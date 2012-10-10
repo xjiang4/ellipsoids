@@ -12,3 +12,4 @@ Add your content here.
   * checkout the latest source
   * navigate to *install* subfolder
   * run `s_install` script
+  * run `elltool.test.run_tests` to make sure that everything works
