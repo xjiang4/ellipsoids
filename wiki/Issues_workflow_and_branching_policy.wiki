@@ -2,7 +2,7 @@
 
 Here and below we use a term "ticket" as a synonym of any type of issue including tasks, enhancements, bug reports etc created in the google issue tracker.
 
-= Enhancement workflow and branching/merging policty =
+= Enhancement workflow and branching/merging policy =
 
   # Enhancement is created by a project owner and assigned to a developer with "New" status
   # Once developer starts working on an issue he/she 
