@@ -1,4 +1,4 @@
-#summary Coding policy applies introduces a naming convention for variables,classes,functions and some other generic requirements that every developer should follow.
+#summary Coding policy introduces a naming convention for variables,classes,functions and some other generic requirements that every developer should follow.
 #labels Phase-Requirements
 
 = Introduction =
