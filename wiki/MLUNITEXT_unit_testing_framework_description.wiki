@@ -43,9 +43,11 @@ end
 function result=run_tests(varargin)
 runner = mlunitext.text_test_runner(1, 1);
 loader = mlunitext.test_loader;
-suiteBasic = loader.load_tests_from_test_case('mymainpackage.mychildpackage.test.mlunit.BasicTestCase',varargin{:});
+suiteBasic = loader.load_tests_from_test_case(...
+'mymainpackage.mychildpackage.test.mlunit.BasicTestCase',varargin{:});
 %
-suiteAdvanced = loader.load_tests_from_test_case('mymainpackage.mychildpackage.test.mlunit.AdvancedTestCase',varargin{:});
+suiteAdvanced = loader.load_tests_from_test_case(...
+'mymainpackage.mychildpackage.test.mlunit.AdvancedTestCase',varargin{:});
 %
 suite = mlunit.test_suite(horzcat(...
     suiteBasic.tests,...
@@ -66,12 +68,15 @@ result=[resList{:}];
 Once this is done, just type 'mymainpackage.test.run_tests` to run all the tests. Please note that 'mymainpackage.test.run_tests` will return results of ALL the tests in both packages.
   # When you need to run tests from a specific use case (let's say  `mymainpackage.mychildpackage.test.mlunit.BasicTestCase`) directly you can use `mlunitext.runtestcase` function (see the following snippet).
 {{{
-mlunitext.runtestcase('mymainpackage.mychildpackage.test.mlunit.BasicTestCase') % runs all tests from the test case
+mlunitext.runtestcase(...
+'mymainpackage.mychildpackage.test.mlunit.BasicTestCase') % runs all tests from the test case
 %
-mlunitext.runtestcase('mymainpackage.mychildpackage.test.mlunit.BasicTestCase','testSinCos') % runs only testSinCos test
+mlunitext.runtestcase(...
+'mymainpackage.mychildpackage.test.mlunit.BasicTestCase','testSinCos') % runs only testSinCos test
 %
-mlunitext.runtestcase('mymainpackage.mychildpackage.test.mlunit.BasicTestCase','testSin') % runs only testSinCos and testSin tests
+mlunitext.runtestcase(...
+'mymainpackage.mychildpackage.test.mlunit.BasicTestCase','testSin') % runs only testSinCos and testSin tests
 %
-mlunitext.runtestcase('mymainpackage.mychildpackage.test.mlunit.BasicTestCase','testSin$') % runs only testSin test
+mlunitext.runtestcase(...
+'mymainpackage.mychildpackage.test.mlunit.BasicTestCase','testSin$') % runs only testSin test
 }}}
-
