@@ -8,8 +8,6 @@ Coding policy consists of
   # Enforces test-driven development
   # Some other generic requirements that in long-term make a life of every developer easier
 
-
-
 = Generic requirements =
 
 Use English as the only language of communication. Source code comments, documentation etc. should be in English. Russian or other languages cannot be used here.
