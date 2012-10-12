@@ -16,6 +16,14 @@ Here and below we use a term "ticket" as a synonym of any type of issue includin
 
  the developer does the following:
      # get the latest changes from the trunk AGAIN (because review could take time and during that time trunk could have been changed again)
-     # run all the tests again
-     # if everything is ok - reintegrate his/her branch back to trunk, if not - make the necessary changes to resolve the conflicts, fix the tests. If the changes are substantial - a review by the original task submitter is needed again. If the changes are very small - reintegration to trunk is allowed.
+     # run all the tests again and act depending on the results
+         # if everything is ok - reintegrate his/her branch back to trunk, if not - make the necessary changes to resolve the conflicts, fix the tests. 
+         # if the changes are substantial - a review by the original task submitter is needed again. If the changes are very small - reintegration to trunk is allowed.
+         # upon reintegration as part of commit *a proper commit message should be formed.* The message format should be as follows.
+             {{{
+                Issue 33
+                NewFeature: new class MyClassA now is capable of calculating an intersection of arbitrary number of ellipsoids 
+                BugFix: classes MyClassB, MyClassB not process the input correctly when both input arguments are specified 
+             }}}
+         Please note that specifying an issue number is obligatory - commits not related to the tickets are prohibited. *Commit messages should be in English!!!*
      # once reintegration is done, the branch is deleted by a developer and the issue status is changed to "Fixed"
