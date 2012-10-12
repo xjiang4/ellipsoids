@@ -10,7 +10,11 @@ Here and below we use a term "ticket" as a synonym of any type of issue includin
      # creates a branch using the following name patter *issue_33_bgates* or *issue_33_bill_gates*
      # starts making the changes withi his/her branch
      
-  # Once the source code is written, the latest changes from trunk are integrated into the branch and ALL tests pass (not just the newly written tests but ALL of them a developer goes to "issues" tab and creates a new issue using "Review request". This review request is assigned to a person who created the original issue. If the reviewer concludes that the task is ready then the reviewer notifies the developer that the task is ready for reintegration to trunk. Notification can be done in two ways
+  # Once the source code is written, the latest changes from trunk are integrated into the branch a developer should run ALL unit tests by calling 
+{{{
+elltool.test.run_tests()
+}}}
+ When and if ALL tests pass (not just the newly written tests but ALL of them a developer goes to "issues" tab and creates a new issue using "Review request". This review request is assigned to a person who created the original issue. If the reviewer concludes that the task is ready then the reviewer notifies the developer that the task is ready for reintegration to trunk. Notification can be done in two ways
      # via comment in the original ticket
      # via reassigning back the request review ticket
 
