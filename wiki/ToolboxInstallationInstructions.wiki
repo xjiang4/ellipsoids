@@ -1,4 +1,5 @@
 #summary Toolbox installation: how to...
+#labels Phase-Deploy
 
 = Requirements =
 
