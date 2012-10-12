@@ -50,15 +50,15 @@ More specifically, you should comply with the following rules.
       'regDefList',{1,2,3},...
       'regCheckList',{'isnumeric(x)','isscalar(x)','isnumeric(x)'},...
       'isObligatoryPropVec',[true true false])
-   %This will produce
-   %reg =   {1,2,3}
-   %isSpecVec = [true,true,false]
-   %propVal1 = 3
-   %propVal2 = 4
-   %propVal3 = 5
-   %isPropVal1 =true
-   %isPropVal2 =true
-   %isPropVal3 =false
+      %This will produce
+      %reg =   {1,2,3}
+      %isSpecVec = [true,true,false]
+      %propVal1 = 3
+      %propVal2 = 4
+      %propVal3 = 5
+      %isPropVal1 =true
+      %isPropVal2 =true
+      %isPropVal3 =false
   }}} 
 
 = Use special functions to throw errors and warnings =
