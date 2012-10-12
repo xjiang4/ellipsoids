@@ -1,0 +1,78 @@
+#summary Coding policy applies introduces a naming convention for variables,classes,functions and some other generic requirements that every developer should follow.
+#labels Phase-Requirements
+
+= Introduction =
+
+Coding policy consists of 
+  # Naming/style convention
+  # Enforces test-driven development
+  # Some other generic requirements that in long-term make a life of every developer easier
+
+
+
+= Generic requirements =
+
+Use English as the only language of communication. Source code comments, documentation etc. should be in English. Russian or other languages cannot be used here.
+
+= Naming and style convention =
+
+Every developer should follow the following naming and style convention:
+[http://ellipsoids.googlecode.com/svn/wiki/attachments/matlabstylereq/matlabstylereq.pdf Matlab naming convention]
+
+= Test-driven approach =
+Always follow a test driven approach. To understand what the test-driven approach is please read about [http://ellipsoids.googlecode.com/svn/wiki/attachments/TheWayOfTestivus.pdf Unit testing karma].
+
+More specifically, you should comply with the following rules.
+
+   #Every new feature should be complemented with a test that makes sure that the feature is implemented correctly
+   #Before committing any changes make sure that you do not break existing tests.
+   #Use MLUNITEXT as a unit-testing framework for your tests. See [MLUNITEXT_unit_testing_framework_description MLUNITEXT framework description].
+   # If you put class MyClass into package 'mypackage.mychildpackage' then your tests should be in `mypackage.mychildpackage.test.mlunit' while 'run_tests' function should be in `mypackage.mychildpackage.test` i.e. its full name should be `mypackage.mychildpackage.test.run_tests`.
+   # Write higher-level `run_tests` function (`mypackage.test.run_test` that calls `mypackage.mychildpackage.test.run_tests`)
+= Program as Matlab were a statically-typified language. Fix and check input argument types =
+   # Do not write classes/functions that can accept arguments of completely different types. The following example shows the construction that *every developer should avoid!!*
+  {{{
+  function result=myfunc(a)
+  if iscell(a)
+     result=a{1}+1;
+  elseif isnumeric(a)
+     result=a+1;
+  end 
+  }}}
+   # Check input argument types using `modgen.common.parseparext` function (see the following example).   For more infromation about `modgen.common.parseparext` read its help header within the function itself.
+  {{{
+  [reg,isSpecVec,...
+      propVal1,propVal2,propVal3...
+      isPropVal1,isPropVal2,isPropVal3]=...
+      modgen.common.parseparext({1,2,'prop1',3,'prop2',4},...
+      {'prop1','prop2','prop3';...
+      [],[],5;...
+      'isscalar(x)','isscalar(x)','isnumeric(x)'},...
+      [0 3],...
+      'regDefList',{1,2,3},...
+      'regCheckList',{'isnumeric(x)','isscalar(x)','isnumeric(x)'},...
+      'isObligatoryPropVec',[true true false])
+   %This will produce
+   %reg =   {1,2,3}
+   %isSpecVec = [true,true,false]
+   %propVal1 = 3
+   %propVal2 = 4
+   %propVal3 = 5
+   %isPropVal1 =true
+   %isPropVal2 =true
+   %isPropVal3 =false
+  }}} 
+
+= Use special functions to throw errors and warnings =
+   # Use `modgen.common.throwerror` and `modgen.common.throwwarn` functions to throw warnings. Do not use `error` and `warning` functions directly. For more information read the help headers for these functions.
+   # Use logging to make debugging easier. For logging use `modgen.logging.log4j.Log4jConfigurator` class. The following example demonstrates its use.
+  {{{
+   import modgen.logging.log4j.Log4jConfigurator;
+   logger=Log4jConfigurator.getLogger();
+   logger.info('doing something useful...');
+   a=2*2;
+   logger.info('doing something useful: done');
+  }}}
+
+= Put your code into well-structured packages =
+Do not put everything into a single package unless the classes/functions are tightly-related.
