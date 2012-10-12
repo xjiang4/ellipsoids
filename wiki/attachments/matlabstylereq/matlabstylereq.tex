@@ -1,0 +1,775 @@
+\documentclass[titlepage,a4paper,12pt]{article}
+\usepackage{config}
+\begin{document}
+\begin{titlepage}
+\begin{flushright}
+\indent\vspace{4cm}\\
+\Huge{\textbf{MATLAB Programming Style Requirements}}\\
+\vspace{3cm} \Large{\textit{Prepared by Peter Gagarinov}}\\
+\vspace{3cm} \large{Moscow State University by M.V. Lomonosov}\\
+\vspace{1cm} \large{Faculty of Applied Mathematics and Computer Science}\\
+\vspace{1cm} \large{System Analysis Department}\\
+\vspace{3cm} \large{12 October, 2012}
+\end{flushright}
+\end{titlepage}
+
+\section{Introduction}
+This document is mainly based on \cite{MPS_G} with some
+modifications added that make sense in the area of
+collaboration programming, creation of large MATLAB-based/scientifically intensive applications,
+large sharable libraries of
+/C++ functions. Most of the changes came from personal
+experience as MATLAB programmer.
+\section{ Naming Conventions}
+In contrast to \cite{MPS_G} naming convention described in this paper
+is more detailed as it is required for creation of sharable code.
+\subsection{Variables}
+ The names of variables should document their
+meaning or use.
+\subsubsection{Variable names should be in mixed
+case starting with lower case.}
+ This is common practice in the C++
+development community. \TMW sometimes starts variable names with
+upper case, but that usage is commonly reserved for types or
+structures in other languages.
+\textmcode{midPrice,meanDev,indAsset,isAssetExpired}
+
+ An alternative technique is to use underscore to
+separate parts of a compound variable name. This technique, although
+readable, is not commonly used for variable names in other languages
+and is not recommended by the author.
+
+\subsubsection{Variables with a
+large scope should have more meaningful names. Variables with a
+small scope can have short but still meaningful names.}
+ In practice most variables should have
+meaningful names. The use of short names should be reserved for
+conditions where they clarify the structure of the statements.
+Scratch variables used for temporary storage or indices can be kept
+short but still meaningful, like \textmcode{ind,isAsset} instead of
+\textmcode{indPair,isAssetExpired}. Using of common scratch
+variables \textmcode{i,j,k,m,n} for integers and \textmcode{x,y} for
+doubles is not recommended, especially considering the fact that
+\textmcode{i,j} are the constants in MATLAB
+
+\subsubsection{The prefix n should be used for variables representing
+the number of objects.}
+ This notation is taken from mathematics where it is an
+established convention for indicating the number of objects.
+Example: \textmcode{nFiles,nSegments,nAssets,nCols}. A
+MATLAB-specific addition is the use of m for number of rows (based
+on matrix notation), as in \textmcode{mRows}.
+
+\subsubsection{A convention on pluralization should be followed
+consistently.}
+A suggested practice is to make all variable names either singular or plural. Having two variables like \textmcode{nDays,nDay,nAsset,nAssets} with names differing only by a final letter s should be avoided.
+\subsubsection{A convention on dimensionality should be followed
+consistently.}
+Use the suffices for indicating the dimensionality of the variables, namely
+\textmcode{Vec(CVec)} for numeric (cell) vectors
+\textmcode{Mat(CMat)} for numeric (cell) matrices, \textmcode{Array(CArray)} for multi-dimentional numeric (cell) arrays: \textmcode{point,pointMat} where \textmcode{point} is singular and
+\textmcode{pointMat} is plural.
+\subsubsection{Iterator variables should be prefixed with \textmcode{i,
+j, k} etc.} The notation is taken from mathematics where it is an
+established convention for indicating iterators.
+\begin{verbmcode}
+for iFile = 1:nFiles
+    ...
+end
+\end{verbmcode}
+For nested loops the iterator variables also should have helpful
+names.
+\begin{verbmcode}
+%start cycle along assets
+for iAssets = 1:nAssets
+    %start cycle along metrics
+    for jMetrics = 1:nMetrics
+        ...
+    end
+end
+\end{verbmcode}
+
+\subsubsection{Logical matrices should be prefixed with \textmcode{is}(\textmcode{isn}),%
+  index matrices should be prefixed with \textmcode{ind}}
+Most of indexing job can be done by using either integer indeces or
+logical indeces. In order to distinguish such variables being used
+in the same part of the code use names like
+\textmcode{indAssetExpired, indMaxMaturity, indMaxElem} for arrays
+of integer indeces and names like
+\textmcode{isAssetExpired},\textmcode{isMaxMaturity,isMaxElem} for
+logical arrays. In that way it is possible to use both versions
+(logical and integer) simultaneously. For negated logical variables
+tend to use prefix \textmcode{isn} instead of \textmcode{isNot} as
+it make the code more compact: \textmcode{isnMaxElem, isnNan}.
+\verbmcodef[Indexation example]{s_indexation.m}
+
+\subsubsection{Using of negated boolean variable names is acceptable
+when it simplifies the code.} A contradictory situation arises when
+such a name is used in conjunction with the logical negation
+operator as this results in a double negative. It is not immediately
+apparent what \textmcode{~isnFound} means. Use \textmcode{isFound}
+and avoid \textmcode{isnFound} in such cases but remember that there
+are many situations when use of negated logical variables is
+justified: \verbmcodef[Negated logical
+variables]{s_negated_logical.m}
+
+\subsubsection{Acronyms, even if normally uppercase, should be mixed
+or lower case.}
+ Using all uppercase for the base name will give
+conflicts with the naming conventions given above. A variable of
+this type would have to be named \textmcode{dVD, hTML} etc. which
+obviously is not very readable. When the name is connected to
+another, the readability is seriously reduced; the word following
+the abbreviation does not stand out as it should. Use
+\textmcode{html, isUsaSpecific}. Avoid \textmcode{hTML,
+isUSASpecific}.
+
+
+\subsubsection{Avoid using a keyword or special value name for a
+variable name.}
+
+\textmcode{MATLAB} can produce cryptic error messages or strange
+results if any of its reserved words or builtin special values is
+redefined. Reserved words are listed by the command
+\textmcode{iskeyword}. Special values are listed in the
+documentation.
+
+
+\subsection{Structures}
+\subsubsection{Structure names should begin with a capital letter.}
+This usage is consistent with C++ practice, and it helps to
+distinguish between structures and ordinary variables.
+\subsubsection{ The name of the structure is implicit, and need not
+be included in a field name.} Repetition is superfluous in use, as
+shown in the example. Use \textmcode{Segment.length}. Avoid
+\textmcode{Segment.segmentLength}.
+\subsubsection{Names of structure fields should begin with a
+lowercase letter even if the fields is a structure} The problem
+arise when the nesting of the structure is high and it can be
+annoying to use capital letter for all field-structures. Use
+\textmcode{Data.dConf.calc.windowSize}. Avoid
+\textmcode{Data.Conf.Calc.windowSize}.
+
+\subsection{Functions/class method names}
+ The names of functions should document their
+use.
+\subsubsection{Names of functions should be written in lower
+case without underscores.}
+ It is clearest to have the function and its m-file names the
+same. Using lower case avoids potential filename problems in mixed
+operating system environments. \textmcode{getname(.)},
+\textmcode{computetotalwidth(.)}.
+\subsubsection{Functions should have meaningful names.}
+ There is an
+unfortunate MATLAB tradition of using short and often somewhat
+cryptic function names probably due to the DOS 8 character limit.
+This concern is no longer relevant and the tradition should usually
+be avoided to improve readability. Use
+\textmcode{computetotalwidth()}. Avoid \textmcode{compwid()}. An
+exception is the use of abbreviations or acronyms widely used in
+mathematics. \textmcode{max(.), gcd(.)}. Functions with such short
+names should always have the complete words in the first header
+comment line for clarity and to support \textmcode{lookfor}
+searches.
+\subsubsection{Functions with a single output can be named for the
+output.}
+ This is common practice in \TMW code. \textmcode{mean(.),
+standarderror(.)}
+
+\subsubsection{Functions with no output argument or which only return a handle
+should be named after what they do.} This practice increases
+readability, making it clear what the function should ( and possibly
+should not) do. This makes it easier to keep the code clean of
+unintended side effects. \textmcode{plot(.)}
+
+
+
+\subsubsection{The prefixes get/set should generally be reserved for accessing an
+object or property, not for functions} General practice of \TMW and common practice in
+C++ and Java development. A plausible exception is the use of set
+for logical set operations. \textmcode{getObj(.); setAppData(.)}
+
+\subsubsection{The prefix compute can be used in methods where something is
+computed.} Consistent use of the term enhances readability. Give the
+reader the immediate clue that this is a potentially complex or time
+consuming operation. \textmcode{computeweightedaverage();
+computespread()}.
+
+
+\subsubsection{The method names should consist of subwords each starting with a capital letter} Please note that the convention for object methods is different and every next subword should start with a capital letter.
+\textmcode{doSomething(.); calculateAppData(.)}
+
+
+ \subsubsection{The
+prefix find can be used in methods where something is looked up.}
+Give the reader the immediate clue that this is a simple look up
+method with a minimum of computations involved. Consistent use of
+the term enhances readability and it is a good substitute for get.
+\textmcode{findOldestRecord(.); findHeaviestElement(.);}
+
+
+\subsubsection{ The prefix is should be used for boolean
+functions.} Common practice in \TMW code as well as C++ and Java.
+\textmcode{isoverpriced(.); iscomplete(.)}
+
+ \subsubsection{Complement names should be used for complement
+operations.} Reduce complexity by symmetry.
+\begin{flushleft}
+\textmcode{get/set}, \textmcode{add/remove},\textmcode{create/destroy},
+\textmcode{start/stop}, \textmcode{insert/delete},
+\textmcode{increment/decrement}, \textmcode{old/new},
+\textmcode{begin/end}, \textmcode{first/last}, \textmcode{up/down},
+\textmcode{min/max}, \textmcode{next/previous}, \textmcode{old/new},
+\textmcode{open/close}, \textmcode{show/hide}, \textmcode{suspend/resume}
+\end{flushleft}
+
+
+\subsubsection{ Avoid
+unintentional shadowing.}
+
+In general function names should be unique. Shadowing (having two or
+more functions with the same name) increases the possibility of
+unexpected behavior or error. Names can be checked for shadowing
+using \textmcode{which -all} or \textmcode{exist}.
+
+\subsection{Classes} The names of classes should document their use.
+\subsubsection{Classes names should start with a capital letter.}
+\textmcode{StateConfigurator} is just fine while
+\textmcode{stateConfigurator} should be avoided.
+\subsubsection{Interfaces should with I.}
+\textmcode{IStateConfigurator} is ok.
+\subsubsection{Abstract classes should with A.}
+\textmcode{AStateConfigurator} is ok.
+\subsubsection{Classes names should not contain their full package names unless but can contain a small part of package name.}
+\textmcode{AStateConfigurator} located within a package \textmcode{modgen.configurators} is ok for two reasons: a) the package can contain the classes that are not configurators and b) When import instruction is used the package name can be omitted when referring to the class names and in this case \textmcode{Configurator} suffix improves readability. \textmcode{AModGenConfigurator} should be avoided.
+
+\subsection{Scripts}
+ The names of scripts should document their
+use
+\subsubsection{Names of scripts should be prefixed with \textmcode{s\_} and should be written in lower
+case with underscores.} Use \textmcode{s\_gen\_config}. Avoid
+\textmcode{sgenconfig},\textmcode{sGenConfing}.
+\subsubsection{Prefer classes or functions to the scripts}
+ In large applications a lot of scripts can produce a mess so because of all of the having the same variable visibility context. Use functions or classes instead
+
+\subsection{General}
+
+\subsubsection{Names of constants should always be in upper-case}
+\textmcode{MAX\_ELEM\_NUMBER}.
+
+\subsubsection{Names of dimensioned variables should usually have a
+units suffix.}
+
+ Using a single set of units is an attractive idea that
+is only rarely implemented completely. Adding units suffixes helps
+to avoid the almost inevitable mixes.
+\textmcode{positionQuotationUnits} or \textmcode{positionQU}.
+
+\subsubsection{Abbreviations in names should be avoided.}
+
+ Using whole words reduces
+ambiguity and helps to make the code self-documenting. Use
+\textmcode{computearrivaltime(.)}. Avoid \textmcode{comparr(.)}.
+Domain specific phrases that are more naturally known through their
+abbreviations or acronyms should be kept abbreviated. Even these
+cases might benefit from a defining comment near their first
+appearance. \textmcode{std, var, html, cpu}.
+
+\subsubsection{Consider making names pronounceable.}
+
+ Names that are at least
+somewhat pronounceable are easier to read and remember.
+
+\subsubsection{All names should be written in English.}
+
+ The MATLAB distribution is
+written in English, and English is the preferred language for
+international development.
+
+\section{Files and Organization}
+ Structuring code, both among and within files
+is essential to making it understandable. Thoughtful partitioning
+and ordering increase the value of the code.
+
+The main difference between script and function is that normally the first
+one is not supposed to be reusable in other applications while the function is supposed to
+be logically solid peace of the code which is maintainable and reusable.
+
+\subsection{Functions}
+\subsubsection{Modularize and partition}
+The best way to write a big program is to assemble it from well
+designed functions. This approach enhances readability,
+understanding and testing by reducing the amount of text which must
+be read to see what the code is doing. Code longer than two editor
+screens is a candidate for partitioning. Small well designed
+functions are more likely to be usable in other applications. All
+subfunctions and many functions should do one thing very well. Every
+function should hide something.
+\subsubsection{Do not use global variables for function interaction}
+The use of arguments is almost always clearer than the use of global
+variables. Moreover it is not correct when a function knows anything
+about a workspace surrounding it since this is a prerogative of the
+scripts to know exactly where their inputs and outputs are located.
+
+\subsubsection{Use common function interface format}
+\label{funcInterface}
+ Common function interface is a very important
+detail for development of large applications/toolboxes containing
+many functions. Here is proposed requirements for function interface
+
+\begin{itemize}
+\item
+Pass some part of input arguments as the properties if the number of
+arguments is greater than 3 so that the number of regular inputs
+does not exceed 3.
+
+
+\item
+
+Use the fixed list of regular arguments.
+
+\begin{verbmcode}
+%Avoid writing the function which allows the following calls
+[dataOutMat,timeOutVec]=aggregatetimeseries(dataInpMat,timeInpVec);
+%in that case windowSize is not a property
+[dataOutMat,timeOutVec]=aggregatetimeseries(dataInpMat,timeInpVec,...
+    windowSize);
+\end{verbmcode}
+
+\item Number of output arguments can be optional
+
+\begin{verbmcode}
+%Matrix nAggregatedObsMat is an optional output
+[dataOutMat,timeOutVec]=aggregatetimeseries(dataInpMat,timeInpVec);
+[dataOutMat,timeOutVec,nAggregatedObsMat]=...
+    aggregatetimeseries(dataInpMat,timeInpVec,windowSize);
+\end{verbmcode}
+
+
+\item
+
+Make all properties optional and define default values for all of
+them.
+
+\begin{verbmcode}
+%Use window size = 15 lags (default value)
+[dataOutMat,timeOutVec]=aggregatetimeseries(dataInpMat,timeInpVec);
+%Use specified windowSize=10 lags
+[dataOutMat,timeOutVec]=aggregatetimeseries(dataInpMat,timeInpVec,...
+    'windowSize',10);
+
+\end{verbmcode}
+
+\item
+
+Pass string inputs as the properties, names of the function regimes/methods
+in particular.
+\begin{verbmcode}
+[dataOutMat,timeOutVec]=aggregatetimeseries(...
+dataInpMat,timeInpVec,'method','simple','windowSize',1);
+\end{verbmcode}
+
+\item
+
+Do not pass flags specifying methods and other function regimes as
+numbers. Use strings instead.
+
+
+\begin{verbmcode}
+%Use
+[dataOutMat,timeOutVec]=aggregatetimeseries(dataInpMat,timeInpVec,...
+    'method','advanced');
+%Avoid
+[dataOutMat,timeOutVec]=aggregatetimeseries(dataInpMat,timeInpVec,...
+    'method',1);
+\end{verbmcode}
+
+
+\item
+
+Pack output arguments into structure when the number of output arguments is greater than 3-5.
+
+\begin{verbmcode}
+ResStruct=multipleoutputfunction(dataInpMat,timeInpVec,...
+'method','simple','windowSize',1);
+>> disp(ResStruct)
+       outMat1: [30x40 double]
+       outMat2: [30x40 double]
+       outMat3: [10x40 double]
+        method: 'simple'
+\end{verbmcode}
+
+\end{itemize}
+
+
+\verbmcodef[Common function interface example]{filterts.m}
+\subsubsection{Use existing functions.}
+
+ Developing a function that is correct,
+readable and reasonably flexible can be a significant task. It may
+be quicker or surer to find an existing function that provides some
+or all of the required functionality.
+
+\subsubsection{Use function syntax instead of script syntax and operator syntax.}
+That way it is easy to control input parameters and avoid unpleasant errors.
+
+Use \textmcode{clear('a','b','c');} Avoid \textmcode{clear a b c;}
+
+\subsubsection{Use function calls for hardly noticeable/distinguishable operators.}
+That approach significantly improves readability.
+Use \textmcode{transpose(a);ctranspose(b);} Avoid \textmcode{a.';a';}
+
+\subsubsection{Any block of code appearing in more than one function or script should be
+considered for packaging as a function.}
+
+It is much easier to manage changes if code appears in only one
+file. "Change is inevitable except from vending machines."
+
+\subsubsection{Subfunctions}
+
+A function used by only one other function should be packaged as its
+subfunction in the same file. This makes the code easier to
+understand and maintain.
+
+\section{Statements}
+
+\subsection{Variables}
+
+\subsubsection{Variables should not be reused
+unless required by memory limitation.}
+
+ Enhance readability by
+ensuring all concepts are represented uniquely. Reduce chance of
+error from misunderstood definition.
+
+
+\subsection{Loops}
+
+ \subsubsection{Loop variables
+should be initialized immediately before the loop.}
+ This improves
+loop speed and helps prevent bogus values if the loop does not
+execute for all possible indices.
+\begin{verbmcode}
+resultMat = zeros(nEntries,1);
+for iEntity = 1:nEntries
+    resultMat(iEntity)=foo(iEntity);
+end
+\end{verbmcode}
+
+
+\subsubsection{The end lines
+in nested loops can have comments}
+
+ Adding comments at the end lines
+of long nested loops can help clarify which statements are in which
+loops and what tasks have been performed at these points.
+
+\subsection{Conditionals}
+
+\subsubsection{Complex conditional expressions should be avoided.}
+
+ Introduce
+temporary logical variables instead. By assigning logical variables
+to expressions, the program gets automatic documentation. The
+construction will be easier to read and to debug.
+\begin{verbmcode}
+if (value>=lowerLimit)&(value<=upperLimit)&~ismember(value,valueArray)
+    ...
+end
+\end{verbmcode}
+should be replaced by:
+\begin{verbmcode}
+isValid = (value >=lowerLimit) & (value <= upperLimit);
+isNew = ~ismember(value,valueArray);
+if (isValid & isNew)
+    ...
+end
+\end{verbmcode}
+
+\subsubsection{The usual case should be put in the \textmcode{if}-part and the exception in the
+\textmcode{else}-part of an \textmcode{if else} statement.}
+
+ This practice improves
+readability by preventing exceptions from obscuring the normal path
+of execution.
+\begin{verbmcode}
+fid = fopen(fileName);
+if (fid~=-1)
+ ...
+else
+ ...
+end
+\end{verbmcode}
+
+\subsubsection{The
+conditional expression \textmcode{if 0} should be avoided, except for temporary
+block commenting}
+
+ Make sure that the exceptions don't obscure the
+normal path of execution. Using the block comment feature of the
+editor is preferred.
+
+\subsubsection{A switch statement should include the otherwise
+condition}
+
+Leaving
+the otherwise out is a common error, which can lead to unexpected
+results.
+\begin{verbmcode}
+switch (condition)
+    case ABC,
+        ...
+    case DEF,
+        ...
+    otherwise
+        ...
+end
+\end{verbmcode}
+
+\subsubsection{The \textmcode{switch} variable should usually be a string.}
+ Character strings
+work well in this context and they are usually more meaningful than
+enumerated cases.
+
+\subsection{General}
+
+\subsubsection{Avoid cryptic code.}
+
+ There is a tendency among some programmers,
+perhaps inspired by Shakespeare's line: Brevity is the soul of with,
+to write MATLAB code that is terse and even obscure. Writing concise
+code can be a way to explore the features of the language. However,
+in almost every circumstance, clarity should be the goal. As Steve
+Lord of \TMW has written, "A month from now, if I look at this code,
+will I understand what it's doing? Try to avoid the situation
+described by the Captain in Cool Hand Luke, What we've got here is
+failure to communicate." The importance of this issue is underlined
+by many authors. Martin Fowler: "Any fool can write code that a
+computer can understand. Good programmers write code that humans can
+understand." Kreitzberg and Shneiderman: "Programming can be fun, so
+can cryptography; however they should not be combined."
+
+\subsubsection{Use parentheses.}
+
+ MATLAB has documented rules for operator
+precedence, but who wants to remember the details? If there might be
+any doubt, use parentheses to clarify expressions. They are
+particularly helpful for extended logical expressions.
+
+\subsubsection{The use of numbers in expressions should be
+minimized.}
+
+Numbers that are subject to change usually should be named constants
+instead. If a number does not have an obvious meaning by itself,
+readability is enhanced by introducing a named constant instead. It
+can be much easier to change the definition of a constant than to
+find and change all of the relevant occurrences of a literal number
+in a file.
+
+
+\subsubsection{Floating point comparisons should be made with
+caution.}
+
+ Binary
+representation can cause trouble, as seen in this example.
+\begin{verbmcode}
+%initialize input parameters with integer values
+shortSide = 3;
+longSide = 5;
+otherSide = 4;
+%make comparison in first way
+longSide^2 ==(shortSide^2 + otherSide^2)
+>> ans = 1
+%initialize input parameters with real values
+scaleFactor = 0.01;
+%make comparison
+(scaleFactor*longSide)^2 == ((scaleFactor*shortSide)^2 +...
+(scaleFactor*otherSide)^2)
+>> ans = 0
+\end{verbmcode}
+
+\section{Layout, Comments and Documentation}
+
+ \subsection{Layout}
+The purpose of layout is to help the reader understand the code.
+Indentation is particularly helpful for revealing structure.
+
+ \subsubsection{Content
+should be kept within the first 80 columns.}
+ 80 columns is a common
+dimension for editors, terminal emulators, printers and debuggers,
+and files that are shared between several people should keep within
+these constraints. Readability improves if unintentional line breaks
+are avoided when passing a file between programmers.
+
+\subsubsection{Lines should be
+split at graceful points.}
+ Split lines occur when a statement
+exceeds the suggested 80 column limit. In general: " Break after a
+comma or space." Break after an operator. " Align the new line with
+the beginning of the expression on the previous line.
+\begin{verbmcode}
+totalSum=a+b+c+...
+    d+e;
+function(param1,param2,...
+    param3)
+setText(['Long line split',...
+    'into two parts.']);
+\end{verbmcode}
+
+
+\subsubsection{Indentation should be consistent with the MATLAB
+Editor.}
+ The MATLAB
+editor provides indentation that clarifies code structure and is
+consistent with recommended practices for C++ and Java.
+
+\subsubsection{In general a line of code should contain only one executable
+statement.}
+ This practice improves readability and allows JIT
+acceleration.
+
+
+
+\subsubsection{Logical groups of statements within a block should be separated by
+one blank line started with \textmcode{\%}.}
+
+ Enhance readability by introducing comment symbols
+between logical units of a block.
+
+\subsubsection{Use cell divider \textmcode{\%\%} for block separation. Add to this two lines
+started with \textmcode{\%}.}
+Cell divider \textmcode{\%\%} while helps reading the code also makes additional features available in MATLAB Editor.
+\verbmcodef[Separation example]{s_blocks.m}
+
+\subsection{Comments}
+
+ The purpose of comments is to add information to the code.
+
+Typical uses for comments are to explain usage, provide reference
+information, to justify decisions, to describe limitations, to
+mention needed improvements. Experience indicates that it is better
+to write comments at the same time as the code rather than to intend
+to add comments later.
+
+\subsubsection{Comments cannot justify poorly written code.}
+
+ Comments cannot make up
+for code lacking appropriate name choices and an explicit logical
+structure. Such code should be rewritten. Steve McConnell: "Improve
+the code and then document it to make it even clearer."
+
+\subsubsection{Comments should agree with the code, but do more than just restate
+the code.}
+
+ A bad or useless comment just gets in the way of the
+reader. N. Schryer: "If the code and the comments disagree, then
+both are probably wrong." It is usually more important for the
+comment to address why or how rather than what.
+
+\subsubsection{Comments should be
+easy to read.}
+There should be a space between the % and the comment text. Comments should start with an
+upper case letter and end with a period.
+
+\subsubsection{Comments should usually have the same indentation as the statements
+referred to.}
+ This is to avoid having the comments break the layout
+of the program. End of line comments tend to be cryptic and should
+be avoided except for constant definitions.
+
+
+\subsubsection{Use common function header format.}
+Stick with the following format of function header.
+\verbmcodef[Function header format]{fheader.m}
+Note that
+\begin{itemize}
+
+\item Function header comments should support the use of help and
+lookfor.
+
+\textmcode{help} prints the first contiguous block of comment lines from the
+file. Make it helpful. \textmcode{lookfor} searches the first comment line of
+all m-files on the path. Try to include likely search words in this
+line.
+
+\item Function header comments should discuss any special requirements for
+the input arguments.
+
+ The user will need to know if the input needs
+to be expressed in particular units
+\begin{verbmcode}
+% ejectionFraction must be between 0 and 1, not a percentage.
+% elapsedTimeSeconds must be one dimensional.
+\end{verbmcode}
+
+\item Function header comments should describe any side
+effects.
+
+Side effects are actions of a function other than assignment of the
+output variables. A common example is plot generation. Descriptions
+of these side effects should be included in the header comments so
+that they appear in the help printout.
+
+\item One should avoid clutter in the help printout
+of the function header.
+
+ It is common to include copyright lines and
+change history in comments near the beginning of a function file.
+There should be a blank line between the header comments and these
+comments so that they are not displayed in response to help.
+
+\end{itemize}
+
+\subsubsection{Use common script header format}
+The outputs and inputs of MATLAB script are usually harder to specify.
+However it is very helpful to stick with common script header format.
+
+\verbmcodef[Script header format]{s_sheader.m}
+
+
+
+\subsubsection{All comments should be written in English.}
+
+In an international environment, English is the preferred language.
+
+
+\subsection{Documentation}
+
+\subsubsection{Formal documentation}
+
+ To be useful documentation should include a
+readable description of what the code is supposed to do
+(Requirements), how it works (Design), which functions it depends on
+and how it is used by other code (Interfaces), and how it is tested.
+For extra credit, the documentation can include a discussion of
+alternative solutions and suggestions for extensions or maintenance.
+Dick Brandon: "Documentation is like sex; when it's good, it's very,
+very good, and when it's bad, it's better than nothing."
+
+
+\subsubsection{Consider writing the documentation first}
+
+ Some programmers believe
+that the best approach is "Code first and answer questions later."
+Through experience most of us learn that developing a design and
+then implementing it leads to a much more satisfactory result.
+Development projects are almost never completed on schedule. If
+documentation and testing are left for last, they will get cut
+short. Writing the documentation first assures that it gets done and
+will probably reduce development time.
+
+\subsubsection{Changes.}
+
+ The professional way to manage and document code changes is
+to use a source control tool. For very simple projects, adding change history comments to the
+function files is certainly better than nothing.
+% 24 November 1971, D.B. Cooper, exit conditions modified.
+
+\begin{thebibliography}{9}
+\bibitem{MPS_G}
+\emph{Richard Johnson}, MATLAB Programming Style Guidelines.
+\end{thebibliography}
+
+\end{document}
