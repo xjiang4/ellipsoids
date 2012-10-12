@@ -1,7 +1,7 @@
-#summary Toolbox installation: how to...
+#summary Describes a sequence of steps that a developer should follow to configure a development environment
 #labels Phase-Deploy
 
-= Requirements =
+= Software requirements =
 
 Add your content here.
 
