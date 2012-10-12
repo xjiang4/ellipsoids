@@ -6,7 +6,7 @@
 Coding policy consists of 
   # Naming/style convention
   # Enforces test-driven development
-  # Some other generic requirements that in long-term make a life of every developer easier
+  # Some other generic requirements that in long-term make a life of every developer easier.
 
 = Generic requirements =
 
