@@ -1,0 +1,57 @@
+#summary Describes the way MLUNITEXT can/should be used for creating a dense test coverage.
+
+= Introduction =
+
+MLUNITEXT is a custom-made unit testing framework developed by Peter Gagarinov. At the moment in r25 of trunk the framework is located in
+[https://ellipsoids.googlecode.com/svn/trunk/lib/mlunitext]. It consists of the following packages.
+
+# *mlunitext* - contains the classes designed for a direct use by a developers. When writing your tests you should inherit from `mlunitext.test_case` class.
+
+# *mlunit_samples* - contain a sample test case for demo purposes. This should be the first place to look for a developer without any experience with MLUNITEXT.
+# *mlunit_test* - contains the tests for MLUNITEXT itself (yes, the testing framework also needs to be tested!!!). This is the second place where developer should look for the test case examples. To run all the tests type `mlunitext.test.run_tests()` from Matlab command line.
+# *mlunit* - provides some basic functionality. Classes from this package should not be used directly.
+
+
+= Typical use case for MLUNITEXT =
+
+# Inherit from mlunitext.test_case and write you tests in the methods that start with *test*. Using *test* in front of your test methods is obligatory as *test* prefix tells MLUNITEXT that the method in question is a test method.
+{{{
+classdef BasicTestCase < mlunit.test_case
+
+    methods
+        function self = BasicTestCase(varargin)
+            self = self@mlunit.test_case(varargin{:});
+        end
+        
+        function self = testNull(self)
+            mlunit.assert_equals(0, sin(0));
+        end
+
+        function self = testSinCos(self)
+            mlunit.assert_equals(cos(0), sin(pi/2));
+        end
+        function self=testFailed(self)
+            mlunit.assert_equals(1,0);
+        end
+    end
+end
+}}}
+
+# Once you created a few test cases, let's say `BasicTestCase` and `AdvancedTestCase` within `mypackage.test.mlunit' the next step would be writing `run_tests` function within `mypackage.test` for these two test cases. The following code snippet shows how this can be done.
+
+{{{
+function result=run_tests(varargin)
+runner = mlunitext.text_test_runner(1, 1);
+loader = mlunitext.test_loader;
+suiteBasic = loader.load_tests_from_test_case('mypackage.test.mlunit.BasicTestCase',varargin{:});
+%
+suiteAdvanced = loader.load_tests_from_test_case('mypackage.test.mlunit.AdvancedTestCase',varargin{:});
+%
+suite = mlunit.test_suite(horzcat(...
+    suiteBasic.tests,...
+    suiteAdvanced.tests));
+%
+result=runner.run(suite);
+
+}}}
+
