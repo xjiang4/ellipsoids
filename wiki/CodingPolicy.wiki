@@ -39,7 +39,7 @@ More specifically, you should comply with the following rules.
      result=a+1;
   end 
   }}}
-   # Check input argument types using `modgen.common.parseparext` function
+   # Check input argument types using `modgen.common.parseparext` function (see the following example).   For more infromation about `modgen.common.parseparext` read its help header within the function itself.
   {{{
   [reg,isSpecVec,...
       propVal1,propVal2,propVal3...
@@ -62,7 +62,8 @@ More specifically, you should comply with the following rules.
    %isPropVal2 =true
    %isPropVal3 =false
   }}} 
-  For more infromation about `modgen.common.parseparext` read its help header within the function itself.
+
+= Use special functions to throw errors and warnings =
    # Use `modgen.common.throwerror` and `modgen.common.throwwarn` functions to throw warnings. Do not use `error` and `warning` functions directly. For more information read the help headers for these functions.
    # Use logging to make debugging easier. For logging use `modgen.logging.log4j.Log4jConfigurator` class. The following example demonstrates its use.
   {{{
@@ -75,4 +76,3 @@ More specifically, you should comply with the following rules.
 
 = Put your code into well-structured packages =
 Do not put everything into a single package unless the classes/functions are tightly-related.
-
