@@ -1,0 +1,20 @@
+#summary Coding policy applies introduces a naming convention for variables,classes,functions and some other generic requirements that every developer should follow.
+#labels Phase-Requirements
+
+= Introduction =
+
+Coding policy consists of 
+  # Naming/style convention
+  # Enforces test-driven development
+  # Some other generic requirements that in long-term make a life of every developer easier
+
+
+
+= Generic requirements =
+  # Use English as the only language of communication. Source code comments, documentation etc. should be in English. Russian or other languages cannot be used here.
+
+= Naming and style convention =
+Every developer should follow the following naming and style convention:
+[http://ellipsoids.googlecode.com/svn/wiki/attachments/matlabstylereq/matlabstylereq.pdf Matlab naming convention]
+
+= Test-driven approach =
