@@ -14,3 +14,13 @@ Add your content here.
   * navigate to *install* subfolder
   * run `s_install` script
   * run `elltool.test.run_tests` to make sure that everything works
+
+Please note that a developer needs to run `s_install` script every time Matlab is started. It's because the new files/folders that the developer can create during in the process of developing the toolbox should be added to Matlab path.
+To automate the launch of `s_install` script it is suggested to create a separate Matlab shortcut for each source control working copy (see an example below). To do that you'll need to copy the standard Matlab shortcut and in the copied shortcut
+  # edit "Start in" field by typing in the path to "install" subfolder of your working copy
+  # edit "Target" field by adding the following string ` -r "s_install,cd .." -singleCompThread` where
+       # ` -r "s_install,cd .."` launches `s_install` script and goes one level up in the folder hierarchy
+       # `-singleCompThread` disables the multithreading, this is needed for the unit tests that check the precision of calculation as the latter can depend on the number of threads. Please note that this is only needed for the development. The ordinary users who just use the toolbox can skip this flag. 
+  # (recommended) copy 'pathdef.m' file from `<MATLAB_ROOT>\toolbox\local` to `install` subfolder of the working copy. This makes Matlab use the copied `pathdef.m` for storing the path instead of using the one located in `<MATLAB_ROOT>\toolbox\local`. This is very useful when you use Matlab for more that one project/branch as paths for these projects/branches can be different. Thus by keeping the paths for the projectsin different copies of `pathdef.m` file you ensure that files from the different project are not put to Matlab path at the same time. By construction `s_install` script cleans the path entirely first and then adds the content of the working copy to the cleaned path. However there may not be such useful script in other projects or this script can be broken so putting `pathdef.m` into `install` subfolder is just a precausion.
+
+http://ellipsoids.googlecode.com/svn/wiki/images/matlab_shortcut_install.png
