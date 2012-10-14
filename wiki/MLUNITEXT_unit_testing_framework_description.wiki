@@ -16,16 +16,16 @@ MLUNITEXT is a custom-made unit testing framework developed by Peter Gagarinov. 
   # Inherit from mlunitext.test_case and write you tests in the methods that start with *test*. Using *test* in front of your test methods is obligatory as *test* prefix tells MLUNITEXT that the method in question is a test method.
 {{{
 classdef BasicTestCase < mlunit.test_case
-
+    %
     methods
         function self = BasicTestCase(varargin)
             self = self@mlunit.test_case(varargin{:});
         end
-        
+        %
         function self = testNull(self)
             mlunit.assert_equals(0, sin(0));
         end
-
+        %
         function self = testSinCos(self)
             mlunit.assert_equals(cos(0), sin(pi/2));
         end
@@ -38,8 +38,8 @@ classdef BasicTestCase < mlunit.test_case
     end
 end
 }}}
-  # Once you created a few test cases, let's say `BasicTestCase` and `AdvancedTestCase` within `mymainpackage.mychildpackage.test.mlunit' the next step would be writing `run_tests` function within `mymainpackage.mychildpackage.test` for these two test cases. The following code snippet shows how this can be done.
-{{{
+  # When you move than one test case created, let's say `BasicTestCase` and `AdvancedTestCase` within `mymainpackage.mychildpackage.test.mlunit' the next step would be writing `run_tests` function within `mymainpackage.mychildpackage.test` for these two test cases. The following code snippet shows how this can be done.
+   {{{
 function result=run_tests(varargin)
 runner = mlunitext.text_test_runner(1, 1);
 loader = mlunitext.test_loader;
@@ -54,9 +54,8 @@ suite = mlunit.test_suite(horzcat(...
     suiteAdvanced.tests));
 %
 result=runner.run(suite);
-
-}}}
-Once this function is written just type `mymainpackage.mychildpackage.test.run_tests` to run the tests from both use cases.
+   }}} 
+   Now you can just type `mymainpackage.mychildpackage.test.run_tests` to run the tests from both use cases.  
   # Let's assume that you have a few additional test cases implemented within a different package `mymainpackage.mysecondpackage.test.mlunit` along with 'mymainpackage.mysecondpackage.test.run_tests' function. Then you can (and actually should) create a higher-level `run_tests`  function in `mymainpackage.test` package that call the lower-level 'run_test' functions (see the following code snippet)
 {{{
 function result=run_tests(varargin)
@@ -65,7 +64,7 @@ resList{1}=mymainpackage.mychildpackage.test.run_tests();
 %
 result=[resList{:}];
 }}}
-Once this is done, just type 'mymainpackage.test.run_tests` to run all the tests. Please note that 'mymainpackage.test.run_tests` will return results of ALL the tests in both packages.
+   The command 'mymainpackage.test.run_tests` will run all the tests. Please note that 'mymainpackage.test.run_tests` returns results of ALL the tests in both packages.
   # When you need to run tests from a specific use case (let's say  `mymainpackage.mychildpackage.test.mlunit.BasicTestCase`) directly you can use `mlunitext.runtestcase` function (see the following snippet).
 {{{
 mlunitext.runtestcase(...
