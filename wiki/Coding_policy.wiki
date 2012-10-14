@@ -62,8 +62,9 @@ More specifically, you should comply with the following rules.
   }}} 
 
 = Use special functions to throw errors and warnings =
-   # Use `modgen.common.throwerror` and `modgen.common.throwwarn` functions to throw warnings. Do not use `error` and `warning` functions directly. For more information read the help headers for these functions.
-   # Use logging to make debugging easier. For logging use `modgen.logging.log4j.Log4jConfigurator` class. The following example demonstrates its use.
+Use `modgen.common.throwerror` and `modgen.common.throwwarn` functions to throw warnings. Do not use `error` and `warning` functions directly. For more information read the help headers for these functions.
+= Use logging to make debugging easier =
+Use logging to make debugging easier. For logging use `modgen.logging.log4j.Log4jConfigurator` class. The following example demonstrates its use.
   {{{
    import modgen.logging.log4j.Log4jConfigurator;
    logger=Log4jConfigurator.getLogger();
