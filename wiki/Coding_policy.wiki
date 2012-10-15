@@ -22,9 +22,9 @@ Always follow a test driven approach. To understand what the test-driven approac
 
 More specifically, you should comply with the following rules.
 
-   #Every new feature should be complemented with a test that makes sure that the feature is implemented correctly
-   #Before committing any changes make sure that you do not break existing tests.
-   #Use MLUNITEXT as a unit-testing framework for your tests. See [MLUNITEXT_unit_testing_framework_description MLUNITEXT framework description].
+   # Every new feature should be complemented with a test that makes sure that the feature is implemented correctly
+   # Before committing any changes make sure that you do not break existing tests.
+   # Use MLUNITEXT as a unit-testing framework for your tests. See [MLUNITEXT_unit_testing_framework_description MLUNITEXT framework description].
    # If you put class MyClass into package 'mypackage.mychildpackage' then your tests should be in `mypackage.mychildpackage.test.mlunit' while 'run_tests' function should be in `mypackage.mychildpackage.test` i.e. its full name should be `mypackage.mychildpackage.test.run_tests`.
    # Write higher-level `run_tests` function (`mypackage.test.run_test` that calls `mypackage.mychildpackage.test.run_tests`)
 = Program as Matlab were a statically-typified language. Fix and check input argument types =
