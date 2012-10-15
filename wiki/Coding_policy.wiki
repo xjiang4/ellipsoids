@@ -37,7 +37,22 @@ More specifically, you should comply with the following rules.
      result=a+1;
   end 
   }}}
-   # Check input argument types using `modgen.common.parseparext` function (see the following example).   For more infromation about `modgen.common.parseparext` read its help header within the function itself.
+   # Check input argument types using `modgen.common.type.simple.checkgen` and `modgen.common.type.simple.checkgenext` functions:
+{{{
+%check whether a condition numel(x1)==numel(x2) holds for variables  aVar and bVar
+%throw exception if it does not, in exception refer to the variables as 'Alpha' and 'Beta' 
+modgen.common.type.simple.checkgenext('numel(x1)==numel(x2)',2,aVar,bVar,'Alpha')
+%
+%do the same but determine the variable names automatically
+modgen.common.type.simple.checkgenext('numel(x1)==numel(x2)',2,aVar,bVar)
+%
+%automatic variable name recognition does not work properly if you use something like that
+modgen.common.type.simple.checkgenext('numel(x1)==numel(x2)',varargin{1},vaarargin{2})
+%
+%simpler variant just for 1 variable
+modgen.common.type.simple.checkgenext(aVar,'isnumeric(x)&&isa(x,'int32')||isscalar(x)')
+}}}
+   # Parse input argument and check their types using `modgen.common.parseparext` function (see the following example). The main purpose of `parseparext` is to parse input arguments (properties and regular inputs) but it also can check for simple conditions that do not involve multiple variables. For checking the more complex conditiosn like `numel(x1)==numel(x2)` use `checkgenext` function mentioned above. For more infromation about `modgen.common.parseparext` read its help header within the function itself. For simple inputs a more light-weight function `modgen.common.parseparams` can be used (it is different from Matlab built-in `parseparams` function).
   {{{
   [reg,isSpecVec,...
       propVal1,propVal2,propVal3...
