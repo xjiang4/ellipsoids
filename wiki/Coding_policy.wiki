@@ -78,6 +78,23 @@ modgen.common.type.simple.checkgenext(aVar,'isnumeric(x)&&isa(x,'int32')||isscal
 
 = Use special functions to throw errors and warnings =
 Use `modgen.common.throwerror` and `modgen.common.throwwarn` functions to throw warnings. Do not use `error` and `warning` functions directly. For more information read the help headers for these functions.
+
+= Use exceptions only for exceptional situations
+The following example demonstrates an extremely improper use of exceptions when they are used for for comparing the array sizes.
+{{{
+function isPositive=issizeequal(aVec,bVec)
+aVec=[1,2,3];
+bVec=[1,2];
+try
+    aVec==bVec;
+catch meObj
+    if strcmp(meObj.identifier,'MATLAB:dimagree')
+        isPositive=false;
+    else
+        rethrow(meObj);
+    end
+end
+}}}
 = Use logging to make debugging easier =
 Use logging to make debugging easier. For logging use `modgen.logging.log4j.Log4jConfigurator` class. The following example demonstrates its use.
   {{{
