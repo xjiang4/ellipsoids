@@ -55,7 +55,30 @@ suite = mlunit.test_suite(horzcat(...
 %
 result=runner.run(suite);
    }}} 
-   Now you can just type `mymainpackage.mychildpackage.test.run_tests` to run the tests from both use cases.  
+   Now you can just type `mymainpackage.mychildpackage.test.run_tests` to run the tests from both use cases. 
+
+= Writing negative tests =
+A test that causes an exception in the called function/class is also a test aka negative test. `mlunitext.test_case` class has a method  `runAndCheckError` designed for negative testing. Let's consider an example where a call to class method `doSomethingBad` causes an exception with 'wrongInput' identifier. The test for this case can be written in the following way.
+{{{
+function testNegative(self)
+obj=...
+inpParamList={1,2};
+self.runAndCheckError('obj.doSomethingBad(inpParamList{:})','wrongInput');
+end
+}}}
+The same test can be written in a slightly different manner:
+{{{
+function testNegative(self)
+obj=...
+inpParamList={1,2};
+self.runAndCheckError(@check,'wrongInput');
+%
+  function check()
+     obj.doSomethingBad(inpParamList{:});
+  end
+end
+}}}
+= Structuring the tests into packages =
   # Let's assume that you have a few additional test cases implemented within a different package `mymainpackage.mysecondpackage.test.mlunit` along with 'mymainpackage.mysecondpackage.test.run_tests' function. Then you can (and actually should) create a higher-level `run_tests`  function in `mymainpackage.test` package that call the lower-level 'run_test' functions (see the following code snippet)
 {{{
 function result=run_tests(varargin)
