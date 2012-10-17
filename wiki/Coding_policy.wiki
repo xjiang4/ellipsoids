@@ -79,8 +79,8 @@ modgen.common.type.simple.checkgenext(aVar,'isnumeric(x)&&isa(x,'int32')||isscal
 = Use special functions to throw errors and warnings =
 Use `modgen.common.throwerror` and `modgen.common.throwwarn` functions to throw warnings. Do not use `error` and `warning` functions directly. For more information read the help headers for these functions.
 
-= Use exceptions only for exceptional situations
-The following example demonstrates an extremely improper use of exceptions when they are used for for comparing the array sizes.
+= Use exceptions only for exceptional situations =
+The following example demonstrates an extremely improper use of exceptions that *every developer should avoid !!*
 {{{
 function isPositive=issizeequal(aVec,bVec)
 aVec=[1,2,3];
