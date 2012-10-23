@@ -10,9 +10,9 @@ classdef EllipsoidTestCase < mlunitext.test_case
         end
         
         function self = testIsInside(self)
-            E = ellipsoid([2; 1], [4, 1; 1, 1]);
-            B = ell_unitball(2);
-            testRes = isinside(E, [E B], 'i');
+            E = ellipsoid([2; 1], [4, 1; 1, 1])
+            B = ell_unitball(2)
+            testRes = isinside(E, [E B], 'i')
             mlunit.assert_equals(1, testRes);
 %             figure(2);
 %             hold on;
