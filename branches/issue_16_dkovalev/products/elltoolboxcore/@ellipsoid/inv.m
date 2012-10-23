@@ -1,4 +1,5 @@
 function I = inv(E)
+import modgen.common.throwerror;
 %
 % INV - inverts shape matrices of ellipsoids in the given array.
 %
@@ -27,7 +28,10 @@ function I = inv(E)
 % -------
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+%   
+  if (det(E.shape) < 1e-7) 
+     throwerror('degenerateMatrix','Matrix is degenerate');
+  end
 
   if ~(isa(E, 'ellipsoid'))
     error('INV: input argument must be array of ellipsoids.');
