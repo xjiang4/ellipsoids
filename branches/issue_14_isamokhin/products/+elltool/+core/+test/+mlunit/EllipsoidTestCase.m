@@ -10,26 +10,34 @@ classdef EllipsoidTestCase < mlunitext.test_case
         end
         
         function self = testIsInside(self)
-        testShapeMatrix = [3 1; 0 1];
-        testCenter = [1; 1];
-        testEll = ellipsoid(testCenter, testShapeMatrix*testShapeMatrix');
-        testResultEll = move2origin(testEll);
-        [testResCenter ~] = double(testResultEll);
-        mlunit.assert_equals([0; 0], testResCenter);
-        
-        testShapeMatrix = 3;
-        testCenter = 150;
-        testEll = ellipsoid(testCenter, testShapeMatrix*testShapeMatrix');
-        testResultEll = move2origin(testEll);
-        [testResCenter ~] = double(testResultEll);
-        mlunit.assert_equals(0, testResCenter);
-        
-        testShapeMatrix = [3 1 5 3; 1 2 0 1; 6 4.4 8 9; 3.4 4 5 6];
-        testCenter = [1; 1; 0; 10];
-        testEll = ellipsoid(testCenter, testShapeMatrix*testShapeMatrix');
-        testResultEll = move2origin(testEll);
-        [testResCenter ~] = double(testResultEll);
-        mlunit.assert_equals([0; 0; 0; 0], testResCenter);
+            E = ellipsoid([2; 1], [4, 1; 1, 1]);
+            B = ell_unitball(2);
+            testRes = isinside(E, [E B], 'i');
+            mlunit.assert_equals(1, testRes);
+%             figure(2);
+%             hold on;
+%             E = ellipsoid([2; 1], [4, 1; 1, 1]);
+%             plot(E);
+%             B = ell_unitball(2);
+%             plot(B);
+%             testRes = isinside(E, [E B], 'u');
+%             mlunit.assert_equals(0, testRes);
+%             figure(3);
+%             hold on;
+%             E = ellipsoid([2; 1; 0], [4, 1, 1; 1, 2, 1; 1, 1, 5]);
+%             plot(E);
+%             B = ell_unitball(3);
+%             plot(B);
+%             testRes = isinside(E, [E B], 'i');
+%             mlunit.assert_equals(1, testRes);
+%             figure(3);
+%             hold on;
+%             E = ellipsoid([2; 1; 0], [4, 1, 1; 1, 2, 1; 1, 1, 5]);
+%             plot(E);
+%             B = ell_unitball(3);
+%             plot(B);
+%             testRes = isinside(E, [E B], 'u');
+%             mlunit.assert_equals(0, testRes);
         end
     end
 end
