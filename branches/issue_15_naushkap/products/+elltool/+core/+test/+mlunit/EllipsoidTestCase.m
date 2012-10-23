@@ -205,8 +205,23 @@ classdef EllipsoidTestCase < mlunitext.test_case
             if (min(min(testEllCenter == [3; 7; 11])) && min(min(testEllMatrix == [5 11 17; 11 25 39; 17 39 61])))
                 isequal = 1;
             end
+            mlunit.assert_equals(1, isequal);            
+        end
+        
+        function self = testMinkdiff_ea(self)
+            testEllipsoid1 = ellipsoid([0; 0], [1 0; 0 4]);
+            testEllipsoid2 = ellipsoid([0; 0], eye(2));
+            testL = [1; 0];
+            ExternalApprox = minkdiff_ea(testEllipsoid1, testEllipsoid2, testL);
+            [testEllCenter testEllMatrix1] = double(ExternalApprox(1));
+            isequal = 0;
+            if (min(min(testEllMatrix1 == [0 0; 0 1])))
+                isequal = 1;
+            end
             mlunit.assert_equals(1, isequal);
             
+            
+                      
         end 
         
     end      
