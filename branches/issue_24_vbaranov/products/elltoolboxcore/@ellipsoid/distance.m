@@ -237,7 +237,10 @@ function [d, status] = l_pointdist(E, X, flag)
           f = (x - y)'*(x - y);
         end
         C   = set(x'*Qi*x + 2*(-Qi*q)'*x + (q'*Qi*q - 1) <= 0);
-        o   = solvesdp(C, f, ellOptions.sdpsettings);
+        
+        options=sdpsettings;
+        options.lmilab.reltol=ellOptions.abs_tol;
+        o   = solvesdp(C, f, options);
         dst = double(f);
         if dst < ellOptions.abs_tol
           dst = 0;
@@ -380,7 +383,9 @@ function [d, status] = l_elldist(E, X, flag)
         end
         C   = set(x'*Qi*x + 2*(-Qi*q)'*x + (q'*Qi*q - 1) <= 0);
         C   = C + set(y'*Ri*y + 2*(-Ri*r)'*y + (r'*Ri*r - 1) <= 0);
-        o   = solvesdp(C, f, ellOptions.sdpsettings);
+        options=sdpsettings;
+        options.lmilab.reltol=ellOptions.abs_tol;
+        o   = solvesdp(C, f, options);
         dst = double(f);
         if dst < ellOptions.abs_tol
           dst = 0;
