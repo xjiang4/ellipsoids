@@ -235,7 +235,7 @@ function [d, status] = l_pointdist(E, X, flag)
           f = (x - y)'*Qi*(x - y);
         else
           f = (x - y)'*(x - y);
-        end
+        end   
         C   = set(x'*Qi*x + 2*(-Qi*q)'*x + (q'*Qi*q - 1) <= 0);
         o   = solvesdp(C, f, ellOptions.sdpsettings);
         dst = double(f);

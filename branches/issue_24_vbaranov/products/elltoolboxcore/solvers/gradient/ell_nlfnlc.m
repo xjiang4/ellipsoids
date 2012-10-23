@@ -148,7 +148,7 @@ function [X, FVAL] = ell_nlfnlc(objf, x0, nlcf, Options, varargin)
 
     otherwise,
       try 
-        [ctmp, ceqtmp] = feval(confcn{3}, X, varargin{:});
+        [ctmp,ceqtmp] = feval(confcn{3}, X, varargin{:});
         c              = ctmp(:);
         ceq            = ceqtmp(:);
         cGRAD          = zeros(numberOfVariables, length(c));
