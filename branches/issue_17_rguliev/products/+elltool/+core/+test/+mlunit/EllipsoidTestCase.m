@@ -86,8 +86,25 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testRes=(testDim==3)&&(testRank==2);
             mlunit.assert_equals(1, testRes);
         end
-        %function self=testIsDegenerate(self)
-        %end
+        function self=testIsDegenerate(self)
+            %Empty ellipsoid
+            testEllipsoid=ellipsoid;
+            testRes = isdegenerate(testEllipsoid);
+            mlunit.assert_equals(0, testRes);
+            %Not degerate ellipsoid
+            testEllipsoid=ellipsoid(ones(6,1),eye(6,6));
+            testRes = isdegenerate(testEllipsoid);
+            mlunit.assert_equals(0, testRes);
+            %Degenerate ellipsoids
+            testEllipsoid=ellipsoid(ones(6,1),zeros(6,6));
+            testRes = isdegenerate(testEllipsoid);
+            mlunit.assert_equals(1, testRes);
+            
+            testA=[ 3 1;0 1; -2 1];
+            testEllipsoid=ellipsoid(testA*(testA'));
+            testRes=isdegenerate(testEllipsoid);
+            mlunit.assert_equals(1, testRes);
+        end
         function self=testIsEmpty(self)
             %Chek realy empty ellipsoid
             testEllipsoid=ellipsoid;
@@ -103,8 +120,21 @@ classdef EllipsoidTestCase < mlunitext.test_case
         %end
         %function self = testMineig(self)
         %end
-        %function self = testTrace(self)
-        %end
+        function self = testTrace(self)
+            %Empty ellipsoid
+            testEllipsoid=ellipsoid;
+            testRes=trace(testEllipsoid);
+            mlunit.assert_equals(0, testRes);
+            
+            %Not empty ellipsoid
+            testEllipsoid=ellipsoid(zeros(10,1),eye(10,10));
+            testRes=trace(testEllipsoid);
+            mlunit.assert_equals(10, testRes);
+            
+            testEllipsoid=ellipsoid(-eye(3,1),[1 0 1; 0 0 0; 1 0 2 ]);
+            testRes=trace(testEllipsoid);
+            mlunit.assert_equals(3, testRes);
+        end
         %function self = testVolume(self)
         %end
     end      
