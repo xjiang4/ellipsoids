@@ -121,6 +121,89 @@ function [d, status] = distance(E, X, flag)
 
 
 %%%%%%%%
+function [ d status ] = l_pointCalc(E,y,options)
+% E - ellipsoid
+% y - vector
+% options - struct of  abs_tol, rel_tol, max_itn
+% d - distance
+% status - additional information
+
+ tic;
+ [center, Q] = double(E);
+ y=y-center;
+ el=y'*Q*y;
+ if ( el< 1)
+     d=-1;
+     t=toc;
+     status=struct('info','Successfully solved','time',t);
+     return;
+ elseif (el==1)
+     d=0;
+     t=toc;
+     status=struct('info','Successfully solved','time',t);
+     return;
+ end;
+ 
+ 
+ [V D]=eig(Q);
+ V=V';
+ d=diag(D);
+ q=V*y;
+ 
+ d_mean=mean(d);
+ y_norm=norm(y);
+ x0=sqrt((d_mean*y_norm^2)-1)/d_mean;
+ F=@(x) -1+sum((q.*q).*(d./((1+d*x).^2)));
+ 
+
+ %%Bisection for interval estimation
+ a=0;
+ b=2*x0;
+ c=a+(b-a)/2;
+ Fa=F(a);
+ Fb=F(b);
+ Fc=F(c);
+     
+ itn=1;
+ while( itn < options.max_itn) && ((abs(Fa-Fc)>options.abs_tol || ...
+         abs(Fb-Fc)>options.abs_tol))
+     c=a+(b-a)/2;
+     Fa=F(a);
+     Fb=F(b);
+     Fc=F(c);
+     if sign(Fa)~=sign(Fc)
+         b=c;
+     else
+         a=c;
+     end
+     itn=itn+1;
+ end
+ 
+ %%Secant Method search for zeros
+ eps=options.rel_tol;
+ x=[c-10*sqrt(eps) c+10*sqrt(eps)];
+ err=Inf;
+ k=2;
+ 
+ while( k <options.max_itn ) && ( err > options.rel_tol )
+     
+     deltaF = F(x(k))-F(x(k-1));
+     
+     if abs(deltaF)<=options.abs_tol
+         error('Derivative almost zero! Impossible for Secant. Try fzero');
+     else
+         x(k+1)=x(k)-F(x(k))*(x(k)-x(k-1))/deltaF;
+         err=abs(x(k)-x(k-1)).^2;
+     end
+     k=k+1;
+ end
+ lambda=x(k);
+ z = (eye(size(Q))+lambda*Q)\y;
+ d = norm(z-y);
+ t=toc;
+ status=struct('info','Successfully solved','time',t);
+ return;
+
   
 function [d, status] = l_pointdist(E, X, flag)
 %
@@ -157,98 +240,117 @@ function [d, status] = l_pointdist(E, X, flag)
 
   d      = [];
   status = [];
+  
+  options=struct('abs_tol',ellOptions.abs_tol,...
+          'rel_tol',ellOptions.rel_tol,'max_itn',50);
+     
   if (t > 1) & (t == l)
     for i = 1:m
       dd  = [];
       sts = [];
       for j = 1:n
-        y      = X(:, i*j);
-        [q, Q] = double(E(i, j));
-        Qi     = ell_inv(Q);
-        Qi     = 0.5*(Qi + Qi');
-        dst    = (q - y)'*Qi*(q - y) - 1;
-        o      = struct('yalmiptime', [], 'solvertime', [], 'info', [], 'problem', [], 'dimacs', []);
-        if dst > 0
-          x = sdpvar(mx, 1);
-          if flag
-            f = (x - y)'*Qi*(x - y);
-          else
-            f = (x - y)'*(x - y);
-          end
-          C   = set(x'*Qi*x + 2*(-Qi*q)'*x + (q'*Qi*q - 1) <= 0);
-          o   = solvesdp(C, f, ellOptions.sdpsettings);
-          dst = double(f);
-          if dst < ellOptions.abs_tol
-            dst = 0;
-          end
-          dst = sqrt(dst);
-        end
-        dd  = [dd dst];
-	sts = [sts o];
+       y      = X(:, i*j);
+       [dist st] = l_pointCalc(E(i,j),y,options);
+       dd = [ dd dist ];
+       sts = [ sts st ];
+       
+    
+% %         y      = X(:, i*j);
+% %         [q, Q] = double(E(i, j));
+% %         Qi     = ell_inv(Q);
+% %         Qi     = 0.5*(Qi + Qi');
+% %         dst    = (q - y)'*Qi*(q - y) - 1;
+% %         o      = struct('yalmiptime', [], 'solvertime', [], 'info', [], 'problem', [], 'dimacs', []);
+% %         if dst > 0
+% %           x = sdpvar(mx, 1);
+% %           if flag
+% %             f = (x - y)'*Qi*(x - y);
+% %           else
+% %             f = (x - y)'*(x - y);
+% %           end
+% %           C   = set(x'*Qi*x + 2*(-Qi*q)'*x + (q'*Qi*q - 1) <= 0);
+% %           o   = solvesdp(C, f, ellOptions.sdpsettings);
+% %           dst = double(f);
+% %           if dst < ellOptions.abs_tol
+% %             dst = 0;
+% %           end
+% %           dst = sqrt(dst);
+% %         end
+% %         dd  = [dd dst];
+% %     	sts = [sts o];
       end
-      d      = [d; dd];
-      status = [status sts];
+       d      = [d; dd];
+       status = [status sts];
     end
   elseif (t > 1)
     for i = 1:m
       dd  = [];
       sts = [];
       for j = 1:n
-        y      = X;
-        [q, Q] = double(E(i, j));
-        Qi     = ell_inv(Q);
-        Qi     = 0.5*(Qi + Qi');
-        dst    = (q - y)'*Qi*(q - y) - 1;
-        o      = struct('yalmiptime', [], 'solvertime', [], 'info', [], 'problem', [], 'dimacs', []);
-        if dst > 0
-          x = sdpvar(mx, 1);
-          if flag
-            f = (x - y)'*Qi*(x - y);
-          else
-            f = (x - y)'*(x - y);
-          end
-          C   = set(x'*Qi*x + 2*(-Qi*q)'*x + (q'*Qi*q - 1) <= 0);
-          o   = solvesdp(C, f, ellOptions.sdpsettings);
-          dst = double(f);
-          if dst < ellOptions.abs_tol
-            dst = 0;
-          end
-          dst = sqrt(dst);
-        end
-        dd  = [dd dst];
-	sts = [sts o];
+       y=X;
+       [dist st] = l_pointCalc(E(i,j),y,options);
+       dd = [ dd dist ];
+       sts = [ sts st ];
+       
+% %         y      = X;
+% %         [q, Q] = double(E(i, j));
+% %         Qi     = ell_inv(Q);
+% %         Qi     = 0.5*(Qi + Qi');
+% %         dst    = (q - y)'*Qi*(q - y) - 1;
+% %         o      = struct('yalmiptime', [], 'solvertime', [], 'info', [], 'problem', [], 'dimacs', []);
+% %         if dst > 0
+% %           x = sdpvar(mx, 1);
+% %           if flag
+% %             f = (x - y)'*Qi*(x - y);
+% %           else
+% %             f = (x - y)'*(x - y);
+% %           end
+% %           C   = set(x'*Qi*x + 2*(-Qi*q)'*x + (q'*Qi*q - 1) <= 0);
+% %           o   = solvesdp(C, f, ellOptions.sdpsettings);
+% %           dst = double(f);
+% %           if dst < ellOptions.abs_tol
+% %             dst = 0;
+% %           end
+% %           dst = sqrt(dst);
+% %         end
+% %         dd  = [dd dst];
+% %  	    sts = [sts o];
       end
       d      = [d; dd];
       status = [status sts];
     end
   else
-    for i = 1:l
-      y      = X(:, i);
-      [q, Q] = double(E);
-      Qi     = ell_inv(Q);
-      Qi     = 0.5*(Qi + Qi');
-      dst    = (q - y)'*Qi*(q - y) - 1;
-      o      = struct('yalmiptime', [], 'solvertime', [], 'info', [], 'problem', [], 'dimacs', []);
-      if dst > 0
-        x = sdpvar(mx, 1);
-        if flag
-          f = (x - y)'*Qi*(x - y);
-        else
-          f = (x - y)'*(x - y);
-        end
-        C   = set(x'*Qi*x + 2*(-Qi*q)'*x + (q'*Qi*q - 1) <= 0);
-        
-        options=sdpsettings;
-        options.lmilab.reltol=ellOptions.abs_tol;
-        o   = solvesdp(C, f, options);
-        dst = double(f);
-        if dst < ellOptions.abs_tol
-          dst = 0;
-        end
-        dst = sqrt(dst);
-      end
-      d      = [d dst];
-      status = [status o];
+    for i = 1:l        
+      y= X(:, i); 
+      [dist st]= l_pointCalc(E,y,options);
+      d = [ d dist ];
+      status = [ status st ];
+            
+% %       [q, Q] = double(E);
+% %       Qi     = ell_inv(Q);
+% %       Qi     = 0.5*(Qi + Qi');
+% %       dst    = (q - y)'*Qi*(q - y) - 1;
+% %       o      = struct('yalmiptime', [], 'solvertime', [], 'info', [], 'problem', [], 'dimacs', []);
+% %       if dst > 0
+% %         x = sdpvar(mx, 1);
+% %         if flag
+% %           f = (x - y)'*Qi*(x - y);
+% %         else
+% %           f = (x - y)'*(x - y);
+% %         end
+% %         C   = set(x'*Qi*x + 2*(-Qi*q)'*x + (q'*Qi*q - 1) <= 0);
+% %         
+% %         options=sdpsettings;
+% %         options.lmilab.reltol=ellOptions.abs_tol;
+% %         o   = solvesdp(C, f, options);
+% %         dst = double(f);
+% %         if dst < ellOptions.abs_tol
+% %           dst = 0;
+% %         end
+% %         dst = sqrt(dst);
+% %       end
+% %       d      = [d dst];
+% %       status = [status o];
     end
   end
 
