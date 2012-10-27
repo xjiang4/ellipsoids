@@ -39,13 +39,12 @@ classdef EllipsoidTestCase < mlunitext.test_case
             mlunit.assert_equals(1, (abs(testRes(1)-4)<ellOptions.abs_tol) &&...
                 (abs(testRes(2)-1)<ellOptions.abs_tol));
            
+            %negative test: matrix Q of ellipsoid has very large
+            %eigenvalues.
+            testEllipsoid = ellipsoid([1e+15,0;0,1e+15]);
+            testPoint = [3e+15,0]';
+            self.runAndCheckError('distance(testEllipsoid, testPoint)','NotSecant');
             
-            
-            
-%             testEllipsoid1 = ellipsoid([0,0,0]',[1,0,0; 0,2,0;0,0,4]);
-%             testEllipsoid2 = ellipsoid([0,0,4]',[3,0,0; 0,5,0; 0,0,1]);
-%             testRes=distance(testEllipsoid1,testEllipsoid2);
-%             mlunit.assert_equals(1,abs(testRes-1)<ellOptions.abs_tol);
          end
     end
 end
