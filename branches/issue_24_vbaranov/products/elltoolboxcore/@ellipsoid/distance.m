@@ -121,20 +121,21 @@ function [d, status] = distance(E, X, flag)
 
 
 %%%%%%%%
-function [ distEllVec timeOfComputation ] = computeEllVecDistance(ellObj,yVec,nMaxIter,absTol, relTol)
+function [ distEllVec timeOfComputation ] = computeEllVecDistance(ellObj,vectorVec,nMaxIter,absTol, relTol)
 % COMPUTEELLVECDISTANCE - computes the distance between an ellipsoid and a
 %                         vector
-% input:
-%       ellObj - ellipsoid
-%       yVec - vector
-%       nMaxIter - maximal number of iterations
-%       absTol, relTol - absolute and relative tolerance 
-% output:
-%       dist  - computed distance
-%       timeOfComputation - time of computation
+% Input:
+%       ellObj:  ellipsoid: [1,1] - an object of class ellipsoid,
+%       vectorVec: double[mVectorVec,1] - vector,
+%       nMaxIter: double[1,1] - maximal number of iterations,
+%       absTol: double[1,1] - absolute tolerance, 
+%       relTol: double[1,1] - relative tolerance 
+% Output:
+%       distEllVec: double[1,1]  - computed distance,
+%       timeOfComputation: double[1,1] - time of computation
 %  
 %
-% Vitaly Baranov  <vetbar42@gmail.com> $	$Date: 2012-10-28 $ 
+% Author:    Vitaly Baranov  <vetbar42@gmail.com> $	$Date: 2012-10-28 $ 
 % Copyright: Lomonosov Moscow State University,
 %            Faculty of Computational Mathematics and Cybernetics,
 %            System Analysis Department 2012 $
@@ -146,35 +147,37 @@ function [ distEllVec timeOfComputation ] = computeEllVecDistance(ellObj,yVec,nM
  import modgen.common.throwerror 
  tic;
  [ellCenterVec, ellQMat] = double(ellObj);
- yVec=yVec-ellCenterVec;
- yEllVal=yVec'*ellQMat*yVec;
- if ( yEllVal< 1)
+ vectorVec=vectorVec-ellCenterVec;
+ vectorEllVal=vectorVec'*ellQMat*vectorVec;
+ if ( vectorEllVal< 1)
      distEllVec=-1;
- elseif (yEllVal==1)
+ elseif (vectorEllVal==1)
      distEllVec=0;
  else
      [unitaryMat diagMat]=eig(ellQMat);
      unitaryMat=transpose(unitaryMat);
      distEllVec=diag(diagMat);
-     qVec=unitaryMat*yVec;
+     qVec=unitaryMat*vectorVec;
      dMean=mean(distEllVec);
-     yNorm=norm(yVec);
-     x0=sqrt((dMean*yNorm^2)-1)/dMean;
-     fMyFunction=@(x) -1+sum((qVec.*qVec).*(distEllVec./((1+distEllVec*x).^2)));
+     vectorNorm=norm(vectorVec);
+     x0=sqrt((dMean*vectorNorm*vectorNorm)-1)/dMean;
+     fDetermenativeFunction=@(x) -1+sum((qVec.*qVec).*(distEllVec./((1+distEllVec*x).^2)));
      %%Bisection for interval estimation
      aPoint=0;
      bPoint=2*x0;
      cPoint=aPoint+(bPoint-aPoint)/2;
-     fMyFunctionAtPointA=fMyFunction(aPoint);
-     fMyFunctionAtPointB=fMyFunction(bPoint);
-     fMyFunctionAtPointC=fMyFunction(cPoint);
+     determenativeFunctionAtPointA=fDetermenativeFunction(aPoint);
+     determenativeFunctionAtPointB=fDetermenativeFunction(bPoint);
+     determenativeFunctionAtPointC=fDetermenativeFunction(cPoint);
      iIter=1;
-     while( iIter < nMaxIter) && ((abs(fMyFunctionAtPointA-fMyFunctionAtPointC)>absTol || abs(fMyFunctionAtPointB-fMyFunctionAtPointC)>absTol))
-         cPoint=aPoint+0.5*(bPoint-aPoint);
-         fMyFunctionAtPointA=fMyFunction(aPoint);
-         fMyFunctionAtPointB=fMyFunction(bPoint);
-         fMyFunctionAtPointC=fMyFunction(cPoint);
-         if sign(fMyFunctionAtPointA)~=sign(fMyFunctionAtPointC)
+     while( iIter < nMaxIter) && ((abs(determenativeFunctionAtPointA-...
+             determenativeFunctionAtPointC)>absTol ||....
+             abs(determenativeFunctionAtPointB-determenativeFunctionAtPointC)>absTol))
+         cPoint=aPoint+(bPoint-aPoint)*0.5;
+         determenativeFunctionAtPointA=fDetermenativeFunction(aPoint);
+         determenativeFunctionAtPointB=fDetermenativeFunction(bPoint);
+         determenativeFunctionAtPointC=fDetermenativeFunction(cPoint);
+         if sign(determenativeFunctionAtPointA)~=sign(determenativeFunctionAtPointC)
              bPoint=cPoint;
          else
              aPoint=cPoint;
@@ -189,18 +192,19 @@ function [ distEllVec timeOfComputation ] = computeEllVecDistance(ellObj,yVec,nM
      oneStepError=Inf;
      kIter=2;
      while( kIter < nMaxIter ) && ( oneStepError > relTol )
-         deltaF = fMyFunction(xVec(kIter))-fMyFunction(xVec(kIter-1));
+         deltaF = fDetermenativeFunction(xVec(kIter))-fDetermenativeFunction(xVec(kIter-1));
          if abs(deltaF) <= absTol
-             throwerror('NotSecant','Secant method is not applicable.');
+             throwerror('notSecant','Secant method is not applicable.');
          else
-             xVec(kIter+1)=xVec(kIter)-fMyFunction(xVec(kIter))*(xVec(kIter)-xVec(kIter-1))/deltaF;
+             xVec(kIter+1)=xVec(kIter)-fDetermenativeFunction(xVec(kIter))*...
+                 (xVec(kIter)-xVec(kIter-1))/deltaF;
              oneStepError=abs(xVec(kIter)-xVec(kIter-1))^2;
          end
          kIter=kIter+1;
      end
      lambda=xVec(kIter);
-     zVec = (eye(size(ellQMat))+lambda*ellQMat)\yVec;
-     distEllVec = norm(zVec-yVec);
+     auxilliaryVec = (eye(size(ellQMat))+lambda*ellQMat)\vectorVec;
+     distEllVec = norm(auxilliaryVec-vectorVec);
  end
  timeOfComputation=toc;
  
