@@ -65,15 +65,7 @@ function [d, status] = distance(E, X, flag)
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
-%    Vitaly Baranov  <vetbar42@gmail.com> $	$Date: 2012-10-28 $ 
-% Copyright: Lomonosov Moscow State University,
-%            Faculty of Computational Mathematics and Cybernetics,
-%            System Analysis Department 2012 $
-%
-% Literature: 
-%   1. Stanley Chan, "Numerical method for Finding Minimum Distance to an
-%   Ellipsoid". http://videoprocessing.ucsd.edu/~stanleychan/publication/unpublished/Ellipse.pdf
-% 
+%   
   global ellOptions;
 
   if ~isstruct(ellOptions)
@@ -129,70 +121,88 @@ function [d, status] = distance(E, X, flag)
 
 
 %%%%%%%%
-function [ dist time ] = computeEllVecDistance(ellObj,yVec,nMaxIter,absTol, relTol)
-% ellObj - ellipsoid
-% yVec - vector
-% nMaxIter - maximal number of iterations
-% absTol, relTol - absolute and relative tolerance 
-% dist  - computed distance
-% time - time of computation
+function [ distEllVec timeOfComputation ] = computeEllVecDistance(ellObj,yVec,nMaxIter,absTol, relTol)
+% COMPUTEELLVECDISTANCE - computes the distance between an ellipsoid and a
+%                         vector
+% input:
+%       ellObj - ellipsoid
+%       yVec - vector
+%       nMaxIter - maximal number of iterations
+%       absTol, relTol - absolute and relative tolerance 
+% output:
+%       dist  - computed distance
+%       timeOfComputation - time of computation
+%  
+%
+% Vitaly Baranov  <vetbar42@gmail.com> $	$Date: 2012-10-28 $ 
+% Copyright: Lomonosov Moscow State University,
+%            Faculty of Computational Mathematics and Cybernetics,
+%            System Analysis Department 2012 $
+%
+% Literature: 
+%   Stanley Chan, "Numerical method for Finding Minimum Distance to an
+%   Ellipsoid". http://videoprocessing.ucsd.edu/~stanleychan/publication/unpublished/Ellipse.pdf
+% 
  import modgen.common.throwerror 
  tic;
- [ellCenter, ellQMat] = double(ellObj);
- yVec=yVec-ellCenter;
+ [ellCenterVec, ellQMat] = double(ellObj);
+ yVec=yVec-ellCenterVec;
  yEllVal=yVec'*ellQMat*yVec;
  if ( yEllVal< 1)
-     dist=-1;
+     distEllVec=-1;
  elseif (yEllVal==1)
-     dist=0;
+     distEllVec=0;
  else
-     [VMat DMat]=eig(ellQMat);
-     VMat=transpose(VMat);
-     dist=diag(DMat);
-     q=VMat*yVec;
-     dMean=mean(dist);
+     [unitaryMat diagMat]=eig(ellQMat);
+     unitaryMat=transpose(unitaryMat);
+     distEllVec=diag(diagMat);
+     qVec=unitaryMat*yVec;
+     dMean=mean(distEllVec);
      yNorm=norm(yVec);
      x0=sqrt((dMean*yNorm^2)-1)/dMean;
-     F=@(x) -1+sum((q.*q).*(dist./((1+dist*x).^2)));
+     fMyFunction=@(x) -1+sum((qVec.*qVec).*(distEllVec./((1+distEllVec*x).^2)));
      %%Bisection for interval estimation
-     a=0;
-     b=2*x0;
-     c=a+(b-a)/2;
-     Fa=F(a);
-     Fb=F(b);
-     Fc=F(c);
+     aPoint=0;
+     bPoint=2*x0;
+     cPoint=aPoint+(bPoint-aPoint)/2;
+     fMyFunctionAtPointA=fMyFunction(aPoint);
+     fMyFunctionAtPointB=fMyFunction(bPoint);
+     fMyFunctionAtPointC=fMyFunction(cPoint);
      iIter=1;
-     while( iIter < nMaxIter) && ((abs(Fa-Fc)>absTol || abs(Fb-Fc)>absTol))
-         c=a+(b-a)/2;
-         Fa=F(a);
-         Fb=F(b);
-         Fc=F(c);
-         if sign(Fa)~=sign(Fc)
-             b=c;
+     while( iIter < nMaxIter) && ((abs(fMyFunctionAtPointA-fMyFunctionAtPointC)>absTol || abs(fMyFunctionAtPointB-fMyFunctionAtPointC)>absTol))
+         cPoint=aPoint+0.5*(bPoint-aPoint);
+         fMyFunctionAtPointA=fMyFunction(aPoint);
+         fMyFunctionAtPointB=fMyFunction(bPoint);
+         fMyFunctionAtPointC=fMyFunction(cPoint);
+         if sign(fMyFunctionAtPointA)~=sign(fMyFunctionAtPointC)
+             bPoint=cPoint;
          else
-             a=c;
+             aPoint=cPoint;
          end
          iIter=iIter+1;
      end
-     %%Secant Method search for zeros
-     xVec=[c-10*sqrt(relTol) c+10*sqrt(relTol)];
-     err=Inf;
+     %%Secant Method, search for zeros
+     intervalHalfLength=10*sqrt(relTol);
+     xVec=zeros(1,nMaxIter);
+     xVec(1)=cPoint-intervalHalfLength;
+     xVec(2)=cPoint+intervalHalfLength;
+     oneStepError=Inf;
      kIter=2;
-     while( kIter < nMaxIter ) && ( err > relTol )
-         deltaF = F(xVec(kIter))-F(xVec(kIter-1));
+     while( kIter < nMaxIter ) && ( oneStepError > relTol )
+         deltaF = fMyFunction(xVec(kIter))-fMyFunction(xVec(kIter-1));
          if abs(deltaF) <= absTol
              throwerror('NotSecant','Secant method is not applicable.');
          else
-             xVec(kIter+1)=xVec(kIter)-F(xVec(kIter))*(xVec(kIter)-xVec(kIter-1))/deltaF;
-             err=abs(xVec(kIter)-xVec(kIter-1)).^2;
+             xVec(kIter+1)=xVec(kIter)-fMyFunction(xVec(kIter))*(xVec(kIter)-xVec(kIter-1))/deltaF;
+             oneStepError=abs(xVec(kIter)-xVec(kIter-1))^2;
          end
          kIter=kIter+1;
      end
      lambda=xVec(kIter);
      zVec = (eye(size(ellQMat))+lambda*ellQMat)\yVec;
-     dist = norm(zVec-yVec);
+     distEllVec = norm(zVec-yVec);
  end
- time=toc;
+ timeOfComputation=toc;
  
 
   
@@ -225,7 +235,6 @@ function [distMat, timeMat] = computePointsEllDist(ellObjMat, vecArray, flag)
     else
       fprintf('Computing ellipsoid-to-vector distance...\n');
     end
-    fprintf('Invoking YALMIP...\n');
   end
 %
 %  
