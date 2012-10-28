@@ -37,7 +37,7 @@ function [D, N] = dimension(rs)
   end
 
   if ~(isa(rs, 'reach'))
-    error('DIMENSION: input argument must be reach set object.');
+    error('DIMENSION:wrongInput','DIMENSION: input argument must be reach set object.');
   end
 
   [m, n] = size(rs);

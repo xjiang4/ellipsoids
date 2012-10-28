@@ -40,7 +40,7 @@ function P = projection(rs, B)
   end
 
   if ~(isa(B, 'double'))
-    error('PROJECTION: second input argument must be matrix of basis vectors.');
+    error('PROJECTION:wrongInput','PROJECTION: second input argument must be matrix of basis vectors.');
   end
 
   rs = rs(1, 1);
