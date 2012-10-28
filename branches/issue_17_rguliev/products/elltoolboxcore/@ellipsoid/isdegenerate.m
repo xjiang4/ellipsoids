@@ -28,7 +28,7 @@ function res = isdegenerate(E)
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
-
+  import modgen.common.throwerror;  
   [m, n] = size(E);
   res = false(m, n);
   for i = 1:m

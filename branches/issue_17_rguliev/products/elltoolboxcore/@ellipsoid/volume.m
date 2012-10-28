@@ -31,7 +31,7 @@ function V = volume(E)
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
-
+  import modgen.common.throwerror;
   global ellOptions;
 
   if ~isstruct(ellOptions)
@@ -47,7 +47,7 @@ function V = volume(E)
   for i = 1:m
     for j = 1:n
       if isempty(E(i,j))
-          throwerror('wrongInput','VOLUME: input argument is empty.');
+          throwerror('wrongInput:emptyEllipsoid','VOLUME: input argument is empty.');
       end
       Q = E(i, j).shape;
       if isdegenerate(E(i, j))

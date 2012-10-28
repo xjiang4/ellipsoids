@@ -31,7 +31,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
                 (size(TestShapeMat,1)==10)&&(size(TestShapeMat,2)==10);
             mlunit.assert_equals(1, isTestRes);
         end
-        function self=testParameters(self)
+        function self = testParameters(self)
             %Empty ellipsoid
             testEllipsoid=ellipsoid;
             [TestCenterVec, TestShapeMat]=parameters(testEllipsoid);
@@ -52,7 +52,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
                 (size(TestShapeMat,1)==10)&&(size(TestShapeMat,2)==10);
             mlunit.assert_equals(1, isTestRes);
         end
-        function self=testDimension(self)
+        function self = testDimension(self)
             %Chek for one output argument
             %Case 1: Empty ellipsoid
             testEllipsoid=ellipsoid;
@@ -86,9 +86,9 @@ classdef EllipsoidTestCase < mlunitext.test_case
             isTestRes=(testDim==3)&&(testRank==2);
             mlunit.assert_equals(1, isTestRes);
         end
-        function self=testIsDegenerate(self)
+        function self = testIsDegenerate(self)
             %Empty ellipsoid
-            %self.runAndCheckError('isdegenerate(ellipsoid)','wrongInput:emptyEllipsoid');
+            self.runAndCheckError('isdegenerate(ellipsoid)','wrongInput:emptyEllipsoid');
             
             %Not degerate ellipsoid
             testEllipsoid=ellipsoid(ones(6,1),eye(6,6));
@@ -105,7 +105,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             isTestRes=isdegenerate(testEllipsoid);
             mlunit.assert_equals(1, isTestRes);
         end
-        function self=testIsEmpty(self)
+        function self = testIsEmpty(self)
             %Chek realy empty ellipsoid
             testEllipsoid=ellipsoid;
             isTestRes = isempty(testEllipsoid);
@@ -118,7 +118,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
         end
         function self = testMaxeig(self)
             %Check empty ellipsoid
-            %self.runAndCheckError('maxeig(ellipsoid)','wrongInput:emptyEllipsoid');
+            self.runAndCheckError('maxeig(ellipsoid)','wrongInput:emptyEllipsoid');
             
             %Check degenerate matrix
             testEllipsoid1=ellipsoid([1; 1], zeros(2,2));
@@ -138,7 +138,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
         end
         function self = testMineig(self)
             %Check empty ellipsoid
-            %self.runAndCheckError('mineig(ellipsoid)','wrongInput:emptyEllipsoid');
+            self.runAndCheckError('mineig(ellipsoid)','wrongInput:emptyEllipsoid');
             
             %Check degenerate matrix
             testEllipsoid1=ellipsoid([-2; -2], zeros(2,2));
@@ -158,7 +158,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
         end
         function self = testTrace(self)
             %Empty ellipsoid
-            %self.runAndCheckError('trace(ellipsoid)','wrongInput:emptyEllipsoid');
+            self.runAndCheckError('trace(ellipsoid)','wrongInput:emptyEllipsoid');
             
             %Not empty ellipsoid
             testEllipsoid=ellipsoid(zeros(10,1),eye(10,10));
@@ -170,8 +170,9 @@ classdef EllipsoidTestCase < mlunitext.test_case
             mlunit.assert_equals(1, isTestRes);
         end
         function self = testVolume(self)
+            
             %Check empty ellipsoid
-            self.runAndCheckError('volume(ellipsoid)','wrongInput');
+            self.runAndCheckError('volume(ellipsoid)','wrongInput:emptyEllipsoid');
             
             %Check degenerate ellipsoid
             testEllipsoid=ellipsoid([1 0 0;0 1 0;0 0 0]);

@@ -27,7 +27,7 @@ function T = trace(E)
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
-
+  import modgen.common.throwerror;
   global ellOptions;
 
   if ~isstruct(ellOptions)

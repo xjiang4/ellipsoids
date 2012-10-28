@@ -63,22 +63,22 @@ function [y, Y] = minkmp(varargin)
   E2 = varargin{2};
   EE = varargin{3};
 
-  if ~(isa(E1, 'ellipsoid')) | ~(isa(E2, 'ellipsoid')) | ~(isa(EE, 'ellipsoid'))
+  if ~(isa(E1, 'ellipsoid')) || ~(isa(E2, 'ellipsoid')) || ~(isa(EE, 'ellipsoid'))
     error('MINKMP: first, second and third arguments must be ellipsoids.');
   end
 
   [k, l] = size(E1);
   [m, n] = size(E2);
-  if (k ~= 1) | (l ~= 1) | (m ~= 1) | (n ~= 1)
+  if (k ~= 1) || (l ~= 1) || (m ~= 1) || (n ~= 1)
     error('MINKMP: first and second arguments must be single ellipsoid.');
   end
 
   m    = dimension(E1);
   n    = dimension(E2);
   dims = dimension(EE);
-  mn   = min(min(dims));
-  mx   = max(max(dims));
-  if (mn ~= mx) | (mn ~= n) | (m ~= n)
+  mn   = min(dims(:));
+  mx   = max(dims(:));
+  if (mn ~= mx) || (mn ~= n) || (m ~= n)
     error('MINKMP: all ellipsoids must be of the same dimension.');
   end
   if n > 3
@@ -162,7 +162,7 @@ function [y, Y] = minkmp(varargin)
     ih = ishold;
   end
 
-  if (Options.show_all ~= 0) & (nargout == 0)
+  if (Options.show_all ~= 0) && (nargout == 0)
     plot(EE, 'b', E2, 'k', E1, 'g');
     hold on;
     if Options.newfigure ~= 0
