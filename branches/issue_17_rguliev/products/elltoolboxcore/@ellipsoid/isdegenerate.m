@@ -30,13 +30,14 @@ function res = isdegenerate(E)
 %
 
   [m, n] = size(E);
-
+  res = false(m, n);
   for i = 1:m
     for j = 1:n
+      if isempty(E(i,j))
+          throwerror('wrongInput:emptyEllipsoid','ISDEGENERATE: input argument is empty.');
+      end
       if rank(E(i, j).shape) < size(E(i, j).shape, 1)
-        res(i, j) = 1;
-      else
-        res(i, j) = 0;
+          res(i, j) = true;
       end
     end
   end

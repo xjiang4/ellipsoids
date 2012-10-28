@@ -71,7 +71,7 @@ function [E] = ellipsoid(varargin)
     error('ELLIPSOID: center of an ellipsoid must be a vector.');
   end
   
-  if (m ~= n) | (min(min((Q == Q'))) == 0)
+  if (m ~= n) || (all(all((Q == Q'))) == 0)
     error('ELLIPSOID: shape matrix must be symmetric.');
   end
 
