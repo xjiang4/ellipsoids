@@ -9,24 +9,24 @@ classdef EllipsoidTestCase < mlunitext.test_case
             
             %distance between ellipsoid and two vectors
             testEllipsoid = ellipsoid([1,0,0;0,5,0;0,0,10]);
-            testPointMatrix = [3,0,0; 5,0,0].';
-            testResVec = distance(testEllipsoid, testPointMatrix);
+            testPointMat = [3,0,0; 5,0,0].';
+            testResVec = distance(testEllipsoid, testPointMat);
             mlunit.assert_equals(1, (abs(testResVec(1)-2)<ellOptions.abs_tol) &&...
                 (abs(testResVec(2)-4)<ellOptions.abs_tol));
             
             %distance between ellipsoid and point in the ellipsoid
             %and point on the boader of the ellipsoid
             testEllipsoid = ellipsoid([1,2,3].',0.25*eye(3,3));
-            testPointMatrix = [2,3,2; 1,2,5].';
-            testResVec = distance(testEllipsoid, testPointMatrix);
+            testPointMat = [2,3,2; 1,2,5].';
+            testResVec = distance(testEllipsoid, testPointMat);
             mlunit.assert_equals(1, testResVec(1)==-1 && testResVec(2)==0);
             
             
             %distance between two ellipsoids and two vectors
             testEllipsoidVec = [ellipsoid([5,2,0;2,5,0;0,0,1]),...
                 ellipsoid([0,0,5].',[1/4, 0, 0; 0, 1/9 , 0; 0,0, 1/25])];
-            testPointMatrix = [0,0,5; 0,5,5].';
-            testResVec = distance(testEllipsoidVec, testPointMatrix);
+            testPointMat = [0,0,5; 0,5,5].';
+            testResVec = distance(testEllipsoidVec, testPointMat);
             mlunit.assert_equals(1, (abs(testResVec(1)-4)<ellOptions.abs_tol) &&...
                 (abs(testResVec(2)-2)<ellOptions.abs_tol));
            
