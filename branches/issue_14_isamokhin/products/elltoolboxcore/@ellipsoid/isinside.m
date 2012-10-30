@@ -62,8 +62,10 @@ function [res, status] = isinside(E1, E2, s)
 %           -1 - problem is infeasible,
 %                for example, if s = 'i', but the intersection of ellipsoids in E2
 %                is an empty set;
-%            0 - intersection is empty;
-%            1 - if intersection is nonempty.
+%            0 - intersection of ellipsoids don't contains the union or
+%            intersection of given ellipsoids or polytopes;
+%            1 - intersection of ellipsoids contains the union or
+%            intersection of given ellipsoids or polytopes.
 %    S   - (optional) status variable returned by YALMIP.
 %
 %
@@ -79,6 +81,8 @@ function [res, status] = isinside(E1, E2, s)
 % -------
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+%    
+% Manual edited by Igor Samokhin <igorian.vmk@gmail.com>
 %
 
   global ellOptions;
