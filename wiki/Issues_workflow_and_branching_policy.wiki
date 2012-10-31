@@ -14,20 +14,20 @@ Here and below we use a term "ticket" as a synonym of any type of issue includin
 {{{
 elltool.test.run_tests()
 }}}
- When and if ALL tests pass (not just the newly written tests but ALL of them a developer goes to "issues" tab and creates a new issue using "Review request". This review request is assigned to a person who created the original issue. If the reviewer concludes that the task is ready then the reviewer notifies the developer that the task is ready for reintegration to trunk. Notification can be done in two ways
+ When and if ALL tests pass (not just the newly written tests but ALL of them) a developer goes to "issues" tab and creates a new issue using "Review request". This review request is assigned to a person who created the original issue. If the reviewer concludes that the task is ready then the reviewer notifies the developer that the task is ready for reintegration to trunk. Notification can be done in two ways
      # via comment in the original ticket
      # via reassigning back the request review ticket
 
- the developer does the following:
-     # get the latest changes from the trunk AGAIN (because review could take time and during that time trunk could have been changed again)
-     # run all the tests again and act depending on the results
-         # if everything is ok - reintegrate his/her branch back to trunk, if not - make the necessary changes to resolve the conflicts, fix the tests. 
-         # if the changes are substantial - a review by the original task submitter is needed again. If the changes are very small - reintegration to trunk is allowed.
-         # upon reintegration as part of commit *a proper commit message should be formed.* The message format should be as follows.
-             {{{
-                Issue 33
-                NewFeature: new class MyClassA now is capable of calculating an intersection of arbitrary number of ellipsoids 
-                BugFix: classes MyClassB, MyClassB not process the input correctly when both input arguments are specified 
-             }}}
-         Please note that specifying an issue number is obligatory - commits not related to the tickets are prohibited. *Commit messages should be in English!!!*
-     # once reintegration is done, the branch is deleted by a developer and the issue status is changed to "Fixed"
+Once the developer is cleared for reintegration he/she strictly follows the *REINTEGRATION* algorithm
+
+ # Update you branch.
+ # Commit your changes.
+ # Merge trunk into your branch.
+ # Commit the result of the merge.
+ # Checkout latest trunk into a separate folder (or update an existing working copy of the trunk).
+ # Reintegrate to trunk FROM your branch. If there are conflicts -  resolve them carefully. 
+ # Run all the tests on trunk without committing anything.
+ # If all tests pass - commit to trunk, if not - go to investigate, fix and go to step 1.
+ # Monitor the automatic tests activity by subscribing to the automatic tests notification group (see the title page of the project). If the automatic tests pass after your commit - go to next step, if not - investigate, fix and go to step 1.
+ # Delete your branch.
+
