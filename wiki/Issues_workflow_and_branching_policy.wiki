@@ -2,32 +2,26 @@
 
 Here and below we use a term "ticket" as a synonym of any type of issue including tasks, enhancements, bug reports etc created in the google issue tracker.
 
-= Enhancement workflow and branching/merging policy =
+= Issue workflow and branching/merging policy =
 
-  # Enhancement is created by a project owner and assigned to a developer with "New" status
+  # A ticket is created by a project owner and assigned to a developer with the status "New"
   # Once developer starts working on an issue he/she 
      # changes the status to "Started". 
      # creates a branch using the following name patter *issue_33_bgates* or *issue_33_bill_gates*. *DO NOT USE YOUR LOGINS, USE REAL NAMES*. So *issue_16_klivenn* is not ok, one should use *issue_16_dkovalev*
      # starts making the changes withi his/her branch
-     
   # Once the source code is written, the latest changes from trunk are integrated into the branch a developer should run ALL unit tests by calling 
 {{{
 elltool.test.run_tests()
 }}}
- When and if ALL tests pass (not just the newly written tests but ALL of them) a developer goes to "issues" tab and creates a new issue using "Review request". This review request is assigned to a person who created the original issue. If the reviewer concludes that the task is ready then the reviewer notifies the developer that the task is ready for reintegration to trunk. Notification can be done in two ways
-     # via comment in the original ticket
-     # via reassigning back the request review ticket
-
-Once the developer is cleared for reintegration he/she strictly follows the *REINTEGRATION* algorithm
-
- # Update you branch.
- # Commit your changes.
- # Merge trunk into your branch.
- # Commit the result of the merge.
- # Checkout latest trunk into a separate folder (or update an existing working copy of the trunk).
- # Reintegrate to trunk FROM your branch. If there are conflicts -  resolve them carefully. 
- # Run all the tests on trunk without committing anything.
- # If all tests pass - commit to trunk, if not - go to investigate, fix and go to step 1.
- # Monitor the automatic tests activity by subscribing to the automatic tests notification group (see the title page of the project). If the automatic tests pass after your commit - go to next step, if not - investigate, fix and go to step 1.
- # Delete your branch.
-
+   When and if ALL tests pass (not just the newly written tests but ALL of them) a developer goes to "issues" tab and creates a new issue using "Review request". This review request is assigned to a person who created the original issue. If the reviewer concludes that the task is ready then the reviewer notifies the developer that the task is ready for reintegration to trunk. Notification should be done either via a comment in the original ticket.
+  # When a developer is cleared for reintegration he/she strictly follows the *REINTEGRATION* algorithm
+      # Update you branch.
+      # Commit your changes.
+      # Merge trunk into your branch.
+      # Commit the result of the merge.
+      # Checkout latest trunk into a separate folder (or update an existing working copy of the trunk).
+      # Reintegrate to trunk FROM your branch. If there are conflicts -  resolve them carefully. 
+      # Run all the tests on trunk without committing anything.
+      # If all tests pass - commit to trunk, if not - go to investigate, fix and go to step 1.
+      # Monitor the automatic tests activity by subscribing to the automatic tests notification group (see the title page of the project). If the automatic tests pass after your commit - go to next step, if not - investigate, fix and go to step 1.
+      # Delete your branch.
