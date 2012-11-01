@@ -1,4 +1,4 @@
-function plot_ea(rs, varargin)
+function hPlot = plot_ea(rs, varargin)
 %
 % PLOT_EA - plots external approximations of 2D and 3D reach sets.
 %
@@ -21,7 +21,7 @@ function plot_ea(rs, varargin)
 % Output:
 % -------
 %
-%    None.
+%    hPlot -  column vector of handles to lineseries objects
 %
 %
 % See also:
@@ -46,7 +46,6 @@ function plot_ea(rs, varargin)
   if ~(isa(rs, 'reach'))
     error('PLOT_EA: first input argument must be reach set.');
   end
-
   rs = rs(1, 1);
   d  = dimension(rs);
   N  = size(rs.ea_values, 2);
@@ -118,7 +117,7 @@ function plot_ea(rs, varargin)
   if ellOptions.verbose > 0
     fprintf('Plotting reach set external approximation...\n');
   end
-  
+  hPlot = figure;
   if d == 3
     EE  = move2origin(E(:, end));
     EE  = EE';

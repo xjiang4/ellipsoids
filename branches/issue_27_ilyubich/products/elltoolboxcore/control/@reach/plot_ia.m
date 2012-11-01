@@ -1,4 +1,4 @@
-function plot_ia(rs, varargin)
+function hPlot = plot_ia(rs, varargin)
 %
 % PLOT_IA - plots internal approximations of 2D and 3D reach sets.
 %
@@ -21,7 +21,7 @@ function plot_ia(rs, varargin)
 % Output:
 % -------
 %
-%    None.
+%    hPlot - column vector of handles to lineseries objects
 %
 %
 % See also:
@@ -118,7 +118,7 @@ function plot_ia(rs, varargin)
   if ellOptions.verbose > 0
     fprintf('Plotting reach set internal approximation...\n');
   end
-  
+   hPlot = figure;
   if d == 3
     EE         = move2origin(inv(E(:, end)));
     EE         = EE';
