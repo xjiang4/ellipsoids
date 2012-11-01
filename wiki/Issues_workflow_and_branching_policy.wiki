@@ -23,5 +23,5 @@ elltool.test.run_tests()
       # Reintegrate to trunk FROM your branch. If there are conflicts -  resolve them carefully. 
       # Run all the tests on trunk without committing anything.
       # If all tests pass - commit to trunk, if not - go to investigate, fix and go to step 1.
-      # Monitor the automatic tests activity by subscribing to the automatic tests notification group (see the title page of the project). If the automatic tests pass after your commit - go to next step, if not - investigate, fix and go to step 1.
       # Delete your branch.
+      # Monitor the automatic tests activity by subscribing to the automatic tests notification group (see the title page of the project). If the automatic tests pass after your commit - you are done, if not - investigate, create the branch again, fix the problem and send a ticket to review.
