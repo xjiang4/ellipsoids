@@ -17,6 +17,26 @@ Use English as the only language of communication. Source code comments, documen
 Every developer should follow the following naming and style convention:
 [http://ellipsoids.googlecode.com/svn/wiki/attachments/matlabstylereq/matlabstylereq.pdf Matlab naming convention]
 
+For a quick reference, here is a short list of correct variable names
+
+
+|| Variable name || Interpretation || Bad names ||
+|| isMyMat ||  logical matrix || myMat, ismyMat ||  
+|| isMyVec || logical vector || ismyvec,myvec ||
+|| isOk || logical scalar || isok, ok || 
+|| myMat ||  numeric matrix || mymat,MyMat || 
+|| myCMat ||  cell matrix || myMat,Mat,mat, CMat|| 
+|| myArray,myFirstArray ||  >=3 dimensional array || myMat,myVec, myCArray || 
+|| myVec,my1Vec,myFirstVec || numeric vector|| myvec, Myvec,myVec1 || 
+|| myCVec, myList,myFirstList || cell vector|| myList1, myListFirst || 
+|| SMyData  || scalar structure|| sMyData || 
+|| SMyDataMat  || structure matrix|| SMyData || 
+|| SMyDataArray  || 3>= dimensional structure array|| SMyDataMat || 
+|| myEll  || scalar ellipsoid object|| MyEll || 
+|| myEllMat  || ellipsoid object matrix|| myEll || 
+|| myEllArray  || ellipsoid object array|| MyEllArray || 
+|| fCalcSomething  || scalar function handle|| calcSomething || 
+
 = Test-driven approach =
 Always follow a test driven approach. To understand what the test-driven approach is please read about [http://ellipsoids.googlecode.com/svn/wiki/attachments/TheWayOfTestivus.pdf Unit testing karma].
 
