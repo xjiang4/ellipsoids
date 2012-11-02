@@ -1,4 +1,5 @@
 function IA = minkpm_ea(EE, E2, L)
+import modgen.common.throwerror;
 %
 % MINKPM_IA - computation of internal approximating ellipsoids
 %             of (E1 + E2 + ... + En) - E in given directions.
@@ -40,12 +41,12 @@ function IA = minkpm_ea(EE, E2, L)
   end
 
   if ~(isa(EE, 'ellipsoid')) | ~(isa(E2, 'ellipsoid'))
-    error('MINKPM_IA: first and second arguments must be ellipsoids.');
+    throwerror('wrongInput', 'MINKPM_IA: first and second arguments must be ellipsoids.');
   end
 
   [m, n] = size(E2);
   if (m ~= 1) | (n ~= 1)
-    error('MINKPM_IA: second argument must be single ellipsoid.');
+    throwerror('wrongInput', 'MINKPM_IA: second argument must be single ellipsoid.');
   end
 
   k  = size(L, 1);
@@ -53,10 +54,10 @@ function IA = minkpm_ea(EE, E2, L)
   mn = min(min(dimension(EE)));
   mx = max(max(dimension(EE)));
   if (mn ~= mx) | (mn ~= n)
-    error('MINKPM_IA: all ellipsoids must be of the same dimension.');
+    throwerror('wrongSizes', 'MINKPM_IA: all ellipsoids must be of the same dimension.');
   end
   if n ~= k
-    error('MINKPM_IA: dimension of the direction vectors must be the same as dimension of ellipsoids.');
+    throwerror('wrongSizes', 'MINKPM_IA: dimension of the direction vectors must be the same as dimension of ellipsoids.');
   end
 
   N                  = size(L, 2);

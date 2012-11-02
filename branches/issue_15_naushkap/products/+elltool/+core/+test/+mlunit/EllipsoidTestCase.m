@@ -7,8 +7,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
     methods
         function self = EllipsoidTestCase(varargin)
             self = self@mlunitext.test_case(varargin{:});
-        end
-        
+        end        
         
         function self = testEq(self)       
             testEllipsoid1 = ellipsoid([0; 0], [1 0; 0 1]);
@@ -38,12 +37,10 @@ classdef EllipsoidTestCase < mlunitext.test_case
             
             testNotEllipsoid = [];
             %'==: both arguments must be ellipsoids.'
-            isError = isempty(eval('eq(testEllipsoidEmpty, testNotEllipsoid)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('eq(testEllipsoidEmpty, testNotEllipsoid)','wrongInput');
             
             %'==: sizes of ellipsoidal arrays do not match.'
-            isError = isempty(eval('eq([testEllipsoidEmpty testEllipsoidEmpty], [testEllipsoidEmpty; testEllipsoidEmpty])', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('eq([testEllipsoidEmpty testEllipsoidEmpty], [testEllipsoidEmpty; testEllipsoidEmpty])','wrongSizes');
             
             testRes = eq([testEllipsoidZeros2 testEllipsoidZeros3], [testEllipsoidZeros3 testEllipsoidZeros3]);
             if (testRes == [0 1])
@@ -81,15 +78,6 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testRes = ne(testEllipsoidEmpty, testEllipsoidEmpty);
             mlunit.assert_equals(0, testRes);
             
-            testNotEllipsoid = [];
-            %'==: both arguments must be ellipsoids.'
-            isError = isempty(eval('ne(testEllipsoidEmpty, testNotEllipsoid)', '[]'));
-            mlunitext.assert(isError);
-            
-            %'==: sizes of ellipsoidal arrays do not match.'
-            isError = isempty(eval('ne([testEllipsoidEmpty testEllipsoidEmpty], [testEllipsoidEmpty; testEllipsoidEmpty])', '[]'));
-            mlunitext.assert(isError);
-            
             testRes = ne([testEllipsoidZeros2 testEllipsoidZeros3], [testEllipsoidZeros3 testEllipsoidZeros3]);
             if (testRes == [1 0])
                 testRes = 1;
@@ -114,15 +102,6 @@ classdef EllipsoidTestCase < mlunitext.test_case
             
             testRes = ge(testEllipsoid2, testEllipsoid3);
             mlunit.assert_equals(0, testRes);
-            
-            testNotEllipsoid = [];
-            %'both arguments must be ellipsoids.'
-            isError = isempty(eval('ge(testEllipsoidEmpty, testNotEllipsoid)', '[]'));
-            mlunitext.assert(isError);
-            
-            %'sizes of ellipsoidal arrays do not match.'
-            isError = isempty(eval('ge([testEllipsoidEmpty testEllipsoidEmpty], [testEllipsoidEmpty; testEllipsoidEmpty])', '[]'));
-            mlunitext.assert(isError);
             
             testRes = ge([testEllipsoid2 testEllipsoid1], [testEllipsoid1 testEllipsoid2]);
             if (testRes == [1 0])
@@ -151,12 +130,10 @@ classdef EllipsoidTestCase < mlunitext.test_case
             
             testNotEllipsoid = [];
             %'both arguments must be ellipsoids.'
-            isError = isempty(eval('gt(testEllipsoidEmpty, testNotEllipsoid)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('gt(testEllipsoidEmpty, testNotEllipsoid)','wrongInput');
             
             %'sizes of ellipsoidal arrays do not match.'
-            isError = isempty(eval('gt([testEllipsoidEmpty testEllipsoidEmpty], [testEllipsoidEmpty; testEllipsoidEmpty])', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('gt([testEllipsoidEmpty testEllipsoidEmpty], [testEllipsoidEmpty; testEllipsoidEmpty])','wrongSizes');
             
             testRes = gt([testEllipsoid2 testEllipsoid1], [testEllipsoid1 testEllipsoid2]);
             if (testRes == [1 0])
@@ -183,15 +160,6 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testRes = lt(testEllipsoid2, testEllipsoid3);
             mlunit.assert_equals(1, testRes);
             
-            testNotEllipsoid = [];
-            %'both arguments must be ellipsoids.'
-            isError = isempty(eval('lt(testEllipsoidEmpty, testNotEllipsoid)', '[]'));
-            mlunitext.assert(isError);
-            
-            %'sizes of ellipsoidal arrays do not match.'
-            isError = isempty(eval('lt([testEllipsoidEmpty testEllipsoidEmpty], [testEllipsoidEmpty; testEllipsoidEmpty])', '[]'));
-            mlunitext.assert(isError);
-            
             testRes = lt([testEllipsoid2 testEllipsoid1], [testEllipsoid1 testEllipsoid2]);
             if (testRes == [0 1])
                 testRes = 1;
@@ -216,15 +184,6 @@ classdef EllipsoidTestCase < mlunitext.test_case
             
             testRes = le(testEllipsoid2, testEllipsoid3);
             mlunit.assert_equals(1, testRes);
-            
-            testNotEllipsoid = [];
-            %'both arguments must be ellipsoids.'
-            isError = isempty(eval('le(testEllipsoidEmpty, testNotEllipsoid)', '[]'));
-            mlunitext.assert(isError);
-            
-            %'sizes of ellipsoidal arrays do not match.'
-            isError = isempty(eval('le([testEllipsoidEmpty testEllipsoidEmpty], [testEllipsoidEmpty; testEllipsoidEmpty])', '[]'));
-            mlunitext.assert(isError);
             
             testRes = le([testEllipsoid2 testEllipsoid1], [testEllipsoid1 testEllipsoid2]);
             if (testRes == [0 1])
@@ -252,13 +211,11 @@ classdef EllipsoidTestCase < mlunitext.test_case
             
             A = eye(3);
             %'MTIMES: dimensions do not match.'
-            isError = isempty(eval('mtimes(A, testEllipsoid1)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('mtimes(A, testEllipsoid1)','wrongSizes');
             
             A = cell(2);
             %'MTIMES: first multiplier is expected to be a matrix or a scalar,\n        and second multiplier - an ellipsoid.'
-            isError = isempty(eval('mtimes(A, testEllipsoid1)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('mtimes(A, testEllipsoid1)','wrongInput');
             
             A = 0*eye(2);
             testEllipsoid2 = mtimes(A, testEllipsoid1);
@@ -312,18 +269,26 @@ classdef EllipsoidTestCase < mlunitext.test_case
             
             testLVec = [1; 1];
             %'MINKDIFF_EA: first and second arguments must be single ellipsoids.'
-            isError = isempty(eval('minkdiff_ea(testEllipsoid1, testNotEllipsoid, testLVec)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('minkdiff_ea(testEllipsoid1, testNotEllipsoid, testLVec)','wrongInput');
             
             testLVec = [1; 1];
             %'MINKDIFF_EA: first and second arguments must be single ellipsoids.'
-            isError = isempty(eval('minkdiff_ea([2*testEllipsoid1 2*testEllipsoid1], [testEllipsoid3 testEllipsoid3], testLVec)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('minkdiff_ea([2*testEllipsoid1 2*testEllipsoid1], [testEllipsoid3 testEllipsoid3], testLVec)','wrongInput');
             
             testLVec = [1; 1; 1];
             %'MINKDIFF_EA: dimension of the direction vectors must be the same as dimension of ellipsoids.'
-            isError = isempty(eval('minkdiff_ea(2*testEllipsoid1, testEllipsoid3, testLVec)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('minkdiff_ea(2*testEllipsoid1, testEllipsoid3, testLVec)','wrongSizes');
+            
+            testEllipsoid1 = ellipsoid([0; 0], [17 8; 8 17]);
+            testEllipsoid2 = ellipsoid([1; 2], [13 12; 12 13]);
+            testL = [1; 1];
+            ExternalApprox = minkdiff_ea(testEllipsoid1, testEllipsoid2, testL);
+            [testEllCenter testEllMatrix1] = double(ExternalApprox(1));
+            iseq = 0;            
+            if ((min(min(testEllMatrix1 - [2 -2; -2 2])) <= ellOptions.abs_tol) && (min(min(testEllCenter - [-1; -2])) <= ellOptions.abs_tol))
+                iseq = 1;
+            end
+            mlunit.assert_equals(1, iseq);
         end 
         
         function self = testMinkdiff_ia(self)
@@ -353,20 +318,27 @@ classdef EllipsoidTestCase < mlunitext.test_case
             end
             mlunit.assert_equals(1, isEq);
             
-            testLVec = [1; 1];
-            %'MINKDIFF_IA: first and second arguments must be single ellipsoids.'
-            isError = isempty(eval('minkdiff_ia(testEllipsoid1, testNotEllipsoid, testLVec)', '[]'));
-            mlunitext.assert(isError);
+            testLVec = [1; 0];
+            internalApprox = minkdiff_ia(2*testEllipsoid1, testEllipsoid1, testLVec);
+            [testEllCenterVec testEllMat] = double(internalApprox(1));
+            isEq = 0;
+            if ((max(max(abs(testEllMat - [1 0; 0 1]))) <= ellOptions.abs_tol) && ...
+                    (max(max(abs(testEllCenterVec - [0; 0]))) <= ellOptions.abs_tol))
+                isEq = 1;
+            end
+            mlunit.assert_equals(1, isEq);
             
             testLVec = [1; 1];
             %'MINKDIFF_IA: first and second arguments must be single ellipsoids.'
-            isError = isempty(eval('minkdiff_ia([testEllipsoid1 testEllipsoid1], [testEllipsoid3 testEllipsoid3], testLVec)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('minkdiff_ia(testEllipsoid1, testNotEllipsoid, testLVec)','wrongInput');
+            
+            testLVec = [1; 1];
+            %'MINKDIFF_IA: first and second arguments must be single ellipsoids.'
+            self.runAndCheckError('minkdiff_ia([testEllipsoid1 testEllipsoid1], [testEllipsoid3 testEllipsoid3], testLVec)','wrongInput');
             
             testLVec = [1; 1; 1];
             %'MINKDIFF_IA: dimension of the direction vectors must be the same as dimension of ellipsoids.'
-            isError = isempty(eval('minkdiff_ia(testEllipsoid3, testEllipsoid1, testLVec)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('minkdiff_ia(testEllipsoid3, testEllipsoid1, testLVec)','wrongSizes');
         end
         
         function self = testMinkpm_ea(self)
@@ -415,48 +387,42 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoid3 = [];
             testLVec = [1; 0; 0];
             %'MINKPM_EA: first and second arguments must be ellipsoids.'
-            isError = isempty(eval('minkpm_ea([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('minkpm_ea([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec)', 'wrongInput');
             
             testEllipsoid1 = [];
             testEllipsoid2 = [];
             testEllipsoid3 = ellipsoid([0; -1; 1], [1 0 0; 0 1 0; 0 0 1]);
             testLVec = [1; 1; 1];
             %'MINKPM_EA: first and second arguments must be ellipsoids.'
-            isError = isempty(eval('minkpm_ea([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('minkpm_ea([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec)', 'wrongInput');
             
             testEllipsoid1 = ellipsoid([1; 0; -1], [2 0 0; 0 2 0; 0 0 2]);;
             testEllipsoid2 = ellipsoid([2; 0; 2], [1 0 0; 0 1 0; 0 0 1]);
             testEllipsoid3 = ellipsoid([0; -1; 1], [1 0 0; 0 1 0; 0 0 1]);
             testLVec = [1; 0; 0];
             %'MINKPM_EA: second argument must be single ellipsoid.'
-            isError = isempty(eval('minkpm_ea([testEllipsoid1 testEllipsoid2], [testEllipsoid3 testEllipsoid3], testLVec)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('minkpm_ea([testEllipsoid1 testEllipsoid2], [testEllipsoid3 testEllipsoid3], testLVec)', 'wrongInput');
             
             testEllipsoid1 = ellipsoid([1; 0; -1], [2 0 0; 0 2 0; 0 0 2]);;
             testEllipsoid2 = ellipsoid([2; 0], eye(2));
             testEllipsoid3 = ellipsoid([0; -1; 1], [1 0 0; 0 1 0; 0 0 1]);
             testLVec = [1; 0; 0];
             %'MINKPM_EA: all ellipsoids must be of the same dimension.'
-            isError = isempty(eval('minkpm_ea([testEllipsoid1 testEllipsoid2], [testEllipsoid3 testEllipsoid3], testLVec)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('minkpm_ea([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec)', 'wrongSizes');
             
             testEllipsoid1 = ellipsoid([1; 0; -1], [2 0 0; 0 2 0; 0 0 2]);;
             testEllipsoid2 = ellipsoid([2; 0; 2], [1 0 0; 0 1 0; 0 0 1]);
             testEllipsoid3 = ellipsoid([2; 0], eye(2));
             testLVec = [1; 0; 0];
-            %'MINKPM_EA: second argument must be single ellipsoid.'
-            isError = isempty(eval('minkpm_ea([testEllipsoid1 testEllipsoid2], [testEllipsoid3 testEllipsoid3], testLVec)', '[]'));
-            mlunitext.assert(isError);
+            %'MINKPM_EA: all ellipsoids must be of the same dimension.'
+            self.runAndCheckError('minkpm_ea([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec)', 'wrongSizes');
              
             testEllipsoid1 = ellipsoid([1; 0; -1], [2 0 0; 0 2 0; 0 0 2]);;
             testEllipsoid2 = ellipsoid([2; 0; 2], [1 0 0; 0 1 0; 0 0 1]);
             testEllipsoid3 = ellipsoid([2; 0; 0], eye(3));
             testLVec = [1; 0];
             %'MINKPM_EA: dimension of the direction vectors must be the same as dimension of ellipsoids.'
-            isError = isempty(eval('minkpm_ea([testEllipsoid1 testEllipsoid2], [testEllipsoid3 testEllipsoid3], testLVec)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('minkpm_ea([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec)', 'wrongSizes');
         end
         
         function self = testMinkpm_ia(self)
@@ -506,48 +472,42 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoid3 = [];
             testLVec = [1; 0; 0];
             %'MINKPM_IA: first and second arguments must be ellipsoids.'
-            isError = isempty(eval('minkpm_ia([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('minkpm_ia([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec)', 'wrongInput');
             
             testEllipsoid1 = [];
             testEllipsoid2 = [];
             testEllipsoid3 = ellipsoid([0; -1; 1], [1 0 0; 0 1 0; 0 0 1]);
             testLVec = [1; 0; 0];
             %'MINKPM_IA: first and second arguments must be ellipsoids.'
-            isError = isempty(eval('minkpm_ia([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('minkpm_ia([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec)', 'wrongInput');
             
             testEllipsoid1 = ellipsoid([1; 0; -1], [2 0 0; 0 2 0; 0 0 2]);;
             testEllipsoid2 = ellipsoid([2; 0; 2], [1 0 0; 0 1 0; 0 0 1]);
             testEllipsoid3 = ellipsoid([0; -1; 1], [1 0 0; 0 1 0; 0 0 1]);
             testLVec = [1; 0; 0];
             %'MINKPM_IA: second argument must be single ellipsoid.'
-            isError = isempty(eval('minkpm_ia([testEllipsoid1 testEllipsoid2], [testEllipsoid3 testEllipsoid3], testLVec)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('minkpm_ia([testEllipsoid1 testEllipsoid2], [testEllipsoid3 testEllipsoid3], testLVec)', 'wrongInput');
             
             testEllipsoid1 = ellipsoid([1; 0; -1], [2 0 0; 0 2 0; 0 0 2]);;
             testEllipsoid2 = ellipsoid([2; 0], eye(2));
             testEllipsoid3 = ellipsoid([0; -1; 1], [1 0 0; 0 1 0; 0 0 1]);
             testLVec = [1; 0; 0];
             %'MINKPM_IA: all ellipsoids must be of the same dimension.'
-            isError = isempty(eval('minkpm_ia([testEllipsoid1 testEllipsoid2], [testEllipsoid3 testEllipsoid3], testLVec)', '[]'));
-            mlunitext.assert(isError);
+            self.runAndCheckError('minkpm_ia([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec)', 'wrongSizes');
             
             testEllipsoid1 = ellipsoid([1; 0; -1], [2 0 0; 0 2 0; 0 0 2]);;
             testEllipsoid2 = ellipsoid([2; 0; 2], [1 0 0; 0 1 0; 0 0 1]);
             testEllipsoid3 = ellipsoid([2; 0], eye(2));
             testLVec = [1; 0; 0];
-            %'MINKPM_IA: second argument must be single ellipsoid.'
-            isError = isempty(eval('minkpm_ia([testEllipsoid1 testEllipsoid2], [testEllipsoid3 testEllipsoid3], testLVec)', '[]'));
-            mlunitext.assert(isError);
+            %'MINKPM_IA: all ellipsoids must be of the same dimension.'
+            self.runAndCheckError('minkpm_ia([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec)', 'wrongSizes');
              
             testEllipsoid1 = ellipsoid([1; 0; -1], [2 0 0; 0 2 0; 0 0 2]);;
             testEllipsoid2 = ellipsoid([2; 0; 2], [1 0 0; 0 1 0; 0 0 1]);
             testEllipsoid3 = ellipsoid([2; 0; 0], eye(3));
             testLVec = [1; 0];
             %'MINKPM_IA: dimension of the direction vectors must be the same as dimension of ellipsoids.'
-            isError = isempty(eval('minkpm_ia([testEllipsoid1 testEllipsoid2], [testEllipsoid3 testEllipsoid3], testLVec)', '[]'));
-            mlunitext.assert(isError);          
+            self.runAndCheckError('minkpm_ia([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec)', 'wrongSizes');
         end
         
     end      

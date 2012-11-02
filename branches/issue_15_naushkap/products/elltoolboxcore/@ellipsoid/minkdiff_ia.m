@@ -1,4 +1,5 @@
 function IA = minkdiff_ia(E1, E2, L)
+import modgen.common.throwerror;
 %
 % MINKDIFF_IA - computation of internal approximating ellipsoids of the geometric
 %               difference of two ellipsoids in given directions.
@@ -59,13 +60,13 @@ function IA = minkdiff_ia(E1, E2, L)
   end
 
   if ~(isa(E1, 'ellipsoid')) | ~(isa(E2, 'ellipsoid'))
-    error('MINKDIFF_IA: first and second arguments must be single ellipsoids.');
+    throwerror('wrongInput', 'MINKDIFF_IA: first and second arguments must be single ellipsoids.');
   end
 
   [k, l] = size(E1);
   [m, n] = size(E2);
   if (k ~= 1) | (l ~= 1) | (m ~= 1) | (n ~= 1)
-    error('MINKDIFF_IA: first and second arguments must be single ellipsoids.');
+    throwerror('wrongInput', 'MINKDIFF_IA: first and second arguments must be single ellipsoids.');
   end
 
   IA = [];
@@ -80,7 +81,7 @@ function IA = minkdiff_ia(E1, E2, L)
   k = size(L, 1);
   n = dimension(E1);
   if k ~= n
-    error('MINKDIFF_IA: dimension of the direction vectors must be the same as dimension of ellipsoids.');
+    throwerror('wrongSizes', 'MINKDIFF_IA: dimension of the direction vectors must be the same as dimension of ellipsoids.');
   end
   q  = E1.center - E2.center;
   Q1 = E1.shape;
