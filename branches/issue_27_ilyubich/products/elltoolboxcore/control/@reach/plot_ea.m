@@ -54,7 +54,7 @@ function hPlot = plot_ea(rs, varargin)
     if d > 3
       msg = sprintf('%s\nUse projection.', msg);
     end
-    error(msg);
+    error('PLOT_EA:wrongDimension',msg);
   end
 
   if nargin > 1

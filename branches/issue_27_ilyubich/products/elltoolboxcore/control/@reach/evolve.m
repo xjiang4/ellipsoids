@@ -43,7 +43,7 @@ function RS = evolve(CRS, T, lsys)
   end
 
   if isprojection(CRS)
-    error('EVOLVE: cannot compute the reach set for projection.');
+    error('Evolve:wrongInput','EVOLVE: cannot compute the reach set for projection.');
   end
 
   RS = CRS;
