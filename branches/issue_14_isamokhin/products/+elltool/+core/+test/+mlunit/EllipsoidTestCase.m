@@ -3,7 +3,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
     
 % $Author: Igor Samokhin, Lomonosov Moscow State University,
 % Faculty of Computational Mathematics and Cybernetics, System Analysis
-% Department, 22-October-2012, <igorian.vmk@gmail.com>$
+% Department, 02-November-2012, <igorian.vmk@gmail.com>$
 
 
     methods
