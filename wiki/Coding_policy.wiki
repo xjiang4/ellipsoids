@@ -36,6 +36,8 @@ For a quick reference, here is a short list of correct variable names
 || myEllMat  || ellipsoid object matrix|| myEll || 
 || myEllArray  || ellipsoid object array|| MyEllArray || 
 || fCalcSomething  || scalar function handle|| calcSomething || 
+|| nElems, mElems  || number of elements (numeric scalar)|| nelems, NElems || 
+|| iElem,jElem,kElem  || current element counter in a loop|| ielem, i,j,k || 
 
 = Test-driven approach =
 Always follow a test driven approach. To understand what the test-driven approach is please read about [http://ellipsoids.googlecode.com/svn/wiki/attachments/TheWayOfTestivus.pdf Unit testing karma].
