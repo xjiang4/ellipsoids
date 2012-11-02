@@ -245,6 +245,14 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testTol=ellOptions.abs_tol;
             %1D case
             testEllipsoidMin=ellipsoid(2,4);
+            testEllipsoidSub=ellipsoid(2,9);
+            testEllipsoidSum1=ellipsoid(1,25);
+            testEllipsoidSum2=ellipsoid(2,16);
+            [testCenter testPointsVec]=minkmp(testEllipsoidMin,testEllipsoidSub,[testEllipsoidSum1,testEllipsoidSum2]);
+            isTestRes = isempty(testCenter) && isempty(testPointsVec);
+            mlunit.assert_equals(true, isTestRes);
+            
+            testEllipsoidMin=ellipsoid(2,4);
             testEllipsoidSub=ellipsoid(2,0);
             testEllipsoidSum=ellipsoid(1,0);
             [testCenter testPointsVec]=minkmp(testEllipsoidMin,testEllipsoidSub,testEllipsoidSum);
@@ -275,6 +283,14 @@ classdef EllipsoidTestCase < mlunitext.test_case
             mlunit.assert_equals(true, isTestRes);
             
             %2D case
+            testEllipsoidMin=ellipsoid([2;2], 4*eye(2,2));
+            testEllipsoidSub=ellipsoid([2;1], 16*eye(2,2));
+            testEllipsoidSum1=ellipsoid([2;1], 25*eye(2,2));
+            testEllipsoidSum2=ellipsoid([2;1], 36*eye(2,2));
+            [testCenterVec testPointsMat]=minkmp(testEllipsoidMin,testEllipsoidSub,[testEllipsoidSum1, testEllipsoidSum2]);
+            isTestRes = isempty(testCenterVec) && isempty( testPointsMat);
+            mlunit.assert_equals(true, isTestRes);
+            
             testEllipsoidMin=ellipsoid([2;2], 4*eye(2,2));
             testEllipsoidSub=ellipsoid([2;1], zeros(2,2));
             testEllipsoidSum=ellipsoid([2;1], zeros(2,2));
@@ -310,7 +326,16 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testDistSqr = (testPointsMat(1,:)-testCenterVec(1)).*(testPointsMat(1,:)-testCenterVec(1))+(testPointsMat(2,:)-testCenterVec(2)).*(testPointsMat(2,:)-testCenterVec(2));
             isTestRes = all( testCenterVec==2 ) && all( abs(testDistSqr - 25) <= testTol );
             mlunit.assert_equals(true, isTestRes);
+            
             %3D case
+            testEllipsoidMin=ellipsoid(eye(3,3));
+            testEllipsoidSub=ellipsoid(2.25*eye(3,3));
+            testEllipsoidSum1=ellipsoid([1;0], 25*eye(3,3));
+            testEllipsoidSum2=ellipsoid([0;1], 36*eye(3,3));
+            [testCenterVec testPointsMat]=minkmp(testEllipsoidMin,testEllipsoidSub,[testEllipsoidSum1, testEllipsoidSum2]);
+            isTestRes = isempty(testCenterVec) && isempty( testPointsMat);
+            mlunit.assert_equals(true, isTestRes);
+            
             testEllipsoidMin=ellipsoid([1;1;1], diag([1,4,9]));
             testEllipsoidSub=ellipsoid([2;1;-1], zeros(3,3));
             testEllipsoidSum=ellipsoid([2;1;-1], zeros(3,3));
