@@ -82,7 +82,10 @@ function [res, status] = isinside(E1, E2, s)
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %    
-% Manual edited by Igor Samokhin <igorian.vmk@gmail.com>
+% $Author: Igor Samokhin  <igorian.vmk@gmail.com> $    $Date: 02-11-2012 $
+% $Copyright: Moscow State University,
+%            Faculty of Computational Mathematics and Computer Science,
+%            System Analysis Department 2012 $
 %
 
   global ellOptions;
