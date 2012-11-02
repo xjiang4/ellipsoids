@@ -8,6 +8,43 @@ classdef EllipsoidTestCase < mlunitext.test_case
         function self = EllipsoidTestCase(varargin)
             self = self@mlunitext.test_case(varargin{:});
         end
+        function self = testEllipsoid(self)
+            %Empty ellipsoid
+            testEllipsoid=ellipsoid;
+            [testCenterVec, testShapeMat]=double(testEllipsoid);
+            isTestRes=isempty(testCenterVec)&&isempty(testShapeMat);
+            mlunit.assert_equals(true, isTestRes);
+            %One argument
+            testEllipsoid=ellipsoid(diag([1 4 9 16]));
+            [testCenterVec, testShapeMat]=double(testEllipsoid);
+            isTestDiagMat=testShapeMat==diag([1 4  9 16]);
+            isTestRes=(numel(testCenterVec)==4) && all(testCenterVec(:)==0)&& all(isTestDiagMat(:));
+            mlunit.assert_equals(true, isTestRes);
+            %Two arguments
+            testEllipsoid=ellipsoid([1; 2; -1],[2.5 -1.5 0; -1.5 2.5 0; 0 0 9]);
+            [testCenterVec, testShapeMat]=double(testEllipsoid);
+            isTestCVec=testCenterVec==[1;2;-1];
+            isTestEyeMat=testShapeMat==[2.5 -1.5 0; -1.5 2.5 0; 0 0 9];
+            isTestRes= all(isTestCVec(:))&& all(isTestEyeMat(:));
+            mlunit.assert_equals(true, isTestRes);
+            
+            testEllipsoid=ellipsoid(-2*ones(5,1),9*eye(5,5));
+            [testCenterVec, testShapeMat]=double(testEllipsoid);
+            isTestEyeMat=testShapeMat==9*eye(5,5);
+            isTestRes=(numel(testCenterVec)==5) && all(testCenterVec(:)==-2)&& all(isTestEyeMat(:));
+            mlunit.assert_equals(true, isTestRes);
+            
+            %Check wrong inputs
+            self.runAndCheckError('ellipsoid(1,2,3)','wrongInput:tooManyArgs');
+            self.runAndCheckError('ellipsoid([1 1],eye(2,2))','wrongInput:wrongCenter');
+            self.runAndCheckError('ellipsoid([1 1;0 1])','wrongInput:wrongMat');
+            self.runAndCheckError('ellipsoid([-1 0;0 -1])','wrongInput:wrongMat');
+            self.runAndCheckError('ellipsoid([1;1],eye(3,3))','wrongInput:dimsMismatch');
+            
+            self.runAndCheckError('ellipsoid([1 -i;-i 1])','wrongInput:imagArgs');
+            self.runAndCheckError('ellipsoid([1+i;1],eye(2,2))','wrongInput:imagArgs');
+            self.runAndCheckError('ellipsoid([1;0],(1+i)*eye(2,2))','wrongInput:imagArgs');
+        end
         function self = testDouble(self)
             %Empty ellipsoid
             testEllipsoid=ellipsoid;
