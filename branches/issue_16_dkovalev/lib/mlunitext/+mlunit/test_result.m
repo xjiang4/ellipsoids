@@ -15,7 +15,7 @@ classdef test_result<handle
     %           MLUNIT.TEXT_TEST_RESULT.
     %
     % $Author: Peter Gagarinov, Moscow State University by M.V. Lomonosov,
-    % Faculty of Applied Mathematics and Cybernetics, System Analysis
+    % Faculty of Computational Mathematics and Cybernetics, System Analysis
     % Department, 7-October-2012, <pgagarinov@gmail.com>$
     
     properties (SetAccess=private)
@@ -353,15 +353,6 @@ classdef test_result<handle
                 failCount=failCount+self(iRes).get_failures();
             end
         end
-        %
-        function message=getErrorFailMessage(self)
-            nRes=length(self);
-            messageList=cell(1,nRes);
-            for iRes=1:nRes
-                messageList{iRes}=feval('print_errors',self(iRes));
-            end
-            message=[messageList{:}];
-        end        
         %
         function display(self)
             message=evalc('display@handle(self)');

@@ -7,7 +7,7 @@ classdef test_loader
     %   suite = test_suite(load_tests_from_test_case(loader, 'my_test'));
     %
     % $Author: Peter Gagarinov, Moscow State University by M.V. Lomonosov,
-    % Faculty of Applied Mathematics and Cybernetics, System Analysis
+    % Faculty of Computational Mathematics and Cybernetics, System Analysis
     % Department, 7-October-2012, <pgagarinov@gmail.com>$
     methods
         %
@@ -54,17 +54,18 @@ classdef test_loader
             %           mlunitext.test_case class
             %
             % Output:
-            %   suite: mlunitext.test_suite
+            %   suite: mlunit.test_suite
             %       
             % Example:
             %   loader = test_loader;
             %   suite = test_suite(load_tests_from_test_case(loader, 'my_test'));
             
-            import mlunitext.*;
+            import mlunit.*;
             %
-            suite = test_suite;
             testNameList = get_test_case_names(self, testCaseClassName);
-            if (~isempty(testNameList))
+            if isempty(testNameList)
+                suite = test_suite;
+            else
                 suite = test_suite(map(self, ...
                     testCaseClassName, ...
                     testNameList,varargin{:}));
