@@ -29,7 +29,10 @@ import modgen.common.throwerror;
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %   
-  if (det(E.shape) < 1e-7) 
+
+  global ellOptions;
+  
+  if (det(E.shape) < ellOptions.abs_tol) 
      throwerror('degenerateMatrix','Matrix is degenerate');
   end
 

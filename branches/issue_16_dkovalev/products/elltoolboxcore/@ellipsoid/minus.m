@@ -1,4 +1,5 @@
 function res = minus(E, b)
+import modgen.common.throwerror;
 %
 %
 % Description:
@@ -46,7 +47,7 @@ function res = minus(E, b)
 
   [k, l] = size(b);
   if (l ~= 1) | (k ~= n)
-    error('MINUS: vector dimension does not match.');
+    throwerror('wrongDimension','MINUS: vector dimension does not match');
   end
 
   [m, n] = size(E);

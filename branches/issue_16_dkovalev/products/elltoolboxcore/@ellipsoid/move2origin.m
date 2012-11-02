@@ -1,4 +1,5 @@
 function EO = move2origin(E)
+import modgen.common.throwerror;
 %
 % MOVE2ORIGIN - moves ellipsoids in the given array to the origin.
 %
@@ -30,6 +31,10 @@ function EO = move2origin(E)
 
   if ~(isa(E, 'ellipsoid'))
     error('MOVE2ORIGIN: argument must be array of ellipsoids.');
+  end
+  
+  if isempty(E.center)
+      throwerror('degenerateEllipsoid','Center of ellipsoid is degenerate');
   end
 
   EO     = E;
