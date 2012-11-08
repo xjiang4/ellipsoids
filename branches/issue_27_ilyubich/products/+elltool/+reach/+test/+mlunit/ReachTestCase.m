@@ -14,10 +14,10 @@ classdef ReachTestCase < mlunitext.test_case
         end
         %  
         function testReachSet = auxGetTestSysParams(self,initialDirectionsMat,timeIntervalVec)
-            options               = [];
-            options.approximation = 2;
-            options.save_all      = 1;
-            options.minmax        = 0;
+            Options               = [];
+            Options.approximation = 2;
+            Options.save_all      = 1;
+            Options.minmax        = 0;
             linsysACMat = {'0' '-10'; '1/(2+sin(t))' '-4/(2+sin(t))'};
             linsysBCMat ={'10' '0'; '0' '1/(2+sin(t))'};
             configurationQMat = eye(2);
@@ -27,7 +27,7 @@ classdef ReachTestCase < mlunitext.test_case
          %   
             initialSetEll = ellipsoid(configurationQMat);
             testReachSet = reach(stationaryLinsys, initialSetEll, initialDirectionsMat,...
-                             timeIntervalVec,options);
+                             timeIntervalVec,Options);
         end    
         %
         %
@@ -154,17 +154,112 @@ classdef ReachTestCase < mlunitext.test_case
             testReachSetRefine = refine(testReachSet,[1 1].');
             mlunit.assert_equals(eq(get_ea(testReachSetRefine), get_ea(testReachSet2)),ones(size(get_ea(testReachSet2))));
             mlunit.assert_equals(eq(get_ia(testReachSetRefine), get_ia(testReachSet2)),ones(size(get_ia(testReachSet2))));
+            %
+            %
+            Options               = [];
+            Options.approximation = 2;
+            Options.save_all      = 1;
+            Options.minmax        = 0;
+            linsysAMat = load(strcat(self.testDataRootDir, '/testData.mat'),'A');
+            linsysBMat = load(strcat(self.testDataRootDir, '/testData.mat'),'B');
+            configurationQMat = eye(12);
+            controlBoundsUEll = ellipsoid(configurationQMat);
+             %
+            stationaryLinsys = linsys(linsysAMat.A, linsysBMat.B, controlBoundsUEll);
+            %
+            initialSetEll = ellipsoid(configurationQMat);
+            initialDirectionsMat = [1 1 2 1 0 3 4 2 3 1 2 3].';
+            initialDirectionsMat2 = [[1 1 2 1 0 3 4 2 3 1 2 3].',[2 3 5 4 12 3 5 6 3 0 1 2].'];
+            timeIntervalVec = [0 1];
+            testReachSet = reach(stationaryLinsys, initialSetEll, initialDirectionsMat,...
+                             timeIntervalVec,Options);      
+            testReachSet2 = reach(stationaryLinsys, initialSetEll, initialDirectionsMat2,...
+                             timeIntervalVec,Options);  
+            testReachSetRefine = refine(testReachSet,[2 3 5 4 12 3 5 6 3 0 1 2].');
+            mlunit.assert_equals(eq(get_ea(testReachSetRefine), get_ea(testReachSet2)),ones(size(get_ea(testReachSet2))));
+            mlunit.assert_equals(eq(get_ia(testReachSetRefine), get_ia(testReachSet2)),ones(size(get_ia(testReachSet2))));
+            %
+            %
+            Options               = [];
+            Options.approximation = 2;
+            Options.save_all      = 1;
+            Options.minmax        = 0;
+            linsysAMat = load(strcat(self.testDataRootDir, '/testData.mat'),'A2');
+            linsysBMat = load(strcat(self.testDataRootDir, '/testData.mat'),'B2');
+            configurationQMat = eye(12);
+            controlBoundsUEll = ellipsoid(configurationQMat);
+             %
+            stationaryLinsys = linsys(linsysAMat.A2, linsysBMat.B2, controlBoundsUEll);
+            %
+            initialSetEll = ellipsoid(configurationQMat);
+            initialDirectionsMat = [1 1 2 1 0 3 4 2 3 1 2 3].';
+            initialDirectionsMat2 = [[1 1 2 1 0 3 4 2 3 1 2 3].',[2 3 5 4 12 3 5 6 3 0 1 2].'];
+            timeIntervalVec = [0 1];
+            testReachSet = reach(stationaryLinsys, initialSetEll, initialDirectionsMat,...
+                             timeIntervalVec,Options);      
+            testReachSet2 = reach(stationaryLinsys, initialSetEll, initialDirectionsMat2,...
+                             timeIntervalVec,Options);  
+            testReachSetRefine = refine(testReachSet,[2 3 5 4 12 3 5 6 3 0 1 2].');
+            mlunit.assert_equals(eq(get_ea(testReachSetRefine), get_ea(testReachSet2)),ones(size(get_ea(testReachSet2))));
+            mlunit.assert_equals(eq(get_ia(testReachSetRefine), get_ia(testReachSet2)),ones(size(get_ia(testReachSet2))));
        end
        %
        function self = testPlotEa(self)
-            testReachSet = self.auxGetTestSysParams([[1 0].',[0 1].'],[0 1]);
-            answerXData = load(strcat(self.testDataRootDir, '/answer2.mat'),'xData');
-            answerYData = load(strcat(self.testDataRootDir, '/answer2.mat'),'yData');
+            Options               = [];
+            Options.approximation = 2;
+            Options.save_all      = 1;
+            Options.minmax        = 0;
+            linsysACMat = {'0' '-10'; '1/(2+sin(t))' '-4/(2+sin(t))'};
+            linsysBCMat ={'10' '0'; '0' '1/(2+sin(t))'};
+            configurationQMat = eye(2);
+            controlBoundsUEll = ellipsoid(configurationQMat);
+            %
+            stationaryLinsys = linsys(linsysACMat, linsysBCMat, controlBoundsUEll);
+            %
+            initialSetEll = ellipsoid(configurationQMat);
+            testReachSet = reach(stationaryLinsys, initialSetEll, [1 0].',...
+            [0 1],Options);
             hFigure = plot_ea(testReachSet);
             hAxes = findobj(hFigure,'Parent',hFigure,'Type','axes');
             hPlot = findobj(hAxes,'Parent',hAxes,'Type','patch','-or','Type','line');
-            mlunit.assert_equals(answerXData.xData,get(hPlot,'XData'));
-            mlunit.assert_equals(answerYData.yData,get(hPlot,'YData'));
+            [xData] = get(hPlot,'XData');
+            [yData] = get(hPlot,'YData');
+            [zData] = get(hPlot,'ZData');
+            answerData = get_ea(testReachSet);
+            [xDataSorted,iDataSorted] = sort(xData(:));
+            yDataSorted = yData(iDataSorted);
+            zDataSorted = zData(iDataSorted);
+            [xDataUnique,iaXData,icXData] = unique(xDataSorted);
+            for iPoints=1:size(icXData,1)
+                iEllipsoid = icXData(iPoints);
+            [qCenter,qMatrix] = double(answerData(iEllipsoid));
+             mlunit.assert_equals(abs((([yDataSorted(iPoints);zDataSorted(iPoints)]-qCenter).')*(qMatrix\([yDataSorted(iPoints);zDataSorted(iPoints)]-qCenter))-1)<0.0001,1)
+            end
+%
+%
+            linsysAMat = load(strcat(self.testDataRootDir, '/testData2.mat'),'A');
+            linsysBMat = load(strcat(self.testDataRootDir, '/testData2.mat'),'B');
+            configurationQMat = eye(3);
+            controlBoundsUEll = ellipsoid(configurationQMat);
+             %
+            stationaryLinsys = linsys(linsysAMat.A, linsysBMat.B, controlBoundsUEll);
+            %
+            initialSetEll = ellipsoid(configurationQMat);
+            initialDirectionsMat = [1 0 0].';
+            timeIntervalVec = [0 1];
+            testReachSet = reach(stationaryLinsys, initialSetEll, initialDirectionsMat,...
+                             timeIntervalVec);   
+            hFigure = plot_ea(testReachSet);
+            hAxes = findobj(hFigure,'Parent',hFigure,'Type','axes');
+            hPlot = findobj(hAxes,'Parent',hAxes,'Type','patch','-or','Type','line');
+            [xData] = get(hPlot,'XData');
+            [yData] = get(hPlot,'YData');
+            [zData] = get(hPlot,'ZData');
+            answerData = get_ea(testReachSet);
+            [qCenter,qMatrix] = double(answerData(end));
+            for iPoints=1:size(xData(:),1)       
+                mlunit.assert_equals(abs((([xData(iPoints);yData(iPoints);zData(iPoints)]-qCenter).')*(qMatrix\([xData(iPoints);yData(iPoints);zData(iPoints)]-qCenter))-1)<0.0001,1)
+            end
             %negative test
             linsysAMat = [1 0 0 0 ; 1 0 0 0;0 0 0 1; 1 1 1 1];
             linsysBMat =zeros(4);
@@ -183,14 +278,62 @@ classdef ReachTestCase < mlunitext.test_case
             clear stationaryLinsys;
        end
        function self = testPlotIa(self)
-            testReachSet = self.auxGetTestSysParams([[1 0].',[0 1].'],[0 1]);
-            answerXData = load(strcat(self.testDataRootDir, '/answer3.mat'),'xData');
-            answerYData = load(strcat(self.testDataRootDir, '/answer3.mat'),'yData');
+           Options               = [];
+            Options.approximation = 2;
+            Options.save_all      = 1;
+            Options.minmax        = 0;
+            linsysACMat = {'0' '-10'; '1/(2+sin(t))' '-4/(2+sin(t))'};
+            linsysBCMat ={'10' '0'; '0' '1/(2+sin(t))'};
+            configurationQMat = eye(2);
+            controlBoundsUEll = ellipsoid(configurationQMat);
+            %
+            stationaryLinsys = linsys(linsysACMat, linsysBCMat, controlBoundsUEll);
+            %
+            initialSetEll = ellipsoid(configurationQMat);
+            testReachSet = reach(stationaryLinsys, initialSetEll, [1 0].',...
+            [0 1],Options);
             hFigure = plot_ia(testReachSet);
             hAxes = findobj(hFigure,'Parent',hFigure,'Type','axes');
             hPlot = findobj(hAxes,'Parent',hAxes,'Type','patch','-or','Type','line');
-            mlunit.assert_equals(answerXData.xData,get(hPlot,'XData'));
-            mlunit.assert_equals(answerYData.yData,get(hPlot,'YData'));
+            [xData] = get(hPlot,'XData');
+            [yData] = get(hPlot,'YData');
+            [zData] = get(hPlot,'ZData');
+            answerData = get_ia(testReachSet);
+            [xDataSorted,iDataSorted] = sort(xData(:));
+            yDataSorted = yData(iDataSorted);
+            zDataSorted = zData(iDataSorted);
+            [xDataUnique,iaXData,icXData] = unique(xDataSorted);
+            for iPoints=1:size(icXData,1)
+                iEllipsoid = icXData(iPoints);
+            [qCenter,qMatrix] = double(answerData(iEllipsoid));
+             mlunit.assert_equals(abs((([yDataSorted(iPoints);zDataSorted(iPoints)]-qCenter).')*(qMatrix\([yDataSorted(iPoints);zDataSorted(iPoints)]-qCenter))-1)<0.0001,1)
+            end
+%             
+%
+%
+             linsysAMat = load(strcat(self.testDataRootDir, '/testData2.mat'),'A');
+            linsysBMat = load(strcat(self.testDataRootDir, '/testData2.mat'),'B');
+            configurationQMat = eye(3);
+            controlBoundsUEll = ellipsoid(configurationQMat);
+             %
+            stationaryLinsys = linsys(linsysAMat.A, linsysBMat.B, controlBoundsUEll);
+            %
+            initialSetEll = ellipsoid(configurationQMat);
+            initialDirectionsMat = [1 0 0].';
+            timeIntervalVec = [0 1];
+            testReachSet = reach(stationaryLinsys, initialSetEll, initialDirectionsMat,...
+                             timeIntervalVec);   
+            hFigure = plot_ia(testReachSet);
+            hAxes = findobj(hFigure,'Parent',hFigure,'Type','axes');
+            hPlot = findobj(hAxes,'Parent',hAxes,'Type','patch','-or','Type','line');
+            [xData] = get(hPlot,'XData');
+            [yData] = get(hPlot,'YData');
+            [zData] = get(hPlot,'ZData');
+            answerData = get_ia(testReachSet);
+            [qCenter,qMatrix] = double(answerData(end));
+            for iPoints=1:size(xData(:),1)       
+                mlunit.assert_equals(abs((([xData(iPoints);yData(iPoints);zData(iPoints)]-qCenter).')*(qMatrix\([xData(iPoints);yData(iPoints);zData(iPoints)]-qCenter))-1)<0.0001,1)
+            end
               %negative test
             linsysAMat = [1 0 0 0 ; 1 0 0 0;0 0 0 1; 1 1 1 1];
             linsysBMat =zeros(4);
@@ -209,26 +352,46 @@ classdef ReachTestCase < mlunitext.test_case
             clear stationaryLinsys;
        end
        function self = testEvolve(self)
-            linsysAMat = load(strcat(self.testDataRootDir, '/testData.mat'),'A');
-            linsysBMat = load(strcat(self.testDataRootDir, '/testData.mat'),'B');
-            linsysA2Mat = load(strcat(self.testDataRootDir, '/testData.mat'),'A2');
-            linsysB2Mat = load(strcat(self.testDataRootDir, '/testData.mat'),'B2');
-            configurationQMat = eye(12);
-            controlBoundsUEll = ellipsoid(configurationQMat);
-            %
-            stationaryLinsys = linsys(linsysAMat.A, linsysBMat.B, controlBoundsUEll);
-            stationaryLinsys2 = linsys(linsysA2Mat.A2, linsysB2Mat.B2, controlBoundsUEll);
-            %
-            initialSetEll = ellipsoid(configurationQMat);
-            initialDirectionsMat = [1 0 0 0 0 0 0 0 0 0 0 1].';
-            timeIntervalVec = [0 1];
-            testReachSet = reach(stationaryLinsys, initialSetEll, initialDirectionsMat,...
-                             timeIntervalVec);   
-            testEvolveSet = evolve(testReachSet,2,stationaryLinsys2);
-            answerEvolve = load(strcat(self.testDataRootDir, '/answer4.mat'),'evolveSet');
-            mlunit.assert_equals(eq(get_ea(answerEvolve.evolveSet), get_ea(testEvolveSet)),ones(size(get_ea(testEvolveSet))));
-            mlunit.assert_equals(eq(get_ia(answerEvolve.evolveSet), get_ia(testEvolveSet)),ones(size(get_ia(testEvolveSet))));
-       %negative test
+%             linsysAMat = load(strcat(self.testDataRootDir, '/testData.mat'),'A');
+%             linsysBMat = load(strcat(self.testDataRootDir, '/testData.mat'),'B');
+%             linsysA2Mat = load(strcat(self.testDataRootDir, '/testData.mat'),'A2');
+%             linsysB2Mat = load(strcat(self.testDataRootDir, '/testData.mat'),'B2');
+%             configurationQMat = eye(12);
+%             controlBoundsUEll = ellipsoid(configurationQMat);
+%             %
+%             stationaryLinsys = linsys(linsysAMat.A, linsysBMat.B, controlBoundsUEll);
+%             stationaryLinsys2 = linsys(linsysA2Mat.A2, linsysB2Mat.B2, controlBoundsUEll);
+%             %
+%             initialSetEll = ellipsoid(configurationQMat);
+%             initialDirectionsMat = [1 0 0 0 0 0 0 0 0 0 0 1].';
+%             timeIntervalVec = [0 1];
+%             testReachSet = reach(stationaryLinsys, initialSetEll, initialDirectionsMat,...
+%                              timeIntervalVec);   
+%             testEvolveSet = evolve(testReachSet,2,stationaryLinsys2);
+%             answerEvolve = load(strcat(self.testDataRootDir, '/answer4.mat'),'evolveSet');
+%             mlunit.assert_equals(eq(get_ea(answerEvolve.evolveSet), get_ea(testEvolveSet)),ones(size(get_ea(testEvolveSet))));
+%             mlunit.assert_equals(eq(get_ia(answerEvolve.evolveSet), get_ia(testEvolveSet)),ones(size(get_ia(testEvolveSet))));
+      
+
+%            initialDirectionsMat = [[1 0].',[0 1].'];
+%            timeIntervalVec = [0 1];
+%            testReachSet = self.auxGetTestSysParams(initialDirectionsMat,timeIntervalVec);
+%            timeIntervalVec2 = [0 2];
+%            answerReachSet = self.auxGetTestSysParams(initialDirectionsMat,timeIntervalVec2);
+%            evolveReachSet = evolve(testReachSet,2);
+%            eaAnswer = get_ea(cut(answerReachSet,[1 2]));
+%            iaAnswer = get_ea(cut(answerReachSet,[1 2]));
+%            eaTest = get_ea(evolveReachSet);
+%            iaTest = get_ia(evolveReachSet);
+%            evolveReachSet.time_values(2)
+%            c = cut(answerReachSet,[1 2]);
+%            c.time_values(2)
+%            eaAnswer(1,2)
+%             eaTest(1,2)
+%             eaAnswer(1,2) == eaTest(1,2)
+%            mlunit.assert_equals(eq(eaAnswer(:,2:end),eaTest(:,2:2:end)),ones(size(eaTest(:,2:2:end))));
+%            mlunit.assert_equals(eq(iaAnswer(:,2:end), iaTest(:,2:2:end)),ones(size(eaTest(:,2:2:end))));
+%negative test
         testReachSet = self.auxGetTestSysParams([[1 0].',[0 1].'],[0 1]);
         self.runAndCheckError('evolve(projection(testReachSet,[1;0]),2)','wrongInput');
        end
