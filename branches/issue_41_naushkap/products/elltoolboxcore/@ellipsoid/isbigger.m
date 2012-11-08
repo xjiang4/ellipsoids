@@ -3,33 +3,22 @@ function res = isbigger(E1, E2)
 % ISBIGGER - checks if one ellipsoid would contain the other if their centers
 %            would coincide.
 %
-%
 % Description:
-% ------------
-%
 %    RES = ISBIGGER(E1, E2)  Given two single ellipsoids of the same dimension,
 %                            E1 and E2, check if E1 would contain E2 inside if
 %                            they were both centered at origin.
 %
+% Input:
+%   regular:
+%       E1: ellipsod [1, 1] - first ellipsoid.
+%       E2: ellipsod [1, 1] - second ellipsoid of the same dimention.
 %
 % Output:
-% -------
+%    res: logical[1, 1], 1 - if ellipsoid E1 would contain E2 inside,
+%         0 - otherwise.
 %
-%    1 - if ellipsoid E1 would contain E2 inside, 0 - otherwise.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

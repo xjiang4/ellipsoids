@@ -3,10 +3,7 @@ function res = isbaddirection(E1, E2, L)
 % ISBADDIRECTION - checks if ellipsoidal approximations of geometric difference
 %                  of two ellipsoids can be computed for given directions.
 %
-%
 % Description:
-% ------------
-%
 %    RES = ISBADDIRECTION(E1, E2, L)  Checks if it is possible to build ellipsoidal
 %                                     approximation of the geometric difference
 %                                     of two ellipsoids E1 - E2 in directions
@@ -15,29 +12,23 @@ function res = isbaddirection(E1, E2, L)
 %
 %    Type 'help minkdiff_ea' or 'help minkdiff_ia' for more information.
 %
+% Input:
+%   regular:
+%       E1: ellipsod [1, 1] - first ellipsoid. Suppose nDim - space
+%       dimension.
+%       E2: ellipsod [1, 1] - second ellipsoid of the same dimention.
+%       L: numeric[nDims, nCols] - matrix whose columns are direction
+%       vectors that need to be checked.
 %
 % Output:
-% -------
-%
-%    RES - array of 1 or 0 with length being equal to the number of columns
+%    res: logical[1, nCols] - array of 1 or 0 with length being equal to the number of columns
 %          in matrix L.
 %          1 marks direction vector as bad - ellipsoidal approximation cannot
 %          be computed for this direction.
 %          0 means the opposite.
 %
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, MINKDIFF, MINKDIFF_EA, MINKDIFF_IA.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

@@ -2,32 +2,19 @@ function res = isdegenerate(E)
 %
 % ISDEGENERATE - checks if the ellipsoid is degenerate.
 %
-%
 % Description:
-% ------------
-%
 %          RES = ISDEGENERATE(E)  Returns 1 if ellipsoid E is degenerate,
 %                                 0 - otherwise.
 %
+% Input:
+%   regular:
+%       E: ellipsod [1, 1] - single ellipsoid.
 %
 % Output:
-% -------
+%    res: logical[1, 1], 1 - if ellipsoid E is degenerate, 0 - otherwise.
 %
-%    1 - if ellipsoid E is degenerate, 0 - otherwise.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, DIMENSION.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   [m, n] = size(E);
 

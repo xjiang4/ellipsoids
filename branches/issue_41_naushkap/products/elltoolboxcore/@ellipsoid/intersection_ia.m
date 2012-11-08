@@ -4,10 +4,7 @@ function E = intersection_ia(E1, X)
 %                   of ellipsoid and ellipsoid, or ellipsoid and halfspace,
 %                   or ellipsoid and polytope.
 %
-%
 % Description:
-% ------------
-%
 %  E = INTERSECTION_IA(E1, E2) Given two ellipsoidal arrays of equal sizes,
 %                              E1 and E2, or, alternatively, E1 or E2 must be
 %                              a single ellipsoid, comuptes the internal
@@ -26,28 +23,22 @@ function E = intersection_ia(E1, X)
 %                              the internal ellipsoidal approximations of
 %                              intersections of ellipsoids E1 and polytopes P.
 %
+% Input:
+%   regular:
+%       E1: ellipsod [mRows, nCols] - ellipsoid or array of ellipsoids.
+%       X: ellipsoid [mRows, nCols] - ellipsoidal array of the same size.
+%          Or
+%          hyperplane [mRows, nCols] - array of hyperplanes of the same size.
+%          Or
+%          polytope [mRows, nCols] - array of polytopes of the same size.
 %
 % Output:
-% -------
-%
-%    E - array of internal approximating ellipsoids;
+%    E: ellipsod [mRows, nCols] - array of internal approximating ellipsoids;
 %        entries can be empty ellipsoids if the corresponding intersection
 %        is empty.
 %
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, INTERSECTION_EA, INTERSECT, DISTANCE,
-%    HYPERPLANE/HYPERPLANE, POLYTOPE/POLYTOPE.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

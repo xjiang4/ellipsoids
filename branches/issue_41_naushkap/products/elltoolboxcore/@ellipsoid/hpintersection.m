@@ -1,44 +1,31 @@
 function [I, isnIntersectedMat] = hpintersection(E, H)
-
 import modgen.common.throwerror 
-
 %
 % HPINTERSECTION - computes the intersection of ellipsoid with hyperplane.
 %
-%
 % Description:
-% ------------
-%
 %    I = HPINTERSECTION(E, H)  Given array of ellipsoids E and array of hyperplane
 %                              structures H of the same size, or, alternatively,
 %                              E can be single ellipsoid or H - single hyperplane,
 %                              compute intersections of ellipsoids with
 %                              hyperplanes pairwise.
 %
-%
-% 
-%
+% Input:
+%   regular:
+%       E: ellipsoid [mRows, nCols] - array of ellipsoids.
+%       H: hyperplane [mRows, nCols] - array of hyperplanes of the same size.
 %
 % Output:
-% -------
-%      I - array of ellipsoids resulting from intersections.
-%      isnIntersectedMat - logical matrix. 
-%      isnIntersectedMat(i, j) = true, if E(i, j) doesn't intersect H(i, j)
-%      isnIntersectedMat(i, j) = false, otherwise. 
-%        
+%   regular:
+%      I: ellipsoid [mRows, nCols] - array of ellipsoids resulting from intersections.
 %
-% See also:
-% ---------
+%   optional:
+%      isnIntersectedMat - logical[mRows, nCols].
+%          - isnIntersectedMat(i, j) = true, if E(i, j) doesn't intersect H(i, j)
+%          - isnIntersectedMat(i, j) = false, otherwise. 
 %
-%    ELLIPSOID/ELLIPSOID, DISTANCE, INTERSECT, HYPERPLANE/HYPERPLANE.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 
@@ -187,3 +174,5 @@ function I = l_compute1intersection(E, H, n)
   Z   = (1 - h) * [0 zeros(1, n-1); zeros(n-1, 1) W];
   I   = ellipsoid(z, Z);
   I   = ell_inv(T)*(I + f);
+
+  return;

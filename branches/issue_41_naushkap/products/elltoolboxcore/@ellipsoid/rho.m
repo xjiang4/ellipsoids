@@ -3,10 +3,7 @@ function [res, x] = rho(E, L)
 % RHO - computes the values of the support function for given ellipsoid
 %       and given direction.
 %
-%
 % Description:
-% ------------
-%
 %         RES = RHO(E, L)  Computes the support function of the ellipsoid E
 %                          in directions specified by the columns of matrix L.
 %                          Or, if E is array of ellipsoids, L is expected to be
@@ -29,32 +26,24 @@ function [res, x] = rho(E, L)
 %    Vector x, at which the maximum at (1) is achieved is defined by
 %       (3)  q + Ql/sqrt(<l, Ql>)
 %
+% Input:
+%   regular:
+%       E: ellipsoid [1, 1]/[1, nCols] - ellipsoid or array of ellipsoids of the same dimentions nDim.
+%       L: numeric [nDim, nCols]/[nDim, 1] - matrix whose columns specify the directions for which the
+%       support function needs to be computed.
 %
 % Output:
-% -------
-%
-%    RES - the values of the support function for the specified ellipsoid E
+%    res: numeric[1, nCols] - the values of the support function for the specified ellipsoid E
 %          and directions L. Or, if E is an array of ellipsoids, and L - single
 %          vector, then these are values of the support function for all the
 %          ellipsoids in the array in the given direction.
-%      X - boundary points of the ellipsoid E that correspond to directions in L.
+%      x: numeric[nDim, nCols] - boundary points of the ellipsoid E that correspond to directions in L.
 %          Or, if E is an array of ellipsoids, and L - single vector,
 %          then these are boundary points of all the ellipsoids in the array
 %          in the given direction.
 %
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   if ~(isa(E, 'ellipsoid'))
     error('RHO: first argument must be ellipsoid.');

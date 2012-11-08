@@ -2,34 +2,23 @@ function EP = projection(E, B)
 %
 % PROJECTION - computes projection of the ellipsoid onto the given subspace.
 %
-%
 % Description:
-% ------------
-%
 %    EP = PROJECTION(E, B)  Computes projection of the ellipsoid E onto a subspace,
 %                           specified by orthogonal basis vectors B.
 %                           E can be an array of ellipsoids of the same dimension.
 %                           Columns of B must be orthogonal vectors.
 %
+% Input:
+%   regular:
+%       E: ellipsoid [mRows, nCols] - ellipsoid or array of ellipsoids of the same dimentions nDimEll.
+%       B: numeric[nDimEll, nDimSubspace] - matrix in R^{nDimEll x
+%       nDimSubspace} whose colums are orthogonal.
 %
 % Output:
-% -------
+%    EP: ellipsoid [mRows, nCols] - array of projected ellipsoid (or array of ellipsoids), generally, of lower dimension.
 %
-%    EP - projected ellipsoid (or array of ellipsoids), generally, of lower dimension.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

@@ -3,35 +3,27 @@ function EA = minkmp_ea(E1, E2, EE, L)
 % MINKMP_EA - computation of external approximating ellipsoids
 %             of (E0 - E) + (E1 + ... + En) in given directions.
 %
-%
 % Description:
-% ------------
-%
-% EA = MINKMP_EA(E0, E, EE, L)  Computes external approximating ellipsoids
+%   EA = MINKMP_EA(E0, E, EE, L)  Computes external approximating ellipsoids
 %                               of (E0 - E) + (E1 + E2 + ... + En),
 %                               where E1, E2, ..., En are ellipsoids in array EE,
 %                               in directions specified by columns of matrix L.
 %
+% Input:
+%   regular:
+%       E1: ellipsoid [1, 1] - first ellipsoid. Suppose nDim - space
+%       dimension.
+%       E2: ellipsoid [1, 1] - second ellipsoid of the same dimention.
+%       EE: ellipsoid [1, nCols] - array of ellipsoids of the same dimentions.
+%       L: numeric[nDim, nCols] - matrix whose columns specify the directions for which the
+%       approximations should be computed.
 %
 % Output:
-% -------
-%
-%    EA - array of external approximating ellipsoids
+%    EA: ellipsoid [1, nCols] - array of external approximating ellipsoids
 %         (empty, if for all specified directions approximations cannot be computed).
 %
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, MINKMP, MINKMP_IA, MINKSUM_EA, MINKDIFF_EA, MINKPM_EA.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

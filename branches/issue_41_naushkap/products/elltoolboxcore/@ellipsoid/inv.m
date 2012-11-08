@@ -2,32 +2,19 @@ function I = inv(E)
 %
 % INV - inverts shape matrices of ellipsoids in the given array.
 %
-%
 % Description:
-% ------------
-%
 %    I = INV(E)  Inverts shape matrices of ellipsoids in the array E.
 %                In case shape matrix is sigular, it is regularized before inversion.
 %
+% Input:
+%   regular:
+%       E: ellipsoid [1, nCols] - array of ellipsoids.
 %
 % Output:
-% -------
+%    I: ellipsoid [1, nCols] - array of ellipsoids with inverted shape matrices.
 %
-%    I - array of ellipsoids with inverted shape matrices.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   if ~(isa(E, 'ellipsoid'))
     error('INV: input argument must be array of ellipsoids.');

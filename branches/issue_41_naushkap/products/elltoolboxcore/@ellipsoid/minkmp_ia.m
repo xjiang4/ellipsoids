@@ -3,35 +3,27 @@ function IA = minkmp_ia(E1, E2, EE, L)
 % MINKMP_IA - computation of internal approximating ellipsoids
 %             of (E0 - E) + (E1 + ... + En) in given directions.
 %
-%
 % Description:
-% ------------
-%
-% IA = MINKMP_IA(E0, E, EE, L)  Computes internal approximating ellipsoids
+%   IA = MINKMP_IA(E0, E, EE, L)  Computes internal approximating ellipsoids
 %                               of (E0 - E) + (E1 + E2 + ... + En),
 %                               where E1, E2, ..., En are ellipsoids in array EE,
 %                               in directions specified by columns of matrix L.
 %
+% Input:
+%   regular:
+%       E1: ellipsoid [1, 1] - first ellipsoid. Suppose nDim - space
+%       dimension.
+%       E2: ellipsoid [1, 1] - second ellipsoid of the same dimention.
+%       EE: ellipsoid [1, nCols] - array of ellipsoids of the same dimentions.
+%       L: numeric[nDim, nCols] - matrix whose columns specify the directions for which the
+%       approximations should be computed.
 %
 % Output:
-% -------
-%
-%    IA - array of internal approximating ellipsoids
+%    IA: ellipsoid [1, nCols] - array of internal approximating ellipsoids
 %         (empty, if for all specified directions approximations cannot be computed).
 %
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, MINKMP, MINKMP_EA, MINKSUM_IA, MINKDIFF_IA, MINKPM_IA.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

@@ -2,6 +2,17 @@ function [d, g] = distobjfun(x, E1, E2, varargin)
 %
 % DISTOBJFUN - objective function for calculation of distance between two ellipsoids.
 %
+% Input:
+%   regular:
+%       E1, E2: ellipsoid [1, 1] - ellipsoids of the same dimentions nDims.
+%       x: numeric[nDims, 1] - Direction vector.
+%
+% Output:
+%    d: numeric[1, 1] -
+%    g: numeric[nDims, 1] -
+%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   q1 = E1.center;
   Q1 = E1.shape;

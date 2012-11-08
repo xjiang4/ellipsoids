@@ -2,31 +2,18 @@ function T = trace(E)
 %
 % TRACE - returns the trace of the ellipsoid.
 %
-%
 % Description:
-% ------------
-%
 %    T = TRACE(E)  Computes the trace of ellipsoids in ellipsoidal array E.
 %
+% Input:
+%   regular:
+%       E: ellipsoid [nRows, nCols] - ellipsoid or array of ellipsoids.
 %
 % Output:
-% -------
+%    T: numeric[nRows, nCols] - array of trace values.
 %
-%    T - array of trace values, same size as E.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

@@ -1,12 +1,9 @@
 function [sd, ed] = dimension(E)
 %
 % DIMENSION - returns the dimension of the space in which the ellipsoid
-%             is defined and the dimension of the ellipsoid.
-%
+%             is defined and the actual dimension of the ellipsoid.
 %
 % Description:
-% ------------
-%
 %    [SD, ED] = DIMENSION(E)  Retrieves the space dimension SD in which
 %                             the ellipsoid E is defined and the actual
 %                             dimension ED of this ellipsoid.
@@ -14,26 +11,19 @@ function [sd, ed] = dimension(E)
 %          SD = DIMENSION(E)  Retrieves just the space dimension SD in which
 %                             the ellipsoid E is defined.
 %
+% Input:
+%   regular:
+%       E: ellipsoid [1, 1] - single ellipsoid.
 %
 % Output:
-% -------
+%   regular:
+%       SD: numeric[1, 1] - space dimension.
 %
-%    SD - space dimension.
-%    ED - dimension of the ellipsoid E.
+%   optional:
+%       ED: numeric[1, 1] - dimension of the ellipsoid E.
 %
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, ISDEGENERATE.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

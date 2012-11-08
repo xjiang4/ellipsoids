@@ -1,34 +1,25 @@
 function res = minus(E, b)
 %
+% MINUS - overloaded operator '-'
 %
 % Description:
-% ------------
-%
 %    Operation
 %              E - b
 %    where E is an ellipsoid in R^n, and b - vector in R^n.
 %    If E(q, Q) is an ellipsoid with center q and shape matrix Q, then
 %          E(q, Q) - b = E(q - b, Q).
 %
+% Input:
+%   regular:
+%       E: ellipsoid [1, nCols] - array of ellipsoids of the same dimentions nDim.
+%       b: numeric[nDim, nCols] - matrix whose columns specify the vectors.
 %
 % Output:
-% -------
+%    res: ellipsoid [1, nCols] - ellipsoid or array of ellipsoids with same
+%    shapes as E, but with centers shifted by vectors in -b.
 %
-%    Resulting ellipsoid E(q - b, Q).
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   if ~(isa(E, 'ellipsoid'))
     error('MINUS: first argument must be ellipsoid.');

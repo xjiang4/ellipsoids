@@ -1,17 +1,13 @@
 function display(E)
 %
-% Description:
-% ------------
+%    DISPLAY - Displays the details of the ellipsoid object.
 %
-%    Displays ellipsoid object.
+% Input:
+%   regular:
+%       E: ellipsod [1, nCols] - ellipsoid or array of ellipsoids.
 %
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   fprintf('\n');
   disp([inputname(1) ' =']);

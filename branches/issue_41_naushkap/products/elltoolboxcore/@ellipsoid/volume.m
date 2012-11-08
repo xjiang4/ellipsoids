@@ -2,35 +2,22 @@ function V = volume(E)
 %
 % VOLUME - returns the volume of the ellipsoid.
 %
-%
 % Description:
-% ------------
-%
 %    V = VOLUME(E)  Computes the volume of ellipsoids in ellipsoidal array E.
 %
 %    The volume of ellipsoid E(q, Q) with center q and shape matrix Q is given by
 %                  V = S sqrt(det(Q))
 %    where S is the volume of unit ball.
 %
+% Input:
+%   regular:
+%       E: ellipsoid [nRows, nCols] - ellipsoid or array of ellipsoids.
 %
 % Output:
-% -------
+%    V: numeric[nRows, nCols] - array of volume values.
 %
-%    V - array of volume values, same size as E.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

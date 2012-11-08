@@ -3,10 +3,7 @@ function IA = minksum_ea(E, L)
 % MINKSUM_IA - computation of internal approximating ellipsoids of the geometric
 %              sum of ellipsoids in given directions.
 %
-%
 % Description:
-% ------------
-%
 %    IA = MINKSUM_IA(E, L)  Computes tight internal approximating ellipsoids
 %                           for the geometric sum of the ellipsoids in the array E
 %                           in directions specified by columns of L.
@@ -27,25 +24,17 @@ function IA = minksum_ea(E, L)
 %    where S1 = I (identity), and S2, ..., Sm are orthogonal matrices such that
 %    vectors (S1 Q1^(1/2) l), ..., (Sm Qm^(1/2) l) are parallel.
 %
+% Input:
+%   regular:
+%       E: ellipsoid [1, nCols] - array of ellipsoids of the same dimentions.
+%       L: numeric[nDim, nCols] - matrix whose columns specify the directions for which the
+%       approximations should be computed.
 %
 % Output:
-% -------
+%    EA: ellipsoid [1, nCols] - array internal approximating ellipsoids.
 %
-%    IA - array internal approximating ellipsoids.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, MINKSUM, MINKSUM_EA, MINKDIFF, MINKDIFF_EA, MINKDIFF_IA.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

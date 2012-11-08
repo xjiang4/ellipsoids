@@ -1,17 +1,20 @@
 function I = uminus(E)
 %
-% Description:
-% ------------
+% UMINUS - overloaded operation unitary minus.
 %
+% Description:
 %    Changes the sign of the center of ellipsoid.
 %
-
+% Input:
+%   regular:
+%       E: ellipsoid [nRows, nCols] - ellipsoid or array of ellipsoids.
 %
-% Author:
-% -------
+% Output:
+%    E: ellipsoid [nRows, nCols] - array of ellipsoids as in E, whose
+%       centers are multilied by -1.
 %
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   if ~(isa(E, 'ellipsoid'))
     error('UMINUS: input argument must be array of ellipsoids.');

@@ -2,11 +2,8 @@ function plot(varargin)
 %
 % PLOT - plots ellipsoids in 2D or 3D.
 %
-%
 % Description:
-% ------------
-%
-% PLOT(E, OPTIONS) plots ellipsoid E if 1 <= dimension(E) <= 3.
+%   PLOT(E, OPTIONS) plots ellipsoid E if 1 <= dimension(E) <= 3.
 %
 %                  PLOT(E)  Plots E in default (red) color.
 %              PLOT(EA, E)  Plots array of ellipsoids EA and single ellipsoid E.
@@ -20,25 +17,15 @@ function plot(varargin)
 % Options.color        - sets default colors in the form [x y z].
 % Options.shade = 0-1  - level of transparency (0 - transparent, 1 - opaque).
 %
+% Input:
+%   regular:
+%       E: ellipsoid [1, nCols] - single ellipsoid or array of ellipsoids of dimention 1 <= dimension(E) <= 3.
 %
-% Output:
-% -------
+%   properties:
+%       OPTIONS: options structure, go to description.
 %
-%    None.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
-
-% 
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

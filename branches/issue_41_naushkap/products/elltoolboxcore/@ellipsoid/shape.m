@@ -2,36 +2,24 @@ function EM = shape(E, A)
 %
 % SHAPE - modifies the shape matrix of the ellipsoid without changing its center.
 %
-%
 % Description:
-% ------------
-%
 %    EM = SHAPE(E, A)  Modifies the shape matrices of the ellipsoids in the
 %                      ellipsoidal array E. The centers remain untouched -
 %                      that is the difference of the function SHAPE and
 %                      linear transformation A*E.
 %                      A is expected to be a scalar or a square matrix
 %                      of suitable dimension.
-%        
+%  
+% Input:
+%   regular:
+%       E: ellipsoid [nRows, nCols] - ellipsoid or array of ellipsoids.
+%       A: numeric[nDim, nDim] / [1, 1] - scalar or matrix in R^{nDim x nDim}
 %
 % Output:
-% -------
+%    EM: ellipsoid [nRows, nCols] - array of modified ellipsoids.
 %
-%    EM - array of modified ellipsoids.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   if ~(isa(A, 'double')) | ~(isa(E, 'ellipsoid'))
     msg = sprintf('SHAPE: expected arguments are:\n');

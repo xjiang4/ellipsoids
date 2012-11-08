@@ -2,31 +2,19 @@ function M = mineig(E)
 %
 % MINEIG - return the minimal eigenvalue of the ellipsoid.
 %
-%
 % Description:
-% ------------
-%
 %    M = MINEIG(E)  Returns the smallest eigenvalues of ellipsoids in the array E.
 %
+% Input:
+%   regular:
+%       E: ellipsoid [mRows, nCols] - array of ellipsoids.
 %
 % Output:
-% -------
+%    M: numeric[mRows, nCols] - array of minimal eigenvalues of ellipsoids
+%       in the input array E.
 %
-%    M - array of minimal eigenvalues of ellipsoids in the input array E.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, ISDEGENERATE, MAXEIG.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

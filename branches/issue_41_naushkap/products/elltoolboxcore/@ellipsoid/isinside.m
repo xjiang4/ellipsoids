@@ -3,9 +3,7 @@ function [res, status] = isinside(E1, E2, s)
 % ISINSIDE - checks if the intersection of ellipsoids contains the union or
 %            intersection of given ellipsoids or polytopes.
 %
-%
 % Description:
-% ------------
 %
 % RES = ISINSIDE(E1, E2, s) Checks if the union (s = 'u') or intersection (s = 'i')
 %                           of ellipsoids in E2 lies inside the intersection of
@@ -54,32 +52,30 @@ function [res, status] = isinside(E1, E2, s)
 %    We use YALMIP as interface to the optimization tools.
 %    (http://control.ee.ethz.ch/~joloef/yalmip.php)
 %
+% Input:
+%   regular:
+%       E1: ellipsod [mRows, nCols] - ellipsoid or array of ellipsoids.
+%       E2: ellipsoid [mRows, nCols] - ellipsoidal array of the same size.
+%          Or
+%          polytope [mRows, nCols] - array of polytopes of the same size.
+%
+%   properties:
+%          s: char[1, 1] - 'u' or 'i', go to description.
 %
 % Output:
-% -------
-%
-%    RES - result:
+%   regular:
+%       res: numeric[mRows, nCols] - result:
 %           -1 - problem is infeasible,
 %                for example, if s = 'i', but the intersection of ellipsoids in E2
 %                is an empty set;
 %            0 - intersection is empty;
 %            1 - if intersection is nonempty.
-%    S   - (optional) status variable returned by YALMIP.
 %
+%   optional:
+%       status  - status variable returned by YALMIP.
 %
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, INTERSECT, ISINTERNAL,
-%    POLYTOPE/POLYTOPE.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%    Vadim Kaushanskiy <vkaushanskiy@gmail.com>
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 
@@ -158,7 +154,7 @@ function [res, status] = isinside(E1, E2, s)
       error('ISINSIDE: ellipsoids must be of the same dimension.');
     end
     if ellOptions.verbose > 0
-      fprintf('Invoking CVX...\n');
+      fprintf('Invoking YALMIP...\n');
     end
     [m, n] = size(E1);
     res    = 1;
@@ -205,40 +201,37 @@ function [res, status] = qcqp(EA, E)
   end
   Q = ell_inv(Q);
   Q = 0.5*(Q + Q');
+
+  % YALMIP
+  x         = sdpvar(length(Q), 1);
+  objective = x'*Q*x + 2*(-Q*q)'*x + (q'*Q*q - 1);
+  F         = set([]);
   
-[m, n] = size(EA);
- 
-cvx_begin sdp
-    variable x(length(Q), 1)
-   
-    minimize(x'*Q*x + 2*(-Q*q)'*x + (q'*Q*q - 1))
-    subject to
-      for i = 1:m
-        for j = 1:n
-        [q, Q] = parameters(EA(i, j));
-        if size(Q, 2) > rank(Q)
-            Q = regularize(Q);
-        end
-        Q = ell_inv(Q);
-        Q = 0.5*(Q + Q');
-        x'*Q*x + 2*(-Q*q)'*x + (q'*Q*q - 1) <= 0;
+  [m, n] = size(EA);
+  for i = 1:m
+    for j = 1:n
+      [q, Q] = parameters(EA(i, j));
+      if size(Q, 2) > rank(Q)
+        Q = regularize(Q);
+      end
+      Q = ell_inv(Q);
+      Q = 0.5*(Q + Q');
+
+      % YALMIP
+      F = F + set(x'*Q*x + 2*(-Q*q)'*x + (q'*Q*q - 1) <= 0);
     end
   end
-cvx_end
 
-
-  status = 1;
-  if strcmp(cvx_status,'Failed')
-    throwerror('cvxError','Cvx failed');
-  end;
-  if strcmp(cvx_status,'Infeasible') || strcmp(cvx_status,'Inaccurate/Infeasible')
+  % YALMIP 
+  status = solvesdp(F, -objective, ellOptions.sdpsettings);
+  
+  if status.problem ~= 0
     % problem is infeasible, or global minimum cannot be found
     res = -1;
-    status = 0;
     return;
   end
-   
-  if (x'*Q*x + 2*(-Q*q)'*x + (q'*Q*q - 1)) < ellOptions.abs_tol
+
+  if double(objective) < ellOptions.abs_tol
     res = 1;
   else
     res = 0;

@@ -2,9 +2,7 @@ function [y, Y] = minkdiff(varargin)
 %
 % MINKDIFF - computes geometric (Minkowski) difference of two ellipsoids in 2D or 3D.
 %
-%
 % Description:
-% ------------
 %
 % MINKDIFF(E1, E2, OPTIONS)  Computes geometric difference of two ellipsoids
 %                            E1 - E2, if 1 <= dimension(E1) = dimension(E2) <= 3,
@@ -23,7 +21,6 @@ function [y, Y] = minkdiff(varargin)
 %    must be bigger than E2 in the sense that if E1 and E2 had the same center,
 %    E2 would be contained inside E1.
 %
-%
 % Options.show_all     - if 1, displays also ellipsoids E1 and E2.
 % Options.newfigure    - if 1, each plot command will open a new figure window.
 % Options.fill         - if 1, the resulting set in 2D will be filled with color.
@@ -31,26 +28,21 @@ function [y, Y] = minkdiff(varargin)
 % Options.shade = 0-1  - level of transparency (0 - transparent, 1 - opaque).
 %
 %
+% Input:
+%   regular:
+%       E1: ellipsoid [1, 1] - first ellipsoid. Suppose nDim - space
+%       dimension, nDim = 2 or 3.
+%       E2: ellipsoid [1, 1] - second ellipsoid of the same dimention.
+%
+%   properties:
+%       OPTIONS:  options structure, go to description.
+%
 % Output:
-% -------
+%    y: numeric[nDim, 1] - center of the resulting set.
+%    Y: numeric[nDim,] - set of boundary points (vertices) of resulting set.
 %
-%    y - center of the resulting set.
-%    Y - set of boundary points (vertices) of resulting set.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, MINKDIFF_EA, MINKDIFF_IA, ISBIGGER, ISBADDIRECTION,
-%                         MINKSUM, MINKSUM_EA, MINKSUM_IA.
-%
-
-% 
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

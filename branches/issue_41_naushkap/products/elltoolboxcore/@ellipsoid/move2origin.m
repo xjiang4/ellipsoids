@@ -2,31 +2,19 @@ function EO = move2origin(E)
 %
 % MOVE2ORIGIN - moves ellipsoids in the given array to the origin.
 %
-%
 % Description:
-% ------------
-%
 %    EO = MOVE2ORIGIN(E)  Replaces the centers of ellipsoids in E with zero vectors.
 %
+% Input:
+%   regular:
+%       E: ellipsoid [1, nCols] - ellipsoid or array of ellipsoids.
 %
 % Output:
-% -------
+%    E0: ellipsoid [1, nCols] - array of ellipsoids with the same shapes as
+%        in E centered at the origin.
 %
-%    EO - array of ellipsoids with the same shapes as in E centered at the origin.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   if ~(isa(E, 'ellipsoid'))
     error('MOVE2ORIGIN: argument must be array of ellipsoids.');

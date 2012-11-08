@@ -2,11 +2,7 @@ function [E] = ellipsoid(varargin)
 %
 % ELLIPSOID - constructor of the ellipsoid object.
 %
-%
-% Description:
-% ------------
-%
-%    
+% Description:  
 %          E = ELLIPSOID  Creates an empty ellipsoid.
 %       E = ELLIPSOID(Q)  Creates an ellipsoid with shape matrix Q, centered at 0.
 %    E = ELLIPSOID(q, Q)  Creates an ellipsoid with shape matrix Q and center q.
@@ -17,25 +13,17 @@ function [E] = ellipsoid(varargin)
 %    in which ellipsoid E is defined and the actual dimension of the ellipsoid;
 %    function ISDEGENERATE(E) checks if ellipsoid E is degenerate.
 %
+% Input:
+%   optional:
+%       q: numeric[nDims, 1] - center of ellipsoid.
+%          default values - 0.
+%       Q: numeric[nDims, nDims] - shape matrix of ellipsoid.
 %
 % Output:
-% -------
+%    E: ellipsoid object [1, 1] - { x : <(x - q), Q^(-1)(x - q)> <= 1 } - ellipsoid.
 %
-%    E = { x : <(x - q), Q^(-1)(x - q)> <= 1 } - ellipsoid.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/CONTENTS.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

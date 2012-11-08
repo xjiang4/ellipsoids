@@ -3,9 +3,7 @@ function [res, status] = intersect(E, X, s)
 % INTERSECT - checks if the union or intersection of ellipsoids intersects
 %             given ellipsoid, hyperplane or polytope.
 %
-%
 % Description:
-% ------------
 %
 % RES = INTERSECT(E, X, s)  Checks if the union (s = 'u') or intersection (s = 'i')
 %                           of ellipsoids in E intersects with objects in X.
@@ -60,37 +58,36 @@ function [res, status] = intersect(E, X, s)
 %    We use YALMIP as interface to optimization tools.
 %    (http://control.ee.ethz.ch/~joloef/yalmip.php)
 %
+% Input:
+%   regular:
+%       E: ellipsod [mRows, nCols] - ellipsoid or array of ellipsoids.
+%       X: ellipsoid [mRows, nCols] - ellipsoidal array of the same size.
+%          Or
+%          hyperplane [mRows, nCols] - array of hyperplanes of the same size.
+%          Or
+%          polytope [mRows, nCols] - array of polytopes of the same size.
+%
+%   properties:
+%          s: char[1, 1] - 'u' or 'i', go to description.
 %
 % Output:
-% -------
+%   regular:
+%          res: numeric[mRows, nCols] - return:
+%                -1 in case parameter s is set to 'i' and the intersection
+%                   of ellipsoids in E is empty
+%                0 if the union or intersection of ellipsoids in E does not
+%                   intersect the object in X
+%                1 if the union or intersection of ellipsoids in E and the
+%                object in X have nonempty intersection
 %
-%    RES - result:
-%           -1 - problem is infeasible,
-%                for example, if s = 'i', but the intersection of ellipsoids in E
-%                is an empty set;
-%            0 - intersection is empty;
-%            1 - if intersection is nonempty.
+%   optional:
+%          status - status variable returned by YALMIP.
 %
-%     S   - (optional) status variable returned by YALMIP.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, ISINSIDE, DISTANCE,
-%    HYPERPLANE/HYPERPLANE, POLYTOPE/POLYTOPE,
-%    YALMIP.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%    Vadim Kaushanskiy <vkaushanskiy@gmail.com>
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
-  import modgen.common.throwerror
+
   if ~isstruct(ellOptions)
     evalin('base', 'ellipsoids_init;');
   end
@@ -131,7 +128,7 @@ function [res, status] = intersect(E, X, s)
       error('INTERSECT: ellipsoids must be of the same dimension.');
     end
     if ellOptions.verbose > 0
-      fprintf('Invoking CVX...\n');
+      fprintf('Invoking YALMIP...\n');
     end
     [m, n] = size(X);
     res    = [];
@@ -158,7 +155,7 @@ function [res, status] = intersect(E, X, s)
       error('INTERSECT: ellipsoids and hyperplanes must be of the same dimension.');
     end
     if ellOptions.verbose > 0
-      fprintf('Invoking CVX...\n');
+      fprintf('Invoking YALMIP...\n');
     end
     [m, n] = size(X);
     res    = [];
@@ -193,7 +190,7 @@ function [res, status] = intersect(E, X, s)
       error('INTERSECT: ellipsoids and polytopes must be of the same dimension.');
     end
     if ellOptions.verbose > 0
-      fprintf('Invoking CVX...\n');
+      fprintf('Invoking YALMIP...\n');
     end
     res    = [];
     status = [];
@@ -227,9 +224,9 @@ function [res, status] = qcqp(EA, E)
 % QCQP - formulate quadratically constrained quadratic programming problem
 %        and invoke external solver.
 %
-  import modgen.common.throwerror;
+
   global ellOptions;
-  status = 1;
+
   [q, Q] = parameters(E(1, 1));
   if size(Q, 2) > rank(Q)
     if ellOptions.verbose > 0
@@ -240,39 +237,42 @@ function [res, status] = qcqp(EA, E)
   end
   Q = ell_inv(Q);
   Q = 0.5*(Q + Q');
-  QQ = Q;
-  qq = q;
-  %cvx
+  
+  % YALMIP
+  x         = sdpvar(length(Q), 1);
+  objective = x'*Q*x + 2*(-Q*q)'*x + (q'*Q*q - 1);
+  F         = set([]);
+  
   [m, n] = size(EA);
+  for i = 1:m
+    for j = 1:n
+      [q, Q] = parameters(EA(i, j));
+      if size(Q, 2) > rank(Q)
+        Q = regularize(Q);
+      end
+      Q = ell_inv(Q);
+      Q = 0.5*(Q + Q');
 
+      % YALMIP
+      F = F + set(x'*Q*x + 2*(-Q*q)'*x + (q'*Q*q - 1) <= 0);
+    end
+  end
 
-  cvx_begin sdp
-    variable x(length(Q), 1)
-    minimize(x'*Q*x + 2*(-Q*q)'*x + (q'*Q*q - 1))
-    subject to      
-        for i = 1:m
-            for j = 1:n
-                [q, Q] = parameters(EA(i, j));
-                if size(Q, 2) > rank(Q)
-                    Q = regularize(Q);
-                end
-                Q = ell_inv(Q);
-                Q = 0.5*(Q + Q');
-                x'*Q*x + 2*(-Q*q)'*x + (q'*Q*q - 1) <= 0;
-            end
-         end
+  % YALMIP 
+  
+  status = solvesdp(F, objective, ellOptions.sdpsettings);
+  
+  if status.problem ~= 0
+    % problem is infeasible, or global minimum cannot be found
+    res = -1;
+    return;
+  end
 
-  cvx_end
-  if strcmp(cvx_status,'Infeasible') || strcmp(cvx_status,'Inaccurate/Infeasible')
-      res = -1;
-      return;
-  end;
-  if x'*QQ*x + 2*(-QQ*qq)'*x + (qq'*QQ*qq - 1) <= ellOptions.abs_tol
-      res = 1;
+  if double(objective) < ellOptions.abs_tol
+    res = 1;
   else
-      res = 0;
-  end;
-
+    res = 0;
+  end
 
   return;
 
@@ -287,46 +287,51 @@ function [res, status] = lqcqp(EA, H)
 % LQCQP - formulate quadratic programming problem with linear and quadratic constraints,
 %         and invoke external solver.
 %
-  import modgen.common.throwerror;
+
   global ellOptions;
-  status = 1;
+
   [v, c] = parameters(H);
   if c < 0
     c = -c;
     v = -v;
   end
+
+  % YALMIP
+  x         = sdpvar(size(v, 1), 1);
+  objective = v'*x - c;
+  F         = set([]);
   
-  %cvx
   [m, n] = size(EA);
+  for i = 1:m
+    for j = 1:n
+      [q, Q] = parameters(EA(i, j));
+      if size(Q, 2) > rank(Q)
+        Q = regularize(Q);
+      end
+      Q  = ell_inv(Q);
+      Q  = 0.5*(Q + Q');
 
+      % YALMIP
+      F = F + set(x'*Q*x - 2*q'*Q*x + (q'*Q*q - 1) <= 0);
+    end
+  end
 
-  cvx_begin sdp
-    variable x(size(v, 1), 1)
-    minimize(abs(v'*x - c))
-    subject to      
-        for i = 1:m
-            for j = 1:n
-                [q, Q] = parameters(EA(i, j));
-                if size(Q, 2) > rank(Q)
-                    Q = regularize(Q);
-                end
-                Q  = ell_inv(Q);
-                x'*Q*x - 2*q'*Q*x + (q'*Q*q - 1) <= 0;
-            end
-        end
+  % YALMIP 
+  status = solvesdp(F, objective, ellOptions.sdpsettings);
 
-  cvx_end
-  if strcmp(cvx_status,'Infeasible') || strcmp(cvx_status, 'Inaccurate/Infeasible')
-      res = -1;
-      return;
-  end;
-  
-  
-  if abs(v'*x - c) <= ellOptions.abs_tol
-      res = 1;
+  if status.problem ~= 0
+    % problem is infeasible, or global minimum cannot be found
+    res = -1;
+    return;
+  end
+
+  F   = F + set(v'*x - c == 0);
+  status = solvesdp(F, objective, ellOptions.sdpsettings);
+  if status.problem ~= 0
+    res = 0;
   else
-      res = 0;
-  end;
+    res = 1;
+  end
 
   return;
 
@@ -341,40 +346,46 @@ function [res, status] = lqcqp2(EA, P)
 % LQCQP2 - formulate quadratic programming problem with linear and quadratic constraints,
 %         and invoke external solver.
 %
-  import modgen.common.throwerror;
-  global ellOptions;
-  status = 1;
-  [A, b] = double(P);
-  [m, n] = size(EA);
-  
-  cvx_begin sdp
-    variable x(size(A, 2), 1)
-    minimize(A(1, :)*x)
-    subject to      
-        for i = 1:m
-            for j = 1:n
-                [q, Q] = parameters(EA(i, j));
-                if size(Q, 2) > rank(Q)
-                    Q = regularize(Q);
-                end
-                Q  = ell_inv(Q);
-                Q  = 0.5*(Q + Q');
-                x'*Q*x - 2*q'*Q*x + (q'*Q*q - 1) <= 0;
-            end
-        end
 
-  cvx_end
+  global ellOptions;
+
+  [A, b] = double(P);
+
+  % YALMIP
+  x         = sdpvar(size(A, 2), 1);
+  objective = A(1, :)*x;
+  F         = set([]);
   
-if strcmp(cvx_status,'Failed')
-    throwerror('cvxError','Cvx failed');
-end;
-  if strcmp(cvx_status,'Infeasible') || strcmp(cvx_status,'Inaccurate/Infeasible')
-      res = -1;
-      return;
-  end;
-  if A(1, :)*x <= ellOptions.abs_tol
-      res = 1;
+  [m, n] = size(EA);
+  for i = 1:m
+    for j = 1:n
+      [q, Q] = parameters(EA(i, j));
+      if size(Q, 2) > rank(Q)
+        Q = regularize(Q);
+      end
+      Q  = ell_inv(Q);
+      Q  = 0.5*(Q + Q');
+
+      % YALMIP
+      F = F + set(x'*Q*x - 2*q'*Q*x + (q'*Q*q - 1) <= 0);
+    end
+  end
+
+  % YALMIP 
+  status = solvesdp(F, objective, ellOptions.sdpsettings);
+
+  if status.problem ~= 0
+    % problem is infeasible, or global minimum cannot be found
+    res = -1;
+    return;
+  end
+
+  F   = F + set(A*x - b <= 0);
+  status = solvesdp(F, objective, ellOptions.sdpsettings);
+  if status.problem ~= 0
+    res = 0;
   else
-      res = 0;
-  end;
-  
+    res = 1;
+  end
+
+  return;

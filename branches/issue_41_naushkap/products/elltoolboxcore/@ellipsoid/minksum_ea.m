@@ -3,10 +3,7 @@ function EA = minksum_ea(E, L)
 % MINKSUM_EA - computation of external approximating ellipsoids of the geometric
 %              sum of ellipsoids in given directions.
 %
-%
 % Description:
-% ------------
-%
 %    EA = MINKSUM_EA(E, L)  Computes tight external approximating ellipsoids
 %                           for the geometric sum of the ellipsoids in the array E
 %                           in directions specified by columns of L.
@@ -27,25 +24,18 @@ function EA = minksum_ea(E, L)
 %    where
 %          p1 = sqrt(<l, Q1l>), ..., pm = sqrt(<l, Qml>).
 %
+% Input:
+%   regular:
+%       E: ellipsoid [1, nCols] - array of ellipsoids of the same dimentions.
+%       L: numeric[nDim, nCols] - matrix whose columns specify the directions for which the
+%       approximations should be computed.
 %
 % Output:
-% -------
+%    EA: ellipsoid [1, nCols] - array external approximating ellipsoids.
 %
-%    EA - array external approximating ellipsoids.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, MINKSUM, MINKSUM_IA, MINKDIFF, MINKDIFF_EA, MINKDIFF_IA.
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
 
   global ellOptions;
 

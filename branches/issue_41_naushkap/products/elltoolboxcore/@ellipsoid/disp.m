@@ -1,17 +1,14 @@
 function disp(E)
 %
-% Description:
-% ------------
+%    DISP - Displays ellipsoid object.
 %
-%    Displays ellipsoid object.
+% Input:
+%   regular:
+%       E: ellipsod [1, nCols] - ellipsoid or array of ellipsoids.
 %
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
 
   fprintf('Ellipsoid with parameters\n');
 

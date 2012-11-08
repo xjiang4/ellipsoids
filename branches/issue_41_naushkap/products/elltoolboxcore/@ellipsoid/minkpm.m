@@ -2,14 +2,10 @@ function [y, Y] = minkpm(varargin)
 %
 % MINKPM - computes and plots geometric (Minkowski) difference of the geometric
 %          sum of ellipsoids and a single ellipsoid in 2D or 3D:
-%
 %          (E1 + E2 + ... + En) - E
 %
-%
 % Description:
-% ------------
-%
-% MINKPM(EA, E, OPTIONS)  Computes geometric difference of the geometric sum
+%   MINKPM(EA, E, OPTIONS)  Computes geometric difference of the geometric sum
 %                         of ellipsoids in EA and ellipsoid E,
 %                         if 1 <= dimension(EA) = dimension(E) <= 3,
 %                         and plots it if no output arguments are specified.
@@ -27,26 +23,20 @@ function [y, Y] = minkpm(varargin)
 % Options.color        - sets default colors in the form [x y z].
 % Options.shade = 0-1  - level of transparency (0 - transparent, 1 - opaque).
 %
+% Input:
+%   regular:
+%       EA: ellipsoid [1, nCols] - array of ellipsoids of the same dimentions 2D or 3D.
+%       E: ellipsoid [1, 1] - ellipsoid of the same dimention 2D or 3D.
+%
+%   properties:
+%       Options:  options structure, go to description.
 %
 % Output:
-% -------
+%    y: numeric[nDim, 1] - center of the resulting set.
+%    Y: numeric[nDim,] - set of boundary points (vertices) of resulting set.
 %
-%    y - center of the resulting set.
-%    Y - set of boundary points (vertices) of resulting set.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, MINKSUM, MINKDIFF, MINKMP.
-%
-
-% 
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

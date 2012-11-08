@@ -1,31 +1,20 @@
 function res = eq(E1, E2)
+import modgen.common.throwerror;
 %
+% EQ - overloaded operator '==', it checks if two ellipsoids are equal.
 %
-% Description:
-% ------------
-%
-%    Implementation of '==' operation.
-%
+% Input:
+%   regular:
+%       E1: ellipsoid [mRows, nCols] - array of ellipsoids.
+%       E2: ellipsoid [mRows, nCols] - array of ellipsoids of the corresponding
+%       dimensions.
 %
 % Output:
-% -------
+%    res: logical[mRows, nCols], 1 - if E1 == E2, 0 - otherwise.
 %
-%    1 - if E1 = E2, 0 - otherwise.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
-  import gras.la.sqrtm;
   global ellOptions;
 
   if ~isstruct(ellOptions)
@@ -33,7 +22,7 @@ function res = eq(E1, E2)
   end
 
   if ~(isa(E1, 'ellipsoid')) | ~(isa(E2, 'ellipsoid'))
-    error('==: both arguments must be ellipsoids.');
+    throwerror('wrongInput', '==: both arguments must be ellipsoids.');
   end
 
   [k, l] = size(E1);
@@ -42,7 +31,7 @@ function res = eq(E1, E2)
   t      = m * n;
 
   if ((k ~= m) | (l ~= n)) & (s > 1) & (t > 1)
-    error('==: sizes of ellipsoidal arrays do not match.');
+    throwerror('wrongSizes', '==: sizes of ellipsoidal arrays do not match.');
   end
 
   res = [];
@@ -55,8 +44,8 @@ function res = eq(E1, E2)
           continue;
         end
         q = E1(i, j).center - E2(i, j).center;
-        Q = sqrtm(E1(i, j).shape) - sqrtm(E2(i, j).shape);
-        if (norm(q) > ellOptions.rel_tol) | (norm(Q) > ellOptions.rel_tol)
+        Q = E1(i, j).shape - E2(i, j).shape;
+        if (norm(q) > ellOptions.abs_tol) | (norm(Q) > ellOptions.abs_tol)
           r = [r 0];
         else
           r = [r 1];
@@ -73,8 +62,8 @@ function res = eq(E1, E2)
           continue;
         end
         q = E1(i, j).center - E2.center;
-        Q = sqrtm(E1(i, j).shape) - sqrtm(E2.shape);
-        if (norm(q) > ellOptions.rel_tol) | (norm(Q) > ellOptions.rel_tol)
+        Q = E1(i, j).shape - E2.shape;
+        if (norm(q) > ellOptions.abs_tol) | (norm(Q) > ellOptions.abs_tol)
           r = [r 0];
         else
           r = [r 1];
@@ -91,9 +80,9 @@ function res = eq(E1, E2)
           continue;
         end
         q = E1.center - E2(i, j).center;
-        Q = sqrtm(E1.shape) - sqrtm(E2(i, j).shape);
-        if (norm(q) > ellOptions.rel_tol) | (norm(Q) > ellOptions.rel_tol)
-           r = [r 0];
+        Q = E1.shape - E2(i, j).shape;
+        if (norm(q) > ellOptions.abs_tol) | (norm(Q) > ellOptions.abs_tol)
+          r = [r 0];
         else
           r = [r 1];
         end

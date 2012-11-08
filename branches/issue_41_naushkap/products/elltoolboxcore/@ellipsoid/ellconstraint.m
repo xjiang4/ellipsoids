@@ -1,22 +1,28 @@
 function [F0, F, G0, G] = ellconstraint(x, Q1, Q2, varargin)
 %
-% Description:
-% ------------
+% ELLCONSTRAINT - describes ellipsoidal constraint.
 %
+% Description:
 %    This function describes ellipsoidal constraint
 %                          <l, Q l> = 1,
 %    where Q is positive semidefinite.
 %
-
+% Input:
+%   regular:
+%       x: numeric[nDims, 1] -  direction vector.
+%       Q1, Q2: are ignored.
 %
-% Author:
-% -------
+%   optional:
+%       Q: numeric[nDims, nDims] - shape matrix of ellipsoid.
+%          default values - identity matrix.
 %
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% Output:
+%       F0, G0: [] - always empty.
+%       F: numeric[1, 1] - ellipsoidal constraint
+%       G: numeric[nDims, 1] - 
 %
-
-  % Parameters Q1, Q2 are ignored,
-  % F0, G0 must be empty.
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   F0 = [];
   G0 = [];

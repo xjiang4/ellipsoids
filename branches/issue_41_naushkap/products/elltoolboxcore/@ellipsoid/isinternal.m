@@ -3,10 +3,7 @@ function res = isinternal(E, X, s)
 % ISINTERNAL - checks if given points belong to the union or intersection
 %              of ellipsoids in the given array.
 %
-%
 % Description:
-% ------------
-%
 %    RES = ISINTERNAL(E, X, s)  Checks if vectors specified as columns of matrix X
 %                               belong to the union (s = 'u'), or
 %                               intersection (s = 'i') of the ellipsoids in E.
@@ -28,27 +25,21 @@ function res = isinternal(E, X, s)
 %
 %    WARNING: be careful with degenerate ellipsoids.
 %
+% Input:
+%   regular:
+%       E: ellipsod [mRows, nColsOfEllMat] - ellipsoid or array of ellipsoids.
+%       X: numeric [nDim, nColsOfVec] - array which specifiy points.
+%
+%   properties:
+%          s: char[1, 1] - 'u' or 'i', go to description.
 %
 % Output:
-% -------
+%    res: logical[1, nColsOfVec] - 
+%       1 - if vector belongs to the union or intersection of ellipsoids,
+%       0 - otherwise.
 %
-%    Array of 1 and/or 0.
-%    1 - if vector belongs to the union or intersection of ellipsoids,
-%    0 - otherwise.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, DIMENSION, ISDEGENERATE, DISTANCE.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

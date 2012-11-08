@@ -5,8 +5,6 @@ function [d, status] = distance(E, X, flag)
 %
 %
 % Description:
-% ------------
-%
 %      D = DISTANCE(E, Y)  Given array of ellipsoids E and array of vectors defined
 %                          by matrix Y (vectors are columns of Y), so that number
 %                          of ellipsoids in E is the same as number of vectors in Y,
@@ -43,22 +41,30 @@ function [d, status] = distance(E, X, flag)
 %                  subject to:  x belongs to E, y belongs to X.
 %    Zero distance means that intersection of E and X is nonempty.
 %
+% Input:
+%   regular:
+%       E: ellipsod [1, nCols] - ellipsoid or array of ellipsoids.
+%          Suppose nDim - space dimension
+%          in which the ellipsoid E is defined.
+%       X: numeric[nDim, nCols] - array of vectors defined
+%          by matrix X (vectors are columns of X)
+%          Or
+%          ellipsoid [1, nCols] - ellipsoidal arrays of the same size.
+%          Or
+%          hyperplane [1, nCols] - array of hyperplanes of the same size.
+%          Or
+%          polytope [1, nCols] - array of polytopes of the same size.
+%
+%   optional:
+%          flag: numeric[1, 1] - (go to description)
 %
 % Output:
-% -------
+%   regular:
+%          D - numeric[1, nCols] - array of distances.
 %
-%    D - array of distances. 
-%    S - (optional) status variable returned by YALMIP.
+%   optional:
+%          status - status variable returned by YALMIP.
 %
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, ISINSIDE, ISINTERNAL, INTERSECT,
-%    HYPERPLANE/HYPERPLANE,
-%    POLYTOPE/POLYTOPE.
-%
-
 %
 % $Author: Alex Kurzhanskiy  <akurzhan@eecs.berkeley.edu> $    $Date: 2004-2008 $
 % $Copyright:  The Regents of the University of California 2004-2008 $
@@ -67,6 +73,7 @@ function [d, status] = distance(E, X, flag)
 % $Copyright: Lomonosov Moscow State University,
 %            Faculty of Computational Mathematics and Cybernetics,
 %            System Analysis Department 2012 $
+%
 % Literature: 
 %    1. Lin, A. and Han, S. On the Distance between Two Ellipsoids. 
 %       SIAM Journal on Optimization, 2002, Vol. 13, No. 1 : pp. 298-308
@@ -74,8 +81,8 @@ function [d, status] = distance(E, X, flag)
 %       Ellipsoid". http://videoprocessing.ucsd.edu/~stanleychan/publication/unpublished/Ellipse.pdf
 %   
   global ellOptions;
-  import modgen.common.throwerror
-if ~isstruct(ellOptions)
+
+  if ~isstruct(ellOptions)
     evalin('base', 'ellipsoids_init;');
   end
 
@@ -147,13 +154,6 @@ function [ellDist timeOfCalculation] = computeEllEllDistance(ellObj1,ellObj2,nMa
 tic;
 [ellCenter1Vec, ellQ1Mat] = double(ellObj1);
 [ellCenter2Vec, ellQ2Mat] = double(ellObj2);
-if rank(ellQ1Mat) < size(ellQ1Mat, 2)
-    ellQ1Mat = regularize(ellQ1Mat);
-end
-if rank(ellQ2Mat) < size(ellQ2Mat, 2)
-    ellQ2Mat = regularize(ellQ2Mat);
-end
-
 %
 ellQ1Mat=ellQ1Mat\eye(size(ellQ1Mat));
 ellQ2Mat=ellQ2Mat\eye(size(ellQ2Mat));
@@ -608,7 +608,7 @@ function [d, status] = l_polydist(E, X)
     else
       fprintf('Computing ellipsoid-to-polytope distance...\n');
     end
-    fprintf('Invoking CVX...\n');
+    fprintf('Invoking YALMIP...\n');
   end
 
   d      = [];
@@ -626,27 +626,23 @@ function [d, status] = l_polydist(E, X)
         end
         Q  = ell_inv(Q);
         Q  = 0.5*(Q + Q');
-        cvx_begin sdp
-            variable x(mx1, 1)
-            variable y(mx1, 1)
-            if flag
-                f = (x - y)'*Qi*(x - y);
-            else
-                f = (x - y)'*(x - y);
-            end
-            minimize(f)
-            subject to
-                x'*Qi*x + 2*(-Qi*q)'*x + (q'*Qi*q - 1) <= 0
-                A*y - b <= 0
-        cvx_end
-
-        d1 = f;
+        x  = sdpvar(mx1, 1);
+        y  = sdpvar(mx1, 1);
+        if flag
+          f  = (y - x)'*Q*(y - x);
+        else
+          f  = (y - x)'*(y - x);
+        end
+        C  = set(x'*Q*x + 2*(-Q*q)'*x + (q'*Q*q - 1) <= 0);
+        C  = C + set(A*y - b <= 0);
+        o  = solvesdp(C, f, ellOptions.sdpsettings);
+        d1 = double(f);
         if d1 < ellOptions.abs_tol
           d1 = 0;
         end
         d1  = sqrt(d1);
         dd  = [dd d1];
-        sts = [sts cvx_status];
+	sts = [sts o];
       end
       d      = [d; dd];
       status = [status sts];
@@ -663,27 +659,23 @@ function [d, status] = l_polydist(E, X)
         end
         Q  = ell_inv(Q);
         Q  = 0.5*(Q + Q');
-        cvx_begin sdp
-            variable x(mx1, 1)
-            variable y(mx1, 1)
-            if flag
-                f = (x - y)'*Qi*(x - y);
-            else
-                f = (x - y)'*(x - y);
-            end
-            minimize(f)
-            subject to
-                x'*Qi*x + 2*(-Qi*q)'*x + (q'*Qi*q - 1) <= 0
-                A*y - b <= 0
-        cvx_end
-
-        d1 = f;
+        x  = sdpvar(mx1, 1);
+        y  = sdpvar(mx1, 1);
+        if flag
+          f  = (y - x)'*Q*(y - x);
+        else
+          f  = (y - x)'*(y - x);
+        end
+        C  = set(x'*Q*x + 2*(-Q*q)'*x + (q'*Q*q - 1) <= 0);
+        C  = C + set(A*y - b <= 0);
+        o  = solvesdp(C, f, ellOptions.sdpsettings);
+        d1 = double(f);
         if d1 < ellOptions.abs_tol
           d1 = 0;
         end
         d1  = sqrt(d1);
         dd  = [dd d1];
-        sts = [sts cvx_status];
+	sts = [sts o];
       end
       d      = [d; dd];
       status = [status sts];
@@ -701,27 +693,23 @@ function [d, status] = l_polydist(E, X)
       for j = 1:l
         %[A, b] = double(X(i, j));
         [A, b] = double(X(j));
-        cvx_begin sdp
-            variable x(mx1, 1)
-            variable y(mx1, 1)
-            if flag
-                f = (x - y)'*Qi*(x - y);
-            else
-                f = (x - y)'*(x - y);
-            end
-            minimize(f)
-            subject to
-                x'*Qi*x + 2*(-Qi*q)'*x + (q'*Qi*q - 1) <= 0
-                A*y - b <= 0
-        cvx_end
-
-        d1 = f;
+        x  = sdpvar(mx1, 1);
+        y  = sdpvar(mx1, 1);
+        if flag
+          f  = (y - x)'*Q*(y - x);
+        else
+          f  = (y - x)'*(y - x);
+        end
+        C  = set(x'*Q*x + 2*(-Q*q)'*x + (q'*Q*q - 1) <= 0);
+        C  = C + set(A*y - b <= 0);
+        o  = solvesdp(C, f, ellOptions.sdpsettings);
+        d1 = double(f);
         if d1 < ellOptions.abs_tol
           d1 = 0;
         end
         d1  = sqrt(d1);
         dd  = [dd d1];
-        sts = [sts cvx_status];
+	sts = [sts o];
       end
       d      = [d; dd];
       status = [status sts];

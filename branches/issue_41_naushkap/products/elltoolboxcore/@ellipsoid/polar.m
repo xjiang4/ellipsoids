@@ -1,17 +1,13 @@
 function P = polar(E)
-
+import modgen.common.throwerror 
 %
 % POLAR - computes the polar ellipsoids.
 %
-%
 % Description:
-% ------------
-%
 %    P = POLAR(E)  Computes the polar ellipsoids for those ellipsoids in E,
 %                  for which the origin is an interior point.
 %                  For those ellipsoids in E, for which this condition
 %                  does not hold, an empty ellipsoid is returned.
-%
 %
 %    Given ellipsoid E(q, Q) where q is its center, and Q - its shape matrix,
 %    the polar set to E(q, Q) is defined as follows:
@@ -21,26 +17,16 @@ function P = polar(E)
 %    If the origin is an interior point of ellipsoid E(q, Q),
 %    then its polar set P is an ellipsoid.
 %
+% Input:
+%   regular:
+%       E: ellipsoid [mRows, nCols] - array of ellipsoids.
 %
 % Output:
-% -------
+%    P: ellipsoid [mRows, nCols] - array of polar ellipsoids.
 %
-%    P - array of polar ellipsoids.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
-  import modgen.common.throwerror 
   if ~(isa(E, 'ellipsoid'))
     error('POLAR: input argument must be array of ellipsoids.');
   end

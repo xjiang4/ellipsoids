@@ -1,38 +1,27 @@
 function res = mtimes(A, E)
+import modgen.common.throwerror;
 %
+% MTIMES - overloaded operator '*'.
 %
 % Description:
-% ------------
-%
 %    Multiplication of the ellipsoid by a matrix or a scalar.
 %    If E(q,Q) is an ellipsoid, and A - matrix of suitable dimensions,
 %    then
 %          A E(q, Q) = E(Aq, AQA').
-%        
 %
+% Input:
+%   regular:
+%       A: numeric[mRows, nDim] / [1, 1] - scalar or matrix in R^{mRows x nDim}
+%       E: ellipsoid [1, nCols] - ellipsoid or array of ellipsoids.
 %
 % Output:
-% -------
+%    res: ellipsoid [1, nCols] - resulting ellipsoids.
 %
-%    Resulting ellipsoid E(Aq, AQA').
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   if ~(isa(A, 'double')) | ~(isa(E, 'ellipsoid'))
-    msg = sprintf('MTIMES: first multiplier is expected to be a matrix or a scalar,\n        and second multiplier - an ellipsoid.');
-    error(msg);
+    throwerror('wrongInput', 'MTIMES: first multiplier is expected to be a matrix or a scalar,\n        and second multiplier - an ellipsoid.');
   end
 
   [m, n] = size(A); 
@@ -40,7 +29,7 @@ function res = mtimes(A, E)
   k      = max(d);
   l      = min(d);
   if ((k ~= l) & (n ~= 1) & (m ~= 1)) | ((k ~= n) & (n ~= 1) & (m ~= 1))
-    error('MTIMES: dimensions do not match.');
+    throwerror('wrongSizes', 'MTIMES: dimensions do not match.');
   end
 
   [m, n] = size(E);

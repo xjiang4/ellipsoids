@@ -2,11 +2,8 @@ function [y, Y] = minksum(varargin)
 %
 % MINKSUM - computes geometric (Minkowski) sum of ellipsoids in 2D or 3D.
 %
-%
 % Description:
-% ------------
-%
-% MINKSUM(EA, OPTIONS)  Computes geometric sum of ellipsoids in the array EA,
+%   MINKSUM(EA, OPTIONS)  Computes geometric sum of ellipsoids in the array EA,
 %                       if 1 <= min(dimension(EA)) = max(dimension(EA)) <= 3,
 %                       and plots it if no output arguments are specified.
 %
@@ -18,33 +15,25 @@ function [y, Y] = minksum(varargin)
 %    MINKSUM(EA, Options)  Plots geometric sum of EA using options
 %                          given in the Options structure.
 %
-%
 % Options.show_all     - if 1, displays also ellipsoids in the given array EA.
 % Options.newfigure    - if 1, each plot command will open a new figure window.
 % Options.fill         - if 1, the resulting set in 2D will be filled with color.
 % Options.color        - sets default colors in the form [x y z].
 % Options.shade = 0-1  - level of transparency (0 - transparent, 1 - opaque).
 %
+% Input:
+%   regular:
+%       EA: ellipsoid [1, nCols] - array of ellipsoids of the same dimentions 2D or 3D.
+%
+%   properties:
+%       Options:  options structure, go to description.
 %
 % Output:
-% -------
+%    y: numeric[nDim, 1] - center of the resulting set.
+%    Y: numeric[nDim,] - set of boundary points (vertices) of resulting set.
 %
-%    y - center of the resulting set.
-%    Y - set of boundary points (vertices) of resulting set.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, MINKSUM_EA, MINKSUM_IA, MINKDIFF, MINKDIFF_EA, MINKDIFF_IA.
-%
-
-% 
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 

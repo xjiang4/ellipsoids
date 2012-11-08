@@ -1,37 +1,28 @@
 function EA = minkpm_ea(EE, E2, L)
+import modgen.common.throwerror;
 %
 % MINKPM_EA - computation of external approximating ellipsoids
 %             of (E1 + E2 + ... + En) - E in given directions.
 %
-%
 % Description:
-% ------------
-%
 %    EA = MINKPM_EA(EE, E, L)  Computes external approximating ellipsoids
 %                              of (E1 + E2 + ... + En) - E,
 %                              where E1, E2, ..., En are ellipsoids in array EE,
 %                              in directions specified by columns of matrix L.
 %
+% Input:
+%   regular:
+%       EE: ellipsoid [1, nCols] - array of ellipsoids of the same dimentions.
+%       E: ellipsoid [1, 1] - ellipsoid of the same dimention.
+%       L: numeric[nDim, nCols] - matrix whose columns specify the directions for which the
+%       approximations should be computed.
 %
 % Output:
-% -------
-%
-%    EA - array of external approximating ellipsoids
+%    EA: ellipsoid [1, nCols] - array of external approximating ellipsoids
 %         (empty, if for all specified directions approximations cannot be computed).
 %
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, MINKPM, MINKPM_IA, MINKSUM_EA, MINKDIFF_EA, MINKMP_EA.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 
@@ -40,12 +31,12 @@ function EA = minkpm_ea(EE, E2, L)
   end
 
   if ~(isa(EE, 'ellipsoid')) | ~(isa(E2, 'ellipsoid'))
-    error('MINKPM_EA: first and second arguments must be ellipsoids.');
+    throwerror('wrongInput', 'MINKPM_EA: first and second arguments must be ellipsoids.');
   end
 
   [m, n] = size(E2);
   if (m ~= 1) | (n ~= 1)
-    error('MINKPM_EA: second argument must be single ellipsoid.');
+    throwerror('wrongInput', 'MINKPM_EA: second argument must be single ellipsoid.');
   end
 
   k  = size(L, 1);
@@ -53,10 +44,10 @@ function EA = minkpm_ea(EE, E2, L)
   mn = min(min(dimension(EE)));
   mx = max(max(dimension(EE)));
   if (mn ~= mx) | (mn ~= n)
-    error('MINKPM_EA: all ellipsoids must be of the same dimension.');
+    throwerror('wrongSizes', 'MINKPM_EA: all ellipsoids must be of the same dimension.');
   end
   if n ~= k
-    error('MINKPM_EA: dimension of the direction vectors must be the same as dimension of ellipsoids.');
+    throwerror('wrongSizes', 'MINKPM_EA: dimension of the direction vectors must be the same as dimension of ellipsoids.');
   end
 
   N                  = size(L, 2);
