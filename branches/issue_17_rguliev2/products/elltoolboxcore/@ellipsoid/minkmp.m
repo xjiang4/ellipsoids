@@ -73,6 +73,10 @@ end
 if nDim > 3
     throwerror('wrongInput','MINKMP: ellipsoid dimension must be not higher than 3.');
 end
+
+if isdegenerate(minEll)
+    throwerror('wrongInput','MINKMP: minuend ellipsoid is degenerate.');
+end
   
 nArgOut=nargout;
   
