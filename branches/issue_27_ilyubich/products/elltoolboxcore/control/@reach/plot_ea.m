@@ -49,7 +49,7 @@ function hPlot = plot_ea(rs, varargin)
   rs = rs(1, 1);
   d  = dimension(rs);
   N  = size(rs.ea_values, 2);
-  if (d < 2) | (d > 3)
+  if (d < 2) || (d > 3)
     msg = sprintf('PLOT_EA: cannot plot reach set of dimension %d.', d);
     if d > 3
       msg = sprintf('%s\nUse projection.', msg);
@@ -102,7 +102,7 @@ function hPlot = plot_ea(rs, varargin)
   end
 
 
-  if (nargin > 1) & ischar(varargin{1})
+  if (nargin > 1) && ischar(varargin{1})
     Options.color = my_color_table(varargin{1});
   end
   

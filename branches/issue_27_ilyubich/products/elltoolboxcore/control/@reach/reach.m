@@ -1,4 +1,4 @@
-function RS = reach(lsys, X0, L0, T, Options)
+function RS = reach(lsys, X0, L0, T, Options,timeGrid)
 %
 % REACH - computes reach set approximation of the linear system for the given
 %         time interval.
@@ -26,7 +26,7 @@ function RS = reach(lsys, X0, L0, T, Options)
 %                                                        This option makes sense only for
 %                                                        discrete-time systems with disturbance.
 %                                       
-%
+%                                    !!!   timeGrid using only for test !!!
 %
 % Output:
 % -------
@@ -149,11 +149,21 @@ function RS = reach(lsys, X0, L0, T, Options)
     end
   else
     if size(T, 2) == 1
-      RS.time_values = linspace(0, T, ellOptions.time_grid);
-      RS.t0          = 0;
+        if (nargin ==6)
+            RS.time_values = timeGrid;
+            RS.t0 = 0;
+        else
+            RS.time_values = linspace(0, T, ellOptions.time_grid);
+            RS.t0 = 0;
+        end
     else
-      RS.time_values = linspace(T(1), T(2), ellOptions.time_grid);
-      RS.t0          = T(1);
+        if (nargin ==6)
+            RS.time_values = timeGrid;
+            RS.t0 = T(1);
+        else
+            RS.time_values = linspace(T(1), T(2), ellOptions.time_grid);
+            RS.t0          = T(1);
+        end
     end
   end
 

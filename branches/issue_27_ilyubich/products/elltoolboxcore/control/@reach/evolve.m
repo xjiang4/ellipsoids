@@ -1,4 +1,4 @@
-function RS = evolve(CRS, T, lsys)
+function RS = evolve(CRS, T, lsys,timeGrid)
 %
 % EVOLVE - computes further evolution in time of the already existing reach set.
 %
@@ -11,7 +11,7 @@ function RS = evolve(CRS, T, lsys)
 %
 % RS = EVOLVE(CRS, T, LSYS)  Further evolution in time is computed according
 %                            different linear system, specified by LSYS.
-%
+%                           !!!   timeGrid using only for test !!!
 %
 % Output:
 % -------
@@ -95,7 +95,11 @@ function RS = evolve(CRS, T, lsys)
       RS.time_values = T(1):T(2);
     end
   else
-    RS.time_values = linspace(T(1), T(2), ellOptions.time_grid);
+    if (nargin == 4)
+        RS.time_values =timeGrid;
+    else
+        RS.time_values = linspace(T(1), T(2), ellOptions.time_grid);
+    end
   end
 
   if RS.time_values(1) > RS.time_values(end)
