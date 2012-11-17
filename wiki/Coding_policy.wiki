@@ -39,6 +39,103 @@ For a quick reference, here is a short list of correct variable names
 || nElems, mElems  || number of elements (numeric scalar)|| nelems, NElems || 
 || iElem,jElem,kElem  || current element counter in a loop|| ielem, i,j,k || 
 
+
+= Help headers =
+Use the format from the following example to the letter (mind the blank spaces, the case, the structure) when writing the help headers for the functions/class methods
+{{{
+% PARSEPAREXT behaves in the same way as modgen.common.parseparams but
+% returns property values in a more convenient form
+%
+% Input:
+%   regular:
+%       arg: cell[1,] list of input parameters to parse
+%       propNameValMat: cell[1-3,nExpProps] of char[1,]/cell[2,]
+%           - list of properties to recognize
+%           - and optionally the list of default values for properties
+%           - and optionally the list of check strings for properties
+%               (see modgen.common.type.simple.checkgen for check string
+%                   syntax)
+%
+%         Note: property names are case-insensitive!
+%
+%   optional:
+%       nRegExpected: numeric[1,1]/[1,2] - an expected number of regular
+%          arguments/range of regular argument numbers. If the actual
+%          number doesn't mach the expected number an exception is thrown.
+%
+%       nPropExpected: numeric[1,1] - an expected number of properties
+%
+%   properties:
+%       regCheckList: cell[1,nRegMax] of char[1,] - list of regular
+%           parameter check strings
+%
+%       regDefList: cell[1,nRegMax] of any[] - list of regular parameter
+%          values
+%       
+%       propRetMode: char[1,] - property return mode, the following modes
+%           are supported
+%               'list' - an aggregated list of specified properties 
+%                   is  returned instead of returning each property as 
+%                   a separate  output
+%               'separate' - each property is returned separately followed
+%                   isSpec indicator, this is a default method
+%
+%       isObligatoryPropVec: logical[1,nExpProp] - indicates whether a
+%           corresponding property from propNameValMat is obligatory. This
+%           property can only be used when propNameValMat is not empty
+%
+% Output:
+%   reg: cell[1,nRegs] - list of regular parameters
+%
+%   isRegSpecVec: logical[1,nRegs] - indicates whether a regular argument
+%       specified
+%   
+%   ---------------"list" mode -----------------         
+%   prop: cell[1,nFilledProps] 
+%   isPropSpecVec: logical[1,nExpProps]
+%
+%   ---------------"separate" mode
+%   prop1Val: any[] - value of the first property specified by propNameValMat
+%       ...
+%   propNVal: any[] - value of the last property specified by propNameValMat
+%
+%   isProp1Spec: logical[1,1] - indicates whether the first property is
+%       specified
+%       ...
+%   isPropNSpec: logical[1,1] - indicates whether the last property is
+%       specified
+%
+% Example:
+%   [reg,isSpecVec,...
+%       propVal1,propVal2,propVal3...
+%       isPropVal1,isPropVal2,isPropVal3]=...
+%       modgen.common.parseparext({1,2,'prop1',3,'prop2',4},...
+%       {'prop1','prop2','prop3';...
+%       [],[],5;...
+%       'isscalar(x)','isscalar(x)','isnumeric(x)'},...
+%       [0 3],...
+%       'regDefList',{1,2,3},...
+%       'regCheckList',{'isnumeric(x)','isscalar(x)','isnumeric(x)'},...
+%       'isObligatoryPropVec',[true true false])
+%
+% reg =   {1,2,3}
+% isSpecVec = [true,true,false]
+% propVal1 = 3
+% propVal2 = 4
+% propVal3 = 5
+% isPropVal1 =true
+% isPropVal2 =true
+% isPropVal3 =false
+%
+%
+% $Author: Peter Gagarinov  <pgagarinov@gmail.com> $	$Date: 2011-07-27 $ 
+% $Copyright: Moscow State University,
+%            Faculty of Computational Mathematics and Computer Science,
+%            System Analysis Department 2011 $
+%
+%
+}}}
+
 = Test-driven approach =
 Always follow a test driven approach. To understand what the test-driven approach is please read about [http://ellipsoids.googlecode.com/svn/wiki/attachments/TheWayOfTestivus.pdf Unit testing karma].
 
