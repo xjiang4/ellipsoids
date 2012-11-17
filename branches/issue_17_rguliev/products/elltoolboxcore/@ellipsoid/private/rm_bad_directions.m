@@ -4,11 +4,12 @@ function clrDirsMat = rm_bad_directions(q1Mat, q2Mat, dirsMat)
 %                     Bad directions are those which should not be used
 %                     for the support function of geometric difference
 %                     of two ellipsoids.
+%
 %    Rustam Guliev <glvrst@gmail.com>   
 
-b=~isbaddirectionmat(q1Mat,q2Mat,dirsMat);
+isGoodDirVec=~isbaddirectionmat(q1Mat,q2Mat,dirsMat);
 clrDirsMat=[];
-if any(b)
-    clrDirsMat=dirsMat(:,b);
+if any(isGoodDirVec)
+    clrDirsMat=dirsMat(:,isGoodDirVec);
 end
 end

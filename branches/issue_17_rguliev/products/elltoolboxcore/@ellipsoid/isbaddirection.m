@@ -1,4 +1,4 @@
-function res = isbaddirection(minEll, subEll, dirsMat)
+function isBadDirVec = isbaddirection(minEll, subEll, dirsMat)
 %
 % ISBADDIRECTION - checks if ellipsoidal approximations of geometric difference
 %                  of two ellipsoids can be computed for given directions.
@@ -19,11 +19,11 @@ function res = isbaddirection(minEll, subEll, dirsMat)
 % Output:
 % -------
 %
-%    RES - logical array with length being equal to the number of columns
-%          in matrix L.
-%          true marks direction vector as bad - ellipsoidal approximation cannot
-%          be computed for this direction.
-%          false means the opposite.
+%    isBadDirVec - logical array with length being equal to the number of columns
+%                  in matrix L.
+%                  true marks direction vector as bad - ellipsoidal approximation cannot
+%                  be computed for this direction.
+%                  false means the opposite.
 %
 %
 % See also:
@@ -37,7 +37,8 @@ function res = isbaddirection(minEll, subEll, dirsMat)
 % -------
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%    Rustam Guliev <glvrst@gmail.com>   
+%    Rustam Guliev <glvrst@gmail.com>
+
   import modgen.common.throwwar;
   global ellOptions;
 
@@ -50,9 +51,10 @@ function res = isbaddirection(minEll, subEll, dirsMat)
     %  fprintf('ISBADDIRECTION: geometric difference of these two ellipsoids is empty set.\n');
     %  fprintf('                All directions are bad.\n'); 
     %end
-    throwwarn('wrongInput:emptyGeomDiff','ISBADDIRECTION: geometric difference of these two ellipsoids is empty set.\n');
+    throwwarn('wrongInput:emptyGeomDiff',...
+        'ISBADDIRECTION: geometric difference of these two ellipsoids is empty set.\n');
   end
 
-  isbaddirectionmat(minEll.shape, subEll.shape, dirsMat);
+  isBadDirVec=isbaddirectionmat(minEll.shape, subEll.shape, dirsMat);
 
 end

@@ -233,48 +233,22 @@ classdef EllipsoidTestCase < mlunitext.test_case
             [testCenterVec, testShapeMat]=double(testEllipsoid);
             isTestRes=isempty(testCenterVec)&&isempty(testShapeMat);
             mlunit.assert_equals(true, isTestRes);
+            
             %One argument
             testEllipsoid=ellipsoid(diag([1 4 9 16]));
             [testCenterVec, testShapeMat]=double(testEllipsoid);
             isTestDiagMat=testShapeMat==diag([1 4  9 16]);
             isTestRes=(numel(testCenterVec)==4) && all(testCenterVec(:)==0)&& all(isTestDiagMat(:));
             mlunit.assert_equals(true, isTestRes);
-            %Two arguments
-            testEllipsoid=ellipsoid([1; 2; -1],[2.5 -1.5 0; -1.5 2.5 0; 0 0 9]);
-            [testCenterVec, testShapeMat]=double(testEllipsoid);
-            isTestCVec=testCenterVec==[1;2;-1];
-            isTestEyeMat=testShapeMat==[2.5 -1.5 0; -1.5 2.5 0; 0 0 9];
-            isTestRes= all(isTestCVec(:))&& all(isTestEyeMat(:));
-            mlunit.assert_equals(true, isTestRes);
             
-            testEllipsoid=ellipsoid(-2*ones(5,1),9*eye(5,5));
-            [testCenterVec, testShapeMat]=double(testEllipsoid);
-            isTestEyeMat=testShapeMat==9*eye(5,5);
-            isTestRes=(numel(testCenterVec)==5) && all(testCenterVec(:)==-2)&& all(isTestEyeMat(:));
-            mlunit.assert_equals(true, isTestRes);
+            %Two arguments
+            fCheckForTestEllipsoidAndDouble([1; 2; -1],[2.5 -1.5 0; -1.5 2.5 0; 0 0 9]);
+            fCheckForTestEllipsoidAndDouble(-2*ones(5,1),9*eye(5,5));
             
             %High-dimensional ellipsoids
-            testEllipsoid=ellipsoid(diag(1:12));
-            [testCenterVec, testShapeMat]=double(testEllipsoid);
-            isTestDiagMat=testShapeMat==diag(1:12);
-            isTestRes=(numel(testCenterVec)==12) && all(testCenterVec(:)==0)&& all(isTestDiagMat(:));
-            mlunit.assert_equals(true, isTestRes);
-            
-            testEllipsoid=ellipsoid((0:0.1:2).',diag(0:10:200));
-            [testCenterVec, testShapeMat] = double(testEllipsoid);
-            isTestDiagMat = testShapeMat == diag(0:10:200);
-            isTestCenVec = testCenterVec == (0:0.1:2).';
-            isTestRes=(numel(testCenterVec)==21) && all(isTestCenVec)&& all(isTestDiagMat(:));
-            mlunit.assert_equals(true, isTestRes);
-            
-            testCenVec = 10*rand(100,1);
-            testAMat = diag(50*rand(1,100));
-            testEllipsoid=ellipsoid(testCenVec,testAMat);
-            [testCenterVec, testShapeMat] = double(testEllipsoid);
-            isTestDiagMat = testShapeMat == testAMat;
-            isTestCenVec = testCenterVec == testCenVec;
-            isTestRes=(numel(testCenterVec)==100) && all(isTestCenVec)&& all(isTestDiagMat(:));
-            mlunit.assert_equals(true, isTestRes);
+            fCheckForTestEllipsoidAndDouble(diag(1:12));
+            fCheckForTestEllipsoidAndDouble((0:0.1:2).',diag(0:10:200));
+            fCheckForTestEllipsoidAndDouble(10*rand(100,1), diag(50*rand(1,100)));
             
             %Check wrong inputs
             self.runAndCheckError('ellipsoid(1,2,3)','wrongInput:tooManyArgs');
@@ -302,36 +276,12 @@ classdef EllipsoidTestCase < mlunitext.test_case
             mlunit.assert_equals(true, isTestRes);
             
             %Chek for two output arguments
-            testEllipsoid=ellipsoid(-(1:10)',eye(10,10));
-            [testCenterVec, testShapeMat]=double(testEllipsoid);
-            isTestRes=(size(testCenterVec,1)==10)&&(size(testCenterVec,2)==1)&&...
-                (size(testShapeMat,1)==10)&&(size(testShapeMat,2)==10);
-            mlunit.assert_equals(true, isTestRes);
+            fCheckForTestEllipsoidAndDouble(-(1:10)',eye(10,10));
             
             %High-dimensional ellipsoids
-            testEllipsoid=ellipsoid(diag(1:12));
-            [testCenterVec, testShapeMat]=double(testEllipsoid);
-            isTestDiagMat=testShapeMat==diag(1:12);
-            isTestRes=(numel(testCenterVec)==12) && all(testCenterVec(:)==0)&& all(isTestDiagMat(:));
-            mlunit.assert_equals(true, isTestRes);
-            
-            testEllipsoid=ellipsoid((0:0.1:2).',diag(0:0.01:0.2));
-            [testCenterVec, testShapeMat] = double(testEllipsoid);
-            isTestDiagMat = ( testShapeMat == diag(0:0.01:0.2) );
-            isTestCenVec = ( testCenterVec == (0:0.1:2).' );
-            isTestRes=(numel(testCenterVec)==21) && all(isTestCenVec)&& all(isTestDiagMat(:));
-            mlunit.assert_equals(true, isTestRes);
-            
-            testCenVec = 10*rand(100,1);
-            testAMat = diag(50*rand(1,100));
-            testEllipsoid=ellipsoid(testCenVec,testAMat);
-            [testCenterVec, testShapeMat] = double(testEllipsoid);
-            isTestDiagMat = testShapeMat == testAMat;
-            isTestCenVec = testCenterVec == testCenVec;
-            isTestRes=(numel(testCenterVec)==100) && all(isTestCenVec)&& all(isTestDiagMat(:));
-            mlunit.assert_equals(true, isTestRes);
-            
-            
+            fCheckForTestEllipsoidAndDouble(diag(1:12));
+            fCheckForTestEllipsoidAndDouble((0:0.1:2).', diag(0:0.01:0.2));
+            fCheckForTestEllipsoidAndDouble(10*rand(100,1), diag(50*rand(1,100)));  
         end
         function self = testParameters(self)
             %Empty ellipsoid
@@ -348,34 +298,12 @@ classdef EllipsoidTestCase < mlunitext.test_case
             mlunit.assert_equals(true, isTestRes);
             
             %Chek for two output arguments
-            testEllipsoid=ellipsoid(-(1:10)',eye(10,10));
-            [testCenterVec, testShapeMat]=parameters(testEllipsoid);
-            isTestRes=(size(testCenterVec,1)==10)&&(size(testCenterVec,2)==1)&&...
-                (size(testShapeMat,1)==10)&&(size(testShapeMat,2)==10);
-            mlunit.assert_equals(true, isTestRes);
+            fCheckForTestParameters(-(1:10)',eye(10,10));
             
             %High-dimensional ellipsoids
-            testEllipsoid=ellipsoid(diag(1:12));
-            [testCenterVec, testShapeMat]=parameters(testEllipsoid);
-            isTestDiagMat=testShapeMat==diag(1:12);
-            isTestRes=(numel(testCenterVec)==12) && all(testCenterVec(:)==0)&& all(isTestDiagMat(:));
-            mlunit.assert_equals(true, isTestRes);
-            
-            testEllipsoid=ellipsoid((0:0.1:2).',diag(0:0.01:0.2));
-            [testCenterVec, testShapeMat] = parameters(testEllipsoid);
-            isTestDiagMat = testShapeMat == diag(0:0.01:0.2);
-            isTestCenVec = testCenterVec == (0:0.1:2).';
-            isTestRes=(numel(testCenterVec)==21) && all(isTestCenVec)&& all(isTestDiagMat(:));
-            mlunit.assert_equals(true, isTestRes);
-            
-            testCenVec = 10*rand(100,1);
-            testAMat = diag(50*rand(1,100));
-            testEllipsoid=ellipsoid(testCenVec,testAMat);
-            [testCenterVec, testShapeMat] = parameters(testEllipsoid);
-            isTestDiagMat = testShapeMat == testAMat;
-            isTestCenVec = testCenterVec == testCenVec;
-            isTestRes=(numel(testCenterVec)==100) && all(isTestCenVec)&& all(isTestDiagMat(:));
-            mlunit.assert_equals(true, isTestRes);
+            fCheckForTestParameters(diag(1:12));
+            fCheckForTestParameters((0:0.1:2).', diag(0:0.01:0.2));
+            fCheckForTestParameters(10*rand(100,1), diag(50*rand(1,100)));
         end
         function self = testDimension(self)
             %Chek for one output argument
@@ -572,8 +500,9 @@ classdef EllipsoidTestCase < mlunitext.test_case
             isTestRes = all( testTraceVec == [78 12 210] );
             mlunit.assert_equals(true, isTestRes);
             
-            testEllMat= [ellipsoid((0.1:0.1:2).',diag(0.01:0.01:0.2)), ellipsoid(-10*ones(41,1),diag(20:10:420)), ellipsoid(rand(50,1),9*eye(50,50));
-                         ellipsoid(repmat(diag(1:20),2,2)), ellipsoid(diag(0.0001:0.0001:0.01)), ellipsoid(zeros(30,30))];
+            testEllMat= [ellipsoid((0.1:0.1:2).',diag(0.01:0.01:0.2)), ellipsoid(-10*ones(41,1),diag(20:10:420)),...
+                ellipsoid(rand(50,1),9*eye(50,50));   ellipsoid(repmat(diag(1:20),2,2)),...
+                ellipsoid(diag(0.0001:0.0001:0.01)), ellipsoid(zeros(30,30))];
             testTraceMat = trace(testEllMat);
             isTestMat = ( testTraceMat == [sum(0.01:0.01:0.2) sum(20:10:420) 9*50; 2*sum(1:20) sum(0.0001:0.0001:0.01) 0] );
             isTestRes = all( isTestMat(:));
@@ -634,6 +563,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             global ellOptions;
             testTol=ellOptions.abs_tol;
             %1D case
+            nDim=1;
             testEllipsoidMin=ellipsoid(2,4);
             testEllipsoidSub=ellipsoid(2,9);
             testEllipsoidSum1=ellipsoid(1,25);
@@ -645,34 +575,31 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoidMin=ellipsoid(2,4);
             testEllipsoidSub=ellipsoid(2,0);
             testEllipsoidSum=ellipsoid(1,0);
-            [testCenter testPointsVec]=minkmp(testEllipsoidMin,testEllipsoidSub,testEllipsoidSum);
-            isTestRes = (testCenter==1) && all( (abs(testPointsVec-1)-2) <= testTol);
-            mlunit.assert_equals(true, isTestRes);
-            
+            fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
+                testEllipsoidSum, 1, 2, testTol);
+
             testEllipsoidMin=ellipsoid(4);
             testEllipsoidSub=ellipsoid(1);
             testEllipsoidSum=ellipsoid(0);
-            [testCenter testPointsVec]=minkmp(testEllipsoidMin,testEllipsoidSub,testEllipsoidSum);
-            isTestRes = (testCenter==0) && all( (abs(testPointsVec)-1)<= testTol );
-            mlunit.assert_equals(true, isTestRes);
+            fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
+                testEllipsoidSum, 0, 1, testTol);
             
             testEllipsoidMin=ellipsoid(4);
             testEllipsoidSub=ellipsoid(0);
             testEllipsoidSum=ellipsoid(0.25);
-            [testCenter testPointsVec]=minkmp(testEllipsoidMin,testEllipsoidSub,testEllipsoidSum);
-            isTestRes = (testCenter==0) && all( (abs(testPointsVec)-2.5)<= testTol );
-            mlunit.assert_equals(true, isTestRes);
+            fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
+                testEllipsoidSum, 0, 2.5, testTol);
             
             testEllipsoidMin=ellipsoid(1,4);
             testEllipsoidSub=ellipsoid(1,2.25);
             testEllipsoidSum1=ellipsoid(1,0);
             testEllipsoidSum2=ellipsoid(1,1);
             testEllipsoidSum3=ellipsoid(1,9);
-            [testCenter testPointsVec]=minkmp(testEllipsoidMin,testEllipsoidSub,[testEllipsoidSum1, testEllipsoidSum2, testEllipsoidSum3]);
-            isTestRes = (testCenter==3) && all( (abs(testPointsVec-3)-4.5) <= testTol);
-            mlunit.assert_equals(true, isTestRes);
+            fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
+                [testEllipsoidSum1 testEllipsoidSum2 testEllipsoidSum3] , 3, 4.5,testTol);
             
             %2D case
+            nDim=2;
             testEllipsoidMin=ellipsoid([2;2], 4*eye(2,2));
             testEllipsoidSub=ellipsoid([2;1], 16*eye(2,2));
             testEllipsoidSum1=ellipsoid([2;1], 25*eye(2,2));
@@ -684,11 +611,8 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoidMin=ellipsoid([2;2], 4*eye(2,2));
             testEllipsoidSub=ellipsoid([2;1], zeros(2,2));
             testEllipsoidSum=ellipsoid([2;1], zeros(2,2));
-            [testCenterVec testPointsMat]=minkmp(testEllipsoidMin,testEllipsoidSub,testEllipsoidSum);
-            testDistSqr = (testPointsMat(1,:)-testCenterVec(1)).*(testPointsMat(1,:)-testCenterVec(1))...
-                +(testPointsMat(2,:)-testCenterVec(2)).*(testPointsMat(2,:)-testCenterVec(2));
-            isTestRes = all( testCenterVec==2 ) && all( abs(testDistSqr - 4) <= testTol );
-            mlunit.assert_equals(true, isTestRes);
+            fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
+                testEllipsoidSum, [2;2], 2,testTol);
             
             testEllipsoidMin=ellipsoid(4*eye(2,2));
             testEllipsoidSub=ellipsoid([1 0;0 0]);
@@ -703,21 +627,18 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoidSub=ellipsoid(4*eye(2,2));
             testEllipsoidSum1=ellipsoid([1;0],eye(2,2));
             testEllipsoidSum2=ellipsoid([0;1],eye(2,2));
-            [testCenterVec testPointsMat]=minkmp(testEllipsoidMin,testEllipsoidSub,[testEllipsoidSum1 testEllipsoidSum2]);
-            testDistSqr = (testPointsMat(1,:)-1).*(testPointsMat(1,:)-1)+(testPointsMat(2,:)-1).*(testPointsMat(2,:)-1);
-            isTestRes = all( testCenterVec==1 ) && all( (abs(testDistSqr - 4) <= testTol) );
-            mlunit.assert_equals(true, isTestRes);
+            fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
+                [testEllipsoidSum1, testEllipsoidSum2], [1;1], 2,testTol);
              
             testEllipsoidMin=ellipsoid([2;2], 4*eye(2,2));
             testEllipsoidSub=ellipsoid([2;1], eye(2,2));
             testEllipsoidSum1=ellipsoid([1;1], eye(2,2));
             testEllipsoidSum2=ellipsoid([1;0], 9*eye(2,2));
-            [testCenterVec testPointsMat]=minkmp(testEllipsoidMin,testEllipsoidSub,[testEllipsoidSum1 testEllipsoidSum2]);
-            testDistSqr = (testPointsMat(1,:)-testCenterVec(1)).*(testPointsMat(1,:)-testCenterVec(1))+(testPointsMat(2,:)-testCenterVec(2)).*(testPointsMat(2,:)-testCenterVec(2));
-            isTestRes = all( testCenterVec==2 ) && all( abs(testDistSqr - 25) <= testTol );
-            mlunit.assert_equals(true, isTestRes);
+            fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
+            [testEllipsoidSum1 testEllipsoidSum2], [2;2], 5,testTol);
             
             %3D case
+            nDim=3;
             testEllipsoidMin=ellipsoid(eye(3,3));
             testEllipsoidSub=ellipsoid(2.25*eye(3,3));
             testEllipsoidSum1=ellipsoid([1;0;0], 25*eye(3,3));
@@ -739,12 +660,8 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoidMin=ellipsoid([1;1;1], 25*eye(3,3));
             testEllipsoidSub=ellipsoid([1;0;1], 4*eye(3,3));
             testEllipsoidSum=ellipsoid([0;-1;0], eye(3,3));
-            [testCenterVec testPointsMat]=minkmp(testEllipsoidMin,testEllipsoidSub,testEllipsoidSum);
-            testDistSqr = (testPointsMat(1,:)-testCenterVec(1)).*(testPointsMat(1,:)-testCenterVec(1)) +...
-                (testPointsMat(2,:)-testCenterVec(2)).*(testPointsMat(2,:)-testCenterVec(2))+...
-                (testPointsMat(3,:)-testCenterVec(3)).*(testPointsMat(3,:)-testCenterVec(3));
-            isTestRes = all( testCenterVec==0 ) && all( abs(testDistSqr - 16) <= testTol );
-            mlunit.assert_equals(true, isTestRes);
+            fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
+                testEllipsoidSum, [0;0;0], 4,testTol);
             
             
             testEllipsoidMin=ellipsoid(diag([25,4,9]));
@@ -752,12 +669,64 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoidSum1=ellipsoid([1;0;-1], eye(3,3));
             testEllipsoidSum2=ellipsoid([0;1;2], eye(3,3));
             testEllipsoidSum3=ellipsoid(eye(3,3));
-            [testCenterVec testPointsMat]=minkmp(testEllipsoidMin,testEllipsoidSub,[testEllipsoidSum1, testEllipsoidSum2, testEllipsoidSum3]);
-            testDistSqr = (testPointsMat(1,:)-testCenterVec(1)).*(testPointsMat(1,:)-testCenterVec(1)) +...
-                (testPointsMat(2,:)-testCenterVec(2)).*(testPointsMat(2,:)-testCenterVec(2))+...
-                (testPointsMat(3,:)-testCenterVec(3)).*(testPointsMat(3,:)-testCenterVec(3));
-            isTestRes = all( testCenterVec==1 ) && all( abs(testDistSqr - 9) <= testTol );
-            mlunit.assert_equals(true, isTestRes);
+            fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
+                [testEllipsoidSum1 testEllipsoidSum2 testEllipsoidSum3], [1;1;1], 3, testTol);
         end
     end
+end
+
+function fCheckForTestEllipsoidAndDouble(qCenterVec, qShapeMat)
+    if nargin < 2
+        qShapeMat = qCenterVec;
+        qCenterVec = zeros(size(qShapeMat,1),1);
+        testEllipsoid=ellipsoid(qShapeMat);
+    else
+        testEllipsoid=ellipsoid(qCenterVec,qShapeMat);
+    end
+	[testCenterVec, testShapeMat]=double(testEllipsoid);
+    try
+    isTestCVec  = testCenterVec == qCenterVec;
+	isTestEyeMat = testShapeMat == qShapeMat;
+    catch
+        isTestRes = false;
+    end
+	isTestRes = all(isTestCVec(:)) && all(isTestEyeMat(:));
+	mlunit.assert_equals(true, isTestRes);    
+end
+
+function fCheckForTestParameters(qCenterVec, qShapeMat)
+    if nargin < 2
+        qShapeMat = qCenterVec;
+        qCenterVec = zeros(size(qShapeMat,1),1);
+        testEllipsoid=ellipsoid(qShapeMat);
+    else
+        testEllipsoid=ellipsoid(qCenterVec,qShapeMat);
+    end
+	[testCenterVec, testShapeMat]=parameters(testEllipsoid);
+    try
+    isTestCVec  = testCenterVec == qCenterVec;
+	isTestEyeMat = testShapeMat == qShapeMat;
+    catch
+        isTestRes = false;
+    end
+	isTestRes = all(isTestCVec(:)) && all(isTestEyeMat(:));
+	mlunit.assert_equals(true, isTestRes);    
+end
+
+function fCheckBallsForTestMinkMP(nDim,minEll,subEll,sumEllMat,centerVec,rad, tol)
+    [testCenterVec testPointsMat]=minkmp(minEll,subEll,sumEllMat);
+    switch nDim
+        case 1
+            isTestRes = (testCenterVec==centerVec) && all( (abs(testPointsMat-centerVec)-rad) <= tol);
+        case 2
+            testDistSqr = (testPointsMat(1,:)-centerVec(1)).*(testPointsMat(1,:)-centerVec(1))...
+                +(testPointsMat(2,:)-centerVec(2)).*(testPointsMat(2,:)-centerVec(2));
+            isTestRes = all( testCenterVec==centerVec ) && all( abs(testDistSqr - rad*rad) <= tol );
+        case 3
+            testDistSqr = (testPointsMat(1,:)-centerVec(1)).*(testPointsMat(1,:)-centerVec(1)) +...
+                (testPointsMat(2,:)-centerVec(2)).*(testPointsMat(2,:)-centerVec(2))+...
+                (testPointsMat(3,:)-centerVec(3)).*(testPointsMat(3,:)-centerVec(3));
+            isTestRes = all( testCenterVec==centerVec ) && all( abs(testDistSqr - rad*rad) <= tol );
+    end
+    mlunit.assert(isTestRes);
 end
