@@ -356,9 +356,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             mlunit.assert_equals(1, testRes);
         end
         
-        
         function self = testMtimes(self)
-            global  ellOptions;
             testEllipsoid1 = ellipsoid([1; 1], eye(2));
             
             testHighDimShapeMat = diag(1:0.5:6.5);
@@ -367,11 +365,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             
             testEllipsoid2 = mtimes(testHighDimMat, testEllHighDim);
             [testEllCenterVec testEllMat] = double(testEllipsoid2);
-            isEq = 0;
-            if ((max(max(abs(testEllCenterVec - zeros(12, 1))))  <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllMat - testHighDimMat*testHighDimShapeMat*testHighDimMat')))  <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(12, 1), testHighDimMat*testHighDimShapeMat*testHighDimMat');
             mlunit.assert_equals(1, isEq);
             
             testHighDimShapeMat = diag(1:0.5:10.5);
@@ -380,11 +374,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             
             testEllipsoid2 = mtimes(testHighDimMat, testEllHighDim);
             [testEllCenterVec testEllMat] = double(testEllipsoid2);
-            isEq = 0;
-            if ((max(max(abs(testEllCenterVec - zeros(20, 1))))  <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllMat - testHighDimMat*testHighDimShapeMat*testHighDimMat')))  <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(20, 1), testHighDimMat*testHighDimShapeMat*testHighDimMat');
             mlunit.assert_equals(1, isEq);
             
             testHighDimShapeMat = diag(1:0.1:10.9);
@@ -393,11 +383,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             
             testEllipsoid2 = mtimes(testHighDimMat, testEllHighDim);
             [testEllCenterVec testEllMat] = double(testEllipsoid2);
-            isEq = 0;
-            if ((max(max(abs(testEllCenterVec - zeros(100, 1))))  <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllMat - testHighDimMat*testHighDimShapeMat*testHighDimMat')))  <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(100, 1), testHighDimMat*testHighDimShapeMat*testHighDimMat');
             mlunit.assert_equals(1, isEq);
             
             % [~, AMat] = eig(rand(4,4)); fixed case
@@ -410,21 +396,13 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoid3 = ellipsoid(diag(1:1:4));
             testEllipsoid2 = mtimes(AMat, testEllipsoid3);
             [testEllCenterVec testEllMat] = double(testEllipsoid2);
-            isEq = 0;
-            if ((max(max(abs(testEllCenterVec - zeros(4, 1))))  <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllMat - AMat*diag(1:1:4)*AMat')))  <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(4, 1), AMat*diag(1:1:4)*AMat');
             mlunit.assert_equals(1, isEq);
             
             AMat = 2*eye(2);
             testEllipsoid2 = mtimes(AMat, testEllipsoid1);
             [testEllCenterVec testEllMat] = double(testEllipsoid2);
-            isEq = 0;
-            if ((max(max(abs(testEllCenterVec - [2; 2])))  <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllMat - 4*eye(2))))  <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [2; 2], 4*eye(2));
             mlunit.assert_equals(1, isEq);
             
             AMat = eye(3);
@@ -438,38 +416,25 @@ classdef EllipsoidTestCase < mlunitext.test_case
             AMat = 0*eye(2);
             testEllipsoid2 = mtimes(AMat, testEllipsoid1);
             [testEllCenterVec testEllMat] = double(testEllipsoid2);
-            isEq = 0;
-            if ((max(max(abs(testEllCenterVec - [0; 0]))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllMat - 0*eye(2))))  <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [0; 0], 0*eye(2));
             mlunit.assert_equals(1, isEq);
             
             AMat = [1 2; 3 4; 5 6];        
             testEllipsoid2 = mtimes(AMat, testEllipsoid1);
             [testEllCenterVec testEllMat] = double(testEllipsoid2);
-            isEq = 0;
-            if ((max(max(abs(testEllCenterVec - [3; 7; 11]))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllMat - [5 11 17; 11 25 39; 17 39 61]))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
-            mlunit.assert_equals(1, isEq);     
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [3; 7; 11], [5 11 17; 11 25 39; 17 39 61]);
+            mlunit.assert_equals(1, isEq);
             
             testEllipsoid1 = ellipsoid([0; 0], zeros(2));
             AMat = [1 2; 3 4; 5 6];        
             testEllipsoid2 = mtimes(AMat, testEllipsoid1);
             [testEllCenterVec testEllMat] = double(testEllipsoid2);
-            isEq = 0;
-            if ((max(max(abs(testEllCenterVec - [0; 0; 0]))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllMat - [0 0 0; 0 0 0; 0 0 0]))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
-            mlunit.assert_equals(1, isEq);  
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [0; 0; 0], [0 0 0; 0 0 0; 0 0 0]);
+            mlunit.assert_equals(1, isEq);
         end
         
         
         function self = testMinkdiff_ea(self)
-            global  ellOptions;
             testEllipsoid1 = ellipsoid([0; 0], [1 0; 0 1]);
             testEllipsoid2 = ellipsoid([1; 0], eye(2));
             testEllipsoid3 = ellipsoid([1; 2], [1 0; 0 1]);
@@ -478,11 +443,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testLVec = [0; 1];
             externalApprox = minkdiff_ea(testEllipsoid1, testEllipsoid2, testLVec);
             [testEllCenterVec testEllMat] = double(externalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - [0 0; 0 0]))) <= ellOptions.abs_tol) && ... 
-                    (max(max(abs(testEllCenterVec - [-1; 0]))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [-1; 0], [0 0; 0 0]);
             mlunit.assert_equals(1, isEq);
             
             testLVec = [1; 1];
@@ -500,61 +461,45 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoid1 = ellipsoid([0; 0], [17 8; 8 17]);
             testEllipsoid2 = ellipsoid([1; 2], [13 12; 12 13]);
             testL = [1; 1];
-            ExternalApprox = minkdiff_ea(testEllipsoid1, testEllipsoid2, testL);
-            [testEllCenter testEllMatrix1] = double(ExternalApprox(1));
-            isEq = 0;            
-            if ((min(min(testEllMatrix1 - [2 -2; -2 2])) <= ellOptions.abs_tol) && (min(min(testEllCenter - [-1; -2])) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            externalApprox = minkdiff_ea(testEllipsoid1, testEllipsoid2, testL);
+            [testEllCenterVec testEllMat] = double(externalApprox(1));
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [-1; -2], [2 -2; -2 2]);
             mlunit.assert_equals(1, isEq);
             
-            testEllipsoid1 = ellipsoid(eye(4));
-            testEllipsoid2 = ellipsoid(diag(2:1:5));
-            testL = [1; 0; 0; 0];
-            ExternalApprox = minkdiff_ea(testEllipsoid2, testEllipsoid1, testL);
-            [testEllCenter testEllMatrix1] = double(ExternalApprox(1));
-            isEq = 0;            
-            if ((min(min(testEllMatrix1 - [0.1716 0 0 0;0 0.5359 0 0; 0 0 1 0; 0 0 0 1.5279])) <= ellOptions.abs_tol) && (min(min(testEllCenter - [0; 0; 0; 0])) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
-            mlunit.assert_equals(1, isEq);
-            
-            testEllHighDim1 = ellipsoid(2*eye(12));
+            testEllHighDim1 = ellipsoid(4*eye(12));
             testEllHighDim2 = ellipsoid(eye(12));
             testL = [1 zeros(1, 11)]';
-            ExternalApprox = minkdiff_ea(testEllHighDim1, testEllHighDim2, testL);
-            [testEllCenter testEllMatrix1] = double(ExternalApprox(1));
-            isEq = 0;            
-            if ((min(min(testEllMatrix1 - eye(12))) <= ellOptions.abs_tol) && (min(min(testEllCenter - zeros(12, 1))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            externalApprox = minkdiff_ea(testEllHighDim1, testEllHighDim2, testL);
+            [testEllCenterVec testEllMat] = double(externalApprox(1));
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(12, 1), eye(12));
             mlunit.assert_equals(1, isEq);
             
-            testEllHighDim1 = ellipsoid(2*eye(20));
+            testEllHighDim1 = ellipsoid(4*eye(20));
             testEllHighDim2 = ellipsoid(eye(20));
             testL = [1 zeros(1, 19)]';
-            ExternalApprox = minkdiff_ea(testEllHighDim1, testEllHighDim2, testL);
-            [testEllCenter testEllMatrix1] = double(ExternalApprox(1));
-            isEq = 0;            
-            if ((min(min(testEllMatrix1 - eye(20))) <= ellOptions.abs_tol) && (min(min(testEllCenter - zeros(20, 1))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            externalApprox = minkdiff_ea(testEllHighDim1, testEllHighDim2, testL);
+            [testEllCenterVec testEllMat] = double(externalApprox(1));
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(20, 1), eye(20));
             mlunit.assert_equals(1, isEq);
 
-            testEllHighDim1 = ellipsoid(2*eye(100));
+            testEllHighDim1 = ellipsoid(4*eye(100));
             testEllHighDim2 = ellipsoid(eye(100));
             testL = [1 zeros(1, 99)]';
-            ExternalApprox = minkdiff_ea(testEllHighDim1, testEllHighDim2, testL);
-            [testEllCenter testEllMatrix1] = double(ExternalApprox(1));
-            isEq = 0;            
-            if ((min(min(testEllMatrix1 - eye(100))) <= ellOptions.abs_tol) && (min(min(testEllCenter - zeros(100, 1))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            externalApprox = minkdiff_ea(testEllHighDim1, testEllHighDim2, testL);
+            [testEllCenterVec testEllMat] = double(externalApprox(1));
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(100, 1), eye(100));
+            mlunit.assert_equals(1, isEq);
+            
+            testEllipsoid1 = ellipsoid(eye(3));
+            testEllipsoid2 = ellipsoid(diag([4, 9, 25]));
+            testL = [1; 0; 0];
+            externalApprox = minkdiff_ea(testEllipsoid2, testEllipsoid1, testL);
+            [testEllCenterVec testEllMat] = double(externalApprox(1));
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [0; 0; 0], diag([1, 4, 16]));
             mlunit.assert_equals(1, isEq);
         end 
         
-        function self = testMinkdiff_ia(self)
-            global  ellOptions;            
+        function self = testMinkdiff_ia(self)          
             testEllipsoid1 = ellipsoid([0; 0], [1 0; 0 1]);
             testEllipsoid2 = ellipsoid([0; 1], eye(2));
             testEllipsoid3 = ellipsoid([0; 0], [4 0; 0 1]);
@@ -564,30 +509,19 @@ classdef EllipsoidTestCase < mlunitext.test_case
             internalApprox = minkdiff_ia(testEllipsoid1, testEllipsoid2, testLVec);
             [testEllCenterVec testEllMat] = double(internalApprox(1));
             isEq = 0;
-            if ((max(max(abs(testEllMat - [0 0; 0 0]))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllCenterVec - [0; -1]))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [0; -1], [0 0; 0 0]);
             mlunit.assert_equals(1, isEq);
             
             testLVec = [0; 1];
             internalApprox = minkdiff_ia(testEllipsoid3, testEllipsoid2, testLVec);
             [testEllCenterVec testEllMat] = double(internalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - [0 0; 0 0]))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllCenterVec - [0; -1]))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [0; -1], [0 0; 0 0]);
             mlunit.assert_equals(1, isEq);
             
             testLVec = [1; 0];
             internalApprox = minkdiff_ia(2*testEllipsoid1, testEllipsoid1, testLVec);
             [testEllCenterVec testEllMat] = double(internalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - [1 0; 0 1]))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllCenterVec - [0; 0]))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [0; 0], [1 0; 0 1]);
             mlunit.assert_equals(1, isEq);
             
             testLVec = [1; 1];
@@ -602,63 +536,47 @@ classdef EllipsoidTestCase < mlunitext.test_case
             %'MINKDIFF_IA: dimension of the direction vectors must be the same as dimension of ellipsoids.'
             self.runAndCheckError('minkdiff_ia(testEllipsoid3, testEllipsoid1, testLVec)','wrongSizes');
             
-            testEllipsoid1 = ellipsoid(eye(4));
-            testEllipsoid2 = ellipsoid(diag(2:1:5));
-            testL = [1; 0; 0; 0];
-            ExternalApprox = minkdiff_ia(testEllipsoid2, testEllipsoid1, testL);
-            [testEllCenter testEllMatrix1] = double(ExternalApprox(1));
-            isEq = 0;            
-            if ((min(min(testEllMatrix1 - [0.1716 0 0 0;0 0.4645 0 0; 0 0 0.7574 0; 0 0 0 1.0503])) <= ellOptions.abs_tol) && (min(min(testEllCenter - [0; 0; 0; 0])) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
-            mlunit.assert_equals(1, isEq);
-            
-            testEllHighDim1 = ellipsoid(2*eye(12));
+            testEllHighDim1 = ellipsoid(4*eye(12));
             testEllHighDim2 = ellipsoid(eye(12));
             testL = [1 zeros(1, 11)]';
-            ExternalApprox = minkdiff_ia(testEllHighDim1, testEllHighDim2, testL);
-            [testEllCenter testEllMatrix1] = double(ExternalApprox(1));
-            isEq = 0;            
-            if ((min(min(testEllMatrix1 - eye(12))) <= ellOptions.abs_tol) && (min(min(testEllCenter - zeros(12, 1))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            internalApprox = minkdiff_ia(testEllHighDim1, testEllHighDim2, testL);
+            [testEllCenterVec testEllMat] = double(internalApprox(1));
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(12, 1), eye(12));
             mlunit.assert_equals(1, isEq);
             
-            testEllHighDim1 = ellipsoid(2*eye(20));
+            testEllHighDim1 = ellipsoid(4*eye(20));
             testEllHighDim2 = ellipsoid(eye(20));
             testL = [1 zeros(1, 19)]';
-            ExternalApprox = minkdiff_ia(testEllHighDim1, testEllHighDim2, testL);
-            [testEllCenter testEllMatrix1] = double(ExternalApprox(1));
-            isEq = 0;            
-            if ((min(min(testEllMatrix1 - eye(20))) <= ellOptions.abs_tol) && (min(min(testEllCenter - zeros(20, 1))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            internalApprox = minkdiff_ia(testEllHighDim1, testEllHighDim2, testL);
+            [testEllCenterVec testEllMat] = double(internalApprox(1));
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(20, 1), eye(20));
             mlunit.assert_equals(1, isEq);
 
-            testEllHighDim1 = ellipsoid(2*eye(100));
+            testEllHighDim1 = ellipsoid(4*eye(100));
             testEllHighDim2 = ellipsoid(eye(100));
             testL = [1 zeros(1, 99)]';
-            ExternalApprox = minkdiff_ia(testEllHighDim1, testEllHighDim2, testL);
-            [testEllCenter testEllMatrix1] = double(ExternalApprox(1));
-            isEq = 0;            
-            if ((min(min(testEllMatrix1 - eye(100))) <= ellOptions.abs_tol) && (min(min(testEllCenter - zeros(100, 1))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            internalApprox = minkdiff_ia(testEllHighDim1, testEllHighDim2, testL);
+            [testEllCenterVec testEllMat] = double(internalApprox(1));
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(100, 1), eye(100));
+            mlunit.assert_equals(1, isEq);
+            
+            testEllipsoid1 = ellipsoid(eye(3));
+            testEllipsoid2 = ellipsoid(diag([4, 9, 16]));
+            testL = [1; 0; 0];
+            internalApprox = minkdiff_ia(testEllipsoid2, testEllipsoid1, testL);
+            [testEllCenterVec testEllMat] = double(internalApprox(1));
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [0; 0; 0], diag([1, 3.5, 7]));
             mlunit.assert_equals(1, isEq);
         end
         
         function self = testMinkpm_ea(self)
-            global  ellOptions;
             testEllipsoid1 = ellipsoid(2, 1);
             testEllipsoid2 = ellipsoid(3, 1);
             testEllipsoid3 = ellipsoid(1, 1);
             testLVec = 1;
             externalApprox = minkpm_ea([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec);
             [testEllCenterVec testEllMat] = double(externalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - 1))) <= ellOptions.abs_tol) && (max(max(abs(testEllCenterVec - 4))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, 4, 1);
             mlunit.assert_equals(1, isEq);
             
             testEllipsoid1 = ellipsoid([1; 0], [2 0; 0 2]);
@@ -667,11 +585,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testLVec = [1; 0];
             externalApprox = minkpm_ea([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec);
             [testEllCenterVec testEllMat] = double(externalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - [2 0; 0 2]))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllCenterVec - [3; 1]))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [3; 1], [2 0; 0 2]);
             mlunit.assert_equals(1, isEq);
             
             testEllipsoid1 = ellipsoid([1; 0; -1], [2 0 0; 0 2 0; 0 0 2]);
@@ -680,11 +594,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testLVec = [1; 0; 0];
             externalApprox = minkpm_ea([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec);
             [testEllCenterVec testEllMat] = double(externalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - [2 0 0; 0 2 0; 0 0 2]))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllCenterVec - [3; 1; 0]))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [3; 1; 0], [2 0 0; 0 2 0; 0 0 2]);
             mlunit.assert_equals(1, isEq);
             
             testEllipsoid1 = ellipsoid([1; 0; -1], [2 0 0; 0 2 0; 0 0 2]);
@@ -735,11 +645,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testLVec = [1 zeros(1, 11)]';
             externalApprox = minkpm_ea([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec);
             [testEllCenterVec testEllMat] = double(externalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - eye(12)))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllCenterVec - zeros(12, 1)))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(12, 1), eye(12));
             mlunit.assert_equals(1, isEq);
             
             testEllipsoid1 = ellipsoid(eye(20));
@@ -748,11 +654,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testLVec = [1 zeros(1, 19)]';
             externalApprox = minkpm_ea([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec);
             [testEllCenterVec testEllMat] = double(externalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - eye(20)))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllCenterVec - zeros(20, 1)))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(20, 1), eye(20));
             mlunit.assert_equals(1, isEq);
             
             testEllipsoid1 = ellipsoid(eye(100));
@@ -761,28 +663,18 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testLVec = [1 zeros(1, 99)]';
             externalApprox = minkpm_ea([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec);
             [testEllCenterVec testEllMat] = double(externalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - eye(100)))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllCenterVec - zeros(100, 1)))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(100, 1), eye(100));
             mlunit.assert_equals(1, isEq);
         end
         
-        function self = testMinkpm_ia(self)
-            global  ellOptions;
-            
+        function self = testMinkpm_ia(self)            
             testEllipsoid1 = ellipsoid(2, 1);
             testEllipsoid2 = ellipsoid(3, 1);
             testEllipsoid3 = ellipsoid(1, 1);
             testLVec = 1;
             internalApprox = minkpm_ia([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec);
             [testEllCenterVec testEllMat] = double(internalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - 1))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllCenterVec - 4))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, 4, 1);
             mlunit.assert_equals(1, isEq);
             
             testEllipsoid1 = ellipsoid([1; 0], [2 0; 0 2]);
@@ -791,11 +683,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testLVec = [1; 0];
             internalApprox = minkpm_ia([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec);
             [testEllCenterVec testEllMat] = double(internalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - [2 0; 0 2]))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllCenterVec - [3; 1]))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [3; 1], [2 0; 0 2]);
             mlunit.assert_equals(1, isEq);
             
             testEllipsoid1 = ellipsoid([1; 0; -1], [2 0 0; 0 2 0; 0 0 2]);
@@ -804,11 +692,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testLVec = [1; 0; 0];
             internalApprox = minkpm_ia([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec);
             [testEllCenterVec testEllMat] = double(internalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - [2 0 0; 0 2 0; 0 0 2]))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllCenterVec - [3; 1; 0]))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, [3; 1; 0], [2 0 0; 0 2 0; 0 0 2]);
             mlunit.assert_equals(1, isEq);
             
             testEllipsoid1 = ellipsoid([1; 0; -1], [2 0 0; 0 2 0; 0 0 2]);
@@ -859,11 +743,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testLVec = [1 zeros(1, 11)]';
             externalApprox = minkpm_ia([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec);
             [testEllCenterVec testEllMat] = double(externalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - eye(12)))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllCenterVec - zeros(12, 1)))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(12, 1), eye(12));
             mlunit.assert_equals(1, isEq);
             
             testEllipsoid1 = ellipsoid(eye(20));
@@ -872,11 +752,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testLVec = [1 zeros(1, 19)]';
             externalApprox = minkpm_ia([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec);
             [testEllCenterVec testEllMat] = double(externalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - eye(20)))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllCenterVec - zeros(20, 1)))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(20, 1), eye(20));
             mlunit.assert_equals(1, isEq);
             
             testEllipsoid1 = ellipsoid(eye(100));
@@ -885,14 +761,19 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testLVec = [1 zeros(1, 99)]';
             externalApprox = minkpm_ia([testEllipsoid1 testEllipsoid2], testEllipsoid3, testLVec);
             [testEllCenterVec testEllMat] = double(externalApprox(1));
-            isEq = 0;
-            if ((max(max(abs(testEllMat - eye(100)))) <= ellOptions.abs_tol) && ...
-                    (max(max(abs(testEllCenterVec - zeros(100, 1)))) <= ellOptions.abs_tol))
-                isEq = 1;
-            end
+            isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(100, 1), eye(100));
             mlunit.assert_equals(1, isEq);
         end
         
     end      
+end
+
+function isEq = subTestFunc(testEllCenterVec, testEllMat, testAnalitVec, testAnalitMat)
+    global  ellOptions;
+    isEq = 0;
+    if ((max(max(abs(testEllCenterVec - testAnalitVec)))  <= ellOptions.abs_tol) && ...
+            (max(max(abs(testEllMat - testAnalitMat)))  <= ellOptions.abs_tol))
+    isEq = 1;
+    end
 end
 
