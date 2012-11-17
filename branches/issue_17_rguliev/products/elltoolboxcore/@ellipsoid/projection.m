@@ -37,7 +37,7 @@ function EP = projection(E, B)
     evalin('base', 'ellipsoids_init;');
   end
 
-  if ~(isa(E, 'ellipsoid')) | ~(isa(B, 'double'))
+  if ~(isa(E, 'ellipsoid')) || ~(isa(B, 'double'))
     error('PROJECTION: arguments must be array of ellipsoids and matrix with orthogonal columns.');
   end
 
@@ -67,6 +67,7 @@ function EP = projection(E, B)
   end
 
   % normalize the basis vectors
+  BB = zeros(k,l);
   for i = 1:l
     BB(:, i) = B(:, i)/norm(B(:, i));
   end
@@ -85,4 +86,4 @@ function EP = projection(E, B)
     clear r;
   end
 
-  return;
+end

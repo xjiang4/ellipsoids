@@ -80,7 +80,7 @@ end
   
 nArgOut=nargout;
   
-if (~isbigger(minEll, subEll))
+if ~isbigger(minEll, subEll)
     %minkmp is empty
     switch nArgOut
         case 0,
@@ -127,27 +127,16 @@ else
             tmpEll=ellipsoid(minEll.center-subEll.center,minEll.shape);
             [firOutArgMat, secOutArgMat]=minksum([tmpEll; sumEllMat(:)]);
         else
-            if isdegenerate(minEll)
-                minEll.shape = regularize(minEll.shape);
-            end
             if isdegenerate(subEll)
                 subEll.shape = regularize(subEll.shape);
             end
             q1Mat=minEll.shape;
             q2Mat=subEll.shape;
-            tMat = ell_simdiag(q2Mat, q1Mat);
-            lambdaMin=min(diag(tMat*q1Mat*(tMat')));
-            if (lambdaMin-1)<eps
+            isGoodDirVec = ~isbaddirectionmat(q1Mat, q2Mat, lDirsMat);
+            if  ~any(isGoodDirVec)
                 tmpEll=ellipsoid(minEll.center-subEll.center,zeros(nDim,nDim));
                 [firOutArgMat, secOutArgMat]=minksum([tmpEll; sumEllMat(:)]);
             else
-                isGoodDirVec=false(1,size(lDirsMat,2));
-                for i = 1:size(lDirsMat,2)
-                    lVec = lDirsMat(:, i);
-                    if (sqrt(lVec'*q1Mat*lVec)/sqrt(lVec'*q2Mat*lVec)) <= lambdaMin
-                        isGoodDirVec(i)=true;
-                    end
-                end
                 [sumCentVec, sumBoundMat]=minksum(sumEllMat);
                 [~, minEllPtsMat] = rho(minEll, lDirsMat(:,isGoodDirVec));
                 [~, subEllPtsMat] = rho(subEll, lDirsMat(:,isGoodDirVec));
@@ -157,7 +146,7 @@ else
             end
         end
     end
-    if (nDim==2)
+    if nDim==2
         secOutArgMat=[secOutArgMat secOutArgMat(:,1)];
     end
 %=======================================================================   

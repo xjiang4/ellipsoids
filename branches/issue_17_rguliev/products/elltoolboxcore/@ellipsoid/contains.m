@@ -42,7 +42,7 @@ function res = contains(E1, E2)
     evalin('base', 'ellipsoids_init;');
   end
 
-  if ~(isa(E1, 'ellipsoid')) | ~(isa(E2, 'ellipsoid'))
+  if ~(isa(E1, 'ellipsoid')) || ~(isa(E2, 'ellipsoid'))
     error('CONTAINS: input arguments must be ellipsoids.');
   end
 
@@ -50,7 +50,7 @@ function res = contains(E1, E2)
   [k, l] = size(E2);
   t1     = m * n;
   t2     = k * l;
-  if (t1 > 1) & (t2 > 1) & ((m ~= k) | (n ~= l))
+  if (t1 > 1) && (t2 > 1) && ((m ~= k) || (n ~= l))
     error('CONTAINS: sizes of ellipsoidal arrays do not match.');
   end
 
@@ -60,12 +60,12 @@ function res = contains(E1, E2)
   mn2   = min(min(dims2));
   mx1   = max(max(dims1));
   mx2   = max(max(dims2));
-  if (mn1 ~= mx1) | (mn2 ~= mx2) | (mn1 ~= mn2)
+  if (mn1 ~= mx1) || (mn2 ~= mx2) || (mn1 ~= mn2)
     error('CONTAINS: ellipsoids must be of the same dimension.');
   end
 
   if ellOptions.verbose > 0
-    if (t1 > 1) | (t2 > 1)
+    if (t1 > 1) || (t2 > 1)
       fprintf('Checking %d ellipsoid-in-ellipsoid containments...\n', max([t1 t2]));
     else
       fprintf('Checking ellipsoid-in-ellipsoid containment...\n');
@@ -73,7 +73,7 @@ function res = contains(E1, E2)
   end
 
   res = [];
-  if (t1 > 1) & (t2 > 1)
+  if (t1 > 1) && (t2 > 1)
     for i = 1:m
       r = [];
       for j = 1:n
@@ -99,7 +99,7 @@ function res = contains(E1, E2)
     end
   end
 
-  return;
+end
 
 
 
@@ -146,3 +146,4 @@ function res = l_check_containment(E1, E2)
   else
     res = 0;
   end
+end

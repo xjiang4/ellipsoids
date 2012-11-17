@@ -58,13 +58,13 @@ function EA = minkdiff_ea(E1, E2, L)
     evalin('base', 'ellipsoids_init;');
   end
 
-  if ~(isa(E1, 'ellipsoid')) | ~(isa(E2, 'ellipsoid'))
+  if ~(isa(E1, 'ellipsoid')) || ~(isa(E2, 'ellipsoid'))
     error('MINKDIFF_EA: first and second arguments must be single ellipsoids.');
   end
 
   [k, l] = size(E1);
   [m, n] = size(E2);
-  if (k ~= 1) | (l ~= 1) | (m ~= 1) | (n ~= 1)
+  if (k ~= 1) || (l ~= 1) || (m ~= 1) || (n ~= 1)
     error('MINKDIFF_EA: first and second arguments must be single ellipsoids.');
   end
 
@@ -111,4 +111,4 @@ function EA = minkdiff_ea(E1, E2, L)
     EA = [EA ellipsoid(q, Q'*Q)];
   end 
 
-  return;
+end

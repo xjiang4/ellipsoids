@@ -53,4 +53,4 @@ function M = mineig(E)
     end
   end
 
-  return;
+end

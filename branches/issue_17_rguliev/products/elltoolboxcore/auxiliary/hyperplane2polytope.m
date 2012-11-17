@@ -60,4 +60,4 @@ function P = hyperplane2polytope(HA)
 
   P = polytope(A, b);
 
-  return;
+end

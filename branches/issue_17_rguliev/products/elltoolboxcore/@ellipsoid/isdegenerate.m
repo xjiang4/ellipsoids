@@ -13,7 +13,7 @@ function res = isdegenerate(E)
 % Output:
 % -------
 %
-%    1 - if ellipsoid E is degenerate, 0 - otherwise.
+%    true - if ellipsoid E is degenerate, false - otherwise.
 %
 %
 % See also:
@@ -42,4 +42,4 @@ function res = isdegenerate(E)
     end
   end
 
-  return;
+end

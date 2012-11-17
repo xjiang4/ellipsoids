@@ -13,7 +13,7 @@ function R = regularize(Q)
   r      = rank(Q);
 
   if r < min(m,n)
-    [U S V] = svd(Q);
+    [U, ~, ~] = svd(Q);
     E       = ellOptions.abs_tol * eye(n - r);
     R       = Q + (U * [zeros(r, r) zeros(r, (n-r)); zeros((n-r), r) E] * U');
     R       = 0.5*(R + R');
@@ -21,4 +21,4 @@ function R = regularize(Q)
     R = Q;
   end
 
-  return;
+end

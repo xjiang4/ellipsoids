@@ -50,4 +50,4 @@ function T = trace(E)
     end
   end
 
-  return;
+end

@@ -1,4 +1,4 @@
-function res = isbaddirection(E1, E2, L)
+function res = isbaddirection(minEll, subEll, dirsMat)
 %
 % ISBADDIRECTION - checks if ellipsoidal approximations of geometric difference
 %                  of two ellipsoids can be computed for given directions.
@@ -19,11 +19,11 @@ function res = isbaddirection(E1, E2, L)
 % Output:
 % -------
 %
-%    RES - array of 1 or 0 with length being equal to the number of columns
+%    RES - logical array with length being equal to the number of columns
 %          in matrix L.
-%          1 marks direction vector as bad - ellipsoidal approximation cannot
+%          true marks direction vector as bad - ellipsoidal approximation cannot
 %          be computed for this direction.
-%          0 means the opposite.
+%          false means the opposite.
 %
 %
 % See also:
@@ -37,42 +37,22 @@ function res = isbaddirection(E1, E2, L)
 % -------
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
-
+%    Rustam Guliev <glvrst@gmail.com>   
+  import modgen.common.throwwar;
   global ellOptions;
 
   if ~isstruct(ellOptions)
     evalin('base', 'ellipsoids_init;');
   end
 
-  [k, d] = size(L);
-
-  if isbigger(E1, E2) == 0
-    if ellOptions.verbose > 0
-      fprintf('ISBADDIRECTION: geometric difference of these two ellipsoids is empty set.\n');
-      fprintf('                All directions are bad.\n');
-    end
-    res = ones(1, d);
-    return;
+  if ~isbigger(minEll, subEll)
+    %if ellOptions.verbose > 0
+    %  fprintf('ISBADDIRECTION: geometric difference of these two ellipsoids is empty set.\n');
+    %  fprintf('                All directions are bad.\n'); 
+    %end
+    throwwarn('wrongInput:emptyGeomDiff','ISBADDIRECTION: geometric difference of these two ellipsoids is empty set.\n');
   end
 
-  n = dimension(E1);
-
-  if k ~= n
-    error('ISBADDIRECTION: direction vectors must be of the same dimension as ellipsoids.');
-  end
-
-  res = ones(1,d);
-  Q1  = E1.shape;
-  Q2  = E2.shape;
-  T   = ell_simdiag(Q2, Q1);
-  a   = min(abs(diag(T*(Q1)*T')));
-  for i = 1:d
-    l = L(:, i);
-    p = sqrt(l'*Q1*l)/sqrt(l'*Q2*l);
-    if a > p
-      res(i) = 0;
-    end
-  end
+  isbaddirectionmat(minEll.shape, subEll.shape, dirsMat);
 
 end

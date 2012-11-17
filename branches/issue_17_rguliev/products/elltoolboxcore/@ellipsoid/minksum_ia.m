@@ -1,4 +1,4 @@
-function IA = minksum_ea(E, L)
+function IA = minksum_ia(E, L)
 %
 % MINKSUM_IA - computation of internal approximating ellipsoids of the geometric
 %              sum of ellipsoids in given directions.
@@ -71,7 +71,7 @@ function IA = minksum_ea(E, L)
   end
 
   [m, n] = size(E);
-  if (m == 1) & (n == 1)
+  if (m == 1) && (n == 1)
     IA = E;
     return;
   end
@@ -90,7 +90,7 @@ function IA = minksum_ea(E, L)
           Q = regularize(Q);
         end
         Q = sqrtm(Q);
-        if (i == 1) & (j == 1)
+        if (i == 1) && (j == 1)
           q = E(i, j).center;
           v = Q * l;
           M = Q;
@@ -104,4 +104,4 @@ function IA = minksum_ea(E, L)
     IA = [IA ellipsoid(q, M'*M)];
   end
 
-  return;
+end

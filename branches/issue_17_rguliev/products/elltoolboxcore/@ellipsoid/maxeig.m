@@ -49,4 +49,4 @@ function M = maxeig(E)
     end
   end
 
-  return;
+end

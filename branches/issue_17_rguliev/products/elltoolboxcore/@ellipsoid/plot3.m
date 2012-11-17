@@ -79,7 +79,7 @@ function plot3(varargin)
       cnt    = m * n;
       E1     = reshape(E, 1, cnt);
       ells   = [ells E1];
-      if (i < nai) & ischar(varargin{i + 1})
+      if (i < nai) && ischar(varargin{i + 1})
         clr = my_color_table(varargin{i + 1});
         val = 1;
       else
@@ -199,7 +199,7 @@ function plot3(varargin)
   if m ~= n
     error('PLOT: ellipsoids must be of the same dimension.');
   end
-  if (n > 3) | (n < 1)
+  if (n > 3) || (n < 1)
     error('PLOT: ellipsoid dimension can be 1, 2 or 3.');
   end
 
@@ -272,4 +272,4 @@ function plot3(varargin)
     hold off;
   end
 
-  return;
+end

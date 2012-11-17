@@ -36,7 +36,8 @@ function [E] = ellipsoid(varargin)
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
-  import modgen.common.throwerror;  
+  import modgen.common.throwerror;
+  import gras.la.ismatsymm;
   global ellOptions;
 
   if ~isstruct(ellOptions)
@@ -77,7 +78,7 @@ function [E] = ellipsoid(varargin)
     throwerror('wrongInput:wrongCenter','ELLIPSOID: center of an ellipsoid must be a vector.');
   end
   
-  if (m ~= n) || (all(all((Q == Q'))) == 0)
+  if (m ~= n) || (~ismatsymm(Q))
     throwerror('wrongInput:wrongMat','ELLIPSOID: shape matrix must be symmetric.');
   end
 
@@ -89,7 +90,7 @@ function [E] = ellipsoid(varargin)
     %tol = n * norm(Q) * eps;
     tol = ellOptions.abs_tol;
     if abs(mev) > tol
-      throwerror('wrongInput:wrongMat','ELLIPSOID: shape matrix must be positive semi-definite.');
+      throwerror('wrongInput:wrongMat','ELLIPSOID: shape matrix must not be negative semi-definute.');
     end
   end
   if k ~= n
@@ -100,4 +101,4 @@ function [E] = ellipsoid(varargin)
   E.shape  = Q; 
   E        = class(E, 'ellipsoid');
 
-  return;
+end

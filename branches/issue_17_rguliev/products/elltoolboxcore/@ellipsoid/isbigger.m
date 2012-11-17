@@ -37,13 +37,13 @@ function res = isbigger(E1, E2)
     evalin('base', 'ellipsoids_init;');
   end
 
-  if ~(isa(E1, 'ellipsoid')) | ~(isa(E2, 'ellipsoid'))
+  if ~(isa(E1, 'ellipsoid')) || ~(isa(E2, 'ellipsoid'))
     error('ISBIGGER: both arguments must be single ellipsoids.');
   end
 
   [k, l] = size(E1);
   [m, n] = size(E2);
-  if (k > 1) | (l > 1) | (m > 1) | (n > 1)
+  if (k > 1) || (l > 1) || (m > 1) || (n > 1)
     error('ISBIGGER: both arguments must be single ellipsoids.');
   end
 
@@ -74,4 +74,4 @@ function res = isbigger(E1, E2)
     res = 0;
   end
 
-  return;
+end

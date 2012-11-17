@@ -13,7 +13,7 @@ function res = isempty(E)
 % Output:
 % -------
 %
-%    1 - if ellipsoid is empty, 0 - otherwise.
+%    true - if ellipsoid is empty, false - otherwise.
 %
 %
 % See also:
@@ -41,4 +41,4 @@ function res = isempty(E)
 
   res = ~dimension(E);
 
-  return;
+end

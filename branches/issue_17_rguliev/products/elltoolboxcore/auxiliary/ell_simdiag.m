@@ -40,15 +40,15 @@ function T = ell_simdiag(A, B)
 % -------
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
-
+%    Rustam Guliev
+  import gras.la.ismatsymm;
   if ~(isa(A, 'double')) || ~(isa(B, 'double'))
     error('ELL_SIMDIAG: both arguments must be symmetric matrices of the same dimension.');
   end
-  if (~all(all(A==A'))) || (min(eig(A)) <= 0)
+  if (~ismatsymm(A)) || (min(eig(A)) <= 0)
     error('ELL_SIMDIAG: first argument must be symmetric positive definite matrix.');
   end
-  if (~all(all(B==B')))
+  if (~ismatsymm(B))
     error('ELL_SIMDIAG: second argument must be symmetric matrix.');
   end
 

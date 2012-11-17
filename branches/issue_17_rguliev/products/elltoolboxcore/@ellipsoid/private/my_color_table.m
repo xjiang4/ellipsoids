@@ -34,4 +34,4 @@ function res = my_color_table(ch)
       res = [0 0 0];
   end
 
-  return;
+end
