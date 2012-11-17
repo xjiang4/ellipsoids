@@ -1,16 +1,19 @@
 function isSymm = ismatsymm(qMat)
 % ISMATSYMM  checks if qMat is symmetric
-% Input:
-%  Regular:
-%      qMat: double[nDims, nDims]
-% Output:
-%   ismatsymm: logical[1,1]
 %
+% Input:
+%	regular:
+%       qMat: double[nDims, nDims]
+%
+% Output:
+%   isSymm: logical[1,1] - indicates whether a matrix is symmetric.
 % 
+%
 % $Author: Rustam Guliev  <glvrst@gmail.com> $	$Date: 2012-16-11$
 % $Copyright: Moscow State University,
 %            Faculty of Computational Mathematics and Cybernetics,
 %            System Analysis Department 2012 $
+%
 
 import modgen.common.throwerror;
 
