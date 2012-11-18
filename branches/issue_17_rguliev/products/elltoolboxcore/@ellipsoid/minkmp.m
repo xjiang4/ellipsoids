@@ -40,12 +40,9 @@ function [firOutArgMat, secOutArgMat] = minkmp(varargin)
 % Department, 23-October-2012, <glvrst@gmail.com>$
 %
 
-import modgen.common.throwerror;  
-global ellOptions;
 
-if ~isstruct(ellOptions)
-    evalin('base', 'ellipsoids_init;');
-end
+import modgen.common.throwerror;
+import elltool.conf.Properties;
 
 if nargin < 3
     throwerror('wrongInput','MINKMP: first, second and third arguments must be ellipsoids.');
@@ -92,8 +89,17 @@ if ~isbigger(minEll, subEll)
             secOutArgMat = [];
     end
 else
-    tempVerbose = ellOptions.verbose;
-    ellOptions.verbose = 0;
+    isVerb = Properties.getIsVerbose();
+    if isVerb
+        if nArgOut == 0
+            fprintf('Computing and plotting (E0 - E) + sum(E_i) ...\n');
+        else
+            fprintf('Computing (E0 - E) + sum(E_i) ...\n');
+        end
+    end
+    
+    Properties.setIsVerbose(false);
+    
     firOutArgMat=NaN(nDim,1);
     switch nDim
         case 1
@@ -106,11 +112,10 @@ else
                 firOutArgMat+max(sumBoundMat);
             firOutArgMat=firOutArgMat+sumCentVec;
         case 2
-            phi = linspace(0, 2*pi, ellOptions.plot2d_grid);
+            phi = linspace(0, 2*pi, minEll.nPlot2dPoints);
             lDirsMat   = [cos(phi); sin(phi)];
-
         case 3
-            phiGrid   = ellOptions.plot3d_grid/2;
+            phiGrid   = minEll.nPlot3dPoints/2;
             psyGrid   = phiGrid/2;
             psy = linspace(0, pi, psyGrid);
             phi = linspace(0, 2*pi, phiGrid);
@@ -120,7 +125,6 @@ else
                 lDirsMat(:,(i-2)*phiGrid+(1:phiGrid))   = [cos(phi)*sin(psy(i)); sin(phi)*sin(psy(i)); arr];
             end
     end
-    
     
     if nDim>1
         if rank(subEll.shape)==0
@@ -146,6 +150,7 @@ else
             end
         end
     end
+    
     if nDim==2
         secOutArgMat=[secOutArgMat secOutArgMat(:,1)];
     end
@@ -251,6 +256,6 @@ else
         end 
         clear firOutArgMat secOutArgMat;
     end
-    ellOptions.verbose = tempVerbose;
+    Properties.setIsVerbose(false);
 end
 end

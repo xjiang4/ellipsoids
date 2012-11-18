@@ -32,12 +32,7 @@ function V = volume(E)
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
   import modgen.common.throwerror;
-  global ellOptions;
-
-  if ~isstruct(ellOptions)
-    evalin('base', 'ellipsoids_init;');
-  end
-
+  
   if ~(isa(E, 'ellipsoid'))
     error('VOLUME: input argument must be ellipsoid.');
   end
@@ -65,5 +60,3 @@ function V = volume(E)
       V(i,j)= S*sqrt(det(Q));
     end
   end
-
-  return;

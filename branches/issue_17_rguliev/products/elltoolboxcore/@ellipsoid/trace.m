@@ -20,7 +20,6 @@ function T = trace(E)
 %
 %    ELLIPSOID/ELLIPSOID.
 %
-
 %
 % Author:
 % -------
@@ -28,16 +27,11 @@ function T = trace(E)
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
   import modgen.common.throwerror;
-  global ellOptions;
-
-  if ~isstruct(ellOptions)
-    evalin('base', 'ellipsoids_init;');
-  end
   
   if ~(isa(E, 'ellipsoid'))
     error('TRACE: input argument must be ellipsoid.')
   end
-
+  
   [m, n] = size(E);
   T      = zeros(m, n);
 

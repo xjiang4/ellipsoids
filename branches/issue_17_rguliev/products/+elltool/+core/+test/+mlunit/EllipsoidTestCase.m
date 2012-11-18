@@ -12,18 +12,19 @@ classdef EllipsoidTestCase < mlunitext.test_case
         end
         function self = testDistance(self)
             
-            global  ellOptions;
+            import elltool.conf.Properties;
             load(strcat(self.testDataRootDir,filesep,'testEllEllRMat.mat'),...
                  'testOrth50Mat','testOrth100Mat','testOrth3Mat','testOrth2Mat');
             %
             %testing vector-ellipsoid distance
             %
             %distance between ellipsoid and two vectors
+            absTol = Properties.getAbsTol();
             testEllipsoid = ellipsoid([1,0,0;0,5,0;0,0,10]);
             testPointMat = [3,0,0; 5,0,0].';
             testResVec = distance(testEllipsoid, testPointMat);
-            mlunit.assert_equals(1, (abs(testResVec(1)-2)<ellOptions.abs_tol) &&...
-                (abs(testResVec(2)-4)<ellOptions.abs_tol));
+            mlunit.assert_equals(1, (abs(testResVec(1)-2)<absTol) &&...
+                (abs(testResVec(2)-4)<absTol));
             %
             %distance between ellipsoid and point in the ellipsoid
             %and point on the boader of the ellipsoid
@@ -37,16 +38,16 @@ classdef EllipsoidTestCase < mlunitext.test_case
                 ellipsoid([0,0,5].',[4, 0, 0; 0, 9 , 0; 0,0, 25])];
             testPointMat = [0,0,5; 0,5,5].';
             testResVec = distance(testEllipsoidVec, testPointMat);
-            mlunit.assert_equals(1, (abs(testResVec(1)-4)<ellOptions.abs_tol) &&...
-                (abs(testResVec(2)-2)<ellOptions.abs_tol));
+            mlunit.assert_equals(1, (abs(testResVec(1)-4)<absTol) &&...
+                (abs(testResVec(2)-2)<absTol));
             %
             %distance between two ellipsoids and a vector
             testEllipsoidVec = [ellipsoid([5,5,0].',[1,0,0;0,5,0;0,0,10]),...
                 ellipsoid([0,10,0].',[10, 0, 0; 0, 16 , 0; 0,0, 5])];
             testPointVec = [0,5,0].';
             testResVec = distance(testEllipsoidVec, testPointVec);
-            mlunit.assert_equals(1, (abs(testResVec(1)-4)<ellOptions.abs_tol) &&...
-                (abs(testResVec(2)-1)<ellOptions.abs_tol));
+            mlunit.assert_equals(1, (abs(testResVec(1)-4)<absTol) &&...
+                (abs(testResVec(2)-1)<absTol));
             %
             %negative test: matrix Q of ellipsoid has very large
             %eigenvalues.
@@ -63,7 +64,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoid=ellipsoid(testEllMat);
             testPoint=testOrth2Mat*[10;zeros(nDim-1,1)];
             testRes=distance(testEllipsoid, testPoint);
-            mlunit.assert_equals(1,abs(testRes-9)<ellOptions.abs_tol);
+            mlunit.assert_equals(1,abs(testRes-9)<absTol);
             %
             %high dimensional tests with rotated ellipsoids
             nDim=50;
@@ -73,7 +74,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoid=ellipsoid(testEllMat);
             testPoint=testOrth50Mat*[zeros(nDim-1,1);10];
             testRes=distance(testEllipsoid, testPoint);
-            mlunit.assert_equals(1,abs(testRes-9)<ellOptions.abs_tol);
+            mlunit.assert_equals(1,abs(testRes-9)<absTol);
             
             %distance between two ellipsoids with random matrices and two vectors
             testEll1Mat=[5,2,0;2,5,0;0,0,1];
@@ -87,8 +88,8 @@ classdef EllipsoidTestCase < mlunitext.test_case
                 ellipsoid(testEll2CenterVec,testEll2Mat)];
             testPointMat = testOrth3Mat*([0,0,5; 0,5,5].');
             testResVec = distance(testEllipsoidVec, testPointMat);
-            mlunit.assert_equals(1, (abs(testResVec(1)-4)<ellOptions.abs_tol) &&...
-                (abs(testResVec(2)-2)<ellOptions.abs_tol));
+            mlunit.assert_equals(1, (abs(testResVec(1)-4)<absTol) &&...
+                (abs(testResVec(2)-2)<absTol));
             %
             %
             %
@@ -99,18 +100,18 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoid1 = ellipsoid([25,0;0,9]);
             testEllipsoid2 = ellipsoid([10;0],[4,0;0,9]);
             testRes=distance(testEllipsoid1,testEllipsoid2);
-            mlunit.assert_equals(1, (abs(testRes-3)<ellOptions.abs_tol));
+            mlunit.assert_equals(1, (abs(testRes-3)<absTol));
             %    
             testEllipsoid1 = ellipsoid([0,-15,0].',[25,0,0;0,100,0;0,0,9]);
             testEllipsoid2 = ellipsoid([0,7,0].',[9,0,0;0,25,0;0,0,100]);
             testRes=distance(testEllipsoid1,testEllipsoid2);
-            mlunit.assert_equals(1, (abs(testRes-7)<ellOptions.abs_tol));
+            mlunit.assert_equals(1, (abs(testRes-7)<absTol));
             %
             % case of ellipses with common center
             testEllipsoid1 = ellipsoid([1 2 3].',[1,2,5;2,5,3;5,3,100]);
             testEllipsoid2 = ellipsoid([1,2,3].',[1,2,7;2,10,5;7,5,100]);
             testRes=distance(testEllipsoid1,testEllipsoid2);
-            mlunit.assert_equals(1, (abs(testRes)<ellOptions.abs_tol));
+            mlunit.assert_equals(1, (abs(testRes)<absTol));
             %
             % distance between two pairs of ellipsoids 
             testEllipsoid1Vec=[ellipsoid([0, -6, 0].',[100,0,0; 0,4,0; 0,0, 25]),...
@@ -118,23 +119,23 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoid2Vec=[ellipsoid([0, 6, 0].',[100,0,0; 0,4,0; 0,0, 25]),...
                 ellipsoid([0,0,4.5].',[100,0,0; 0, 25,0; 0,0,4])];
             testResVec=distance(testEllipsoid1Vec,testEllipsoid2Vec);
-            mlunit.assert_equals(1, (abs(testResVec(1)-8)<ellOptions.abs_tol) &&...
-                (abs(testResVec(2)-5)<ellOptions.abs_tol));
+            mlunit.assert_equals(1, (abs(testResVec(1)-8)<absTol) &&...
+                (abs(testResVec(2)-5)<absTol));
             %            
             % distance between two ellipsoids and an ellipsoid 
             testEllipsoidVec=[ellipsoid([0, 0, 0].',[9,0,0; 0,25,0; 0,0, 1]),...
                 ellipsoid([-5,0,0].',[9,0,0; 0, 25,0; 0,0,1])];
             testEllipsoid=ellipsoid([5, 0, 0].',[25,0,0; 0,100,0; 0,0, 1]);
             testResVec=distance(testEllipsoidVec,testEllipsoid);
-            mlunit.assert_equals(1, (abs(testResVec(1))<ellOptions.abs_tol) &&...
-                (abs(testResVec(2)-2)<ellOptions.abs_tol));
+            mlunit.assert_equals(1, (abs(testResVec(1))<absTol) &&...
+                (abs(testResVec(2)-2)<absTol));
             %
             %distance between two ellipsoids of high dimensions
             nDim=100;
             testEllipsoid1=ellipsoid(diag(1:2:2*nDim));
             testEllipsoid2=ellipsoid([5;zeros(nDim-1,1)],diag(1:nDim));
             testRes=distance(testEllipsoid1,testEllipsoid2);
-            mlunit.assert_equals(1,abs(testRes-3)<ellOptions.abs_tol);
+            mlunit.assert_equals(1,abs(testRes-3)<absTol);
             %
             %distance between two vectors of ellipsoids of rather high
             %dimension (12<=nDim<=26) with matrices that have nonzero non
@@ -143,7 +144,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
                  'testEllipsoid1Vec','testEllipsoid2Vec','testAnswVec','nEllVec');
             testResVec=distance(testEllipsoid1Vec,testEllipsoid2Vec);
             mlunit.assert_equals(ones(1,nEllVec),...
-                 abs(testResVec-testAnswVec)<ellOptions.abs_tol);
+                 abs(testResVec-testAnswVec)<absTol);
             %
             %distance between two ellipsoids and an ellipsoid (of 3-dimension), 
             %all matrices with nonzero nondiagonal elements 
@@ -162,8 +163,8 @@ classdef EllipsoidTestCase < mlunitext.test_case
                 ellipsoid(testEll2CenterVec,testEll2Mat)];
             testEllipsoid=ellipsoid(testEll3CenterVec,testEll3Mat);
             testResVec=distance(testEllipsoidVec,testEllipsoid);
-            mlunit.assert_equals(1, (abs(testResVec(1))<ellOptions.abs_tol) &&...
-                (abs(testResVec(2)-2)<ellOptions.abs_tol));
+            mlunit.assert_equals(1, (abs(testResVec(1))<absTol) &&...
+                (abs(testResVec(2)-2)<absTol));
             %
             %distance between two ellipsoids of high dimensions and random
             %matrices
@@ -178,7 +179,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoid1=ellipsoid(testEll1Mat);
             testEllipsoid2=ellipsoid(testEll2CenterVec,testEll2Mat);
             testRes=distance(testEllipsoid1,testEllipsoid2);
-            mlunit.assert_equals(1,abs(testRes-3)<ellOptions.abs_tol);
+            mlunit.assert_equals(1,abs(testRes-3)<absTol);
             %
             %
             %
@@ -193,7 +194,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoid=ellipsoid(testEllCenterVec,testEllMat);
             testHyp=hyperplane(testHypVVec,testHypC);
             testRes=distance(testEllipsoid,testHyp);
-            mlunit.assert_equals(1,abs(testRes-3)<ellOptions.abs_tol);
+            mlunit.assert_equals(1,abs(testRes-3)<absTol);
             %
             %distance between an ellipsoid (with nonzero nondiagonal elements)
             %and a hyperplane in 3 dimensions
@@ -205,7 +206,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoid=ellipsoid(testEllMat);
             testHyp=hyperplane(testHypVVec,testHypC);
             testRes=distance(testEllipsoid,testHyp);
-            mlunit.assert_equals(1,abs(testRes-5)<ellOptions.abs_tol);
+            mlunit.assert_equals(1,abs(testRes-5)<absTol);
             %
             %distance between two high dimensional ellipsoids (with nonzero
             %nondiagonal elements) and a hyperplane
@@ -224,16 +225,42 @@ classdef EllipsoidTestCase < mlunitext.test_case
                 ellipsoid(testEll2CenterVec,testEll2Mat)];
             testHyp=hyperplane(testHypVVec,testHypC);
             testRes=distance(testEllipsoid,testHyp);
-            mlunit.assert_equals(1,abs(testRes(1)-7)<ellOptions.abs_tol&&...
-                abs(testRes(2)-5)<ellOptions.abs_tol);   
-            
+            mlunit.assert_equals(1,abs(testRes(1)-7)<absTol&&...
+                abs(testRes(2)-5)<absTol);          
             %distance where two ellipsoids have one common point 
-            % according to existing precision policy ellOptions.abs_tol
+            % according to existing precision policy elltool.conf.Properties.getAbsTol()
             testEll1=ellipsoid([1+1e-20 0].',[1 0; 0 1]);
             testEll2=ellipsoid([-1 0].',[1 0;0 1]);
             testRes=distance(testEll1,testEll2);
-            mlunit.assert_equals(1,abs(testRes)<ellOptions.abs_tol);   
+            mlunit.assert_equals(1,abs(testRes)<elltool.conf.Properties.getAbsTol());   
             
+        end
+        function self = testPropertyGetters(self)
+            ellCenter = [1;1];
+            ellMat = eye(2);
+            testAbsTol = 1;
+            testRelTol = 2;
+            testNPlot2dPoints = 3;
+            testNPlot3dPoints = 4;
+            args = {ellCenter,ellMat, 'absTol',testAbsTol,'relTol',testRelTol,...
+                             'nPlot2dPoints',testNPlot2dPoints,...
+                             'nPlot3dPoints',testNPlot3dPoints};
+           %%
+            ellArr = [ellipsoid(args{:}),ellipsoid(args{:});...
+                           ellipsoid(args{:}),ellipsoid(args{:})];
+            ellArr(:,:,2) = [ellipsoid(args{:}),ellipsoid(args{:});...
+                           ellipsoid(args{:}),ellipsoid(args{:})];
+            sizeArr = size(ellArr);
+            testAbsTolArr = repmat(testAbsTol,sizeArr);
+            testRelTolArr = repmat(testRelTol,sizeArr);
+            testNPlot2dPointsArr = repmat(testNPlot2dPoints,sizeArr);
+            testNPlot3dPointsArr = repmat(testNPlot3dPoints,sizeArr);
+            %%
+            isOkArr = (testAbsTolArr == ellArr.getAbsTol()) &(testRelTolArr == ellArr.getRelTol()) &...
+               (testNPlot2dPointsArr == ellArr.getNPlot2dPoints()) &...
+               (testNPlot3dPointsArr == ellArr.getNPlot3dPoints());
+            isOk = all(isOkArr(:));
+            mlunit.assert(isOk);            
         end
         function self = testEllipsoid(self)
             %Empty ellipsoid
@@ -259,7 +286,6 @@ classdef EllipsoidTestCase < mlunitext.test_case
             fCheckForTestEllipsoidAndDouble(10*rand(100,1), diag(50*rand(1,100)));
             
             %Check wrong inputs
-            self.runAndCheckError('ellipsoid(1,2,3)','wrongInput:tooManyArgs');
             self.runAndCheckError('ellipsoid([1 1],eye(2,2))','wrongInput:wrongCenter');
             self.runAndCheckError('ellipsoid([1 1;0 1])','wrongInput:wrongMat');
             self.runAndCheckError('ellipsoid([-1 0;0 -1])','wrongInput:wrongMat');
@@ -517,8 +543,8 @@ classdef EllipsoidTestCase < mlunitext.test_case
             mlunit.assert_equals(true, isTestRes);
         end
         function self = testVolume(self)
-            global ellOptions;
-            testTol=ellOptions.abs_tol;
+            import elltool.conf.Properties;
+            absTol = Properties.getAbsTol();
             %Check empty ellipsoid
             self.runAndCheckError('volume(ellipsoid)','wrongInput:emptyEllipsoid');
             
@@ -536,22 +562,22 @@ classdef EllipsoidTestCase < mlunitext.test_case
             %Check dim=2 with two different centers
             testEllipsoid1=ellipsoid([1; -1],eye(2,2));
             testEllipsoid2=ellipsoid(eye(2,2));
-            isTestRes=( (volume(testEllipsoid1)-pi)<=testTol )&&( (volume(testEllipsoid2)-pi)<=testTol );
+            isTestRes=( (volume(testEllipsoid1)-pi)<=absTol )&&( (volume(testEllipsoid2)-pi)<=absTol );
             mlunit.assert_equals(true, isTestRes);
             
             %Chek dim=3 with not diaganal matrix
             testEllipsoid=ellipsoid([1 1 -1; 1 4 -3; -1 -3 9]);
-            isTestRes=( (volume(testEllipsoid)-(8*sqrt(5)*pi/3)<=testTol ) );
+            isTestRes=( (volume(testEllipsoid)-(8*sqrt(5)*pi/3)<=absTol ) );
             mlunit.assert_equals(true, isTestRes);
             
             %Check dim=5
             testEllipsoid=ellipsoid(4*ones(5,1),eye(5,5));
-            isTestRes=( (volume(testEllipsoid)-(256*pi*pi/15)<=testTol ) );
+            isTestRes=( (volume(testEllipsoid)-(256*pi*pi/15)<=absTol ) );
             mlunit.assert_equals(true, isTestRes);
             
             %Check dim=6
             testEllipsoid=ellipsoid(-ones(6,1),diag([1, 4, 9, 16,1, 25]));
-            isTestRes=( (volume(testEllipsoid)-(20*pi*pi*pi)<=testTol ) );
+            isTestRes=( (volume(testEllipsoid)-(20*pi*pi*pi)<=absTol ) );
             mlunit.assert_equals(true, isTestRes);
             
             %High-dimensional ellipsoids            
@@ -563,13 +589,13 @@ classdef EllipsoidTestCase < mlunitext.test_case
                                0,                                          (pi^10)*(2^11)*sqrt(prod(1:21))/prod(1:2:21);
                                (pi^50)*sqrt(prod(0.1:0.1:10))/prod(1:50), 0];
             
-            isTestEqMat = (testVolMat-testRightVolMat)<=testTol;
+            isTestEqMat = (testVolMat-testRightVolMat)<=absTol;
             isTestRes = all(isTestEqMat(:));
             mlunit.assert_equals(true, isTestRes);
         end
-        function self = testMinkMP(self)
-            global ellOptions;
-            testTol=ellOptions.abs_tol;
+        function self = disabletestMinkMP(self)
+            import elltool.conf.Properties;
+            absTol = Properties.getAbsTol();
             %1D case
             nDim=1;
             testEllipsoidMin=ellipsoid(2,4);
@@ -584,19 +610,19 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoidSub=ellipsoid(2,0);
             testEllipsoidSum=ellipsoid(1,0);
             fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
-                testEllipsoidSum, 1, 2, testTol);
+                testEllipsoidSum, 1, 2, absTol);
 
             testEllipsoidMin=ellipsoid(4);
             testEllipsoidSub=ellipsoid(1);
             testEllipsoidSum=ellipsoid(0);
             fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
-                testEllipsoidSum, 0, 1, testTol);
+                testEllipsoidSum, 0, 1, absTol);
             
             testEllipsoidMin=ellipsoid(4);
             testEllipsoidSub=ellipsoid(0);
             testEllipsoidSum=ellipsoid(0.25);
             fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
-                testEllipsoidSum, 0, 2.5, testTol);
+                testEllipsoidSum, 0, 2.5, absTol);
             
             testEllipsoidMin=ellipsoid(1,4);
             testEllipsoidSub=ellipsoid(1,2.25);
@@ -604,7 +630,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoidSum2=ellipsoid(1,1);
             testEllipsoidSum3=ellipsoid(1,9);
             fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
-                [testEllipsoidSum1 testEllipsoidSum2 testEllipsoidSum3] , 3, 4.5,testTol);
+                [testEllipsoidSum1 testEllipsoidSum2 testEllipsoidSum3] , 3, 4.5,absTol);
             
             %2D case
             nDim=2;
@@ -620,7 +646,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoidSub=ellipsoid([2;1], zeros(2,2));
             testEllipsoidSum=ellipsoid([2;1], zeros(2,2));
             fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
-                testEllipsoidSum, [2;2], 2,testTol);
+                testEllipsoidSum, [2;2], 2,absTol);
             
             testEllipsoidMin=ellipsoid(4*eye(2,2));
             testEllipsoidSub=ellipsoid([1 0;0 0]);
@@ -636,14 +662,14 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoidSum1=ellipsoid([1;0],eye(2,2));
             testEllipsoidSum2=ellipsoid([0;1],eye(2,2));
             fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
-                [testEllipsoidSum1, testEllipsoidSum2], [1;1], 2,testTol);
+                [testEllipsoidSum1, testEllipsoidSum2], [1;1], 2,absTol);
              
             testEllipsoidMin=ellipsoid([2;2], 4*eye(2,2));
             testEllipsoidSub=ellipsoid([2;1], eye(2,2));
             testEllipsoidSum1=ellipsoid([1;1], eye(2,2));
             testEllipsoidSum2=ellipsoid([1;0], 9*eye(2,2));
             fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
-            [testEllipsoidSum1 testEllipsoidSum2], [2;2], 5,testTol);
+            [testEllipsoidSum1 testEllipsoidSum2], [2;2], 5,absTol);
             
             %3D case
             nDim=3;
@@ -662,14 +688,14 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testDistSqr = (testPointsMat(1,:)-testCenterVec(1)).*(testPointsMat(1,:)-testCenterVec(1)) +...
                 (testPointsMat(2,:)-testCenterVec(2)).*(testPointsMat(2,:)-testCenterVec(2))/4+...
                 (testPointsMat(3,:)-testCenterVec(3)).*(testPointsMat(3,:)-testCenterVec(3))/9;
-            isTestRes = all( testCenterVec==1 ) && all( abs(testDistSqr - 1) <= testTol );
+            isTestRes = all( testCenterVec==1 ) && all( abs(testDistSqr - 1) <= absTol );
             mlunit.assert_equals(true, isTestRes);
             
             testEllipsoidMin=ellipsoid([1;1;1], 25*eye(3,3));
             testEllipsoidSub=ellipsoid([1;0;1], 4*eye(3,3));
             testEllipsoidSum=ellipsoid([0;-1;0], eye(3,3));
             fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
-                testEllipsoidSum, [0;0;0], 4,testTol);
+                testEllipsoidSum, [0;0;0], 4,absTol);
             
             
             testEllipsoidMin=ellipsoid(diag([25,4,9]));
@@ -678,7 +704,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllipsoidSum2=ellipsoid([0;1;2], eye(3,3));
             testEllipsoidSum3=ellipsoid(eye(3,3));
             fCheckBallsForTestMinkMP(nDim,testEllipsoidMin,testEllipsoidSub,...
-                [testEllipsoidSum1 testEllipsoidSum2 testEllipsoidSum3], [1;1;1], 3, testTol);
+                [testEllipsoidSum1 testEllipsoidSum2 testEllipsoidSum3], [1;1;1], 3, absTol);
         end
     end
 end

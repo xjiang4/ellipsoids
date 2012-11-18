@@ -39,22 +39,19 @@ function isBadDirVec = isbaddirection(minEll, subEll, dirsMat)
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %    Rustam Guliev <glvrst@gmail.com>
 
-  import modgen.common.throwwar;
-  global ellOptions;
 
-  if ~isstruct(ellOptions)
-    evalin('base', 'ellipsoids_init;');
-  end
+  import modgen.common.throwwar;
+  %import elltool.conf.Properties;
 
   if ~isbigger(minEll, subEll)
-    %if ellOptions.verbose > 0
+    %if Properties.getIsVerbose() > 0
     %  fprintf('ISBADDIRECTION: geometric difference of these two ellipsoids is empty set.\n');
     %  fprintf('                All directions are bad.\n'); 
     %end
     throwwarn('wrongInput:emptyGeomDiff',...
-        'ISBADDIRECTION: geometric difference of these two ellipsoids is empty set.\n');
+        'ISBADDIRECTION: geometric difference of these two ellipsoids is empty set.\n');  
   end
 
   isBadDirVec=isbaddirectionmat(minEll.shape, subEll.shape, dirsMat);
 
-end
+
