@@ -5,18 +5,33 @@ import modgen.common.throwerror;
 import modgen.common.type.simple.*;
 
 solver_name = 'ode113reg';
-
+dyRegMat = 0;
 % Constants
 N_MAX_REG_STEPS_DEFAULT=3;
 N_PROGRESS_DOTS_SHOWN=10;
 
-% Check inputs
 if nargin < 4
     options = [];
     if nargin < 3
         throwerror('wrongInput','not enough input arguments');
     end
 end
+
+% Stats
+nsteps  = 0;
+nfailed = 0;
+nfevals = 0; 
+
+% There might be no output requested...
+checkgen(fOdeDeriv,'isfunction(x)');
+checkgen(fOdeReg,'isfunction(x)');
+%
+% Handle solver arguments
+[neq, tspan, ntspan, next, t0, tfinal, y0, f0, ...
+    options, threshold, rtol, normcontrol, normy, hmax, htry, htspan,...
+    dataType,absTol] = ...
+    odearguments(solver_name,fOdeDeriv, tspan, y0, options);
+
 [opts,~,regMaxStepTol,regAbsTol,nMaxRegSteps,isRegMaxStepTolSpec,...
     isRegAbsTolSpec]=modgen.common.parseparext(varargin,...
     {'regMaxStepTol','regAbsTol','nMaxRegSteps';...
@@ -24,41 +39,22 @@ end
     'isnumeric(x)','isnumeric(x)','isnumeric(x)'});
 options=odeset(options,opts{:});
 
-
-% Stats
-nsteps  = 0;
-nfailed = 0;
-nfevals = 0; 
-
-% Output
-FcnHandlesUsed  = isa(ode,'function_handle');
-output_sol = (FcnHandlesUsed && (nargout==1));      % sol = odeXX(...)
-output_ty  = (~output_sol && (nargout > 0));  % [t,y,...] = odeXX(...)
-% There might be no output requested...
-checkgen(fOdeDeriv,'isfunction(x)');
-checkgen(fOdeReg,'isfunction(x)');
-
-sol = []; klastvec = []; phi3d = []; psi2d = []; 
- 
-
-% Handle solver arguments
-[neq, tspan, ntspan, next, t0, tfinal, tdir, y0, f0, odeArgs, odeFcn, ...
- options, threshold, rtol, normcontrol, normy, hmax, htry, htspan, dataType] = ...
-    odearguments(solver_name, fOdeDeriv, tspan, y0, options);
-
 if ~isRegMaxStepTolSpec
     regMaxStepTol=absTol*10;
 end
 if ~isRegAbsTolSpec
     regAbsTol=256*eps(dataType);
 end
-
 nfevals = nfevals + 1;
 prDispObj=gras.gen.ProgressCmdDisplayer(t0,tfinal,...
     N_PROGRESS_DOTS_SHOWN,modgen.common.getcallername());
 prDispObj.start();
 
-% Handle the output
+% There might be no output requested...
+
+sol = []; klastvec = []; phi3d = []; psi2d = []; 
+
+
 refine = max(1,odeget(options,'Refine',1,'fast'));
 if ntspan > 2
   outputAt = 'RequestedPoints';         % output only at tspan points
@@ -73,21 +69,21 @@ t = t0;
 y = y0;
 yp = f0;  
 
-% Allocate memory for the output.
+% Allocate memory if we're generating output.
+nout = 0;
+tout = []; yout = [];
 if ntspan > 2                         % output only at tspan points
-    tout = zeros(1,ntspan,dataType);
-    yout = zeros(neq,ntspan,dataType);
-    dyRegMat=yout;
+      tout = zeros(1,ntspan,dataType);
+      yout = zeros(neq,ntspan,dataType);
 else                                  % alloc in chunks
-    chunk = min(max(100,50*refine), refine+floor((2^13)/neq));
-    tout = zeros(1,chunk,dataType);
-    yout = zeros(neq,chunk,dataType);
-    dyRegMat=yout;
+      chunk = min(max(100,50*refine), refine+floor((2^13)/neq));
+      tout = zeros(1,chunk,dataType);
+      yout = zeros(neq,chunk,dataType);
 end
+    
 nout = 1;
 tout(nout) = t;
-yout(:,nout) = y;
-
+yout(:,nout) = y;  
 
 % Initialize method parameters.
 maxk = 12;
@@ -133,22 +129,15 @@ hlast = 0;
 klast = 0;
 phase1 = true;
 
-% Initialize the output function.
-
-f(:,1) = f0;
-dyCurCorrVec=zeros(neq,1);
 
 % THE MAIN LOOP
-
 done = false;
 while ~done
-  
   % By default, hmin is a small number such that t+hmin is only slightly
   % different than t.  It might be 0 if t is 0.
   hmin = 16*eps(t);
   absh = min(hmax, max(hmin, absh));    % couldn't limit absh until new hmin
-  h = tdir * absh;
-  
+  h =  absh;
   % Stretch the step if within 10% of tfinal-t.
   if 1.1*absh >= abs(tfinal - t)
     h = tfinal - t;
@@ -156,6 +145,7 @@ while ~done
     done = true;
   end
   
+   
   % LOOP FOR ADVANCING ONE STEP.
   failed = 0;
   if normcontrol
@@ -163,8 +153,15 @@ while ~done
   else
     invwt = 1 ./ max(abs(y),threshold);
   end
+  
+  iRegStep=0;
+  dyNewCorrVec=zeros(neq,1,dataType);
   while true
     prDispObj.progress(t);
+    if iRegStep==0
+        dyCurCorrVec=zeros(neq,1,dataType);
+    end
+    isRejectedStep=false;
     % Compute coefficients of formulas for this step.  Avoid computing
     % those quantities not changed when step size is not changed.
 
@@ -240,8 +237,29 @@ while ~done
     if done
       t = tfinal;   % Hit end point exactly.
     end
+
+    [isStrictViol, pp] = fOdeReg(p);
+    yp = feval(fOdeDeriv,t,pp) + dyCurCorrVec;
+    yCurCorrVec=(pp-p);
+    errReg = max(abs(yCurCorrVec));
+    isWeakViol=errReg>=regAbsTol;
+   
     
-    yp = feval(fOdeDeriv,t,p);
+    if isStrictViol
+        isRejectedStep=true;
+    elseif isWeakViol
+        if errReg>regMaxStepTol
+            isRejectedStep = true; 
+        end               
+        dyCurCorrVec=yCurCorrVec./h;
+    end
+               %
+    if (iRegStep>nMaxRegSteps)
+        throwerror('wrongState',...
+        ['Oops, we shouldn''t be here, regularization ',...
+        'haven''t worked after %d steps'],iRegStep);
+    end
+ 
     nfevals = nfevals + 1;
 
     % Estimate errors at orders k, k-1, k-2.
@@ -288,22 +306,32 @@ while ~done
     if (k > 2) && (max(erkm1,erkm2) <= erk)
       knew = k - 1;
     end
-       
+    
+      if normcontrol
+        errNN = norm( max(0,-y) ) * invwt;
+      else
+        errNN = norm( max(0,-y) ./ thresholdNonNegative, inf);
+      end
+      if errNN > rtol
+        err = errNN;
+      end
+   
     % Test if step successful
-    if err > rtol                       % Failed step
+    isFailedStep=isRejectedStep||(err>rtol);
+    if isFailedStep                       % Failed step
+      if iRegStep>0
+                throwerror('wrongState',...
+                    ['Oops, we shouldn''t be here, regularization ',...
+                    'haven''t worked']);
+      end
+        
       nfailed = nfailed + 1;            
       if absh <= hmin
-        warning(message('MATLAB:ode113:IntegrationTolNotMet', sprintf( '%e', t ), sprintf( '%e', hmin )));
-        solver_output = odefinalize(solver_name, sol,...
-                                    outputFcn, outputArgs,...
-                                    printstats, [nsteps, nfailed, nfevals],...
-                                    nout, tout, yout,...
-                                    haveEventFcn, teout, yeout, ieout,...
-                                    {klastvec,phi3d,psi2d,idxNonNegative});
-        if nargout > 0
-          varargout = solver_output;
-        end  
-        return;
+                warning(message('MATLAB:ode45:IntegrationTolNotMet', ...
+                    sprintf( '%e', t ), sprintf( '%e', hmin )));
+                shrinkResults();
+                prDispObj.finish();
+                return;
       end
       
       % Restore t, phi, and psi.
@@ -324,13 +352,19 @@ while ~done
         reduce = min(0.5, sqrt(0.5*rtol/erk));
       end
       absh = max(reduce * absh, hmin);
-      h = tdir * absh;
+      h = absh;
       k = knew;
       K = 1:k;
       done = false;
       
-    else                                % Successful step
-      break;
+    else
+        if isWeakViol
+            iRegStep=iRegStep+1;
+            dyNewCorrVec=dyNewCorrVec+dyCurCorrVec;
+        else
+            % Successful step
+            break;
+        end;
       
     end
   end
@@ -342,6 +376,7 @@ while ~done
   % Correct and evaluate.
   ylast = y;
   y = p + h * g(k+1) * phikp1;
+  %[isStrictViol, y] = fOdeReg(y);
   yp = feval(fOdeDeriv,t,y);
   nfevals = nfevals + 1;                
   
@@ -389,26 +424,26 @@ while ~done
   end
   
   NNreset_phi = false;
-  if nonNegative && any(y(idxNonNegative) < 0)
-    NNidx = idxNonNegative(y(idxNonNegative) < 0); % logical indexing 
-    y(NNidx) = 0;
-    NNreset_phi = true;
-  end   
+ % if nonNegative && any(y(idxNonNegative) < 0)
+ %   NNidx = idxNonNegative(y(idxNonNegative) < 0); % logical indexing 
+ %   y(NNidx) = 0;
+ %   NNreset_phi = true;
+ % end   
 
    
-    nout = nout + 1;
-    if nout > length(tout)
+  nout = nout + 1;
+  if nout > length(tout)
       tout = [tout, zeros(1,chunk,dataType)];  % requires chunk >= refine
       yout = [yout, zeros(neq,chunk,dataType)];
       klastvec = [klastvec, zeros(1,chunk)];   % order of the method -- integers
       phi3d = cat(3,phi3d,zeros(neq,14,chunk,dataType));
       psi2d = [psi2d, zeros(12,chunk,dataType)];
-    end
-    tout(nout) = t;
-    yout(:,nout) = y;
-    klastvec(nout) = klast;
-    phi3d(:,:,nout) = phi;
-    psi2d(:,nout) = psi;
+  end
+  tout(nout) = t;
+  yout(:,nout) = y;
+  klastvec(nout) = klast;
+  phi3d(:,:,nout) = phi;
+  psi2d(:,nout) = psi;
   
     switch outputAt
      case 'SolverSteps'        % computed points, no refinement
@@ -425,15 +460,20 @@ while ~done
       tout_new = [];
       yout_new = [];
       while next <= ntspan  
-        if tdir * (t - tspan(next)) < 0
-           break;
+        if (t - tspan(next)) < 0
+          if haveEventFcn && stop     % output tstop,ystop
+            nout_new = nout_new + 1;
+            tout_new = [tout_new, t];
+            yout_new = [yout_new, y];            
+          end
+          break;
         end
         nout_new = nout_new + 1;
         tout_new = [tout_new, tspan(next)];
         if tspan(next) == t
           yout_new = [yout_new, y];
         else
-          yout_new = [yout_new, ntrp113(tspan(next),t,y,h,f,fOdeReg)];
+          yout_new = [yout_new, ntrp113(tspan(next),t,y,klast,phi,psi,fOdeReg)];
         end                    
         next = next + 1;
       end
@@ -449,8 +489,9 @@ while ~done
         idx = oldnout+1:nout;        
         tout(idx) = tout_new;
         yout(:,idx) = yout_new;
+     
     end  
- 
+  
   
   if done
     break
@@ -474,18 +515,15 @@ while ~done
   end
   
 end
-
 shrinkResults();
 prDispObj.finish();
     function shrinkResults()
         tout = tout(1:nout).';
         yout = yout(:,1:nout).';
-        dyRegMat = dyRegMat(:,1:nout).';
+        %dyRegMat = dyRegMat(:,1:nout).';
     end
-end
+end  
 
-
-end
 
 function yinterp = ntrp113(tinterp,tnew,ynew,klast,phi,psi,fOdeReg)
 
@@ -518,3 +556,4 @@ for k = 1:length(tinterp)
 end
 
 end
+
