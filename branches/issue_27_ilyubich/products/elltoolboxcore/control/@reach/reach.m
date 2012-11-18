@@ -1,4 +1,4 @@
-function RS = reach(lsys, X0, L0, T, Options,timeGrid)
+function [RS,myData] = reach(lsys, X0, L0, T, Options,timeGrid)
 %
 % REACH - computes reach set approximation of the linear system for the given
 %         time interval.
@@ -684,9 +684,6 @@ function RS = reach(lsys, X0, L0, T, Options,timeGrid)
   clear A B C AA BB CC DD Bp BPB Gq GQG p P q Q w W ww;
 
 
-
-  
-
   %%% Compute state transition matrix. %%%
 
   if ellOptions.verbose > 0
@@ -827,6 +824,7 @@ function RS = reach(lsys, X0, L0, T, Options,timeGrid)
           [tt, Q] = ell_ode_solver(@ell_eedist_ode, tvals, Q0, l0, mydata, d1, back);
           Q       = Q';
         elseif ~(isempty(mydata.BPB))
+            myData = mydata;
           [tt, Q] = ell_ode_solver(@ell_eesm_ode, tvals, Q0, l0, mydata, d1, back);
           Q       = Q';
         else

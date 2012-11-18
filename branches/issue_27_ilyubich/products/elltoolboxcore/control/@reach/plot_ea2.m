@@ -140,28 +140,34 @@ end
     plObj=smartdb.disp.RelationDataPlotter(...
                 'nMaxAxesRows',1 ,'nMaxAxesCols', 1,...
                 'figureGroupKeySuffFunc',@(x)sprintf('_gr%d',x));
-    SData.vertices= X;
-    
-   SData.faceVertexCData = clr(ones(1,n),:).';
-    
+    SData.verticesX = X(1,:);
+    SData.verticesY = X(2,:);
+    SData.verticesZ = X(3,:);
+    faceVertexCData = clr(ones(1,n),:).';
+    SData.faceVertexCDataX = faceVertexCData(1,:);
+    SData.faceVertexCDataY = faceVertexCData(2,:);
+    SData.faceVertexCDataZ = faceVertexCData(3,:);
+    SData.axesName = 'ax';
+    SData.figureName = 'fig';
 %     SData.faceColor = {'flat';'flat';'flat'};
 %     SData.faceAlpha = {Options.shade;Options.shade;Options.shade}
-%      if isdiscrete(rs.system);
-%       SData.title = sprintf('%s at time step K = %d', back, rs.time_values(end));
-%     else
-%       SData.title = sprintf('%s at time T = %d', back, rs.time_values(end));
-%      end
+     if isdiscrete(rs.system);
+      SData.tit = sprintf('%s at time step K = %d', back, rs.time_values(end));
+    else
+      SData.tit = sprintf('%s at time T = %d', back, rs.time_values(end));
+     end
 %     SData.title = {SData.title;SData.title;SData.title}
 
     rel=smartdb.relations.DynamicRelation(SData);
     
-      plObj.plotGeneric(rel,@(varargin)'figure',...
-                {},@figureSetPropFunc,...
-                {},{@(varargin)'surf'},...
-                {},...
-                {@(varargin)'figure'},{},...
+       plObj.plotGeneric(rel,@figureGetGroupNameFunc,...
+                {'figureName'},@figureSetPropFunc,...
+                {},  @axesGetNameSurfFunc,...
+                {'axesName'},...
+                @axesSetPropFunc,{'axesName'},...
                 {@plotCreateSurfFunc},...
-                {'vertices','faceVertexCData'});
+                {'SData.verticesX','SData.verticesY','SData.verticesZ',...
+                'SData.faceVertexCDataX','SData.faceVertexCDataY','SData.faceVertexCDataZ'});
             
             
             
@@ -170,8 +176,11 @@ end
   end     
             
 end   
-    function hVec=plotCreateSurfFunc(vertices,faceVertexCData)%,faceColor,faceAlpha,...
+function hVec=plotCreateSurfFunc(verticesX,verticesY,verticesZ,faceVertexCDataX,faceVertexCDataY,faceVertexCDataZ)%,faceColor,faceAlpha,...
        % varargin)
+        vertices = [verticesX;verticesY;verticesZ];
+        faces = convhulln( vertices.');
+        faceVertexCData = [faceVertexCDataX;faceVertexCDataY;faceVertexCDataZ];
          h0 = patch('Vertices',vertices, 'Faces', faces, ...
           'FaceVertexCData', faceVertexCData, 'FaceColor',faceColor, ...
           'FaceAlpha', faceAlpha);
@@ -180,17 +189,23 @@ end
          material('metal');
          view(3);
          hVec  = h0;
-    end
-    function axesSetPropFunc(basicAxesName)
-                
-                title(basicAxesName(1));
-                xlabel('x_1'); 
-                ylabel('x_2'); 
-                zlabel('x_3');
-                
-    end
-     function figureSetPropFunc(hFigure,figureName,indFigureGroup)
-                set(hFigure,'NumberTitle','off','WindowStyle','docked',...
-                    'RendererMode','manual','Renderer','OpenGL',...
-                    'Name',figureName);
-     end
+end
+    function figureSetPropFunc(hFigure,figureName,indFigureGroup)
+                set(hFigure,'Name',figureName);
+end
+    
+function figureGroupName=figureGetGroupNameFunc(figureName)
+                figureGroupName=[figureName];
+end
+function axesName=axesGetNameSurfFunc(axesName)
+                axesName = axesName;
+end
+function hVec=axesSetPropFunc(hAxes,basicAxesName,axesName,tit)
+                axis(hAxes,'auto');
+                 set(hAxes,'XLabel','x_1');
+                set(hAxes,'YLabel','x_2');
+                set(hAxes,'ZLabel','x_3');
+               set(hAxes,'Title',tit);
+                hVec=[];
+end
+            
