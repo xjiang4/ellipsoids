@@ -1,39 +1,29 @@
-function [sd, ed] = dimension(E)
+function [spaceDim, ellDim] = dimension(myEll)
 %
 % DIMENSION - returns the dimension of the space in which the ellipsoid
-%             is defined and the dimension of the ellipsoid.
-%
+%             is defined and the actual dimension of the ellipsoid.
 %
 % Description:
-% ------------
+%    [SPACEDIM, ELLDIM] = DIMENSION(myEll)  Retrieves the space dimension SPACEDIM in which
+%                             the ellipsoid myEll is defined and the actual
+%                             dimension ELLDIM of this ellipsoid.
 %
-%    [SD, ED] = DIMENSION(E)  Retrieves the space dimension SD in which
-%                             the ellipsoid E is defined and the actual
-%                             dimension ED of this ellipsoid.
+%          SPACEDIM = DIMENSION(myEll)  Retrieves just the space dimension SPACEDIM in which
+%                             the ellipsoid myEll is defined.
 %
-%          SD = DIMENSION(E)  Retrieves just the space dimension SD in which
-%                             the ellipsoid E is defined.
-%
+% Input:
+%   regular:
+%       myEll: ellipsoid [1, 1] - single ellipsoid.
 %
 % Output:
-% -------
+%   regular:
+%       SPACEDIM: double[1, 1] - space dimension.
 %
-%    SD - space dimension.
-%    ED - dimension of the ellipsoid E.
+%   optional:
+%       ELLDIM: double[1, 1] - dimension of the ellipsoid myEll.
 %
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, ISDEGENERATE.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
   global ellOptions;
 
@@ -41,15 +31,15 @@ function [sd, ed] = dimension(E)
     evalin('base', 'ellipsoids_init;');
   end
 
-  [m, n] = size(E);
+  [mRows, nCols] = size(myEll);
 
-  for i = 1:m
-    for j = 1:n
-      sd(i, j) = size(E(i, j).shape, 1);
-      ed(i, j) = rank(E(i, j).shape);
-      if isempty(E(i, j).shape) | isempty(E(i, j).center)
-        sd(i, j) = 0;
-        ed(i, j) = 0;
+  for iRows = 1:mRows
+    for jCols = 1:nCols
+      spaceDim(iRows, jCols) = size(myEll(iRows, jCols).shape, 1);
+      ellDim(iRows, jCols) = rank(myEll(iRows, jCols).shape);
+      if isempty(myEll(iRows, jCols).shape) | isempty(myEll(iRows, jCols).center)
+        spaceDim(iRows, jCols) = 0;
+        ellDim(iRows, jCols) = 0;
       end
     end
   end

@@ -1,14 +1,31 @@
-function [d, g] = contobjfun(x, E1, E2, varargin)
+function [resD, resG] = contobjfun(xVec, firstEll, secondEll, varargin)
 %
-% CONTOBJFUN - objective function for containment checking of two ellipsoids (E2 in E1).
+% CONTOBJFUN - objective function for containment checking of two ellipsoids 
+%               (secondEll in firstEll).
 %
+% Input:
+%   regular:
+%       firstEll, secondEll: ellipsoid [1, 1] - ellipsoids of the same dimentions nDims.
+%       x: numeric[nDims, 1] - Direction vector.
+%
+% Output:
+%    resD: double[1, 1] - Subtraction between 
+%       of ellipsoides support functions.
+%    resG: double[nDims, 1] - Subtraction between 
+%       of ellipsoides support vectors.
+%
+%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
-  q1 = E1.center;
-  Q1 = E1.shape;
-  q2 = E2.center;
-  Q2 = E2.shape;
+  firstEllCenterVec = firstEll.center;
+  firstEllShapeMat = firstEll.shape;
+  secondEllCenterVec = secondEll.center;
+  secondEllShapeMat = secondEll.shape;
 
-  d = x'*q1 + sqrt(x'*Q1*x) - x'*q2 - sqrt(x'*Q2*x);
-  g = q1 + ((Q1*x)/sqrt(x'*Q1*x)) - q2 - ((Q2*x)/sqrt(x'*Q2*x));
+  resD = xVec'*firstEllCenterVec + sqrt(xVec'*firstEllShapeMat1*xVec) - ...
+      xVec'*secondEllCenterVec - sqrt(xVec'*secondEllShapeMat*xVec);
+  resG = firstEllCenterVec + ((firstEllShapeMat*xVec)/sqrt(xVec'*firstEllShapeMat*xVec))...
+      - secondEllCenterVec - ((secondEllShapeMat*xVec)/sqrt(xVec'*secondEllShapeMat*xVec));
 
   return;
