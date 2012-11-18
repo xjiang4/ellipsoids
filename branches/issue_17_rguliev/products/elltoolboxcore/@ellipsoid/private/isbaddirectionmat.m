@@ -4,17 +4,17 @@ function isBadDirVec = isbaddirectionmat(q1Mat, q2Mat, dirsMat)
 % specified by matrix dirsMat                   
 %                    
 % Input:
-%	regular:
-%      q1Mat: double[nDims, nDims] - shape matrix of minuend ellipsoid
-%      q2Mat: double[nDims, nDims] - shape matrix of subtrahend ellipsoid
-%      dirsMat: double[nDims,nDirs] - columns of dirsMat are direction vectors
+%   regular:
+%       q1Mat: double[nDims, nDims] - shape matrix of minuend ellipsoid
+%       q2Mat: double[nDims, nDims] - shape matrix of subtrahend ellipsoid
+%       dirsMat: double[nDims,nDirs] - columns of dirsMat are direction vectors
 %
 % Output:
 %   isBadDirVec: logical[1,nDirs] - true marks direction vector as bad - ellipsoidal 
 %   	approximation cannot be computed for this direction, false means the opposite.
 %
 %   Note: in both cases, when geometric difference empty and when geometric difference is
-%       a single point, function returns same vector isBaDDirVec=true(1,nDirs). Therefore, 
+%       a single point, function returns same vector isBadDirVec=true(1,nDirs). Therefore, 
 %       the case where first ellipsoid is less than second, should be checked advance. 
 %
 %
@@ -46,6 +46,4 @@ if lambdaMin > (1+eps)
             isBadDirVec(iDirCout) = false;
         end
     end
-end
-
 end
