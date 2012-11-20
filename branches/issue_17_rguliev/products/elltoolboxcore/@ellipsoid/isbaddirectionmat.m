@@ -38,12 +38,12 @@ end
 
 isBadDirVec = true(1,nDirs);
 lambdaMin   = min(eig(q1Mat/q2Mat));
-if lambdaMin > (1+eps)
+%if lambdaMin > (1-eps)
     for iDirCout = 1:nDirs
         lVec = dirsMat(:, iDirCout);
         checkVal = sqrt( (lVec'*q1Mat*lVec)/(lVec'*q2Mat*lVec) );
-        if lambdaMin > checkVal
+        if lambdaMin >= checkVal
             isBadDirVec(iDirCout) = false;
         end
     end
-end
+%end

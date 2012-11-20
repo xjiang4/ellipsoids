@@ -34,5 +34,4 @@ function [q, Q] = parameters(E)
     else
         [q, Q] = double(E);
     end    
-
     

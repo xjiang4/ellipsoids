@@ -6,7 +6,7 @@ function clrDirsMat = rm_bad_directions(q1Mat, q2Mat, dirsMat)
 %                     of two ellipsoids.
 %
 
-isGoodDirVec=~isbaddirectionmat(q1Mat,q2Mat,dirsMat);
+isGoodDirVec=~ellipsoid.isbaddirectionmat(q1Mat,q2Mat,dirsMat);
 clrDirsMat=[];
 if any(isGoodDirVec)
     clrDirsMat=dirsMat(:,isGoodDirVec);

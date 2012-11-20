@@ -42,5 +42,4 @@ function [q, Q] = double(E)
     Q = E.shape;
   end
   
-end
   

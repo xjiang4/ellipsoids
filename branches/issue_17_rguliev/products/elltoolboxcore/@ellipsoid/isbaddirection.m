@@ -40,7 +40,7 @@ function isBadDirVec = isbaddirection(minEll, subEll, dirsMat)
 %    Rustam Guliev <glvrst@gmail.com>
 
 
-  import modgen.common.throwwar;
+  import modgen.common.throwwarn;
   %import elltool.conf.Properties;
 
   if ~isbigger(minEll, subEll)
@@ -52,6 +52,6 @@ function isBadDirVec = isbaddirection(minEll, subEll, dirsMat)
         'ISBADDIRECTION: geometric difference of these two ellipsoids is empty set.\n');  
   end
 
-  isBadDirVec=isbaddirectionmat(minEll.shape, subEll.shape, dirsMat);
+  isBadDirVec=ellipsoid.isbaddirectionmat(minEll.shape, subEll.shape, dirsMat);
 
 

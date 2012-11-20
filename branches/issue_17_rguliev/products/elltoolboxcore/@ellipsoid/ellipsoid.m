@@ -61,7 +61,8 @@ classdef ellipsoid < handle
           import modgen.common.throwerror;
           import gras.la.ismatsymm;
           neededPropNameList = {'absTol','relTol','nPlot2dPoints','nPlot3dPoints'};
-          [absTolVal, relTolVal,nPlot2dPointsVal,nPlot3dPointsVal] =  elltool.conf.Properties.parseProp(varargin,neededPropNameList);
+          [absTolVal, relTolVal,nPlot2dPointsVal,nPlot3dPointsVal] =...
+              elltool.conf.Properties.parseProp(varargin,neededPropNameList);
 
           if nargin == 0
             E.center = [];
@@ -125,8 +126,9 @@ classdef ellipsoid < handle
     
     methods(Static,Access = private)
         res = my_color_table(ch)
-        R = regularize(Q,absTol)
-        LC = rm_bad_directions(Q1, Q2, L)
+        regQMat = regularize(qMat,absTol)
+        clrDirsMat = rm_bad_directions(q1Mat, q2Mat, dirsMat)
+        isBadDirVec = isbaddirectionmat(q1Mat, q2Mat, dirsMat)
     end
     methods(Access = private)
         propValMat = getProperty(hplaneMat,propName)
