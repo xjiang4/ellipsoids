@@ -18,8 +18,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
                 filesep,shortClassName];
         end
         
-        function self = disabledtestIsInside(self)
-            ellOptions.abs_tol
+        function self = testIsInside(self)
             E = ellipsoid([2; 1], [4, 1; 1, 1]);
             B = ell_unitball(2);
             testRes = isinside(E, [E B], 'i');
