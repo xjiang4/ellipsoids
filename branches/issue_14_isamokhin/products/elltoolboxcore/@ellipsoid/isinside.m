@@ -78,8 +78,13 @@ function [res, status] = isinside(E1, E2, s)
 % Author:
 % -------
 %
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%    Vadim Kaushanskiy <vkaushanskiy@gmail.com>
+% $Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>$
+% $Samokhin Igor <igorian.vmk@gmail.com>$    $Date: 21-10-2012 $
+% $Vadim Kaushanskiy <vkaushanskiy@gmail.com>$    $Date: 04-11-2012 $
+% $Copyright: Moscow State University,
+%            Faculty of Computational Mathematics and Computer Science,
+%            System Analysis Department 2012 $
+
 
   import elltool.conf.Properties;
 

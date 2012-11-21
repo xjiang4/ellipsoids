@@ -1,72 +1,4 @@
-classdef EllipsoidTestCase < mlunitext.test_case
-     properties (Access=private)
-        testDataRootDir
-     end
-     methods
-        function self=EllipsoidTestCase(varargin)
-            self=self@mlunitext.test_case(varargin{:});
-            [~,className]=modgen.common.getcallernameext(1);
-            shortClassName=mfilename('classname');
-            self.testDataRootDir=[fileparts(which(className)),filesep,'TestData',...
-                filesep,shortClassName];
-        end
-        function self = testDistance(self)
-            
-            import elltool.conf.Properties;
-            load(strcat(self.testDataRootDir,filesep,'testEllEllRMat.mat'),...
-                 'testOrth50Mat','testOrth100Mat','testOrth3Mat','testOrth2Mat');
-            %
-            %testing vector-ellipsoid distance
-            %
-            %distance between ellipsoid and two vectors
-            absTol = Properties.getAbsTol();
-            testEllipsoid = ellipsoid([1,0,0;0,5,0;0,0,10]);
-            testPointMat = [3,0,0; 5,0,0].';
-            testResVec = distance(testEllipsoid, testPointMat);
-            mlunit.assert_equals(1, (abs(testResVec(1)-2)<absTol) &&...
-                (abs(testResVec(2)-4)<absTol));
-            %
-            %distance between ellipsoid and point in the ellipsoid
-            %and point on the boader of the ellipsoid
-            testEllipsoid = ellipsoid([1,2,3].',4*eye(3,3));
-            testPointMat = [2,3,2; 1,2,5].';
-            testResVec = distance(testEllipsoid, testPointMat);
-            mlunit.assert_equals(1, testResVec(1)==-1 && testResVec(2)==0);
-            %           
-            %distance between two ellipsoids and two vectors
-            testEllipsoidVec = [ellipsoid([5,2,0;2,5,0;0,0,1]),...
-                ellipsoid([0,0,5].',[4, 0, 0; 0, 9 , 0; 0,0, 25])];
-            testPointMat = [0,0,5; 0,5,5].';
-            testResVec = distance(testEllipsoidVec, testPointMat);
-            mlunit.assert_equals(1, (abs(testResVec(1)-4)<absTol) &&...
-                (abs(testResVec(2)-2)<absTol));
-            %
-            %distance between two ellipsoids and a vector
-            testEllipsoidVec = [ellipsoid([5,5,0].',[1,0,0;0,5,0;0,0,10]),...
-                ellipsoid([0,10,0].',[10, 0, 0; 0, 16 , 0; 0,0, 5])];
-            testPointVec = [0,5,0].';
-            testResVec = distance(testEllipsoidVec, testPointVec);
-            mlunit.assert_equals(1, (abs(testResVec(1)-4)<absTol) &&...
-                (abs(testResVec(2)-1)<absTol));
-            %
-            %negative test: matrix Q of ellipsoid has very large
-            %eigenvalues.
-            testEllipsoid = ellipsoid([1e+15,0;0,1e+15]);
-            testPointVec = [3e+15,0].';
-            self.runAndCheckError('distance(testEllipsoid, testPointVec)',...
-                'notSecant');
-            %
-            %random ellipsoid matrix, low dimension case
-            nDim=2;
-            testEllMat=diag(1:2);
-            testEllMat=testOrth2Mat*testEllMat*testOrth2Mat.';
-            testEllMat=0.5*(testEllMat+testEllMat.');
-            testEllipsoid=ellipsoid(testEllMat);
-            testPoint=testOrth2Mat*[10;zeros(nDim-1,1)];
-            testRes=distance(testEllipsoid, testPoint);
-            mlunit.assert_equals(1,abs(testRes-9)<absTol);
-            %
-            %high dimensional tests with rotated ellipsoids
+ tests with rotated ellipsoids
             nDim=50;
             testEllMat=diag(nDim:-1:1);
             testEllMat=testOrth50Mat*testEllMat*testOrth50Mat.';
@@ -975,7 +907,79 @@ classdef EllipsoidTestCase < mlunitext.test_case
             isEq = subTestFunc(testEllCenterVec, testEllMat, zeros(100, 1), eye(100));
             mlunit.assert_equals(1, isEq);
         end
-        
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
+        function self = disabledtestMinkmp_ea(self)
+            e0 = zeros(5, 1);
+            E0 = diag(ones(1, 5));
+            ell0 = ellipsoid(e0, E0);
+            q = [6.5; 1; 1; 1; 1];
+            Q = diag([5, 2, 2, 2, 2]);
+            E = ellipsoid(q, Q);
+            ee1 = [3; 3; 65; 4; 23];
+            EE1 = diag([13, 3, 2, 2, 2]);
+            ell1 = ellipsoid(ee1, EE1);
+            ee2 = [3; 8; 3; 2; 6];
+            EE2 = diag([7, 2, 6, 2, 2]);
+            ell2 = ellipsoid(ee2, EE2);
+            EE = [ell1, ell2];
+            L = diag(ones(1, 5));
+            testRes = minkmp_ea(ell0, E, EE, L);
+            mlunit.assert_equals([], testRes); 
+            E = 0.5 * ell_unitball(5);
+            testRes = minkmp_ea(ell0, E, EE, L);
+            analyticResVec = e0 - q + ee1 + ee2;
+            analyticRes = [ell0, ell0, ell0, ell0];
+            for indi = 1 : 5
+                lVec = L(:, indi);
+                supp1Mat = sqrt(E0);
+                supp1Mat = 0.5 * (supp1Mat + supp1Mat.');
+                supp1Vec = supp1Mat * lVec;
+                supp2Mat = sqrt(Q);
+                supp2Mat = 0.5 * (supp2Mat + supp2Mat.');
+                supp2Vec = supp2Mat * lVec;
+                [U1, ~, V1] = svd(supp1Vec);
+                [U2, ~, V2] = svd(supp2Vec);
+                S = U1 * V1 * V2' * U2';
+                S = real(S);
+                Q_starMat = supp1Mat + S * supp2Mat;
+                Q_plusMat = Q_starMat.' * Q_starMat;
+                Q_plusMat = 0.5 * (Q_plusMat + Q_plusMat.');
+                aDouble = sqrt(dot(lVec, Q_plusMat * lVec));
+                a1Double = sqrt(dot(lVec, EE1 * lVec));
+                a2Double = sqrt(dot(lVec, EE2 * lVec));
+                analyticResMat = (aDouble + a1Double + a2Double) .* ( Q_plusMat ./ aDouble + EE1 ./ a1Double + EE2 ./ a2Double);
+                analyticRes(1, indi) = ellipsoid(analyticResVec, analyticResMat);
+            end
+            
+            mlunit.assert_equals(analyticRes, testRes); 
+%             q = [1; 0.5; 0.5; 0.5; 0.5];
+%             Q = diag([1 / 4, 1 / 16, 1 / 16, 1 / 16, 1 / 16]);
+%             E = ellipsoid(q, Q);
+%             testRes = minkmp_ea(ell0, E, EE, L);
+%             analyticResVec = e0 - q + ee1 + ee2;
+%             lVec = L(:, 1);
+%             supp1Mat = sqrt(E0);
+%             supp1Mat = 0.5 * (supp1Mat + supp1Mat.');
+%             supp1Vec = supp1Mat * lVec;
+%             supp2Mat = sqrt(Q);
+%             supp2Mat = 0.5 * (supp2Mat + supp2Mat.');
+%             supp2Vec = supp2Mat * lVec;
+%             [U1, ~, V1] = svd(supp1Vec);
+%             [U2, ~, V2] = svd(supp2Vec);
+%             S = U1 * V1 * V2' * U2';
+%             S = real(S);
+%             Q_starMat = supp1Mat + S * supp2Mat;
+%             Q_plusMat = Q_starMat.' * Q_starMat;
+%             Q_plusMat = 0.5 * (Q_plusMat + Q_plusMat.');
+%             aDouble = sqrt(dot(lVec, Q_plusMat * lVec));
+%             a1Double = sqrt(dot(lVec, EE1 * lVec));
+%             a2Double = sqrt(dot(lVec, EE2 * lVec));
+%             analyticResMat = (aDouble + a1Double + a2Double) .* ( Q_plusMat ./ aDouble + EE1 ./ a1Double + EE2 ./ a2Double);
+%             analyticRes = ellipsoid(analyticResVec, analyticResMat);
+%             mlunit.assert_equals(analyticRes, testRes); 
+            
+        end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
     end
 end
 
