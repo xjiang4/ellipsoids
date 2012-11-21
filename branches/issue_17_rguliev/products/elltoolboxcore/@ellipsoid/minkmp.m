@@ -136,7 +136,7 @@ else
             end
             q1Mat=minEll.shape;
             q2Mat=subEll.shape;
-            isGoodDirVec = ~isbaddirectionmat(q1Mat, q2Mat, lDirsMat);
+            isGoodDirVec = ~ellipsoid.isbaddirectionmat(q1Mat, q2Mat, lDirsMat);
             if  ~any(isGoodDirVec)
                 tmpEll=ellipsoid(minEll.center-subEll.center,zeros(nDim,nDim));
                 [firOutArgMat, secOutArgMat]=minksum([tmpEll; sumEllMat(:)]);

@@ -241,7 +241,7 @@ function a = l_get_lambda(q1, Q1, q2, Q2, flag)
     end
   end
 
-  return;
+end
 
 
 
@@ -268,4 +268,4 @@ function EA = l_polyintersect(E, P)
     EA = intersection_ea(EA, HA(i));
   end
 
-  return;
+end

@@ -232,4 +232,4 @@ function EA = l_polyintersect(E, P)
     return;
   end
 
-  return;
+end
