@@ -32,20 +32,17 @@ function IA = minkpm_ea(EE, E2, L)
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
+  import modgen.common.throwerror;
+  import elltool.conf.Properties;
 
-  global ellOptions;
-
-  if ~isstruct(ellOptions)
-    evalin('base', 'ellipsoids_init;');
-  end
 
   if ~(isa(EE, 'ellipsoid')) | ~(isa(E2, 'ellipsoid'))
-    error('MINKPM_IA: first and second arguments must be ellipsoids.');
+    throwerror('wrongInput', 'MINKPM_IA: first and second arguments must be ellipsoids.');
   end
 
   [m, n] = size(E2);
   if (m ~= 1) | (n ~= 1)
-    error('MINKPM_IA: second argument must be single ellipsoid.');
+    throwerror('wrongInput', 'MINKPM_IA: second argument must be single ellipsoid.');
   end
 
   k  = size(L, 1);
@@ -53,17 +50,17 @@ function IA = minkpm_ea(EE, E2, L)
   mn = min(min(dimension(EE)));
   mx = max(max(dimension(EE)));
   if (mn ~= mx) | (mn ~= n)
-    error('MINKPM_IA: all ellipsoids must be of the same dimension.');
+    throwerror('wrongSizes', 'MINKPM_IA: all ellipsoids must be of the same dimension.');
   end
   if n ~= k
-    error('MINKPM_IA: dimension of the direction vectors must be the same as dimension of ellipsoids.');
+    throwerror('wrongSizes', 'MINKPM_IA: dimension of the direction vectors must be the same as dimension of ellipsoids.');
   end
 
   N                  = size(L, 2);
   IA                 = [];
   ES                 = minksum_ia(EE, L);
-  vrb                = ellOptions.verbose;
-  ellOptions.verbose = 0;
+  vrb                = Properties.getIsVerbose();
+  Properties.setIsVerbose(false);
 
   for i = 1:N
     E = ES(i);
@@ -75,10 +72,10 @@ function IA = minkpm_ea(EE, E2, L)
     end
   end
 
-  ellOptions.verbose = vrb;
+  Properties.setIsVerbose(vrb);
 
   if isempty(IA)
-    if ellOptions.verbose > 0
+    if Properties.getIsVerbose()
       fprintf('MINKPM_IA: cannot compute internal approximation for any\n');
       fprintf('           of the specified directions.\n');
     end
