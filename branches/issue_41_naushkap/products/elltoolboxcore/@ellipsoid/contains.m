@@ -1,25 +1,15 @@
-function res = contains(firstEll, secondEll)
+function resMat = contains(firstEllArray, secondEllArray)
 %
 % CONTAINS - checks if one ellipsoid contains the other.
 %
-% Description:
-%    RES = CONTAINS(firstEll, secondEll)  Checks if ellipsoid firstEll contains ellipsoid secondEll.
-%                            firstEll and secondEll must be ellipsoidal arrays of the same
-%                            size, or, alternatively, firstEll or secondEll should be a single
-%                            ellipsoid.
-%
-%    The condition for firstEll to contain secondEll is 
-%                min(rho(l | firstEll) - rho(l | secondEll)) > 0,
-%    subject to
-%                <l, l> = 1.
-%
 % Input:
 %   regular:
-%       firstEll: ellipsoid [1, nCols] - first ellipsoid.
-%       secondEll: ellipsoid [1, nCols] - second ellipsoid.
+%       firstEllArray: ellipsoid [mRows, nCols] - first array of ellipsoids.
+%       secondEllArray: ellipsoid [mRows, nCols] - second array of ellipsoids.
 %
 % Output:
-%    res: double[1,1], 1 - firstEll contains secondEll, 0 - otherwise.
+%    resMat: double[mRows, nCols], resMat(iRows, jCols) = 1 - firstEllArray(iRows, jCols)
+%                                  contains secondEllArray(iRows, jCols), 0 - otherwise.
 %
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
@@ -32,64 +22,64 @@ import modgen.common.throwerror;
     evalin('base', 'ellipsoids_init;');
   end
 
-  if ~(isa(firstEll, 'ellipsoid')) | ~(isa(secondEll, 'ellipsoid'))
+  if ~(isa(firstEllArray, 'ellipsoid')) || ~(isa(secondEllArray, 'ellipsoid'))
     throwerror('wrongInput', 'CONTAINS: input arguments must be ellipsoids.');
   end
 
-  [mRowsFirst, nColsFirst] = size(firstEll);
-  [mRowsSecond, nColsSecond] = size(secondEll);
+  [mRowsFirst, nColsFirst] = size(firstEllArray);
+  [mRowsSecond, nColsSecond] = size(secondEllArray);
   nSizeFirst     = mRowsFirst * nColsFirst;
   nSizeSecond     = mRowsSecond * nColsSecond;
-  if (nSizeFirst > 1) & (nSizeSecond > 1) & ((mRowsFirst ~= mRowsSecond) | (nColsFirst ~= nColsSecond))
+  if (nSizeFirst > 1) && (nSizeSecond > 1) && ((mRowsFirst ~= mRowsSecond) || (nColsFirst ~= nColsSecond))
     throwerror('wrongInput', 'CONTAINS: sizes of ellipsoidal arrays do not match.');
   end
 
-  dimFirst = dimension(firstEll);
-  dimSecond = dimension(secondEll);
+  dimFirst = dimension(firstEllArray);
+  dimSecond = dimension(secondEllArray);
   minDimFirst   = min(min(dimFirst));
   minDimSecond   = min(min(dimSecond));
   maxDimFirst   = max(max(dimFirst));
   maxDimSecond   = max(max(dimSecond));
-  if (minDimFirst ~= maxDimFirst) | (minDimSecond ~= maxDimSecond) | (minDimFirst ~= minDimSecond)
+  if (minDimFirst ~= maxDimFirst) || (minDimSecond ~= maxDimSecond) || (minDimFirst ~= minDimSecond)
     throwerror('wrongSizes', 'CONTAINS: ellipsoids must be of the same dimension.');
   end
 
   if ellOptions.verbose > 0
-    if (nSizeFirst > 1) | (nSizeSecond > 1)
+    if (nSizeFirst > 1) || (nSizeSecond > 1)
       fprintf('Checking %d ellipsoid-in-ellipsoid containments...\n', max([nSizeFirst nSizeSecond]));
     else
       fprintf('Checking ellipsoid-in-ellipsoid containment...\n');
     end
   end
 
-  res = [];
-  if (nSizeFirst > 1) & (nSizeSecond > 1)
+  resMat = [];
+  if (nSizeFirst > 1) && (nSizeSecond > 1)
     for iRowsFirst = 1:mRowsFirst
       resPart = [];
       for jColsFirst = 1:nColsFirst
-        resPart = [resPart l_check_containment(firstEll(iRowsFirst, jColsFirst), secondEll(iRowsFirst, jColsFirst))];
+        resPart = [resPart l_check_containment(firstEllArray(iRowsFirst, jColsFirst), secondEllArray(iRowsFirst, jColsFirst))];
       end
-      res = [res; resPart];
+      resMat = [resMat; resPart];
     end
   elseif (nSizeFirst > 1)
     for iRowsFirst = 1:mRowsFirst
       resPart = [];
       for jColsFirst = 1:nColsFirst
-        resPart = [resPart l_check_containment(firstEll(iRowsFirst, jColsFirst), secondEll)];
+        resPart = [resPart l_check_containment(firstEllArray(iRowsFirst, jColsFirst), secondEllArray)];
       end
-      res = [res; resPart];
+      resMat = [resMat; resPart];
     end
   else
     for iRowsSecond = 1:mRowsSecond
       resPart = [];
       for jColsSecond = 1:nColsSecond
-        resPart = [resPart l_check_containment(firstEll, secondEll(iRowsSecond, jColsSecond))];
+        resPart = [resPart l_check_containment(firstEllArray, secondEllArray(iRowsSecond, jColsSecond))];
       end
-      res = [res; resPart];
+      resMat = [resMat; resPart];
     end
   end
 
-  return;
+end
 
 
 
@@ -154,3 +144,4 @@ function res = l_check_containment(firstEll, secondEll)
   else
     res = 0;
   end
+end

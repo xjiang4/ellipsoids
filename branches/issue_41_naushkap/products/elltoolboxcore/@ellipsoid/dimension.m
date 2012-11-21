@@ -1,26 +1,18 @@
-function [spaceDim, ellDim] = dimension(myEll)
+function [spaceDimMat, ellDimMat] = dimension(myEllArray)
 %
 % DIMENSION - returns the dimension of the space in which the ellipsoid
 %             is defined and the actual dimension of the ellipsoid.
 %
-% Description:
-%    [SPACEDIM, ELLDIM] = DIMENSION(myEll)  Retrieves the space dimension SPACEDIM in which
-%                             the ellipsoid myEll is defined and the actual
-%                             dimension ELLDIM of this ellipsoid.
-%
-%          SPACEDIM = DIMENSION(myEll)  Retrieves just the space dimension SPACEDIM in which
-%                             the ellipsoid myEll is defined.
-%
 % Input:
 %   regular:
-%       myEll: ellipsoid [1, 1] - single ellipsoid.
+%       myEllArray: ellipsoid [mRows, nCols] - Array of ellipsoids.
 %
 % Output:
 %   regular:
-%       SPACEDIM: double[1, 1] - space dimension.
+%       spaceDimMat: double[mRows, nCols] - space dimensions.
 %
 %   optional:
-%       ELLDIM: double[1, 1] - dimension of the ellipsoid myEll.
+%       ellDimMat: double[mRows, nCols] - dimensions of the ellipsoids in myEllArray.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
@@ -31,17 +23,17 @@ function [spaceDim, ellDim] = dimension(myEll)
     evalin('base', 'ellipsoids_init;');
   end
 
-  [mRows, nCols] = size(myEll);
+  [mRows, nCols] = size(myEllArray);
 
   for iRows = 1:mRows
     for jCols = 1:nCols
-      spaceDim(iRows, jCols) = size(myEll(iRows, jCols).shape, 1);
-      ellDim(iRows, jCols) = rank(myEll(iRows, jCols).shape);
-      if isempty(myEll(iRows, jCols).shape) | isempty(myEll(iRows, jCols).center)
-        spaceDim(iRows, jCols) = 0;
-        ellDim(iRows, jCols) = 0;
+      spaceDimMat(iRows, jCols) = size(myEllArray(iRows, jCols).shape, 1);
+      ellDimMat(iRows, jCols) = rank(myEllArray(iRows, jCols).shape);
+      if isempty(myEllArray(iRows, jCols).shape) || isempty(myEllArray(iRows, jCols).center)
+        spaceDimMat(iRows, jCols) = 0;
+        ellDimMat(iRows, jCols) = 0;
       end
     end
   end
 
-  return;
+end
