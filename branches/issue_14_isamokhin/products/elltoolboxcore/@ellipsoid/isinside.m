@@ -92,18 +92,18 @@ function [res, status] = isinside(E1, E2, s)
     error('ISINSIDE: first input argument must be ellipsoid.');
   end
 
-  if ~(isa(E2, 'ellipsoid')) & ~(isa(E2, 'polytope'))
+  if ~(isa(E2, 'ellipsoid')) && ~(isa(E2, 'polytope'))
     error('ISINSIDE: second input arguments must be ellipsoids or polytope.');
   end
 
-  if (nargin < 3) | ~(ischar(s))
+  if (nargin < 3) || ~(ischar(s))
     s = 'u';
   end
 
   status = [];
 
   if isa(E2, 'polytope')
-    [m, n] = size(E2);
+    [~, n] = size(E2);
     if s == 'i'
       PP = E2(1);
       for j = 1:n
@@ -155,7 +155,7 @@ function [res, status] = isinside(E1, E2, s)
     dims = dimension(E2);
     k    = min(min(dims));
     l    = max(max(dims));
-    if (m ~= n) | (k ~= l) | (k ~= m)
+    if (m ~= n) || (k ~= l) || (k ~= m)
       error('ISINSIDE: ellipsoids must be of the same dimension.');
     end
     if Properties.getIsVerbose()
@@ -171,7 +171,7 @@ function [res, status] = isinside(E1, E2, s)
             clear status;
           end
           return;
-	end
+        end
       end
     end
   end
@@ -180,7 +180,7 @@ function [res, status] = isinside(E1, E2, s)
     clear status;
   end
 
-  return;
+end
 
 
 
@@ -224,8 +224,8 @@ cvx_begin sdp
         Q = ell_inv(Q);
         Q = 0.5*(Q + Q');
         x'*Q*x + 2*(-Q*q)'*x + (q'*Q*q - 1) <= 0;
-    end
-  end
+        end 
+      end
 cvx_end
 
 
@@ -246,4 +246,4 @@ cvx_end
     res = 0;
   end
 
-  return;
+end
