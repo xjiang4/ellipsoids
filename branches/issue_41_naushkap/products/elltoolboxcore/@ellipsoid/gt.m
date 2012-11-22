@@ -1,57 +1,63 @@
-function res = gt(E1, E2)
+function resMat = gt(firsrEllMat, secondEllMat)
 %
+% GT - checks if the first ellipsoid is bigger than the second one.
 %
-% Description:
-% ------------
+% Input:
+%   regular:
+%       firsrEllMat: ellipsoid [mRows, nCols] - array of ellipsoids.
+%       secondEllMat: ellipsoid [mRows, nCols] - array of ellipsoids of the corresponding
+%       dimensions.
 %
-%    See ISBIGGER for details.
+% Output:
+%    resMat: double[mRows, nCols], resMat[iRows, jCols] = 1 - if firsrEllMat[iRows, jCols]
+%               contains secondEllMat[iRows, jCols] when both have same center,
+%                                                         0 - otherwise.
 %
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 import modgen.common.throwerror;
 
-  if ~(isa(E1, 'ellipsoid')) || ~(isa(E2, 'ellipsoid'))
+  if ~(isa(firsrEllMat, 'ellipsoid')) || ~(isa(secondEllMat, 'ellipsoid'))
     throwerror('wrongInput', '<>: both input arguments must be ellipsoids.');
   end
 
-  [k, l] = size(E1);
-  s      = k * l;
-  [m, n] = size(E2);
-  t      = m * n;
+  [mRowsFstEllMatrix, nColsFstEllMatrix] = size(firsrEllMat);
+  nFstEllipsoids = mRowsFstEllMatrix * nColsFstEllMatrix;
+  [mRowsSecEllMatrix, nColsSecEllMatrix] = size(secondEllMat);
+  nSecEllipsoids = mRowsSecEllMatrix * nColsSecEllMatrix;
 
-  if ((k ~= m) || (l ~= n)) && (s > 1) && (t > 1)
+  if ((mRowsFstEllMatrix ~= mRowsSecEllMatrix) || (nColsFstEllMatrix ~= ...
+          nColsSecEllMatrix)) && (nFstEllipsoids > 1) && (nSecEllipsoids > 1)
     throwerror('wrongSizes', '<>: sizes of ellipsoidal arrays do not match.');
   end
 
-  res = [];
-  if (s > 1) && (t > 1)
-    for i = 1:m
-      r = [];
-      for j = 1:n
-        r = [r isbigger(E1(i, j), E2(i, j))];
+  resMat = [];
+  if (nFstEllipsoids > 1) && (nSecEllipsoids > 1)
+    for iRowsSecEllMatrix = 1:mRowsSecEllMatrix
+      resPartVec = [];
+      for jColsSecEllMatrix = 1:nColsSecEllMatrix
+        resPartVec = [resPartVec isbigger(firsrEllMat(iRowsSecEllMatrix, jColsSecEllMatrix),...
+            secondEllMat(iRowsSecEllMatrix, jColsSecEllMatrix))];
       end
-      res = [res; r];
+      resMat = [resMat; resPartVec];
     end
-  elseif (s > 1)
-    for i = 1:k
-      r = [];
-      for j = 1:l
-        r = [r isbigger(E1(i, j), E2)];
+  elseif (nFstEllipsoids > 1)
+    for iRowsFstEllMatrix = 1:mRowsFstEllMatrix
+      resPartVec = [];
+      for jColsFstEllMatrix = 1:nColsFstEllMatrix
+        resPartVec = [resPartVec isbigger(firsrEllMat(iRowsFstEllMatrix, ...
+            jColsFstEllMatrix), secondEllMat)];
       end
-      res = [res; r];
+      resMat = [resMat; resPartVec];
     end
   else
-    for i = 1:m
-      r = [];
-      for j = 1:n
-        r = [r isbigger(E1, E2(i, j))];
+    for iRowsSecEllMatrix = 1:mRowsSecEllMatrix
+      resPartVec = [];
+      for jColsSecEllMatrix = 1:nColsSecEllMatrix
+        resPartVec = [resPartVec isbigger(firsrEllMat,...
+            secondEllMat(iRowsSecEllMatrix, jColsSecEllMatrix))];
       end
-      res = [res; r];
+      resMat = [resMat; resPartVec];
     end
   end
 
