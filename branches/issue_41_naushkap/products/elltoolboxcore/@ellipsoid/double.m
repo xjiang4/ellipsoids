@@ -21,7 +21,7 @@ function [myEllCentVec, myEllshMat] = double(myEll)
   end
   
   if nargout < 2
-    myEllshMat = myEll.shape;
+    myEllCentVec = myEll.shape;
   else
     myEllCentVec = myEll.center;
     myEllshMat = myEll.shape;
