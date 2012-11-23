@@ -1,15 +1,15 @@
-function isSymm = ismatsymm(qMat)
-% ISMATSYMM  checks if qMat is symmetric
+function isPosDef = ismatposdef(qMat)
+% ISMATPOSDEF  checks if qMat is positive definiteness
 %
 % Input:
 %	regular:
 %       qMat: double[nDims, nDims]
 %
 % Output:
-%   isSymm: logical[1,1] - indicates whether a matrix is symmetric.
+%   isPosDef: logical[1,1] - indicates whether a matrix is positive definiteness.
 % 
 %
-% $Author: Rustam Guliev  <glvrst@gmail.com> $	$Date: 2012-16-11$
+% $Author: Rustam Guliev  <glvrst@gmail.com> $	$Date: 2012-24-11$
 % $Copyright: Moscow State University,
 %            Faculty of Computational Mathematics and Cybernetics,
 %            System Analysis Department 2012 $
@@ -22,8 +22,7 @@ if (nRows~=nCols)
     throwerror('wrongInput:nonSquareMat',...
         'ISMATSYMM: Input matrix mast be square.');
 end
-isSymm=false;
-if all(all(qMat == transpose(qMat)))
-    isSymm=true;
+isPosDef=false;
+if min(eig(qMat))>0
+    isPosDef=true;
 end
-

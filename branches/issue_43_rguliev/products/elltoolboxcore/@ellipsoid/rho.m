@@ -56,9 +56,8 @@ function [res, x] = rho(E, L)
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
 
-  if ~(isa(E, 'ellipsoid'))
-    error('RHO: first argument must be ellipsoid.');
-  end
+modgen.common.type.simple.checkgenext(@(x1,x2)...
+    isa(x1,'ellipsoid')&&isa(x2,'double'),2,E,L,'Input argumets',' ');
 
   [m, n] = size(E);
   [k, d] = size(L);

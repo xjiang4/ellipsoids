@@ -1,4 +1,4 @@
-function V = volume(E)
+function volArr = volume(ellArr)
 %
 % VOLUME - returns the volume of the ellipsoid.
 %
@@ -30,33 +30,35 @@ function V = volume(E)
 % -------
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+%    Rustam Guliev <glvrst@gmail.com>
 %
-  import modgen.common.throwerror;
-  
-  if ~(isa(E, 'ellipsoid'))
-    error('VOLUME: input argument must be ellipsoid.');
-  end
 
-  [m, n] = size(E);
-  V=zeros(m,n);
-  for i = 1:m
-    for j = 1:n
-      if isempty(E(i,j))
-          throwerror('wrongInput:emptyEllipsoid','VOLUME: input argument is empty.');
-      end
-      Q = E(i, j).shape;
-      if isdegenerate(E(i, j))
-        S = 0;
-      else
-        N = size(Q, 1) - 1;
-        if mod(N, 2) > 0
-          k = (N + 1)/2;
-          S = (pi^k)/factorial(k);
+import modgen.common.throwerror;
+modgen.common.type.simple.checkgen(ellArr,@(x) isa(x,'ellipsoid'),...
+    'Input argument');
+if any(isempty(ellArr(:)))
+	throwerror('wrongInput:emptyEllipsoid','VOLUME: input argument is empty.');
+end
+
+volArr = arrayfun(@(x) fsingleVolume(x), ellArr);
+  
+end
+
+function vol = fsingleVolume(singEll)
+    if isdegenerate(singEll)
+        vol = 0;
+    else
+        qMat = singEll.shape;
+        nDim = size(qMat, 1);
+        
+        if mod(nDim,2)
+            k = (nDim-1)/2;
+            s = ((2^(2*k + 1))*(pi^k)*factorial(k))/factorial(2*k + 1);
         else
-          k = N/2;
-          S = ((2^(2*k + 1))*(pi^k)*factorial(k))/factorial(2*k + 1);
+            k = nDim /2;
+            s = (pi^k)/factorial(k);
         end
-      end
-      V(i,j)= S*sqrt(det(Q));
+        vol = s*sqrt(det(qMat));
     end
-  end
+end
+  
