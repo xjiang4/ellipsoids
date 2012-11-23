@@ -6,11 +6,10 @@ function outEll = ellunion_ea(inpEllMat)
 % Input:
 %   regular:
 %       inpEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids
-%                                             of the same dimentions.
+%           of the same dimentions.
 %
 % Output:
-%   regular:
-%       outEll: ellipsoid [1, 1] - resulting minimum volume ellipsoid.
+%   outEll: ellipsoid [1, 1] - resulting minimum volume ellipsoid.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
@@ -59,12 +58,12 @@ for iEllipsoid = 1:nEllipsoids
     inpEllShMat     = inv(inpEllShMat);
     inpEllShMat = (inpEllShMat + inpEllShMat')*0.5;
     bVec    = -inpEllShMat * inpEllcenrVec;
-    c    = inpEllcenrVec' * inpEllShMat * inpEllcenrVec - 1;
+    constraint    = inpEllcenrVec' * inpEllShMat * inpEllcenrVec - 1;
     
     [ -(cvxEllMat - cvxDirVec(iEllipsoid)*inpEllShMat), -(cvxEllCenterVec...
         - cvxDirVec(iEllipsoid)*bVec), zeros(minEllDim, minEllDim);
         -(cvxEllCenterVec - cvxDirVec(iEllipsoid)*bVec)', -(- 1 - ...
-        cvxDirVec(iEllipsoid)*c), -cvxEllCenterVec';
+        cvxDirVec(iEllipsoid)*constraint), -cvxEllCenterVec';
         zeros(minEllDim, minEllDim), -cvxEllCenterVec, cvxEllMat] >= 0;
 end
 cvx_end

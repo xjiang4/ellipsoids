@@ -7,8 +7,7 @@ function xMat = ellbndr_2d(myEll)
 %       myEll: ellipsoid [1, 1]- ellipsoid of the dimention 2.
 %
 % Output:
-%      xMat: double[2, nPoints + 1] - boundary points of the
-%                                     ellipsoid myEll.
+%   xMat: double[2, nPoints + 1] - boundary points of the ellipsoid myEll.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $

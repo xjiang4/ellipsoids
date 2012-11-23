@@ -6,11 +6,10 @@ function outEll = ellintersection_ia(inpEllMat)
 % Input:
 %   regular:
 %       inpEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids
-%                                             of the same dimentions.
+%           of the same dimentions.
 %
 % Output:
-%   regular:
-%       outEll: ellipsoid [1, 1] - resulting maximum volume ellipsoid.
+%   outEll: ellipsoid [1, 1] - resulting maximum volume ellipsoid.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
@@ -57,9 +56,9 @@ for iEllipsoid = 1:nEllipsoids
     end
     invShMat     = ell_inv(inpEllShMat);
     bVec     = -invShMat * inpEllcenrVec;
-    c     = inpEllcenrVec' * invShMat * inpEllcenrVec - 1;
-    [ (-cvxDirVec(iEllipsoid)-c+bVec'*inpEllShMat*bVec), zeros(minEllDim,1)',...
-        (cvxEllCenterVec + inpEllShMat*bVec)' ;
+    constraint     = inpEllcenrVec' * invShMat * inpEllcenrVec - 1;
+    [ (-cvxDirVec(iEllipsoid)-constraint+bVec'*inpEllShMat*bVec), ...
+        zeros(minEllDim,1)', (cvxEllCenterVec + inpEllShMat*bVec)' ;
         
         zeros(minEllDim,1), cvxDirVec(iEllipsoid)*eye(minEllDim), cvxEllMat;
         (cvxEllCenterVec + inpEllShMat*bVec), cvxEllMat, inpEllShMat] >= 0;

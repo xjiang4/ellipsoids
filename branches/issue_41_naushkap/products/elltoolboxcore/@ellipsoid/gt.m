@@ -6,21 +6,21 @@ function resMat = gt(firsrEllMat, secondEllMat)
 %   regular:
 %       firsrEllMat: ellipsoid [mRows, nCols] - array of ellipsoids.
 %       secondEllMat: ellipsoid [mRows, nCols] - array of ellipsoids
-%                                          of the corresponding dimensions.
+%           of the corresponding dimensions.
 %
 % Output:
-%    resMat: double[mRows, nCols],
-%            resMat[iRows, jCols] = 1 - if firsrEllMat[iRows, jCols]
-%                                       contains secondEllMat[iRows, jCols]
-%                                       when both have same center,
-%                                   0 - otherwise.
+%   resMat: double[mRows, nCols],
+%       resMat(iRows, jCols) = 1 - if firsrEllMat(iRows, jCols)
+%       contains secondEllMat(iRows, jCols)
+%       when both have same center, 0 - otherwise.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 import modgen.common.throwerror;
 
 if ~(isa(firsrEllMat, 'ellipsoid')) || ~(isa(secondEllMat, 'ellipsoid'))
-    throwerror('wrongInput', '<>: both input arguments must be ellipsoids.');
+    throwerror('wrongInput', ...
+        '<>: both input arguments must be ellipsoids.');
 end
 
 [mRowsFstEllMatrix, nColsFstEllMatrix] = size(firsrEllMat);
@@ -30,7 +30,8 @@ nSecEllipsoids = mRowsSecEllMatrix * nColsSecEllMatrix;
 
 if ((mRowsFstEllMatrix ~= mRowsSecEllMatrix) || (nColsFstEllMatrix ~= ...
         nColsSecEllMatrix)) && (nFstEllipsoids > 1) && (nSecEllipsoids > 1)
-    throwerror('wrongSizes', '<>: sizes of ellipsoidal arrays do not match.');
+    throwerror('wrongSizes', ...
+        '<>: sizes of ellipsoidal arrays do not match.');
 end
 
 resMat = [];
