@@ -21,5 +21,3 @@ else
         fprintf('Empty ellipsoid.\n\n');
     end
 end
-
-end

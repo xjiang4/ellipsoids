@@ -17,5 +17,3 @@ phiVec = linspace(0, 2*pi, nPoints);
 lMat = [cos(phiVec); sin(phiVec)];
 [rVec, xMat] = rho(myEll, lMat);
 xMat = [xMat xMat(:, 1)];
-
-end

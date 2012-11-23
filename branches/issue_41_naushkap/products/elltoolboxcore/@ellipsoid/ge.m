@@ -19,5 +19,3 @@ function resMat = ge(firsrEllMat, secondEllMat)
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
 resMat = gt(firsrEllMat, secondEllMat);
-
-end

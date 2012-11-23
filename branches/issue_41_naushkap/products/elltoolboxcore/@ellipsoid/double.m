@@ -28,5 +28,3 @@ else
     myEllCentVec = myEll.center;
     myEllshMat = myEll.shape;
 end
-
-end

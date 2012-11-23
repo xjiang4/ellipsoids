@@ -80,5 +80,3 @@ ellMat = cvxEllMat * cvxEllMat';
 ellMat = 0.5*(ellMat + ellMat');
 
 outEll = ellipsoid(cvxEllCenterVec, ellMat);
-
-end

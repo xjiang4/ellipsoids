@@ -31,7 +31,8 @@ function resMat = contains(firstEllMat, secondEllMat)
   [mRowsSecond, nColsSecond] = size(secondEllMat);
   nSizeFirst = mRowsFirst * nColsFirst;
   nSizeSecond = mRowsSecond * nColsSecond;
-  if (nSizeFirst > 1) && (nSizeSecond > 1) && ((mRowsFirst ~= mRowsSecond) || (nColsFirst ~= nColsSecond))
+  if (nSizeFirst > 1) && (nSizeSecond > 1) && ...
+          ((mRowsFirst ~= mRowsSecond) || (nColsFirst ~= nColsSecond))
     throwerror('wrongInput', ...
         'CONTAINS: sizes of ellipsoidal arrays do not match.');
   end

@@ -35,5 +35,3 @@ for iRows = 1:mRows
         end
     end
 end
-
-end

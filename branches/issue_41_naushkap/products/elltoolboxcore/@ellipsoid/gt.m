@@ -63,5 +63,3 @@ else
         resMat = [resMat; resPartVec];
     end
 end
-
-end

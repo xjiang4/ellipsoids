@@ -22,5 +22,3 @@ myEllShMat = myEll.shape;
 resD = xVec'*myEllCentVec + sqrt(xVec'*myEllShMat*xVec) - xVec'*yVec;
 resGVec = myEllCentVec - yVec + ...
     ((myEllShMat*xVec)/sqrt(xVec'*myEllShMat*xVec));
-
-end

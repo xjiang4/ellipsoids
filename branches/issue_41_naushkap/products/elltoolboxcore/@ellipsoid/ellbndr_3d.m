@@ -25,4 +25,3 @@ for i = 2:(nNPoints - 1)
         sin(phiVec)*sin(psyVec(i)); arrVec]];
 end
 [rVec, xMat] = rho(myEll, lMat);
-end

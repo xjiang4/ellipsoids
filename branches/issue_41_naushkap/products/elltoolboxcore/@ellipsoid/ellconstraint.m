@@ -15,7 +15,7 @@ function [fstOutEmpt, ellConstr, secOutEmpt, GVec] = ellconstraint(xVec, Q1, Q2,
 %           ellipsoid. Default values - identity matrix.
 %
 % Output:
-%   F0, G0: [] - always empty.
+%   fstOutEmpt, secOutEmpt: [] - always empty.
 %   ellConstr: double[1, 1] - ellipsoidal constraint
 %   GVec: double[ellDimension, 1] -
 %
@@ -32,6 +32,4 @@ if nargin > 3
 else
     ellConstr = (xVec' * xVec) - 1;
     GVec = 2 * xVec;
-end
-
 end
