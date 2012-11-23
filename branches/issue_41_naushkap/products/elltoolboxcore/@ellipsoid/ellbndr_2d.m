@@ -13,10 +13,10 @@ function xMat = ellbndr_2d(myEll)
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-  nPoints = myEll.nPlot2dPoints;
-  phiVec = linspace(0, 2*pi, nPoints);
-  lMat = [cos(phiVec); sin(phiVec)];
-  [rVec, xMat] = rho(myEll, lMat);
-  xMat = [xMat xMat(:, 1)];
+nPoints = myEll.nPlot2dPoints;
+phiVec = linspace(0, 2*pi, nPoints);
+lMat = [cos(phiVec); sin(phiVec)];
+[rVec, xMat] = rho(myEll, lMat);
+xMat = [xMat xMat(:, 1)];
 
 end
