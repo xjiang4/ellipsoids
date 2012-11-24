@@ -1,52 +1,41 @@
-function I = inv(E)
+function invEll = inv(myEll)
 %
 % INV - inverts shape matrices of ellipsoids in the given array.
+%   I = INV(myEll)  Inverts shape matrices of ellipsoids in the
+%       array myEll. In case shape matrix is sigular, it is
+%       regularized before inversion.
 %
-%
-% Description:
-% ------------
-%
-%    I = INV(E)  Inverts shape matrices of ellipsoids in the array E.
-%                In case shape matrix is sigular, it is ellipsoid.regularized before inversion.
-%
+% Input:
+%   regular:
+%       myEll: ellipsoid [mRows, nCols] - matrix of ellipsoids.
 %
 % Output:
-% -------
+%    invEll: ellipsoid [mRows, nCols] - matrix of ellipsoids with inverted
+%       shape matrices.
 %
-%    I - array of ellipsoids with inverted shape matrices.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+import modgen.common.throwerror;
 
-  if ~(isa(E, 'ellipsoid'))
-    error('INV: input argument must be array of ellipsoids.');
-  end
+if ~(isa(myEll, 'ellipsoid'))
+    throwerror('wrongInput', ...
+        'INV: input argument must be array of ellipsoids.');
+end
 
-  I      = E;
-  [m, n] = size(I);
+invEll      = myEll;
+[mRows, nCols] = size(invEll);
 
-  absTolMat = getAbsTol(I);
-  for i = 1:m
-    for j = 1:n
-      if isdegenerate(I(i, j))
-        Q = ellipsoid.regularize(I(i, j).shape,absTolMat(i,j));
-      else
-        Q = I(i, j).shape;
-      end
-      Q             = ell_inv(Q);
-      I(i, j).shape = 0.5*(Q + Q');
+absTolMat = getAbsTol(invEll);
+for iRow = 1:mRows
+    for jCol = 1:nCols
+        if isdegenerate(invEll(iRow, jCol))
+            regShMat = ellipsoid.regularize(invEll(iRow, jCol).shape, ...
+                absTolMat(iRow,jCol));
+        else
+            regShMat = invEll(iRow, jCol).shape;
+        end
+        regShMat = ell_inv(regShMat);
+        invEll(iRow, jCol).shape = 0.5*(regShMat + regShMat');
     end
-  end
-
 end

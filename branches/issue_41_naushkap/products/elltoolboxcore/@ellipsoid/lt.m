@@ -1,19 +1,21 @@
-function res = lt(E1, E2)
+function resMat = lt(fstEllMat, secEllMat)
 %
+% LT - checks if the second ellipsoid is bigger than the first one.
+%      The opposite of GT.
 %
-% Description:
-% ------------
+% Input:
+%   regular:
+%       fstEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
+%       secEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids of the
+%           corresponding dimensions.
 %
-%    The opposite of GT.
+% Output:
+%   resMat: double[mRows, nCols],
+%       resMat(iRows, jCols) = 1 - if secEllMat(iRows, jCols)
+%       contains fstEllMat(iRows, jCols)
+%       when both have same center, 0 - otherwise.
 %
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
-
-  res = gt(E2, E1);
-
-end
+resMat = gt(secEllMat, fstEllMat);
