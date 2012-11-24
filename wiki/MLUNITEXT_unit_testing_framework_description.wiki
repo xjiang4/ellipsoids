@@ -17,22 +17,37 @@ MLUNITEXT is a custom-made unit testing framework developed by Peter Gagarinov. 
 {{{
 classdef BasicTestCase < mlunit.test_case
     %
+    properties (Access=private)
+        someProperty
+    end
     methods
         function self = BasicTestCase(varargin)
             self = self@mlunit.test_case(varargin{:});
         end
         %
-        function self = testNull(self)
+        function set_up(self)
+           self.someProperty=1;
+        end
+        %
+        function tear_down(self)
+           self.someProperty=0;
+        end
+        %
+        function testAlwaysPass(self)
+            mlunit.assert_equals(self.someProperty,1);
+        end
+        %
+        function testNull(self)
             mlunit.assert_equals(0, sin(0));
         end
         %
-        function self = testSinCos(self)
+        function testSinCos(self)
             mlunit.assert_equals(cos(0), sin(pi/2));
         end
-        function self=testFailed(self)
+        function testFailed(self)
             mlunit.assert_equals(1,0);
         end
-        function self = testSin(self)
+        function testSin(self)
             mlunit.assert_equals(sin(0), 0);
         end
     end
