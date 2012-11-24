@@ -77,7 +77,6 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testRes = any(testRes);
             mlunit.assert_equals(0, testRes); 
         end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function self = testMinkmp_ea(self)
             e0 = [3; 3; 8; 3; 23];
             E0 = diag(ones(1, 5));
@@ -99,7 +98,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             E = ellipsoid(q, Q);
             testRes = minkmp_ea(ell0, E, EE, L);
             analyticResVec = e0 - q + ee1 + ee2;
-            analyticRes = [ell0, ell0, ell0, ell0, ell0];
+            analyticRes(5) = ellipsoid;
             for indi = 1 : 5
                 lVec = L(:, indi);
                 supp1Mat = sqrt(E0);
@@ -122,6 +121,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
                 analyticRes(1, indi) = ellipsoid(analyticResVec, analyticResMat);
             end
             mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
+            clear analyticRes testRes;
             e0 = [3; 76; 8; 3; 23];
             E0 = diag([3, 5, 6, 2, 7]);
             ell0 = ellipsoid(e0, E0);
@@ -138,7 +138,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             L = diag(ones(1, 5));
             testRes = minkmp_ea(ell0, E, EE, L);
             analyticResVec = e0 - q + ee1 + ee2;
-            analyticRes = [ell0, ell0];
+            analyticRes(2) = ellipsoid;
             for indi = 1 : 2
                 lVec = L(:, indi);
                 supp1Mat = sqrt(E0);
@@ -161,12 +161,210 @@ classdef EllipsoidTestCase < mlunitext.test_case
                 analyticRes(1, indi) = ellipsoid(analyticResVec, analyticResMat);
             end
             mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
-            
-            
-           
-            
+            clear analyticRes testRes;
+            e0 = rand(100, 1);
+            E0 = diag([5 * ones(1, 50), 2 * ones(1, 50)]);
+            ell0 = ellipsoid(e0, E0);
+            q = rand(100, 1);
+            Q = diag([0.5 * ones(1, 50), 0.2 * ones(1, 50)]);
+            E = ellipsoid(q, Q);
+            ee1 = rand(100, 1);
+            EE1 = diag(10 * rand(1, 100) + 0.5);
+            ell1 = ellipsoid(ee1, EE1);
+            ee2 = rand(100, 1);
+            EE2 = diag(10 * rand(1, 100) + 0.5);
+            ell2 = ellipsoid(ee2, EE2);
+            EE = [ell1, ell2];
+            L = diag(ones(1, 100));
+            testRes = minkmp_ea(ell0, E, EE, L);
+            analyticResVec = e0 - q + ee1 + ee2;
+            analyticRes(100) = ellipsoid;
+            for indi = 1 : 100
+                lVec = L(:, indi);
+                supp1Mat = sqrt(E0);
+                supp1Mat = 0.5 * (supp1Mat + supp1Mat.');
+                supp1Vec = supp1Mat * lVec;
+                supp2Mat = sqrt(Q);
+                supp2Mat = 0.5 * (supp2Mat + supp2Mat.');
+                supp2Vec = supp2Mat * lVec;
+                [U1, ~, V1] = svd(supp1Vec);
+                [U2, ~, V2] = svd(supp2Vec);
+                S = U1 * V1 * V2' * U2';
+                S = real(S);
+                Q_starMat = supp1Mat - S * supp2Mat;
+                Q_plusMat = Q_starMat.' * Q_starMat;
+                Q_plusMat = 0.5 * (Q_plusMat + Q_plusMat.');
+                aDouble = sqrt(dot(lVec, Q_plusMat * lVec));
+                a1Double = sqrt(dot(lVec, EE1 * lVec));
+                a2Double = sqrt(dot(lVec, EE2 * lVec));
+                analyticResMat = (aDouble + a1Double + a2Double) .* ( Q_plusMat ./ aDouble + EE1 ./ a1Double + EE2 ./ a2Double);
+                analyticRes(1, indi) = ellipsoid(analyticResVec, analyticResMat);
+            end
+            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));            
         end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
+        function self = testMinkmp_ia(self)
+            e0 = [3; 3; 8; 3; 23];
+            E0 = diag(ones(1, 5));
+            ell0 = ellipsoid(e0, E0);
+            q = [6.5; 1; 1; 1; 1];
+            Q = diag([5, 2, 2, 2, 2]);
+            E = ellipsoid(q, Q);
+            ee1 = [3; 3; 65; 4; 23];
+            EE1 = diag([13, 3, 2, 2, 2]);
+            ell1 = ellipsoid(ee1, EE1);
+            ee2 = [3; 8; 3; 2; 6];
+            EE2 = diag([7, 2, 6, 2, 2]);
+            ell2 = ellipsoid(ee2, EE2);
+            EE = [ell1, ell2];
+            L = diag(ones(1, 5));
+            testRes = minkmp_ia(ell0, E, EE, L);
+            mlunit.assert_equals([], testRes);
+            Q = diag([0.25, 0.25, 0.25, 0.25, 0.25]);
+            E = ellipsoid(q, Q);
+            testRes = minkmp_ia(ell0, E, EE, L);
+            analyticResVec = e0 - q + ee1 + ee2;
+            analyticRes(5) = ellipsoid;
+            for indi = 1 : 5
+                lVec = L(:, indi);
+                p  = (sqrt(dot(lVec, E0 * lVec))) / (sqrt(dot(lVec, Q * lVec)));
+                Q_minusMat  = (1 - (1 / p)) * E0 + (1 - p) * Q;
+                Q_minusMat = 0.5 * (Q_minusMat + Q_minusMat.');
+                supp1Mat = sqrt(Q_minusMat);
+                supp1Mat = 0.5 * (supp1Mat + supp1Mat.');
+                supp2Mat = sqrt(EE1);
+                supp2Mat = 0.5 * (supp2Mat + supp2Mat.');
+                supp3Mat = sqrt(EE3);
+                supp3Mat = 0.5 * (supp3Mat + supp3Mat.');
+                supp1lVec = supp1Mat * lVec;
+                supp2lVec = supp2Mat * lVec;
+                supp3lVec = supp3Mat * lVec;
+                [U1, ~, V1] = svd(supp1lVec);
+                [U2, ~, V2] = svd(supp2lVec);
+                [U3, ~, V3] = svd(supp3lVec);
+                S2Mat = U1 * V1 * V2' * U2';
+                S2Mat = real(S2Mat);
+                S3Mat = U1 * V1 * V3' * U3';
+                S3Mat = real(S3Mat);
+                Q_starMat = supp1Mat + S2Mat * supp1Mat + S3Mat * supp3Mat;
+                analyticResMat = Q_starMat' * Q_starMat;
+                analyticRes(1, indi) = ellipsoid(analyticResVec, analyticResMat);
+            end
+            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
+            clear analyticRes testRes;
+            e0 = [3; 76; 8; 3; 23];
+            E0 = diag([3, 5, 6, 2, 7]);
+            ell0 = ellipsoid(e0, E0);
+            q = [6.5; 1.345; 1.234; 114; 241];
+            Q = diag([2, 3, 1.5, 0.6, 2]);
+            E = ellipsoid(q, Q);
+            ee1 = [7; 33; 45; 42; 3];
+            EE1 = diag([3, 34, 23, 22, 21]);
+            ell1 = ellipsoid(ee1, EE1);
+            ee2 = [32; 81; 36; -2325; -6];
+            EE2 = diag([34, 12, 8, 17, 7]);
+            ell2 = ellipsoid(ee2, EE2);
+            EE = [ell1, ell2];
+            L = diag(ones(1, 5));
+            testRes = minkmp_ea(ell0, E, EE, L);
+            analyticResVec = e0 - q + ee1 + ee2;
+            analyticRes(2) = ellipsoid;
+            for indi = 1 : 2
+                lVec = L(:, indi);
+                p  = (sqrt(dot(lVec, E0 * lVec))) / (sqrt(dot(lVec, Q * lVec)));
+                Q_minusMat  = (1 - (1 / p)) * E0 + (1 - p) * Q;
+                Q_minusMat = 0.5 * (Q_minusMat + Q_minusMat.');
+                supp1Mat = sqrt(Q_minusMat);
+                supp1Mat = 0.5 * (supp1Mat + supp1Mat.');
+                supp2Mat = sqrt(EE1);
+                supp2Mat = 0.5 * (supp2Mat + supp2Mat.');
+                supp3Mat = sqrt(EE3);
+                supp3Mat = 0.5 * (supp3Mat + supp3Mat.');
+                supp1lVec = supp1Mat * lVec;
+                supp2lVec = supp2Mat * lVec;
+                supp3lVec = supp3Mat * lVec;
+                [U1, ~, V1] = svd(supp1lVec);
+                [U2, ~, V2] = svd(supp2lVec);
+                [U3, ~, V3] = svd(supp3lVec);
+                S2Mat = U1 * V1 * V2' * U2';
+                S2Mat = real(S2Mat);
+                S3Mat = U1 * V1 * V3' * U3';
+                S3Mat = real(S3Mat);
+                Q_starMat = supp1Mat + S2Mat * supp1Mat + S3Mat * supp3Mat;
+                analyticResMat = Q_starMat' * Q_starMat;
+                analyticRes(1, indi) = ellipsoid(analyticResVec, analyticResMat);
+            end
+            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
+            clear analyticRes testRes;
+            e0 = rand(100, 1);
+            E0 = diag([5 * ones(1, 50), 2 * ones(1, 50)]);
+            ell0 = ellipsoid(e0, E0);
+            q = rand(100, 1);
+            Q = diag([0.5 * ones(1, 50), 0.2 * ones(1, 50)]);
+            E = ellipsoid(q, Q);
+            ee1 = rand(100, 1);
+            EE1 = diag(10 * rand(1, 100) + 0.5);
+            ell1 = ellipsoid(ee1, EE1);
+            ee2 = rand(100, 1);
+            EE2 = diag(10 * rand(1, 100) + 0.5);
+            ell2 = ellipsoid(ee2, EE2);
+            EE = [ell1, ell2];
+            L = diag(ones(1, 100));
+            testRes = minkmp_ea(ell0, E, EE, L);
+            analyticResVec = e0 - q + ee1 + ee2;
+            analyticRes(100) = ellipsoid;
+            for indi = 1 : 100
+                lVec = L(:, indi);
+                p  = (sqrt(dot(lVec, E0 * lVec))) / (sqrt(dot(lVec, Q * lVec)));
+                Q_minusMat  = (1 - (1 / p)) * E0 + (1 - p) * Q;
+                Q_minusMat = 0.5 * (Q_minusMat + Q_minusMat.');
+                supp1Mat = sqrt(Q_minusMat);
+                supp1Mat = 0.5 * (supp1Mat + supp1Mat.');
+                supp2Mat = sqrt(EE1);
+                supp2Mat = 0.5 * (supp2Mat + supp2Mat.');
+                supp3Mat = sqrt(EE3);
+                supp3Mat = 0.5 * (supp3Mat + supp3Mat.');
+                supp1lVec = supp1Mat * lVec;
+                supp2lVec = supp2Mat * lVec;
+                supp3lVec = supp3Mat * lVec;
+                [U1, ~, V1] = svd(supp1lVec);
+                [U2, ~, V2] = svd(supp2lVec);
+                [U3, ~, V3] = svd(supp3lVec);
+                S2Mat = U1 * V1 * V2' * U2';
+                S2Mat = real(S2Mat);
+                S3Mat = U1 * V1 * V3' * U3';
+                S3Mat = real(S3Mat);
+                Q_starMat = supp1Mat + S2Mat * supp1Mat + S3Mat * supp3Mat;
+                analyticResMat = Q_starMat' * Q_starMat;
+                analyticRes(1, indi) = ellipsoid(analyticResVec, analyticResMat);
+            end
+            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));            
+        end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         function self = testDistance(self)
             
