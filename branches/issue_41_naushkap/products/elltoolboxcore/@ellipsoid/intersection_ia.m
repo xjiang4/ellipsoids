@@ -32,13 +32,9 @@ function outEllMat = intersection_ia(myEllMat, objMat)
 % Input:
 %   regular:
 %       myEllMat: ellipsod [mRows, nCols] - matrix of ellipsoids.
-%       objMat: ellipsoid [mRows, nCols] - ellipsoidal matrix
-%               of the same size.
-%           Or
-%           hyperplane [mRows, nCols] - matrix of hyperplanes
-%               of the same size.
-%           Or
-%           polytope [mRows, nCols] - matrix of polytopes of the same size.
+%       objMat: ellipsoid [mRows, nCols] / hyperplane [mRows, nCols] /
+%           / polytope [mRows, nCols]  - matrix of ellipsoids or
+%           hyperplanes or polytopes of the same sizes.
 %
 % Output:
 %    outEllMat: ellipsod [mRows, nCols] - matrix of internal approximating
@@ -82,7 +78,8 @@ minDim   = min(min(nDimsMat));
 minObjDim   = min(min(nObjDimsMat));
 maxDim   = max(max(nDimsMat));
 maxObjDim   = max(max(nObjDimsMat));
-if (minDim ~= maxDim) || (minObjDim ~= maxObjDim) || (maxDim ~= maxObjDim)
+if (minDim ~= maxDim) || (minObjDim ~= maxObjDim) ...
+        || (maxDim ~= maxObjDim)
     if isa(objMat, 'hyperplane')
         fstErrMsg = 'INTERSECTION_IA: ellipsoids and hyperplanes ';
         secErrMsg = 'must be of the same dimension.';
@@ -204,7 +201,8 @@ end
 fstEllCentVec = fstEll.center;
 fstEllShMat = fstEll.shape;
 if rank(fstEllShMat) < size(fstEllShMat, 1)
-    fstEllShMat = ell_inv(ellipsoid.regularize(fstEllShMat,fstEll.absTol));
+    fstEllShMat = ell_inv(ellipsoid.regularize(fstEllShMat,...
+        fstEll.absTol));
 else
     fstEllShMat = ell_inv(fstEllShMat);
 end
@@ -212,16 +210,19 @@ end
 [normHypVec, hypScalar] = parameters(-secObj);
 hypScalar      = hypScalar/sqrt(normHypVec'*normHypVec);
 normHypVec      = normHypVec/sqrt(normHypVec'*normHypVec);
-if (normHypVec'*fstEllCentVec > hypScalar) && ~(intersect(fstEll, secObj))
+if (normHypVec'*fstEllCentVec > hypScalar) ...
+        && ~(intersect(fstEll, secObj))
     outEll = fstEll;
     return;
 end
-if (normHypVec'*fstEllCentVec < hypScalar) && ~(intersect(fstEll, secObj))
+if (normHypVec'*fstEllCentVec < hypScalar) ...
+        && ~(intersect(fstEll, secObj))
     outEll = ellipsoid;
     return;
 end
 
-[intEllCentVec, intEllShMat] = parameters(hpintersection(fstEll, secObj));
+[intEllCentVec, intEllShMat] = parameters(hpintersection(fstEll, ...
+    secObj));
 [~, boundVec] = rho(fstEll, normHypVec);
 hEig      = 2*sqrt(maxeig(fstEll));
 secCentVec     = intEllCentVec + hEig*normHypVec;

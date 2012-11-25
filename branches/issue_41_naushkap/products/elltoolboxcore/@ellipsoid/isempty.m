@@ -1,4 +1,4 @@
-function isResMat = isempty(myEllMat)
+function isPositiveMat = isempty(myEllMat)
 %
 % ISEMPTY - checks if the ellipsoid object is empty.
 %
@@ -7,8 +7,9 @@ function isResMat = isempty(myEllMat)
 %       myEllMat: ellipsod [mRows, nCols] - matrix of ellipsoids.
 %
 % Output:
-%   isResMat: logical[1mRows, nCols], isResMat(iRow, jCol) = 1 - if
-%       ellipsoid myEllMat(iRow, jCol) is empty, 0 - otherwise.
+%   isPositiveMat: logical[1mRows, nCols], 
+%       isPositiveMat(iRow, jCol) = true - if ellipsoid
+%       myEllMat(iRow, jCol) is empty, false - otherwise.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
@@ -21,4 +22,4 @@ if ~(isa(myEllMat, 'ellipsoid'))
         'ISEMPTY: input argument must be ellipsoid.');
 end
 
-isResMat = ~dimension(myEllMat);
+isPositiveMat = ~dimension(myEllMat);

@@ -168,7 +168,7 @@ end
 tMat = ell_valign([1; zeros(maxEllDim-1, 1)], normHypVec);
 rotVec = (hypScalar*tMat*normHypVec)/(normHypVec'*normHypVec);
 myEll = tMat*myEll - rotVec;
-myEllcentVec = myEll.center;
+myEllCentVec = myEll.center;
 myEllShMat = myEll.shape;
 
 if rank(myEllShMat) < maxEllDim
@@ -185,9 +185,9 @@ invShMatrixVec   = invMyEllShMat(2:maxEllDim, 1);
 invShMatrixElem = invMyEllShMat(1, 1);
 invMyEllShMat   = ell_inv(invMyEllShMat(2:maxEllDim, 2:maxEllDim));
 invMyEllShMat   = 0.5*(invMyEllShMat + invMyEllShMat');
-hCoefficient   = (myEllcentVec(1, 1))^2 * (invShMatrixElem - ...
+hCoefficient   = (myEllCentVec(1, 1))^2 * (invShMatrixElem - ...
     invShMatrixVec'*invMyEllShMat*invShMatrixVec);
-intEllcentVec   = myEllcentVec + myEllcentVec(1, 1)*...
+intEllcentVec   = myEllCentVec + myEllCentVec(1, 1)*...
     [-1; invMyEllShMat*invShMatrixVec];
 intEllShMat   = (1 - hCoefficient) * [0 zeros(1, maxEllDim-1); ...
     zeros(maxEllDim-1, 1) invMyEllShMat];

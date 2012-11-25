@@ -19,7 +19,8 @@ function isBadDirVec = isbaddirectionmat(q1Mat, q2Mat, dirsMat)
 %       Note: in both cases, when geometric difference empty and when
 %           geometric difference is a single point, function returns same
 %           vector isBadDirVec=true(1,nDirs). Therefore,  the case where
-%           first ellipsoid is less than second, should be checked advance.
+%           first ellipsoid is less than second,
+%           should be checked advance.
 %
 % $Author: Rustam Guliev  <glvrst@gmail.com> $	$Date: 2012-16-11$
 % $Copyright: Moscow State University,

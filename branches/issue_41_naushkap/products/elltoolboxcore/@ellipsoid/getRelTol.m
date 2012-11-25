@@ -4,11 +4,11 @@ function relTolArr = getRelTol(ellArr)
 %
 % Input:
 %   regular:
-%       ellArr: ellipsoid[nRows, nCols] - multidimension array
+%       ellArr: ellipsoid[nDim1, nDim2,...] - multidimension array
 %           of ellipsoids
 %
 % Output:
-%   relTolArr: double[nRows, nCols] - multidimension array of relTol
+%   relTolArr: double[nDim1, nDim2,...] - multidimension array of relTol
 %       properties for ellipsoids in ellArr
 %
 % $Author: Zakharov Eugene <justenterrr@gmail.com> $

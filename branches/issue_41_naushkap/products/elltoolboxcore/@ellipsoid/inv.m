@@ -10,8 +10,8 @@ function invEllMat = inv(myEllMat)
 %       myEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
 %
 % Output:
-%    invEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids with inverted
-%       shape matrices.
+%    invEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids with
+%       inverted shape matrices.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $

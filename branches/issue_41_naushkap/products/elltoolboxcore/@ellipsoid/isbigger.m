@@ -1,4 +1,4 @@
-function isRes = isbigger(fstEll, secEll)
+function isPositive = isbigger(fstEll, secEll)
 %
 % ISBIGGER - checks if one ellipsoid would contain the other if their
 %            centers would coincide.
@@ -8,12 +8,12 @@ function isRes = isbigger(fstEll, secEll)
 %
 % Input:
 %   regular:
-%       E1: ellipsod [1, 1] - first ellipsoid.
-%       E2: ellipsod [1, 1] - second ellipsoid of the same dimention.
+%       fstEll: ellipsod [1, 1] - first ellipsoid.
+%       secEll: ellipsod [1, 1] - second ellipsoid of the same dimention.
 %
 % Output:
-%   isRes: logical[1, 1], 1 - if ellipsoid E1 would contain E2 inside,
-%       0 - otherwise.
+%   isPositive: logical[1, 1], true - if ellipsoid fstEll
+%       would contain secEll inside, false - otherwise.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
@@ -41,7 +41,7 @@ if nFstEllSpaceDim ~= nSecEllSpaceDim
         'ISBIGGER: both ellipsoids must be of the same dimension.');
 end
 if nFstEllDim < nSecEllDim
-    isRes = false;
+    isPositive = false;
     return;
 end
 
@@ -57,7 +57,7 @@ end
 
 tMat = ell_simdiag(fstEllShMat, secEllShMat);
 if max(abs(diag(tMat*secEllShMat*tMat'))) < (1 + fstEll.absTol)
-    isRes = true;
+    isPositive = true;
 else
-    isRes = false;
+    isPositive = false;
 end

@@ -33,13 +33,9 @@ function outEllMat = intersection_ea(myEllMat, objMat)
 % Input:
 %   regular:
 %       myEllMat: ellipsod [mRows, nCols] - matrix of ellipsoids.
-%       objMat: ellipsoid [mRows, nCols] - ellipsoidal matrix
-%               of the same size.
-%           Or
-%           hyperplane [mRows, nCols] - matrix of hyperplanes
-%               of the same size.
-%           Or
-%           polytope [mRows, nCols] - matrix of polytopes of the same size.
+%       objMat: ellipsoid [mRows, nCols] / hyperplane [mRows, nCols] /
+%           / polytope [mRows, nCols]  - matrix of ellipsoids or
+%           hyperplanes or polytopes of the same sizes.
 %
 % Output:
 %    outEllMat: ellipsod [mRows, nCols] - matrix of external approximating
@@ -180,11 +176,8 @@ function outEll = l_intersection_ea(fstEll, secObj)
 % Input:
 %   regular:
 %       fsrEll: ellipsod [1, 1] - matrix of ellipsoids.
-%       secObj: ellipsoid [1, 1] - ellipsoidal matrix
-%               of the same size.
-%           Or
-%           hyperplane [1, 1] - matrix of hyperplanes
-%               of the same size.
+%       secObj: ellipsoid [1, 1]/hyperplane [1, 1] - ellipsoidal matrix or
+%           matrix of hyperplanes of the same sizes.
 %
 % Output:
 %    outEll: ellipsod [1, 1] - external approximating ellipsoid.
@@ -260,7 +253,7 @@ end
 %%%%%%%%
 
 function lambda = l_get_lambda(fstEllCentVec, fstEllShMat, qSecVec, ...
-    secQMat, flag)
+    secQMat, isFlag)
 %
 % L_GET_LAMBDA - find parameter value for minimal volume ellipsoid.
 %
@@ -268,19 +261,19 @@ function lambda = l_get_lambda(fstEllCentVec, fstEllShMat, qSecVec, ...
 %   regular:
 %       fstEllCentVec, qSecVec: double[nDims, 1]
 %       fstEllShMat, secQMat: double[nDims, nDims]
-%       flag: logical[1, 1]
+%       isFlag: logical[1, 1]
 %
 % Output:
-%    lambda: double[1, 1]
+%    lambda: double[1, 1] - parameter value for minimal volume ellipsoid.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-[lambda, fval] = fzero(@ell_fusionlambda, 0.5, [], ...
+[lambda, fVal] = fzero(@ell_fusionlambda, 0.5, [], ...
     fstEllCentVec, fstEllShMat, qSecVec, secQMat, size(fstEllCentVec, 1));
 
 if (lambda < 0) || (lambda > 1)
-    if flag || (det(fstEllShMat) > det(secQMat))
+    if isFlag || (det(fstEllShMat) > det(secQMat))
         lambda = 1;
     else
         lambda = 0;
@@ -320,8 +313,8 @@ if isinside(myEll, polyt)
     return;
 end
 
-for iDim = 1:nDimsHyp
-    outEll = intersection_ea(outEll, hyp(iDim));
+for iElem = 1:nDimsHyp
+    outEll = intersection_ea(outEll, hyp(iElem));
 end
 
 end

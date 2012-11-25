@@ -4,11 +4,11 @@ function absTolArr = getAbsTol(ellArr)
 %
 % Input:
 %   regular:
-%       ellArr: ellipsoid[nRows, nCols] - multidimension array
+%       ellArr: ellipsoid[nDim1, nDim2, ...] - multidimension array
 %           of ellipsoids
 %
 % Output:
-%   absTolArr: double[nRows, nCols] - multidimension array of absTol
+%   absTolArr: double[nDim1, nDim2,...] - multidimension array of absTol
 %       properties for ellipsoids in ellArr
 %
 % $Author: Zakharov Eugene  <justenterrr@gmail.com> $

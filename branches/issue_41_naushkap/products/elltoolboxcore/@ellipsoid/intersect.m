@@ -57,13 +57,9 @@ function [resMat, statusMat] = intersect(myEllMat, objMat, mode)
 % Input:
 %   regular:
 %       myEllMat: ellipsod [mEllRows, nEllCols] - matrix of ellipsoids.
-%       objMat: ellipsoid [mRows, nCols] - ellipsoidal matrix
-%               of the same size.
-%           Or
-%           hyperplane [mRows, nCols] - matrix of hyperplanes
-%               of the same size.
-%           Or
-%           polytope [mRows, nCols] - matrix of polytopes of the same size.
+%       objMat: ellipsoid [mRows, nCols] / hyperplane [mRows, nCols] /
+%           / polytope [mRows, nCols]  - matrix of ellipsoids or
+%           hyperplanes or polytopes of the same sizes.
 %
 %   properties:
 %       mode: char[1, 1] - 'u' or 'i', go to description.
@@ -81,13 +77,14 @@ function [resMat, statusMat] = intersect(myEllMat, objMat, mode)
 %       resMat(i, j) = 1 if the union or intersection of
 %           ellipsoids in myEllMat and the object in objMat(i, j)
 %           have nonempty intersection.
-%   status: status variable returned by CVX.
+%   statusMat: double[]/double[mRows, nCols] - status variable.
+%       statusMat is empty if mode = 'u'.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
 import elltool.conf.Properties;
-import modgen.common.throwerror
+import modgen.common.throwerror;
 
 if ~(isa(myEllMat, 'ellipsoid'))
     throwerror('wrongInput', ...
@@ -106,15 +103,15 @@ end
 absTolMat = getAbsTol(myEllMat);
 resMat = [];
 statusMat = [];
-status = [];
 if mode == 'u'
     [mRows, nCols] = size(myEllMat);
-    res    = (distance(myEllMat(1, 1), objMat) <= absTolMat(1,1));
+    res    = double((distance(myEllMat(1, 1), objMat) <= absTolMat(1,1)));
     for iRow = 1:mRows
         for jCol = 1:nCols
             if (iRow > 1) || (jCol > 1)
-                res = res || (distance(myEllMat(iRow, jCol), objMat) ...
-                    <= absTolMat(iRow,jCol));
+                res = double(res || ...
+                    (distance(myEllMat(iRow, jCol), objMat) ...
+                    <= absTolMat(iRow,jCol)));
             end
         end
     end
@@ -126,7 +123,8 @@ elseif isa(objMat, 'ellipsoid')
     nDimsMat = dimension(objMat);
     minEllDim    = min(min(nDimsMat));
     maxEllDim    = max(max(nDimsMat));
-    if (mRows ~= nCols) || (minEllDim ~= maxEllDim) || (minEllDim ~= mRows)
+    if (mRows ~= nCols) || (minEllDim ~= maxEllDim) ...
+            || (minEllDim ~= mRows)
         throwerror('wrongSizes', ...
             'INTERSECT: ellipsoids must be of the same dimension.');
     end
@@ -154,7 +152,8 @@ elseif isa(objMat, 'hyperplane')
     nDimsMat = dimension(objMat);
     minEllDim    = min(min(nDimsMat));
     maxEllDim    = max(max(nDimsMat));
-    if (mRows ~= nCols) || (minEllDim ~= maxEllDim) || (minEllDim ~= mRows)
+    if (mRows ~= nCols) || (minEllDim ~= maxEllDim) ...
+            || (minEllDim ~= mRows)
         fstErrMsg = 'INTERSECT: ellipsoids and hyperplanes ';
         secErrMsg = 'must be of the same dimension.';
         throwerror('wrongSizes', [fstErrMsg secErrMsg]);
@@ -183,11 +182,11 @@ else
     maxDims = max(max(nDimsMat));
     nDimsMat   = [];
     for iRow = 1:mRows
-        nDimsPart = [];
+        nDimsPartVec = [];
         for jCol = 1:nCols
-            nDimsPart = [nDimsPart dimension(objMat(jCol))];
+            nDimsPartVec = [nDimsPartVec dimension(objMat(jCol))];
         end
-        nDimsMat = [nDimsMat; nDimsPart];
+        nDimsMat = [nDimsMat; nDimsPartVec];
     end
     minEllDim = min(min(nDimsMat));
     maxEllDim = max(max(nDimsMat));

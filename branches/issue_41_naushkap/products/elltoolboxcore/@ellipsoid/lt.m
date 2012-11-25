@@ -1,4 +1,4 @@
-function resMat = lt(fstEllMat, secEllMat)
+function isPositiveMat = lt(fstEllMat, secEllMat)
 %
 % LT - checks if the second ellipsoid is bigger than the first one.
 %      The opposite of GT.
@@ -6,16 +6,16 @@ function resMat = lt(fstEllMat, secEllMat)
 % Input:
 %   regular:
 %       fstEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
-%       secEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids of the
-%           corresponding dimensions.
+%       secEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids
+%           of the corresponding dimensions.
 %
 % Output:
-%   resMat: double[mRows, nCols],
-%       resMat(iRows, jCols) = 1 - if secEllMat(iRows, jCols)
+%   isPositiveMat: logical[mRows, nCols],
+%       resMat(iRows, jCols) = true - if secEllMat(iRows, jCols)
 %       contains fstEllMat(iRows, jCols)
-%       when both have same center, 0 - otherwise.
+%       when both have same center, false - otherwise.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-resMat = gt(secEllMat, fstEllMat);
+isPositiveMat = gt(secEllMat, fstEllMat);

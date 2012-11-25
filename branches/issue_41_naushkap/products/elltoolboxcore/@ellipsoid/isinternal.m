@@ -1,4 +1,4 @@
-function resVec = isinternal(myEllMat, matrixOfVecMat, mode)
+function isPositiveVec = isinternal(myEllMat, matrixOfVecMat, mode)
 %
 % ISINTERNAL - checks if given points belong to the union or intersection
 %              of ellipsoids in the given array.
@@ -35,9 +35,9 @@ function resVec = isinternal(myEllMat, matrixOfVecMat, mode)
 %       mode: char[1, 1] - 'u' or 'i', go to description.
 %
 % Output:
-%    resVec: double[1, nColsOfVec] -
-%       1 - if vector belongs to the union or intersection of ellipsoids,
-%       0 - otherwise.
+%    isPositiveVec: logical[1, nColsOfVec] -
+%       true - if vector belongs to the union or intersection
+%       of ellipsoids, false - otherwise.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
@@ -80,9 +80,9 @@ if mRows ~= minDim
         'ISINTERNAL: dimensions of ellipsoid and vector do not match.');
 end
 
-resVec = zeros(1,nCols);
+isPositiveVec = logical(zeros(1,nCols));
 for iCol = 1:nCols
-    resVec(iCol) = isinternal_sub(myEllMat,...
+    isPositiveVec(iCol) = isinternal_sub(myEllMat,...
         matrixOfVecMat(:, iCol), mode, mRows);
 end
 
@@ -92,7 +92,7 @@ end
 
 %%%%%%%%
 
-function res = isinternal_sub(myEllMat, xVec, mode, mRows)
+function isPositive = isinternal_sub(myEllMat, xVec, mode, mRows)
 %
 % ISINTERNAL_SUB - compute result for single vector.
 %
@@ -107,9 +107,9 @@ function res = isinternal_sub(myEllMat, xVec, mode, mRows)
 %       mode: char[1, 1] - 'u' or 'i', go to description.
 %
 % Output:
-%    res: double[1, nColsOfVec] -
-%       1 - if vector belongs to the union or intersection of ellipsoids,
-%       0 - otherwise.
+%    isPositive: logical[1, nColsOfVec] -
+%       true - if vector belongs to the union or intersection
+%       of ellipsoids, false - otherwise.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
@@ -117,9 +117,9 @@ function res = isinternal_sub(myEllMat, xVec, mode, mRows)
 import elltool.conf.Properties;
 
 if mode == 'u'
-    res = 0;
+    isPositive = false;
 else
-    res = 1;
+    isPositive = true;
 end
 
 absTolMat = getAbsTol(myEllMat);
@@ -142,13 +142,13 @@ for iEllRow = 1:mEllRows
         
         rScal = myEllCentVec' * ell_inv(myEllShMat) * myEllCentVec;
         if (mode == 'u')
-            if (rScal < 1) | (abs(rScal - 1) < absTolMat(iEllRow,jEllCol))
-                res = 1;
+            if (rScal < 1) || (abs(rScal - 1) < absTolMat(iEllRow,jEllCol))
+                isPositive = true;
                 return;
             end
         else
-            if (rScal > 1) & (abs(rScal - 1) > absTolMat(iEllRow,jEllCol))
-                res = 0;
+            if (rScal > 1) && (abs(rScal - 1) > absTolMat(iEllRow,jEllCol))
+                isPositive = false;
                 return;
             end
         end

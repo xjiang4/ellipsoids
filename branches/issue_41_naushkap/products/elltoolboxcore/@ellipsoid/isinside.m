@@ -51,11 +51,9 @@ function [res, status] = isinside(fstEllMat, secEllMat, mode)
 %   regular:
 %       fstEllMat: ellipsod [mRows, mCols] - array or matrix of
 %           ellipsoids of the same size.
-%       secEllMat: ellipsoid [mSecRows, nSecCols] - ellipsoidal array or
-%                       matrix of the same size.
-%                  Or
-%                  polytope [mSecRows, nSecCols] - array of polytopes of
-%                       the same size.
+%       secEllMat: ellipsoid [mSecRows, nSecCols] / 
+%           polytope [mSecRows, nSecCols] - matrix of ellipsoids or
+%           polytopes of the same sizes.
 %
 %           note: if mode == 'i', then fstEllMat, secEllVec should be
 %               array.
@@ -69,7 +67,8 @@ function [res, status] = isinside(fstEllMat, secEllMat, mode)
 %           but the intersection of ellipsoids in E2 is an empty set;
 %       0 - intersection is empty;
 %       1 - if intersection is nonempty.
-%   status: double[]/double[1, 1].
+%   status: double[]/double[1, 1] - status variable. status is empty
+%       if mode == 'u' or mSecRows == nSecCols == 1.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $

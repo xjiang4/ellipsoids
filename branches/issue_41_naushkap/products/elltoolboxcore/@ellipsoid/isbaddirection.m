@@ -7,22 +7,22 @@ function isBadDirVec = isbaddirection(minEll, subEll, dirsMat)
 %       possible to build ellipsoidal approximation of the geometric
 %       difference of two ellipsoids minEll - subEll in directions
 %       specified by matrix dirsMat (columns of dirsMat are
-%       direction vectors).
-%       Type 'help minkdiff_ea' or 'help minkdiff_ia' for more information.
+%       direction vectors). Type 'help minkdiff_ea' or
+%       'help minkdiff_ia' for more information.
 %
 % Input:
 %   regular:
 %       minEll: ellipsod [1, 1] - first ellipsoid. Suppose nDim - space
 %       dimension.
 %       subEll: ellipsod [1, 1] - second ellipsoid of the same dimention.
-%       dirsMat: numeric[nDims, nCols] - matrix whose columns are direction
-%       vectors that need to be checked.
+%       dirsMat: numeric[nDims, nCols] - matrix whose columns are
+%           direction vectors that need to be checked.
 %
 % Output:
-%    isBadDirVec: logical[1, nCols] - array of 1 or 0 with length being
-%       equal to the number of columns in matrix dirsMat.
-%       1 marks direction vector as bad - ellipsoidal approximation cannot
-%       be computed for this direction. 0 means the opposite.
+%    isBadDirVec: logical[1, nCols] - array of true or false with length
+%       being equal to the number of columns in matrix dirsMat.
+%       ture marks direction vector as bad - ellipsoidal approximation
+%       cannot be computed for this direction. false means the opposite.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
