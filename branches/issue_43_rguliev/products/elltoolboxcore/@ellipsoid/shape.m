@@ -12,7 +12,7 @@ function modEllArr = shape(ellArr, modMat)
 %                      linear transformation A*E.
 %                      A is expected to be a scalar or a square matrix
 %                      of suitable dimension.
-%        
+%
 %
 % Output:
 % -------
@@ -35,11 +35,12 @@ function modEllArr = shape(ellArr, modMat)
 
 modgen.common.type.simple.checkgenext(@(x1,x2)...
     isa(x1,'ellipsoid')&&isa(x2,'double'),2,ellArr,modMat,'Input argumets',' ');
-  
+
 if isscalar(modMat)
-	modEllArr = arrayfun(@(x) ellipsoid(x.center, modMat*modMat*x.shape),  ellArr);
+    modEllCArr = arrayfun(@(x) ellipsoid(x.center, modMat*modMat*x.shape),  ellArr,...
+        'UniformOutput',false);
 else
-	[nRows, nDim] = size(modMat); 
+    [nRows, nDim] = size(modMat);
     if nRows ~= nDim
         error('SHAPE: only square matrices are allowed.');
     end
@@ -47,12 +48,14 @@ else
     if any(nDimsVec ~= nDim)
         error('SHAPE: dimensions do not match.');
     end
-    modEllArr = arrayfun(@(x) fsingleShape(x),  ellArr);
+    modEllCArr = arrayfun(@(x) fsingleShape(x),  ellArr,...
+        'UniformOutput',false);
 end
+modEllArr=reshape([modEllCArr{:}],size(ellArr));
 
     function modEll = fsingleShape(singEll)
         qMat    = modMat*(singEll.shape)*modMat';
         qMat    = 0.5*(qMat + qMat');
-        modEll = ellipsoid(singArr.center, qMat);
+        modEll = ellipsoid(singEll.center, qMat);
     end
 end

@@ -37,28 +37,28 @@ import modgen.common.throwerror;
 modgen.common.type.simple.checkgen(ellArr,@(x) isa(x,'ellipsoid'),...
     'Input argument');
 if any(isempty(ellArr(:)))
-	throwerror('wrongInput:emptyEllipsoid','VOLUME: input argument is empty.');
+    throwerror('wrongInput:emptyEllipsoid',...
+        'VOLUME: input argument is empty.');
 end
 
 volArr = arrayfun(@(x) fsingleVolume(x), ellArr);
-  
+
 end
 
 function vol = fsingleVolume(singEll)
-    if isdegenerate(singEll)
-        vol = 0;
+if isdegenerate(singEll)
+    vol = 0;
+else
+    qMat = singEll.shape;
+    nDim = size(qMat, 1);
+    
+    if mod(nDim,2)
+        k = (nDim-1)/2;
+        s = ((2^(2*k + 1))*(pi^k)*factorial(k))/factorial(2*k + 1);
     else
-        qMat = singEll.shape;
-        nDim = size(qMat, 1);
-        
-        if mod(nDim,2)
-            k = (nDim-1)/2;
-            s = ((2^(2*k + 1))*(pi^k)*factorial(k))/factorial(2*k + 1);
-        else
-            k = nDim /2;
-            s = (pi^k)/factorial(k);
-        end
-        vol = s*sqrt(det(qMat));
+        k = nDim /2;
+        s = (pi^k)/factorial(k);
     end
+    vol = s*sqrt(det(qMat));
 end
-  
+end

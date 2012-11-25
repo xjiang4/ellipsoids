@@ -59,56 +59,56 @@ function [res, x] = rho(E, L)
 modgen.common.type.simple.checkgenext(@(x1,x2)...
     isa(x1,'ellipsoid')&&isa(x2,'double'),2,E,L,'Input argumets',' ');
 
-  [m, n] = size(E);
-  [k, d] = size(L);
-  if (m > 1) || (n > 1)
+[m, n] = size(E);
+[k, d] = size(L);
+if (m > 1) || (n > 1)
     if d > 1
-      msg = sprintf('RHO: arguments must be single ellipsoid and matrix of direction vectors,\n     or array of ellipsoids and single direction vector.');
-      error(msg);
+        msg = sprintf('RHO: arguments must be single ellipsoid and matrix of direction vectors,\n     or array of ellipsoids and single direction vector.');
+        error(msg);
     end
     ea = 1;
-  else
+else
     ea = 0;
-  end
+end
 
-  dims = dimension(E);
-  mn   = min(dims(:));
-  mx   = max(dims(:));
-  if mn ~= mx
+dims = dimension(E);
+mn   = min(dims(:));
+mx   = max(dims(:));
+if mn ~= mx
     error('RHO: ellipsoids in the array must be of the same dimension.');
-  end
-  if mn ~= k
+end
+if mn ~= k
     error('RHO: dimensions of the direction vector and the ellipsoid do not match.');
-  end
+end
 
-  
-  if ea > 0 % multiple ellipsoids, one direction
+
+if ea > 0 % multiple ellipsoids, one direction
     res=NaN(m,n);
     x=NaN(k,m*n);
     for i = 1:m
-      for j = 1:n
-        q  = E(i, j).center;
-        Q  = E(i, j).shape;
-        sr = sqrt(L'*Q*L);
-        if sr == 0
-          sr = eps;
+        for j = 1:n
+            q  = E(i, j).center;
+            Q  = E(i, j).shape;
+            sr = sqrt(L'*Q*L);
+            if sr == 0
+                sr = eps;
+            end
+            res(i,j) = q'*L + sr;
+            x(:,(i-1)*n+j)=((Q*L)/sr) + q;
         end
-        res(i,j) = q'*L + sr;
-        x(:,(i-1)*n+j)=((Q*L)/sr) + q;
-      end
     end
-  else % one ellipsoid, multiple directions
+else % one ellipsoid, multiple directions
     q = E.center;
     Q = E.shape;
     res=NaN(1,d);
     x=NaN(k,d);
     for i = 1:d
-      l   = L(:, i);
-      sr  = sqrt(l'*Q*l);
-      if sr == 0
-        sr = eps;
-      end
-      res(i) = q'*l + sr;
-      x(:,i)=((Q*l)/sr) + q;
+        l   = L(:, i);
+        sr  = sqrt(l'*Q*l);
+        if sr == 0
+            sr = eps;
+        end
+        res(i) = q'*l + sr;
+        x(:,i)=((Q*l)/sr) + q;
     end
-  end
+end
