@@ -1,4 +1,4 @@
-function figHandleVec = plot(varargin)
+function relationDataPlotter = plot(varargin)
 %
 % PLOT - plots hyperplanes in 2D or 3D.
 %
@@ -52,7 +52,7 @@ function figHandleVec = plot(varargin)
   end
 
   if nai > 1
-    if isstruct(varargin{nai}) & ~(isa(varargin{nai}, 'hyperplane'))
+    if isstruct(varargin{nai}) && ~(isa(varargin{nai}, 'hyperplane'))
       Options = varargin{nai};
       nai     = nai - 1;
     else
@@ -77,7 +77,7 @@ function figHandleVec = plot(varargin)
       cnt    = m * n;
       H1     = reshape(H, 1, cnt);
       hps    = [hps H1];
-      if (i < nai) & ischar(varargin{i + 1})
+      if (i < nai) && ischar(varargin{i + 1})
         clr = my_color_table(varargin{i + 1});
         val = 1;
       else
@@ -135,7 +135,6 @@ function figHandleVec = plot(varargin)
       end
     end
   end
-
   if ~isfield(Options, 'shade')
     Options.shade = 0.25 * ones(1, hp_count);
   else
@@ -196,18 +195,21 @@ function figHandleVec = plot(varargin)
       end
     end
   end
-
+%
+    SData.clr = Options.color;
+    SData.wid = Options.width.';
+    SData.shad = Options.shade.';
+%
   if size(Options.color, 1) < hp_count
     error('PLOT: not enough colors.');
   end
-
-  dims = dimension(hps);
+    dims = dimension(hps);
   m    = min(dims);
   n    = max(dims);
   if m ~= n
     error('PLOT: hyperplanes must be of the same dimension.');
   end
-  if (n < 2) | (n > 3)
+  if (n < 2) || (n > 3)
     error('PLOT: hyperplane dimension must be 2 or 3.');
   end
 
@@ -218,28 +220,37 @@ function figHandleVec = plot(varargin)
       fprintf('Plotting %d hyperplanes...\n', hp_count);
     end
   end
-
   if  ~isempty(findall(0,'Type','Figure')) && ~(Options.newfigure)
     ih = ishold;
   else
     ih = false;
   end 
-  
-  if Options.newfigure
-      figHandleVec = zeros(1,hp_count);
-  else 
-      figHandleVec = gcf;
-  end
-  
+  plObj=smartdb.disp.RelationDataPlotter(...
+          'nMaxAxesRows',2 ,'nMaxAxesCols', 2,...
+          'figureGroupKeySuffFunc',@(x)sprintf('_gr%d',x));
+%   if ih
+%       set(gcf,'Name','figure_gr1');
+%   end
+  SData.figureName=repmat({'figure'},hp_count,1);
+  SData.axesName = repmat({'ax'},hp_count,1);
+  SData.x1 = repmat({1},hp_count,1);
+  SData.x2 = repmat({1},hp_count,1);
+  SData.VerX = repmat({1},hp_count,1);
+  SData.VerY = repmat({1},hp_count,1);
+  SData.VerZ = repmat({1},hp_count,1);
+  SData.FaceX = repmat({1},hp_count,1);
+  SData.FaceY = repmat({1},hp_count,1);
+  SData.FaceZ = repmat({1},hp_count,1);
+  SData.axesNum = repmat({1},hp_count,1);
+  SData.figureNum = repmat({1},hp_count,1);
+  SData.FaceVertexCDataX = repmat({1},hp_count,1);
+  SData.FaceVertexCDataY = repmat({1},hp_count,1);
+  SData.FaceVertexCDataZ = repmat({1},hp_count,1);
   for i = 1:hp_count
-    if Options.newfigure ~= 0
-        figHandleVec(i) = figure();
-    else
-      newplot(figHandleVec);
-    end
-
-    hold on;
-
+    if Options.newfigure 
+        SData.figureName{i}=sprintf('figure%d',i);
+        SData.axesName{i} = sprintf('ax%d',i);
+    end  
     H = hps(i);
     q = H.normal;
     g = H.shift;
@@ -254,7 +265,6 @@ function figHandleVec = plot(varargin)
     else
       clr = Options.color(i, :);
     end
-      
     if size(Options.center, 1) == n
       x0 = Options.center(:, i);
       if ~(contains(H, x0))
@@ -268,8 +278,10 @@ function figHandleVec = plot(varargin)
     x1      = x0 - c*e1;
     x2      = x0 + c*e1;
     if n == 2
-      h = ell_plot([x1 x2]);
-      set(h, 'Color', clr, 'LineWidth', Options.width(i));
+        SData.x1{i} = x1;
+        SData.x2{i} = x2;
+%       h = ell_plot([x1 x2]);
+%       set(h, 'Color', clr, 'LineWidth', Options.width(i));
     else
       e2 = U(:, 3);
       [nRows, nCols] = size(hps);
@@ -289,29 +301,52 @@ function figHandleVec = plot(varargin)
       else
         ch = convhulln([x1 x3 x2 x4]', {'QJ', 'QbB', 'Qs', 'QR0', 'Pp'});
       end
-      patch('Vertices', [x1 x3 x2 x4]', 'Faces', ch, ...
-            'FaceVertexCData', clr(ones(1, 4), :), 'FaceColor', 'flat', ...
-            'FaceAlpha', Options.shade(1, i));
-      shading interp;
-      lighting phong;
-      material('metal');
-      view(3);
+      Ver = [x1 x3 x2 x4];
+      SData.VerX{i} = Ver(1,:);
+      SData.VerY{i} = Ver(2,:);
+      SData.VerZ{i} = Ver(3,:);
+      SData.FaceX{i} = ch(:,1);
+      SData.FaceY{i} = ch(:,2);
+      SData.FaceZ{i} = ch(:,3);
+      col = clr(ones(1, 4), :);
+      SData.FaceVertexCDataX{i} = col(:,1);
+      SData.FaceVertexCDataY{i} = col(:,2);
+      SData.FaceVertexCDataZ{i} = col(:,3);
+%       patch('Vertices', [x1 x3 x2 x4]', 'Faces', ch, ...
+%             'FaceVertexCData', clr(ones(1, 4), :), 'FaceColor', 'flat', ...
+%             'FaceAlpha', Options.shade(1, i));
+%       shading interp;
+%       lighting phong;
+%       material('metal');
+%       view(3);
       %camlight('headlight','local');
       %camlight('headlight','local');
       %camlight('right','local');
       %camlight('left','local');
     end
-
   end
-
+  rel=smartdb.relations.DynamicRelation(SData);
+  if (n==2)
+      plObj.plotGeneric(rel,@figureGetGroupNameFunc,{'figureName'},...
+                @figureSetPropFunc,{},...
+                @axesGetNameSurfFunc,{'axesName','axesNum'},...
+                @axesSetPropDoNothingFunc,{},...
+                @plotCreateElPlotFunc,...
+                {'x1','x2','clr','wid'});
+  else
+      plObj.plotGeneric(rel,@figureGetGroupNameFunc,{'figureName'},...
+                @figureSetPropFunc,{},...
+                @axesGetNameSurfFunc,{'axesName','axesNum'},...
+                @axesSetPropDoNothingFunc,{},...
+                @plotCreatePatchFunc,...
+                {'VerX','VerY','VerZ','FaceX','FaceY','FaceZ','FaceVertexCDataX','FaceVertexCDataY','FaceVertexCDataZ','shad'});
+  end
+  
   if ~ih;
     hold off;
   end
-
-
-
-
-
+  relationDataPlotter = plObj;
+ end
 function res = my_color_table(ch)
 %
 % MY_COLOR_TABLE - returns the code of the color defined by single letter.
@@ -347,4 +382,34 @@ function res = my_color_table(ch)
     otherwise,
       res = [0 0 0];
   end
-
+end
+function hVec=plotCreateElPlotFunc(hAxes,X,Y,col,wid,varargin)
+                h =   ell_plot([X Y],'Parent',hAxes);
+                set(h,'Color',col,'LineWidth',wid);
+                hVec  = h;
+end
+function figureSetPropFunc(hFigure,figureName,~)
+                set(hFigure,'Name',figureName);
+end
+function figureGroupName=figureGetGroupNameFunc(figureName)
+                figureGroupName=figureName;
+end
+function hVec=axesSetPropDoNothingFunc(~,~)
+                hVec=[];
+end
+ function axesName=axesGetNameSurfFunc(name,~)
+                axesName=name;
+            end
+function hVec=plotCreatePatchFunc(hAxes,verticesX,verticesY,verticesZ,facesX,facesY,facesZ,faceVertexCDataX,faceVertexCDataY,faceVertexCDataZ,faceAlpha)
+        vertices = [verticesX;verticesY;verticesZ];
+        faces = [facesX,facesY,facesZ];
+        faceVertexCData = [faceVertexCDataX,faceVertexCDataY,faceVertexCDataZ];
+        h0 = patch('Vertices',vertices', 'Faces', faces, ...
+          'FaceVertexCData', faceVertexCData, 'FaceColor','flat', ...
+          'FaceAlpha', faceAlpha,'Parent',hAxes);
+         shading interp;
+         lighting phong;
+         material('metal');
+         view(3);
+         hVec  = h0;
+end

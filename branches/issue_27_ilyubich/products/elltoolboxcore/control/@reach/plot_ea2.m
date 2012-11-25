@@ -30,11 +30,9 @@ function relationDataPlot = plot_ea2(rs, varargin)
 %    REACH/REACH, PLOT_IA, CUT, PROJECTION.
 %
 
-  global ellOptions;
+import elltool.conf.Properties;
 
-  if ~isstruct(ellOptions)
-    evalin('base', 'ellipsoids_init;');
-  end
+
   
   
   if ~(isa(rs, 'reach'))
@@ -104,7 +102,7 @@ end
   else
     back = 'Reach set';
   end
-  if ellOptions.verbose > 0
+  if Properties.getIsVerbose()
     fprintf('Plotting reach set external approximation...\n');
   end
   plObj=smartdb.disp.RelationDataPlotter(...
@@ -113,7 +111,7 @@ end
   if d == 3
     EE  = move2origin(E(:, end));
     EE  = EE';
-    M   = ellOptions.plot3d_grid/2;
+    M   = rs.nPlot3dPoints()/2;
     N   = M/2;
     psy = linspace(0, pi, N);
     phi = linspace(0, 2*pi, M);
@@ -233,7 +231,7 @@ end
     return;
   end
     [m, n] = size(E);
-  s      = (1/2) * ellOptions.plot2d_grid;
+  s      = (1/2) * rs.nPlot2dPoints();
   phi    = linspace(0, 2*pi, s);
   L      = [cos(phi); sin(phi)];
 
@@ -261,7 +259,7 @@ end
       for i = 1:s
         l = L(:, i);
         [v, x] = rho(EE, l);
-        idx    = find(isinternal((1+ellOptions.abs_tol)*EE, x, 'i') > 0);
+        idx    =  find(isinternal((1+rs.absTol())*EE, x, 'i') > 0);
         if ~isempty(idx)
           x = x(:, idx(1, 1)) + rs.center_values(:, ii);
           X = [X x];

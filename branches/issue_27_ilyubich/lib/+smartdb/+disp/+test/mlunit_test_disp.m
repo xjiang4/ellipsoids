@@ -74,7 +74,44 @@ classdef mlunit_test_disp < mlunit.test_case
         function test_RelDataPlotterLongAxisNames(self)        
             self.aux_testRelDataPlotter(@(x)[repmat(x,1,2),'  ',repmat(x,1,48)]);
         end
-        
+        function test_HoldOnBehavior(self);
+                plot(1:10,[1:10].*[1:10]);
+                hold on;
+                plObj=smartdb.disp.RelationDataPlotter(...
+                'nMaxAxesRows',2 ,'nMaxAxesCols', 2,...
+                'figureGroupKeySuffFunc',@(x)sprintf('_gr%d',x));
+                SData.X = 1:10;
+                SData.Y = [1:10];
+   
+                SData.figureName = 'sa';
+                SData.figureNum = '1';
+                SData.axesName = 'ax';
+                SData.axesNum = '1';
+                rel=smartdb.relations.DynamicRelation(SData);
+                plObj.plotGeneric(rel,@figureGetGroupNameFunc,{'figureName'},...
+                    @figureSetPropFunc,{},...
+                    @axesGetNameSurfFunc,{'axesName','axesNum'},...
+                    @axesSetPropDoNothingFunc,{},...
+                    @plotCreatePlotFunc,...
+                    {'X','Y'}); 
+              
+            function hVec = plotCreatePlotFunc(hAxes,X,Y,varargin)
+                hVec = plot(X,Y);
+            end
+            function figureSetPropFunc(hFigure,figureName,~)
+                set(hFigure,'Name',figureName);
+end
+function figureGroupName=figureGetGroupNameFunc(figureName)
+                figureGroupName=figureName;
+end
+function hVec=axesSetPropDoNothingFunc(~,~)
+                hVec=[];
+end
+ function axesName=axesGetNameSurfFunc(name,~)
+                axesName=name;
+            end
+            end
+            
         function aux_testRelDataPlotter(~,modifyAxesName)
             %
             resDir=modgen.test.TmpDataManager.getDirByCallerKey();
@@ -399,6 +436,7 @@ classdef mlunit_test_disp < mlunit.test_case
                     str2double(modgen.string.splitpart(...
                     figureName,'_gr',2)));
             end
+            
         end
     end
 end
