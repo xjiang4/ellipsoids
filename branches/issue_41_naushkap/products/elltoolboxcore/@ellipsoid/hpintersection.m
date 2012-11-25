@@ -125,8 +125,8 @@ else
                 end;
             else
                 intEllVec = [intEllVec ...
-                    l_compute1intersection(myEllMat, myHypMat(iRow, jCol), ...
-                    maxEllDim)];
+                    l_compute1intersection(myEllMat, ...
+                    myHypMat(iRow, jCol), maxEllDim)];
             end
         end
         intEllMat = [intEllMat; intEllVec];

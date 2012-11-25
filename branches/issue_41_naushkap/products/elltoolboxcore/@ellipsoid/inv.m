@@ -1,8 +1,8 @@
 function invEllMat = inv(myEllMat)
 %
 % INV - inverts shape matrices of ellipsoids in the given array.
-%   I = INV(myEll)  Inverts shape matrices of ellipsoids in the
-%       array myEll. In case shape matrix is sigular, it is
+%   I = INV(myEllMat)  Inverts shape matrices of ellipsoids in the
+%       array myEllMat. In case shape matrix is sigular, it is
 %       regularized before inversion.
 %
 % Input:
@@ -30,7 +30,7 @@ absTolMat = getAbsTol(invEllMat);
 for iRow = 1:mRows
     for jCol = 1:nCols
         if isdegenerate(invEllMat(iRow, jCol))
-            regShMat = ellipsoid.regularize(invEllMat(iRow, jCol).shape, ...
+            regShMat = ellipsoid.regularize(invEllMat(iRow, jCol).shape,...
                 absTolMat(iRow,jCol));
         else
             regShMat = invEllMat(iRow, jCol).shape;

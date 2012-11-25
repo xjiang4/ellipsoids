@@ -14,7 +14,7 @@ function [resMat, statusMat] = intersect(myEllMat, objMat, mode)
 %
 %   If we need to check the intersection of union of ellipsoids in E
 %   (s = 'u'), or if E is a single ellipsoid, it can be done by calling
-%   distance function for each of the ellipsoids in E and X, and if it 
+%   distance function for each of the ellipsoids in E and X, and if it
 %   returns negative value, the intersection is nonempty.
 %   Checking if the intersection of ellipsoids in E
 %   (with size of E greater than 1) intersects with ellipsoids or
@@ -34,7 +34,7 @@ function [resMat, statusMat] = intersect(myEllMat, objMat, mode)
 %   If this problem is feasible, i.e. inequalities (1)-(n) do not
 %   contradict, or, in other words, intersection of ellipsoids
 %   E(q1, Q1), E(q2, Q2), ..., E(qn, Qn) is nonempty, then we can find
-%   vector y such that it satisfies inequalities (1)-(n) and minimizes 
+%   vector y such that it satisfies inequalities (1)-(n) and minimizes
 %   function J. If J(y) <= 1, then ellipsoid E(q, Q) intersects or touches
 %   the given intersection, otherwise, it does not. To check if E(q, Q)
 %   intersects the union of E(q1, Q1), E(q2, Q2), ..., E(qn, Qn),
@@ -71,22 +71,18 @@ function [resMat, statusMat] = intersect(myEllMat, objMat, mode)
 %           note: If mode == 'u', then mRows, nCols should be equal to 1.
 %
 % Output:
-%   resMat: logical[mRows, nCols]/double[mRows, nCols] - return:
-%       resMat(i, j) = -1 (double) in case parameter mode is set
+%   resMat: double[mRows, nCols] - return:
+%       resMat(i, j) = -1 in case parameter mode is set
 %           to 'i' and the intersection of ellipsoids in myEllMat
 %           is empty.
-%       resMat(i, j) = 0 (logical) if the union or intersection of 
+%       resMat(i, j) = 0 if the union or intersection of
 %           ellipsoids in myEllMat does not intersect the object
 %           in objMat(i, j).
-%       resMat(i, j) = 1 (logical) if the union or intersection of 
+%       resMat(i, j) = 1 if the union or intersection of
 %           ellipsoids in myEllMat and the object in objMat(i, j)
 %           have nonempty intersection.
 %   status: status variable returned by CVX.
 %
-%       note: resMat is logical[1, 1] if mode == 'u'.
-%             resMat is double[mRows, nCols] if resMat(iRow, jCol) == -1,
-%             for all iRow, jCol.
-% 
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
@@ -231,9 +227,7 @@ if nargout < 2
     clear status;
 end
 
-if (min(min(resMat)) >= 0)
-    resMat = logical(resMat);
-end
+resMat = double(resMat);
 
 end
 
@@ -327,7 +321,7 @@ end
 
 function [res, status] = lqcqp(myEllMat, hyp)
 %
-% LQCQP - formulate quadratic programming problem with linear and 
+% LQCQP - formulate quadratic programming problem with linear and
 %         quadratic constraints, and invoke external solver.
 %
 % Input:
@@ -397,7 +391,7 @@ end
 
 function [res, status] = lqcqp2(myEllMat, polyt)
 %
-% LQCQP2 - formulate quadratic programming problem with 
+% LQCQP2 - formulate quadratic programming problem with
 %          linear and quadratic constraints, and invoke external solver.
 %
 % Input:
