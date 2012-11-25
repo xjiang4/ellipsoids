@@ -37,7 +37,7 @@ import modgen.common.throwwarn;
 if ~isbigger(minEll, subEll)
     fstErrMsg = 'ISBADDIRECTION: geometric difference of these ';
     secErrMsg = 'two ellipsoids is empty set.\n';
-    throwerror('wrongInput:emptyGeomDiff', [fstErrMsg secErrMsg]);
+    throwwarn('wrongInput:emptyGeomDiff', [fstErrMsg secErrMsg]);
 end
 
 isBadDirVec=ellipsoid.isbaddirectionmat(minEll.shape,...

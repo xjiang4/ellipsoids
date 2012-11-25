@@ -209,35 +209,35 @@ else
     fstEllShMat = ell_inv(fstEllShMat);
 end
 
-[normHipVec, HipScalar] = parameters(-secObj);
-HipScalar      = HipScalar/sqrt(normHipVec'*normHipVec);
-normHipVec      = normHipVec/sqrt(normHipVec'*normHipVec);
-if (normHipVec'*fstEllCentVec > HipScalar) && ~(intersect(fstEll, secObj))
+[normHypVec, hypScalar] = parameters(-secObj);
+hypScalar      = hypScalar/sqrt(normHypVec'*normHypVec);
+normHypVec      = normHypVec/sqrt(normHypVec'*normHypVec);
+if (normHypVec'*fstEllCentVec > hypScalar) && ~(intersect(fstEll, secObj))
     outEll = fstEll;
     return;
 end
-if (normHipVec'*fstEllCentVec < HipScalar) && ~(intersect(fstEll, secObj))
+if (normHypVec'*fstEllCentVec < hypScalar) && ~(intersect(fstEll, secObj))
     outEll = ellipsoid;
     return;
 end
 
 [intEllCentVec, intEllShMat] = parameters(hpintersection(fstEll, secObj));
-[~, boundVec] = rho(fstEll, normHipVec);
+[~, boundVec] = rho(fstEll, normHypVec);
 hEig      = 2*sqrt(maxeig(fstEll));
-secCentVec     = intEllCentVec + hEig*normHipVec;
-secMat     = (normHipVec*normHipVec')/(hEig^2);
-fstE     = (fstEllCentVec - ...
+secCentVec     = intEllCentVec + hEig*normHypVec;
+secMat     = (normHypVec*normHypVec')/(hEig^2);
+fstCoeff     = (fstEllCentVec - ...
     intEllCentVec)'*fstEllShMat*(fstEllCentVec - intEllCentVec);
-secE     = (secCentVec - boundVec)'*secMat*(secCentVec - boundVec);
-fstConst     = (1 - secE)/(1 - fstE*secE);
-secConst     = (1 - fstE)/(1 - fstE*secE);
-intEllShMat      = fstConst*fstEllShMat + secConst*secMat;
+secCoeff = (secCentVec - boundVec)'*secMat*(secCentVec - boundVec);
+fstEllCoeff  = (1 - secCoeff)/(1 - fstCoeff*secCoeff);
+secEllCoeff = (1 - fstCoeff)/(1 - fstCoeff*secCoeff);
+intEllShMat      = fstEllCoeff*fstEllShMat + secEllCoeff*secMat;
 intEllShMat      = 0.5*(intEllShMat + intEllShMat');
 intEllCentVec      = ell_inv(intEllShMat)*...
-    (fstConst*fstEllShMat*fstEllCentVec + secConst*secMat*secCentVec);
+    (fstEllCoeff*fstEllShMat*fstEllCentVec + secEllCoeff*secMat*secCentVec);
 intEllShMat      = intEllShMat/(1 - ...
-    (fstConst*fstEllCentVec'*fstEllShMat*fstEllCentVec + ...
-    secConst*secCentVec'*secMat*secCentVec - ...
+    (fstEllCoeff*fstEllCentVec'*fstEllShMat*fstEllCentVec + ...
+    secEllCoeff*secCentVec'*secMat*secCentVec - ...
     intEllCentVec'*intEllShMat*intEllCentVec));
 intEllShMat      = ell_inv(intEllShMat);
 intEllShMat      = (1-fstEll.absTol)*0.5*(intEllShMat + intEllShMat');

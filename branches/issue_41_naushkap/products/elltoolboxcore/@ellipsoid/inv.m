@@ -1,4 +1,4 @@
-function invEll = inv(myEll)
+function invEllMat = inv(myEllMat)
 %
 % INV - inverts shape matrices of ellipsoids in the given array.
 %   I = INV(myEll)  Inverts shape matrices of ellipsoids in the
@@ -7,10 +7,10 @@ function invEll = inv(myEll)
 %
 % Input:
 %   regular:
-%       myEll: ellipsoid [mRows, nCols] - matrix of ellipsoids.
+%       myEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
 %
 % Output:
-%    invEll: ellipsoid [mRows, nCols] - matrix of ellipsoids with inverted
+%    invEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids with inverted
 %       shape matrices.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
@@ -18,24 +18,24 @@ function invEll = inv(myEll)
 
 import modgen.common.throwerror;
 
-if ~(isa(myEll, 'ellipsoid'))
+if ~(isa(myEllMat, 'ellipsoid'))
     throwerror('wrongInput', ...
         'INV: input argument must be array of ellipsoids.');
 end
 
-invEll      = myEll;
-[mRows, nCols] = size(invEll);
+invEllMat = myEllMat;
+[mRows, nCols] = size(invEllMat);
 
-absTolMat = getAbsTol(invEll);
+absTolMat = getAbsTol(invEllMat);
 for iRow = 1:mRows
     for jCol = 1:nCols
-        if isdegenerate(invEll(iRow, jCol))
-            regShMat = ellipsoid.regularize(invEll(iRow, jCol).shape, ...
+        if isdegenerate(invEllMat(iRow, jCol))
+            regShMat = ellipsoid.regularize(invEllMat(iRow, jCol).shape, ...
                 absTolMat(iRow,jCol));
         else
-            regShMat = invEll(iRow, jCol).shape;
+            regShMat = invEllMat(iRow, jCol).shape;
         end
         regShMat = ell_inv(regShMat);
-        invEll(iRow, jCol).shape = 0.5*(regShMat + regShMat');
+        invEllMat(iRow, jCol).shape = 0.5*(regShMat + regShMat');
     end
 end

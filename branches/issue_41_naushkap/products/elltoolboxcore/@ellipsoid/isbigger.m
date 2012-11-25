@@ -55,8 +55,8 @@ if nFstEllDim < nFstEllSpaceDim
     fstEllShMat = ellipsoid.regularize(fstEllShMat,fstEll.absTol);
 end
 
-TMat = ell_simdiag(fstEllShMat, secEllShMat);
-if max(abs(diag(TMat*secEllShMat*TMat'))) < (1 + fstEll.absTol)
+tMat = ell_simdiag(fstEllShMat, secEllShMat);
+if max(abs(diag(tMat*secEllShMat*tMat'))) < (1 + fstEll.absTol)
     isRes = true;
 else
     isRes = false;

@@ -64,15 +64,12 @@ function [res, status] = isinside(fstEllMat, secEllMat, mode)
 %       mode: char[1, 1] - 'u' or 'i', go to description.
 %
 % Output:
-%   regular:
-%       res: double[1, 1] - result:
-%           -1 - problem is infeasible, for example, if s = 'i',
-%               but the intersection of ellipsoids in E2 is an empty set;
-%           0 - intersection is empty;
-%           1 - if intersection is nonempty.
-%
-%   optional:
-%       status: double[]/double[1, 1].
+%   res: double[1, 1] - result:
+%       -1 - problem is infeasible, for example, if s = 'i',
+%           but the intersection of ellipsoids in E2 is an empty set;
+%       0 - intersection is empty;
+%       1 - if intersection is nonempty.
+%   status: double[]/double[1, 1].
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
@@ -148,12 +145,12 @@ elseif min(size(secEllMat) == [1 1]) == 1
         res = 0;
     end
 else
-    nFstEllDims = dimension(fstEllMat);
-    minFstEllDim    = min(min(nFstEllDims));
-    maxFsrEllDim    = max(max(nFstEllDims));
-    nFstEllDims = dimension(secEllMat);
-    minSecEllDim    = min(min(nFstEllDims));
-    maxSecEllDim    = max(max(nFstEllDims));
+    nFstEllDimsMat = dimension(fstEllMat);
+    minFstEllDim    = min(min(nFstEllDimsMat));
+    maxFsrEllDim    = max(max(nFstEllDimsMat));
+    nSecEllDimsMat = dimension(secEllMat);
+    minSecEllDim    = min(min(nSecEllDimsMat));
+    maxSecEllDim    = max(max(nSecEllDimsMat));
     if (minFstEllDim ~= maxFsrEllDim) || (minSecEllDim ~= maxSecEllDim) ...
             || (minSecEllDim ~= minFstEllDim)
         throwerror('wrongSizes', ...
@@ -211,16 +208,16 @@ function [res, status] = qcqp(fstEllMat, secObj)
 import modgen.common.throwerror;
 import elltool.conf.Properties;
 
-absTolMat = getAbsTol(secObj);
-[qVec, QMat] = parameters(secObj(1, 1));
-if size(QMat, 2) > rank(QMat)
+absTolScal = getAbsTol(secObj);
+[qVec, paramMat] = parameters(secObj(1, 1));
+if size(paramMat, 2) > rank(paramMat)
     if Properties.getIsVerbose()
         fprintf('QCQP: Warning! Degenerate ellipsoid.\n');
         fprintf('      Regularizing...\n');
     end
-    QMat = ellipsoid.regularize(QMat,absTolMat(1,1));
+    paramMat = ellipsoid.regularize(paramMat,absTolScal(1,1));
 end
-invQMat = ell_inv(QMat);
+invQMat = ell_inv(paramMat);
 invQMat = 0.5*(invQMat + invQMat');
 
 [mRows, nCols] = size(fstEllMat);
@@ -235,7 +232,7 @@ for iRow = 1:mRows
     for jCol = 1:nCols
         [qVec, invQMat] = parameters(fstEllMat(iRow, jCol));
         if size(invQMat, 2) > rank(invQMat)
-            invQMat = ellipsoid.regularize(invQMat,absTolMat(iRow,jCol));
+            invQMat = ellipsoid.regularize(invQMat,absTolScal(iRow,jCol));
         end
         invQMat = ell_inv(invQMat);
         invQMat = 0.5*(invQMat + invQMat');

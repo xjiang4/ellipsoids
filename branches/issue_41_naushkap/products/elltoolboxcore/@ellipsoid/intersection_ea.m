@@ -201,25 +201,25 @@ else
 end
 
 if isa(secObj, 'hyperplane')
-    [normHipVec, HipScalar] = parameters(-secObj);
-    HipScalar      = HipScalar/sqrt(normHipVec'*normHipVec);
-    normHipVec      = normHipVec/sqrt(normHipVec'*normHipVec);
-    if (normHipVec'*fstEllCentVec > HipScalar) ...
+    [normHypVec, hypScalar] = parameters(-secObj);
+    hypScalar      = hypScalar/sqrt(normHypVec'*normHypVec);
+    normHypVec      = normHypVec/sqrt(normHypVec'*normHypVec);
+    if (normHypVec'*fstEllCentVec > hypScalar) ...
             && ~(intersect(fstEll, secObj))
         outEll = fstEll;
         return;
     end
-    if (normHipVec'*fstEllCentVec < HipScalar) ...
+    if (normHypVec'*fstEllCentVec < hypScalar) ...
             && ~(intersect(fstEll, secObj))
         outEll = ellipsoid;
         return;
     end
     hEig  = 2*sqrt(maxeig(fstEll));
-    qSecVec = HipScalar*normHipVec + hEig*normHipVec;
-    QSecMat = (normHipVec*normHipVec')/(hEig^2);
+    qSecVec = hypScalar*normHypVec + hEig*normHypVec;
+    seqQMat = (normHypVec*normHypVec')/(hEig^2);
     
-    [qVec, QMat] = parameters(hpintersection(fstEll, secObj));
-    qSecVec     = qVec + hEig*normHipVec;
+    [qCenterVec, shQMat] = parameters(hpintersection(fstEll, secObj));
+    qSecVec     = qCenterVec + hEig*normHypVec;
 else
     if fstEll == secObj
         outEll = fstEll;
@@ -230,26 +230,26 @@ else
         return;
     end
     qSecVec = secObj.center;
-    QSecMat = secObj.shape;
-    if rank(QSecMat) < size(QSecMat, 1)
-        QSecMat = ell_inv(ellipsoid.regularize(QSecMat,secObj.absTol));
+    seqQMat = secObj.shape;
+    if rank(seqQMat) < size(seqQMat, 1)
+        seqQMat = ell_inv(ellipsoid.regularize(seqQMat,secObj.absTol));
     else
-        QSecMat = ell_inv(QSecMat);
+        seqQMat = ell_inv(seqQMat);
     end
 end
 
 lambda = l_get_lambda(fstEllCentVec, fstEllShMat, qSecVec, ...]
-    QSecMat, isa(secObj, 'hyperplane'));
-XMat = lambda*fstEllShMat + (1 - lambda)*QSecMat;
-XMat = 0.5*(XMat + XMat');
-invXMat = ell_inv(XMat);
+    seqQMat, isa(secObj, 'hyperplane'));
+xMat = lambda*fstEllShMat + (1 - lambda)*seqQMat;
+xMat = 0.5*(xMat + xMat');
+invXMat = ell_inv(xMat);
 invXMat = 0.5*(invXMat + invXMat');
 const = 1 - lambda*(1 - lambda)*(qSecVec - ...
-    fstEllCentVec)'*QSecMat*invXMat*fstEllShMat*(qSecVec - fstEllCentVec);
-qVec = invXMat*(lambda*fstEllShMat*fstEllCentVec + ...
-    (1 - lambda)*QSecMat*qSecVec);
-QMat = (1+fstEll.absTol)*const*invXMat;
-outEll = ellipsoid(qVec, QMat);
+    fstEllCentVec)'*seqQMat*invXMat*fstEllShMat*(qSecVec - fstEllCentVec);
+qCenterVec = invXMat*(lambda*fstEllShMat*fstEllCentVec + ...
+    (1 - lambda)*seqQMat*qSecVec);
+shQMat = (1+fstEll.absTol)*const*invXMat;
+outEll = ellipsoid(qCenterVec, shQMat);
 
 end
 

@@ -1,4 +1,4 @@
-function [resMat, statusMat] = intersect(myEllMat, XMat, mode)
+function [resMat, statusMat] = intersect(myEllMat, objMat, mode)
 %
 % INTERSECT - checks if the union or intersection of ellipsoids intersects
 %             given ellipsoid, hyperplane or polytope.
@@ -57,7 +57,7 @@ function [resMat, statusMat] = intersect(myEllMat, XMat, mode)
 % Input:
 %   regular:
 %       myEllMat: ellipsod [mEllRows, nEllCols] - matrix of ellipsoids.
-%       XMat: ellipsoid [mRows, nCols] - ellipsoidal matrix
+%       objMat: ellipsoid [mRows, nCols] - ellipsoidal matrix
 %               of the same size.
 %           Or
 %           hyperplane [mRows, nCols] - matrix of hyperplanes
@@ -69,27 +69,24 @@ function [resMat, statusMat] = intersect(myEllMat, XMat, mode)
 %       mode: char[1, 1] - 'u' or 'i', go to description.
 %
 %           note: If mode == 'u', then mRows, nCols should be equal to 1.
-%               if mEllRows == nEllCols == 1, then mRows, nCols should
-%               be equal 1.
 %
 % Output:
-%   regular:
-%       resMat: logical[1, 1]/double[mRows, nCols] - return:
-%           resMat(i, j) = -1 (double) in case parameter mode is set
-%               to 'i' and the intersection of ellipsoids in myEllMat
-%               is empty.
-%           resMat(i, j) = 0 if the union or intersection of 
-%               ellipsoids in myEllMat does not intersect the object
-%               in X(i, j).
-%           resMat(i, j) = 1 (logical) if the union or intersection of 
-%               ellipsoids in myEllMat and the object in X(i, j)
-%               have nonempty intersection.
+%   resMat: logical[mRows, nCols]/double[mRows, nCols] - return:
+%       resMat(i, j) = -1 (double) in case parameter mode is set
+%           to 'i' and the intersection of ellipsoids in myEllMat
+%           is empty.
+%       resMat(i, j) = 0 (logical) if the union or intersection of 
+%           ellipsoids in myEllMat does not intersect the object
+%           in objMat(i, j).
+%       resMat(i, j) = 1 (logical) if the union or intersection of 
+%           ellipsoids in myEllMat and the object in objMat(i, j)
+%           have nonempty intersection.
+%   status: status variable returned by CVX.
 %
-%           note: resMat is logical[1, 1] if mode == 'u'.
-%
-%   optional:
-%          status - status variable returned by CVX.
-%
+%       note: resMat is logical[1, 1] if mode == 'u'.
+%             resMat is double[mRows, nCols] if resMat(iRow, jCol) == -1,
+%             for all iRow, jCol.
+% 
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
@@ -100,8 +97,8 @@ if ~(isa(myEllMat, 'ellipsoid'))
     throwerror('wrongInput', ...
         'INTERSECT: first input argument must be ellipsoid.');
 end
-if ~(isa(XMat, 'ellipsoid')) && ~(isa(XMat, 'hyperplane')) ...
-        && ~(isa(XMat, 'polytope'))
+if ~(isa(objMat, 'ellipsoid')) && ~(isa(objMat, 'hyperplane')) ...
+        && ~(isa(objMat, 'polytope'))
     fstErrMsg = 'INTERSECT: second input argument must be ellipsoid, ';
     secErrMsg = 'hyperplane or polytope.';
     throwerror('wrongInput', [fstErrMsg secErrMsg]);
@@ -111,26 +108,26 @@ if (nargin < 3) || ~(ischar(mode))
     mode = 'u';
 end
 absTolMat = getAbsTol(myEllMat);
+resMat = [];
+statusMat = [];
+status = [];
 if mode == 'u'
     [mRows, nCols] = size(myEllMat);
-    resMat    = (distance(myEllMat(1, 1), XMat) <= absTolMat(1,1));
+    res    = (distance(myEllMat(1, 1), objMat) <= absTolMat(1,1));
     for iRow = 1:mRows
         for jCol = 1:nCols
             if (iRow > 1) || (jCol > 1)
-                resMat = resMat || (distance(myEllMat(iRow, jCol), XMat) ...
+                res = res || (distance(myEllMat(iRow, jCol), objMat) ...
                     <= absTolMat(iRow,jCol));
             end
         end
     end
-    statusMat = [];
-elseif min(size(myEllMat) == [1 1]) == 1
-    resMat    = (distance(myEllMat, XMat) <= myEllMat.absTol);
-    statusMat = [];
-elseif isa(XMat, 'ellipsoid')
+    status = [];
+elseif isa(objMat, 'ellipsoid')
     nDimsMat = dimension(myEllMat);
     mRows    = min(min(nDimsMat));
     nCols    = max(max(nDimsMat));
-    nDimsMat = dimension(XMat);
+    nDimsMat = dimension(objMat);
     minEllDim    = min(min(nDimsMat));
     maxEllDim    = max(max(nDimsMat));
     if (mRows ~= nCols) || (minEllDim ~= maxEllDim) || (minEllDim ~= mRows)
@@ -140,25 +137,25 @@ elseif isa(XMat, 'ellipsoid')
     if Properties.getIsVerbose()
         fprintf('Invoking CVX...\n');
     end
-    [mRows, nCols] = size(XMat);
+    [mRows, nCols] = size(objMat);
     resMat    = [];
     statusMat = [];
     for iRow = 1:mRows
-        resPart = [];
-        statusPartMat = [];
+        resPartVec = [];
+        statusPartVec = [];
         for jCol = 1:nCols
-            [subRes, subStatus] = qcqp(myEllMat, XMat(iRow, jCol));
-            resPart = [resPart subRes];
-            statusPartMat = [statusPartMat subStatus];
+            [subRes, subStatus] = qcqp(myEllMat, objMat(iRow, jCol));
+            resPartVec = [resPartVec subRes];
+            statusPartVec = [statusPartVec subStatus];
         end
-        resMat = [resMat; resPart];
-        statusMat = [statusMat; statusPartMat];
+        resMat = [resMat; resPartVec];
+        statusMat = [statusMat; statusPartVec];
     end
-elseif isa(XMat, 'hyperplane')
+elseif isa(objMat, 'hyperplane')
     nDimsMat = dimension(myEllMat);
     mRows    = min(min(nDimsMat));
     nCols    = max(max(nDimsMat));
-    nDimsMat = dimension(XMat);
+    nDimsMat = dimension(objMat);
     minEllDim    = min(min(nDimsMat));
     maxEllDim    = max(max(nDimsMat));
     if (mRows ~= nCols) || (minEllDim ~= maxEllDim) || (minEllDim ~= mRows)
@@ -169,22 +166,22 @@ elseif isa(XMat, 'hyperplane')
     if Properties.getIsVerbose()
         fprintf('Invoking CVX...\n');
     end
-    [mRows, nCols] = size(XMat);
+    [mRows, nCols] = size(objMat);
     resMat    = [];
     statusMat = [];
     for iRow = 1:mRows
-        resPart = [];
-        statusPartMat = [];
+        resPartVec = [];
+        statusPartVec = [];
         for jCol = 1:nCols
-            [subRes, subStatus] = lqcqp(myEllMat, XMat(iRow, jCol));
-            resPart = [resPart subRes];
-            statusPartMat = [statusPartMat subStatus];
+            [subRes, subStatus] = lqcqp(myEllMat, objMat(iRow, jCol));
+            resPartVec = [resPartVec subRes];
+            statusPartVec = [statusPartVec subStatus];
         end
-        resMat    = [resMat; resPart];
-        statusMat = [statusMat; statusPartMat];
+        resMat    = [resMat; resPartVec];
+        statusMat = [statusMat; statusPartVec];
     end
 else
-    [mRows, nCols] = size(XMat);
+    [mRows, nCols] = size(objMat);
     nDimsMat   = dimension(myEllMat);
     minDims = min(min(nDimsMat));
     maxDims = max(max(nDimsMat));
@@ -192,7 +189,7 @@ else
     for iRow = 1:mRows
         nDimsPart = [];
         for jCol = 1:nCols
-            nDimsPart = [nDimsPart dimension(XMat(jCol))];
+            nDimsPart = [nDimsPart dimension(objMat(jCol))];
         end
         nDimsMat = [nDimsMat; nDimsPart];
     end
@@ -210,20 +207,32 @@ else
     resMat    = [];
     statusMat = [];
     for iRow = 1:mRows
-        resPart = [];
-        statusPartMat = [];
+        resPartVec = [];
+        statusPartVec = [];
         for jCol = 1:nCols
-            [subRes, subStatus] = lqcqp2(myEllMat, XMat(jCol));
-            resPart = [resPart subRes];
-            statusPartMat = [statusPartMat subStatus];
+            [subRes, subStatus] = lqcqp2(myEllMat, objMat(jCol));
+            resPartVec = [resPartVec subRes];
+            statusPartVec = [statusPartVec subStatus];
         end
-        resMat = [resMat; resPart];
-        statusMat = [statusMat; statusPartMat];
+        resMat = [resMat; resPartVec];
+        statusMat = [statusMat; statusPartVec];
     end
+end
+
+if isempty(resMat)
+    resMat = res;
+end
+
+if isempty(statusMat)
+    statusMat = status;
 end
 
 if nargout < 2
     clear status;
+end
+
+if (min(min(resMat)) >= 0)
+    resMat = logical(resMat);
 end
 
 end
@@ -336,10 +345,10 @@ function [res, status] = lqcqp(myEllMat, hyp)
 import modgen.common.throwerror;
 import elltool.conf.Properties;
 status = 1;
-[normHipVec, HipScalar] = parameters(hyp);
-if HipScalar < 0
-    HipScalar = -HipScalar;
-    normHipVec = -normHipVec;
+[normHypVec, hypScalar] = parameters(hyp);
+if hypScalar < 0
+    hypScalar = -hypScalar;
+    normHypVec = -normHypVec;
 end
 
 %cvx
@@ -348,8 +357,8 @@ end
 
 absTolMat = getAbsTol(myEllMat);
 cvx_begin sdp
-variable cvxExprVec(size(normHipVec, 1), 1)
-minimize(abs(normHipVec'*cvxExprVec - HipScalar))
+variable cvxExprVec(size(normHypVec, 1), 1)
+minimize(abs(normHypVec'*cvxExprVec - hypScalar))
 subject to
 for iRow = 1:mRows
     for jCol = 1:nCols
@@ -372,7 +381,7 @@ if strcmp(cvx_status,'Infeasible') || ...
 end;
 
 
-if abs(normHipVec'*cvxExprVec - HipScalar) <= min(getAbsTol(myEllMat(:)))
+if abs(normHypVec'*cvxExprVec - hypScalar) <= min(getAbsTol(myEllMat(:)))
     res = 1;
 else
     res = 0;
@@ -406,13 +415,13 @@ function [res, status] = lqcqp2(myEllMat, polyt)
 import modgen.common.throwerror;
 import elltool.conf.Properties;
 status = 1;
-[AMat, bVec] = double(polyt);
+[aMat, bVec] = double(polyt);
 [mRows, nCols] = size(myEllMat);
 
 absTolMat = getAbsTol(myEllMat);
 cvx_begin sdp
-variable cvxExprVec(size(AMat, 2), 1)
-minimize(AMat(1, :)*cvxExprVec)
+variable cvxExprVec(size(aMat, 2), 1)
+minimize(aMat(1, :)*cvxExprVec)
 subject to
 for iRow = 1:mRows
     for jCol = 1:nCols
@@ -438,7 +447,7 @@ if strcmp(cvx_status,'Infeasible') || ...
     res = -1;
     return;
 end;
-if AMat(1, :)*cvxExprVec <= min(getAbsTol(myEllMat(:)))
+if aMat(1, :)*cvxExprVec <= min(getAbsTol(myEllMat(:)))
     res = 1;
 else
     res = 0;

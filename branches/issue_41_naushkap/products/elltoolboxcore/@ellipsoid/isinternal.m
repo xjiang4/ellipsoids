@@ -1,4 +1,4 @@
-function res = isinternal(myEllMat, matrixOfVecMat, mode)
+function resVec = isinternal(myEllMat, matrixOfVecMat, mode)
 %
 % ISINTERNAL - checks if given points belong to the union or intersection
 %              of ellipsoids in the given array.
@@ -12,12 +12,13 @@ function res = isinternal(myEllMat, matrixOfVecMat, mode)
 %       Column size of matrix X should match the dimension of ellipsoids.
 %
 %    Let E(q, Q) be an ellipsoid with center q and shape matrix Q.
-%    Checking if given vector x belongs to E(q, Q) is equivalent to checking
-%    if inequality
+%    Checking if given vector x belongs to E(q, Q) is equivalent
+%    to checking if inequality
 %                    <(x - q), Q^(-1)(x - q)> <= 1
 %    holds.
-%    If x belongs to at least one of the ellipsoids in the array, then it belongs
-%    to the union of these ellipsoids. If x belongs to all ellipsoids in the array,
+%    If x belongs to at least one of the ellipsoids in the array, then it
+%    belongs to the union of these ellipsoids. If x belongs to all
+%    ellipsoids in the array,
 %    then it belongs to the intersection of these ellipsoids.
 %    The default value of the specifier s = 'u'.
 %
@@ -25,14 +26,16 @@ function res = isinternal(myEllMat, matrixOfVecMat, mode)
 %
 % Input:
 %   regular:
-%       myEllMat: ellipsod [mRowsOfEllMat, nColsOfEllMat] - matrix of ellipsoids.
-%       matrixOfVecMat: double [mRows, nColsOfVec] - matrix which specifiy points.
+%       myEllMat: ellipsod [mRowsOfEllMat, nColsOfEllMat] - matrix
+%           of ellipsoids.
+%       matrixOfVecMat: double [mRows, nColsOfVec] - matrix which
+%           specifiy points.
 %
 %   properties:
 %       mode: char[1, 1] - 'u' or 'i', go to description.
 %
 % Output:
-%    res: double[1, nColsOfVec] -
+%    resVec: double[1, nColsOfVec] -
 %       1 - if vector belongs to the union or intersection of ellipsoids,
 %       0 - otherwise.
 %
@@ -48,9 +51,9 @@ if ~isa(myEllMat, 'ellipsoid')
     throwerror('wrongInput', [fstErrMsg secErrMsg]);
 end
 
-nDims = dimension(myEllMat);
-maxDim    = min(min(nDims));
-minDim    = max(max(nDims));
+nDimsMat = dimension(myEllMat);
+maxDim    = min(min(nDimsMat));
+minDim    = max(max(nDimsMat));
 if maxDim ~= minDim
     throwerror('wrongSizes', ...
         'ISINTERNAL: ellipsoids must be of the same dimension.');
@@ -77,9 +80,10 @@ if mRows ~= minDim
         'ISINTERNAL: dimensions of ellipsoid and vector do not match.');
 end
 
-res=zeros(1,nCols);
+resVec = zeros(1,nCols);
 for iCol = 1:nCols
-    res(iCol) = isinternal_sub(myEllMat, matrixOfVecMat(:, iCol), mode, mRows);
+    resVec(iCol) = isinternal_sub(myEllMat,...
+        matrixOfVecMat(:, iCol), mode, mRows);
 end
 
 end
@@ -94,7 +98,8 @@ function res = isinternal_sub(myEllMat, xVec, mode, mRows)
 %
 % Input:
 %   regular:
-%       myEllMat: ellipsod [mRowsOfEllMat, nColsOfEllMat] - matrix of ellipsoids.
+%       myEllMat: ellipsod [mRowsOfEllMat, nColsOfEllMat] - matrix of
+%           ellipsoids.
 %       xVec: double [mRows, 1] - matrix which specifiy points.
 %       mRows: double[1, 1] - dimension of ellipsoids in myEllMat and xVec.
 %
@@ -121,18 +126,21 @@ absTolMat = getAbsTol(myEllMat);
 [mEllRows, nEllCols] = size(myEllMat);
 for iEllRow = 1:mEllRows
     for jEllCol = 1:nEllCols
-        qVec = xVec - myEllMat(iEllRow, jEllCol).center;
-        QMat = myEllMat(iEllRow, jEllCol).shape;
+        myEllCentVec = xVec - myEllMat(iEllRow, jEllCol).center;
+        myEllShMat = myEllMat(iEllRow, jEllCol).shape;
         
-        if rank(QMat) < mRows
+        if rank(myEllShMat) < mRows
             if Properties.getIsVerbose()
-                fprintf('ISINTERNAL: Warning! There is degenerate ellipsoid in the array.\n');
+                fstFprintStr = 'ISINTERNAL: Warning! There is degenerate ';
+                secFprintStr = 'ellipsoid in the array.\n';
+                fprintf([fstFprintStr secFprintStr]);
                 fprintf('            Regularizing...\n');
             end
-            QMat = ellipsoid.regularize(QMat,absTolMat(iEllRow,jEllCol));
+            myEllShMat = ellipsoid.regularize(myEllShMat,...
+                absTolMat(iEllRow,jEllCol));
         end
         
-        rScal = qVec' * ell_inv(QMat) * qVec;
+        rScal = myEllCentVec' * ell_inv(myEllShMat) * myEllCentVec;
         if (mode == 'u')
             if (rScal < 1) | (abs(rScal - 1) < absTolMat(iEllRow,jEllCol))
                 res = 1;
