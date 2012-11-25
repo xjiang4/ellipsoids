@@ -288,7 +288,7 @@ if (n==2)
             @axesGetNameSurfFunc,{'axesName','axesNum'},...
             @axesSetPropDoNothingFunc,{},...
             @plotCreateFillPlotFunc,...
-            {'x1','x2','clr'});
+            {'x1','x2','clr','fill'});
     end
     plObj.plotGeneric(rel,@figureGetGroupNameFunc,{'figureName'},...
         @figureSetPropFunc,{},...
@@ -330,8 +330,8 @@ h2 = ell_plot(q, '*','Parent',hAxes);
 set(h2, 'Color', clr);
 hVec = [h1,h2];
 end
-function hVec=plotCreateFillPlotFunc(hAxes,X,Y,clr,fill,varargin)
-if fill
+function hVec=plotCreateFillPlotFunc(hAxes,X,Y,clr,fil,varargin)
+if fil
     hVec = fill(X, Y, clr,'Parent',hAxes);
 end
 end
