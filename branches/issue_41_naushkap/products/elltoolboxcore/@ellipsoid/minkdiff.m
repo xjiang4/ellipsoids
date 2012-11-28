@@ -21,28 +21,32 @@ function [centVec, boundPointMat] = minkdiff(varargin)
 %   and secEll had the same center, secEll would be contained
 %   inside fstEll.
 %
-%   Options.show_all - if 1, displays also ellipsoids fstEll and secEll.
-%   Options.newfigure - if 1, each plot command will open a new
-%       figure window.
-%   Options.fill - if 1, the resulting set in 2D will be filled
-%       with color.
-%   Options.color - sets default colors in the form [x y z].
-%   Options.shade = 0-1 - level of transparency
-%       (0 - transparent, 1 - opaque).
-%
 % Input:
 %   regular:
 %       fstEll: ellipsoid [1, 1] - first ellipsoid. Suppose nDim - space
 %           dimension, nDim = 2 or 3.
-%       secEll: ellipsoid [1, 1] - second ellipsoid of the same dimention.
+%       secEll: ellipsoid [1, 1] - second ellipsoid
+%           of the same dimention.
 %
-%   properties:
-%       OPTIONS: options structure, go to description.
+%   optional:
+%       options: structure[1,1] - fields:
+%           Options.show_all - if 1, displays also ellipsoids
+%               fstEll and secEll.
+%           Options.newfigure - if 1, each plot command will open
+%               a new figure window.
+%           Options.fill - if 1, the resulting set in 2D will be
+%               filled with color.
+%           Options.color - sets default colors in the form [x y z].
+%           Options.shade = 0-1 - level of transparency
+%               (0 - transparent, 1 - opaque).
 %
 % Output:
 %   centVec: double[nDim, 1]/double[] - center of the resulting set.
-%   boundPointMat: double[nDim, ]/double[] - set of boundary points (vertices)
-%       of resulting set.
+%       centVec may be empty if ellipsoid fsrEll isn't bigger
+%       than secEll.
+%   boundPointMat: double[nDim, nBoundPoints]/double[] - set of
+%       boundary points (vertices) of resulting set. boundPointMat
+%       may be empty if  ellipsoid fstEll isn't bigger than secEll.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
@@ -125,9 +129,6 @@ if secEllDim > 3
     throwerror('wrongSizes', ...
         'MINKDIFF: ellipsoid dimension must be not higher than 3.');
 end
-
-%opts.fill          = Options.fill;
-%opts.shade(1, 1:2) = Options.shade;
 
 if nargout == 0
     ih = ishold;
@@ -226,10 +227,6 @@ switch secEllDim
             lighting phong;
             material('metal');
             view(3);
-            %camlight('headlight','local');
-            %camlight('headlight','local');
-            %camlight('right','local');
-            %camlight('left','local');
         end
         
     otherwise,

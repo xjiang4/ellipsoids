@@ -10,9 +10,10 @@ function extApprEllVec = minkmp_ea(fstEll, secEll, inpEllMat, dirMat)
 %
 % Input:
 %   regular:
-%       fstEll: ellipsoid [1, 1] - first ellipsoid. Suppose nDims - space
-%           dimension.
-%       secEll: ellipsoid [1, 1] - second ellipsoid of the same dimention.
+%       fstEll: ellipsoid [1, 1] - first ellipsoid. Suppose
+%           nDims - space dimension.
+%       secEll: ellipsoid [1, 1] - second ellipsoid
+%           of the same dimention.
 %       inpEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids
 %           of the same dimentions.
 %       dirMat: double[nDims, nCols] - matrix whose columns specify the

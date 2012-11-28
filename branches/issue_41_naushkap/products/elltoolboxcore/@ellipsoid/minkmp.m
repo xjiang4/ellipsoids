@@ -20,29 +20,29 @@ function [firOutArgMat, secOutArgMat] = minkmp(varargin)
 %       (E0 - E) + (geometric sum of ellipsoids in EE)
 %       using options given in the Options structure.
 %
-%   Options.show_all - if 1, displays also ellipsoids
-%   Options.newfigure - if 1, each plot command will open a new
-%       figure window.
-%   Options.fill - if 1, the resulting set in 2D will be filled
-%       with color.
-%   Options.color - sets default colors in the form [x y z].
-%   Options.shade = 0-1 - level of transparency
-%       (0 - transparent, 1 - opaque).
-%   Options.grid - if 1, grid on.
-%
 % Input:
 %   regular:
 %       minEll: ellipsoid [1, 1] - first ellipsoid. Suppose nDim - space
 %           dimension, nDim = 2 or 3.
-%       subEll: ellipsoid [1, 1] - second ellipsoid of the same dimention.
+%       subEll: ellipsoid [1, 1] - second ellipsoid
+%           of the same dimention.
 %       sumEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
 %
-%   properties:
-%       OPTIONS:  options structure, go to description.
+%   optional:
+%       options: structure[1,1] - fields:
+%           Options.show_all - if 1, displays also ellipsoids
+%               fstEll and secEll.
+%           Options.newfigure - if 1, each plot command will open
+%               a new figure window.
+%           Options.fill - if 1, the resulting set in 2D will be
+%               filled with color.
+%           Options.color - sets default colors in the form [x y z].
+%           Options.shade = 0-1 - level of transparency
+%               (0 - transparent, 1 - opaque).
 %
 % Output:
-%   firOutArgMat: double[nDim, 1]/double[] - center of the resulting set.
-%   secOutArgMat: double[nDim, ]/double[] - set of boundary
+%   firOutArgMat: double[nDim, 1] - center of the resulting set.
+%   secOutArgMat: double[nDim, nBoundPoints] - set of boundary
 %       points (vertices) of resulting set.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>

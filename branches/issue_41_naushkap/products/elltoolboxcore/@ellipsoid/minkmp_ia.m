@@ -10,9 +10,10 @@ function intApprEllVec = minkmp_ia(fstEll, secEll, inpEllMat, dirMat)
 %
 % Input:
 %   regular:
-%       fstEll: ellipsoid [1, 1] - first ellipsoid. Suppose nDim - space
-%           dimension.
-%       secEll: ellipsoid [1, 1] - second ellipsoid of the same dimention.
+%       fstEll: ellipsoid [1, 1] - first ellipsoid. Suppose
+%           nDim - space dimension.
+%       secEll: ellipsoid [1, 1] - second ellipsoid
+%           of the same dimention.
 %       inpEllMat: ellipsoid [1, nCols] - array of ellipsoids
 %           of the same dimentions.
 %       dirMat: numeric[nDim, nCols] - matrix whose columns specify the

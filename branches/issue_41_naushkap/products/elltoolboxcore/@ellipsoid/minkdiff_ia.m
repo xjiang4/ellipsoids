@@ -29,9 +29,10 @@ function intApprEllVec = minkdiff_ia(fstEll, secEll, directionsMat)
 %
 % Input:
 %   regular:
-%       fstEll: ellipsoid [1, 1] - first ellipsoid. Suppose nDim - space
-%           dimension.
-%       secEll: ellipsoid [1, 1] - second ellipsoid of the same dimention.
+%       fstEll: ellipsoid [1, 1] - first ellipsoid. Suppose
+%           nDim - space dimension.
+%       secEll: ellipsoid [1, 1] - second ellipsoid
+%           of the same dimention.
 %       directionsMat: double[nDim, nCols] - matrix whose columns
 %           specify the directions for which the approximations
 %           should be computed.
