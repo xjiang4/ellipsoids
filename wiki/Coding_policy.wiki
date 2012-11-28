@@ -164,13 +164,16 @@ More specifically, you should comply with the following rules.
 modgen.common.checkmultvar('numel(x1)==numel(x2)',2,aVar,bVar,'varNameList',{'Alpha'},'errorTag','wrongInput:wrongSizes','errorMessage','Sizes of inputs are not consistent')
 %
 %do the same but determine the variable names automatically and automatically generate error message
-modgen.common.checkmultvar('numel(x1)==numel(x2)',2,aVar,bVar,'errorTag','wrongInput:wrongSizes')
+modgen.common.checkmultvar('numel(x1)==numel(x2)',2,aVar,bVar,...
+    'errorTag','wrongInput:wrongSizes')
 %
 %automatic variable name recognition does not work properly if you use something like that
-modgen.common.checkmultvar('numel(x1)==numel(x2)',varargin{1},vaarargin{2})
+modgen.common.checkmultvar('numel(x1)==numel(x2)',...
+    varargin{1},vaarargin{2})
 %
 %simpler variant just for 1 variable
-modgen.common.checkvar(aVar,'isnumeric(x)&&isa(x,'int32')||isscalar(x)''errorTag','wrongInput:wrongTypes','errorMessage','Input has an incorrect type')
+modgen.common.checkvar(aVar,'isnumeric(x)&&isa(x,''int32'')||isscalar(x)',...
+    'errorTag','wrongInput:wrongTypes','errorMessage','Input has an incorrect type')
 }}}
    # Parse input argument and check their types using `modgen.common.parseparext` function (see the following example). The main purpose of `parseparext` is to parse input arguments (properties and regular inputs) but it also can check for simple conditions that do not involve multiple variables. For checking the more complex conditiosn like `numel(x1)==numel(x2)` use `checkgenext` function mentioned above. For more infromation about `modgen.common.parseparext` read its help header within the function itself. For simple inputs a more light-weight function `modgen.common.parseparams` can be used (it is different from Matlab built-in `parseparams` function).
   {{{
