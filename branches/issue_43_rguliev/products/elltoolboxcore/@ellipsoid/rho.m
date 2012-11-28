@@ -56,8 +56,9 @@ function [resArr, xMat] = rho(ellArr, L)
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %    Rustam Guliev <glvrst@gmail.com>
 
-modgen.common.type.simple.checkgenext(@(x1,x2)...
-    isa(x1,'ellipsoid')&&isa(x2,'double'),2,ellArr,L,'Input argumets',' ');
+checkIsMe(ellArr);
+modgen.common.type.simple.checkgen(L, @(x)isa(x,'double'),...
+    'Input argumet');
 
 [m, n] = size(ellArr);
 [k, d] = size(L);

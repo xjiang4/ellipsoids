@@ -43,8 +43,8 @@ function polEllArr = polar(ellArr)
 %
 
 import modgen.common.throwerror
-modgen.common.type.simple.checkgen(ellArr,@(x) isa(x,'ellipsoid'),...
-    'Input argument');
+
+checkIsMe(ellArr);
 
 if any(isdegenerate(ellArr))
     throwerror('degenerateEllipsoid','The resulting ellipsoid is not bounded');

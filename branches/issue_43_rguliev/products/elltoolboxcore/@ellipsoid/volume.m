@@ -34,8 +34,9 @@ function volArr = volume(ellArr)
 %
 
 import modgen.common.throwerror;
-modgen.common.type.simple.checkgen(ellArr,@(x) isa(x,'ellipsoid'),...
-    'Input argument');
+checkIsMe(ellArr); 
+%modgen.common.type.simple.checkgen(ellArr,@(x) isa(x,'ellipsoid'),...
+%    'Input argument');
 if any(isempty(ellArr(:)))
     throwerror('wrongInput:emptyEllipsoid',...
         'VOLUME: input argument is empty.');

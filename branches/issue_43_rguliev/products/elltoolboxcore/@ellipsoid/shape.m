@@ -33,8 +33,10 @@ function modEllArr = shape(ellArr, modMat)
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %    Rustam Guliev <glvrst@gmail.com>
 
-modgen.common.type.simple.checkgenext(@(x1,x2)...
-    isa(x1,'ellipsoid')&&isa(x2,'double'),2,ellArr,modMat,'Input argumets',' ');
+
+checkIsMe(ellArr);
+modgen.common.type.simple.checkgen(modMat, @(x)isa(x,'double'),...
+    'Input argumet');
 
 if isscalar(modMat)
     modMatSq = modMat*modMat;

@@ -30,8 +30,7 @@ function trArr = trace(ellArr)
 
 import modgen.common.throwerror;
 
-modgen.common.type.simple.checkgen(ellArr,@(x) isa(x,'ellipsoid'),...
-    'Input argument');
+checkIsMe(ellArr);
 
 if any(isempty(ellArr(:)))
     throwerror('wrongInput:emptyEllipsoid','TRACE: input argument is empty.');

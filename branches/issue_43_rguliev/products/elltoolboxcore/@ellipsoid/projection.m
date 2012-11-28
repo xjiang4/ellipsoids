@@ -32,14 +32,14 @@ function projEllArr = projection(ellArr, B)
 %    Rustam Guliev <glvrst@gmail.com>
 %
 
-if ~(isa(ellArr, 'ellipsoid')) || ~(isa(B, 'double'))
-    error('PROJECTION: arguments must be array of ellipsoids and matrix with orthogonal columns.');
-end
+checkIsMe(ellArr);
+modgen.common.type.simple.checkgen(B, @(x)isa(x,'double'),...
+    'Input argumet');
 
 [k, l] = size(B);
 dims   = dimension(ellArr);
-m      = min(dims(:));
-n      = max(dims(:));
+m = min(dims(:));
+n = max(dims(:));
 if (m ~= n)
     error('PROJECTION: ellipsoids in the array must be of the same dimenion.');
 end
@@ -54,7 +54,7 @@ end
 % check the orthogonality of the columns of B
 scalProdMat = B' * B;
 normsVec = diag(scalProdMat);
-isOrtogonalMat = (scalProdMat - diag(normsVec)) > ellArr.getAbsTol();
+isOrtogonalMat =(scalProdMat - diag(normsVec))> min(ellArr(:).getAbsTol());
 if any(isOrtogonalMat(:))
     error('PROJECTION: basis vectors must be orthogonal.');
 end
@@ -67,4 +67,4 @@ end
 
 % compute projection
 ellCArr = arrayfun(@(x) BB'*x, ellArr,'UniformOutput',false);
-projEllArr=reshape([ellCArr{:}],sizeVec);
+projEllArr=reshape([ellCArr{:}],size(ellArr));

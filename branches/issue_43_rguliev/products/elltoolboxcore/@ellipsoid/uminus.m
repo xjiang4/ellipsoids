@@ -14,8 +14,7 @@ function outEllArr = uminus(ellArr)
 %    Rustam Guliev <glvrst@gmail.com>
 %
 
-modgen.common.type.simple.checkgen(ellArr,@(x) isa(x,'ellipsoid'),...
-    'Input argument');
+checkIsMe(ellArr);
 
 sizeVec = size(ellArr);
 ellCArr = arrayfun(@(x) ellipsoid(-x.center,x.shape), ellArr,...
