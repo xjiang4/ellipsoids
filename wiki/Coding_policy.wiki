@@ -161,7 +161,9 @@ More specifically, you should comply with the following rules.
 {{{
 %check whether a condition numel(x1)==numel(x2) holds for variables  aVar and bVar
 %throw exception if it does not, in exception refer to the variables as 'Alpha' and 'bVar' 
-modgen.common.checkmultvar('numel(x1)==numel(x2)',2,aVar,bVar,'varNameList',{'Alpha'},'errorTag','wrongInput:wrongSizes','errorMessage','Sizes of inputs are not consistent')
+modgen.common.checkmultvar('numel(x1)==numel(x2)',2,aVar,bVar,...
+    'varNameList','Alpha'},'errorTag',...
+    'wrongInput:wrongSizes','errorMessage','Sizes of inputs are not consistent')
 %
 %do the same but determine the variable names automatically and automatically generate error message
 modgen.common.checkmultvar('numel(x1)==numel(x2)',2,aVar,bVar,...
