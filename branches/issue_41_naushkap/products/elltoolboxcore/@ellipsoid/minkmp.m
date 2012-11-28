@@ -22,22 +22,23 @@ function [firOutArgMat, secOutArgMat] = minkmp(varargin)
 %
 % Input:
 %   regular:
-%       minEll: ellipsoid [1, 1] - first ellipsoid. Suppose nDim - space
-%           dimension, nDim = 2 or 3.
+%       minEll: ellipsoid [1, 1] - first ellipsoid. Suppose
+%           nDim - space dimension, nDim = 2 or 3.
 %       subEll: ellipsoid [1, 1] - second ellipsoid
 %           of the same dimention.
 %       sumEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
 %
 %   optional:
-%       options: structure[1,1] - fields:
-%           Options.show_all - if 1, displays also ellipsoids
-%               fstEll and secEll.
-%           Options.newfigure - if 1, each plot command will open
-%               a new figure window.
-%           Options.fill - if 1, the resulting set in 2D will be
-%               filled with color.
-%           Options.color - sets default colors in the form [x y z].
-%           Options.shade = 0-1 - level of transparency
+%       Options: structure[1, 1] - fields:
+%           show_all: double[1, 1] - if 1, displays
+%               also ellipsoids fstEll and secEll.
+%           newfigure: double[1, 1] - if 1, each plot
+%               command will open a new figure window.
+%           fill: double[1, 1] - if 1, the resulting
+%               set in 2D will be filled with color.
+%           color: double[1, 3] - sets default colors
+%               in the form [x y z].
+%           shade: double[1, 1] = 0-1 - level of transparency
 %               (0 - transparent, 1 - opaque).
 %
 % Output:
@@ -150,7 +151,8 @@ else
     if nDim>1
         if rank(subEll.shape)==0
             tmpEll=ellipsoid(minEll.center-subEll.center,minEll.shape);
-            [firOutArgMat, secOutArgMat]=minksum([tmpEll; sumEllMat(:)]);
+            [firOutArgMat, secOutArgMat] = ...
+                minksum([tmpEll; sumEllMat(:)]);
         else
             if isdegenerate(subEll)
                 subEll.shape = regularize(subEll.shape);
@@ -166,11 +168,14 @@ else
                     sumEllMat(:)]);
             else
                 [sumCentVec, sumBoundMat]=minksum(sumEllMat);
-                [~, minEllPtsMat] = rho(minEll, lDirsMat(:,isGoodDirVec));
-                [~, subEllPtsMat] = rho(subEll, lDirsMat(:,isGoodDirVec));
+                [~, minEllPtsMat] = rho(minEll, ...
+                    lDirsMat(:,isGoodDirVec));
+                [~, subEllPtsMat] = rho(subEll, ...
+                    lDirsMat(:,isGoodDirVec));
                 diffBoundMat =  minEllPtsMat - subEllPtsMat;
                 firOutArgMat = minEll.center-subEll.center+sumCentVec;
-                secOutArgMat = diffBoundMat+ sumBoundMat(:,isGoodDirVec);
+                secOutArgMat = diffBoundMat + ...
+                    sumBoundMat(:,isGoodDirVec);
             end
         end
     end

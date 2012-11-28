@@ -29,15 +29,16 @@ function [centVec, boundPointMat] = minkdiff(varargin)
 %           of the same dimention.
 %
 %   optional:
-%       options: structure[1,1] - fields:
-%           Options.show_all - if 1, displays also ellipsoids
-%               fstEll and secEll.
-%           Options.newfigure - if 1, each plot command will open
-%               a new figure window.
-%           Options.fill - if 1, the resulting set in 2D will be
-%               filled with color.
-%           Options.color - sets default colors in the form [x y z].
-%           Options.shade = 0-1 - level of transparency
+%       Options: structure[1, 1] - fields:
+%           show_all: double[1, 1] - if 1, displays
+%               also ellipsoids fstEll and secEll.
+%           newfigure: double[1, 1] - if 1, each plot
+%               command will open a new figure window.
+%           fill: double[1, 1] - if 1, the resulting
+%               set in 2D will be filled with color.
+%           color: double[1, 3] - sets default colors
+%               in the form [x y z].
+%           shade: double[1, 1] = 0-1 - level of transparency
 %               (0 - transparent, 1 - opaque).
 %
 % Output:
