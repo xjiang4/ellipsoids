@@ -36,5 +36,5 @@ modgen.common.type.simple.checkgen(ellArr,@(x) isa(x,'ellipsoid'),...
 if any(isempty(ellArr(:)))
     throwerror('wrongInput:emptyEllipsoid','TRACE: input argument is empty.');
 end
-trArr = arrayfun(@(x) trace(double(x)), ellArr);
+trArr = arrayfun(@(x) trace(x.shape), ellArr);
 

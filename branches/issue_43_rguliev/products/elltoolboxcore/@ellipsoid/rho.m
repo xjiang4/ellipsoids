@@ -1,4 +1,4 @@
-function [res, x] = rho(E, L)
+function [resArr, xMat] = rho(ellArr, L)
 %
 % RHO - computes the values of the support function for given ellipsoid
 %       and given direction.
@@ -54,12 +54,12 @@ function [res, x] = rho(E, L)
 % -------
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+%    Rustam Guliev <glvrst@gmail.com>
 
 modgen.common.type.simple.checkgenext(@(x1,x2)...
-    isa(x1,'ellipsoid')&&isa(x2,'double'),2,E,L,'Input argumets',' ');
+    isa(x1,'ellipsoid')&&isa(x2,'double'),2,ellArr,L,'Input argumets',' ');
 
-[m, n] = size(E);
+[m, n] = size(ellArr);
 [k, d] = size(L);
 if (m > 1) || (n > 1)
     if d > 1
@@ -71,7 +71,7 @@ else
     ea = 0;
 end
 
-dims = dimension(E);
+dims = dimension(ellArr);
 mn   = min(dims(:));
 mx   = max(dims(:));
 if mn ~= mx
@@ -82,33 +82,42 @@ if mn ~= k
 end
 
 
-if ea > 0 % multiple ellipsoids, one direction
-    res=NaN(m,n);
-    x=NaN(k,m*n);
-    for i = 1:m
-        for j = 1:n
-            q  = E(i, j).center;
-            Q  = E(i, j).shape;
-            sr = sqrt(L'*Q*L);
-            if sr == 0
-                sr = eps;
-            end
-            res(i,j) = q'*L + sr;
-            x(:,(i-1)*n+j)=((Q*L)/sr) + q;
-        end
-    end
+if ea > 0 % multiple ellipsoids, one direction    
+    [resCArr xCArr] =arrayfun(@(x) fSingleRhoForOneDir(x),ellArr,...
+        'UniformOutput',false);
+    resArr = cell2mat(resCArr);
+    xMat= horzcat(xCArr{:});
 else % one ellipsoid, multiple directions
-    q = E.center;
-    Q = E.shape;
-    res=NaN(1,d);
-    x=NaN(k,d);
-    for i = 1:d
-        l   = L(:, i);
-        sr  = sqrt(l'*Q*l);
-        if sr == 0
-            sr = eps;
+    q = ellArr.center;
+    Q = ellArr.shape;
+    dirsCVec = cell(1,d);
+    for iDirs = 1:d
+        dirsCVec{iDirs} = L(:,iDirs);
+    end
+    [resCArr xCArr] =cellfun(@(x) fSingleRhoForOneEll(x),dirsCVec,...
+        'UniformOutput',false);
+    resArr = cell2mat(resCArr);
+    xMat = cell2mat(xCArr);
+end
+
+    function [supFun xVec] = fSingleRhoForOneDir(singEll)
+        cVec  = singEll.center;
+        shpMat  = singEll.shape;
+        sq = sqrt(L'*shpMat*L);
+        if sq == 0
+            sq = eps;
         end
-        res(i) = q'*l + sr;
-        x(:,i)=((Q*l)/sr) + q;
+        supFun = cVec'*L + sq;
+        xVec =((shpMat*L)/sq) + cVec;
+    end
+    function [supFun xVec] = fSingleRhoForOneEll(lVec)
+        sq  = sqrt(lVec'*Q*lVec);
+        if sq == 0
+            sq = eps;
+        end
+        supFun = q'*lVec + sq;
+        xVec = ((Q*lVec)/sq) + q;
     end
 end
+
+

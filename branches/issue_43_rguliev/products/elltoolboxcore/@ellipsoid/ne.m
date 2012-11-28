@@ -14,6 +14,4 @@ function res = ne(E1, E2)
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
 
-  res = ~(eq(E1, E2));
-
-end
+res = ~(eq(E1, E2));

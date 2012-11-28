@@ -17,9 +17,9 @@ function outEllArr = uminus(ellArr)
 modgen.common.type.simple.checkgen(ellArr,@(x) isa(x,'ellipsoid'),...
     'Input argument');
 
-nDimsVec = size(ellArr);
+sizeVec = size(ellArr);
 ellCArr = arrayfun(@(x) ellipsoid(-x.center,x.shape), ellArr,...
     'UniformOutput',false);
 
-%Conver cell array to ellipsoid array
-outEllArr=reshape([ellCArr{:}],nDimsVec);
+%Convert cell array to ellipsoid array
+outEllArr=reshape([ellCArr{:}],sizeVec);

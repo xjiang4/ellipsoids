@@ -1,4 +1,4 @@
-function P = polar(E)
+function polEllArr = polar(ellArr)
 
 %
 % POLAR - computes the polar ellipsoids.
@@ -39,39 +39,36 @@ function P = polar(E)
 % -------
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+%    Rustam Guliev <glvrst@gmail.com>
 %
-  import modgen.common.throwerror 
-  if ~(isa(E, 'ellipsoid'))
-    error('POLAR: input argument must be array of ellipsoids.');
-  end
 
-  [m, n] = size(E);
-  P      = [];
+import modgen.common.throwerror
+modgen.common.type.simple.checkgen(ellArr,@(x) isa(x,'ellipsoid'),...
+    'Input argument');
 
-  for i = 1:m
-    PP = [];
-    for j = 1:n
-      if isdegenerate(E(i, j))
-           throwerror('degenerateEllipsoid','The resulting ellipsoid is not bounded');
-    
-      else
-        [q, Q] = parameters(E(i, j));
-        d      = size(Q, 2);
-        z      = zeros(d, 1);
-        chk    = (z' - q') * ell_inv(Q) * (z - q);
-        if chk < 1
-          M  = ell_inv(Q - q*q');
-          M  = 0.5*(M + M');
-          w  = -M * q;
-          W  = (1 + q'*M*q)*M;
-          PP = [PP ellipsoid(w, W)];
-        else
-            throwerror('degenerateEllipsoid','The resulting ellipsoid is not bounded');
+if any(isdegenerate(ellArr))
+    throwerror('degenerateEllipsoid','The resulting ellipsoid is not bounded');
+end
+polEllCArr = arrayfun(@(x) fSinglePolar(x), ellArr,...
+    'UniformOutput',false);
 
-        end
-      end
+polEllArr = reshape([polEllCArr{:}],size(ellArr));
+
+end
+
+function ell = fSinglePolar(singEll)
+    q = singEll.center; 
+    Q = singEll.shape;
+    d      = size(Q, 2);
+    z      = zeros(d, 1);
+    chk    = (z' - q') * ell_inv(Q) * (z - q);
+    if chk < 1
+        M  = ell_inv(Q - q*q');
+        M  = 0.5*(M + M');
+        w  = -M * q;
+        W  = (1 + q'*M*q)*M;
+        ell = ellipsoid(w, W);
+    else
+        throwerror('degenerateEllipsoid','The resulting ellipsoid is not bounded');    
     end
-    P = [P; PP];
-  end
-
-  return;
+end

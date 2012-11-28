@@ -41,11 +41,11 @@ if any(isempty(ellArr(:)))
         'VOLUME: input argument is empty.');
 end
 
-volArr = arrayfun(@(x) fsingleVolume(x), ellArr);
+volArr = arrayfun(@(x) fSingleVolume(x), ellArr);
 
 end
 
-function vol = fsingleVolume(singEll)
+function vol = fSingleVolume(singEll)
 if isdegenerate(singEll)
     vol = 0;
 else

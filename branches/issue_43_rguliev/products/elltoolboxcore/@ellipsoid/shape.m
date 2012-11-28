@@ -37,7 +37,8 @@ modgen.common.type.simple.checkgenext(@(x1,x2)...
     isa(x1,'ellipsoid')&&isa(x2,'double'),2,ellArr,modMat,'Input argumets',' ');
 
 if isscalar(modMat)
-    modEllCArr = arrayfun(@(x) ellipsoid(x.center, modMat*modMat*x.shape),  ellArr,...
+    modMatSq = modMat*modMat;
+    modEllCArr = arrayfun(@(x) ellipsoid(x.center, modMatSq*x.shape),  ellArr,...
         'UniformOutput',false);
 else
     [nRows, nDim] = size(modMat);
@@ -48,12 +49,12 @@ else
     if any(nDimsVec ~= nDim)
         error('SHAPE: dimensions do not match.');
     end
-    modEllCArr = arrayfun(@(x) fsingleShape(x),  ellArr,...
+    modEllCArr = arrayfun(@(x) fSingleShape(x),  ellArr,...
         'UniformOutput',false);
 end
 modEllArr=reshape([modEllCArr{:}],size(ellArr));
 
-    function modEll = fsingleShape(singEll)
+    function modEll = fSingleShape(singEll)
         qMat    = modMat*(singEll.shape)*modMat';
         qMat    = 0.5*(qMat + qMat');
         modEll = ellipsoid(singEll.center, qMat);

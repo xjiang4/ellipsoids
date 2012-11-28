@@ -1,4 +1,4 @@
-function res = plus(X, Y)
+function outEllArr = plus(X, Y)
 %
 %
 % Description:
@@ -28,47 +28,34 @@ function res = plus(X, Y)
 % -------
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+%    Rustam Guliev <glvrst@gmail.com>
 %
 
-  if isa(X, 'ellipsoid') && ~(isa(Y, 'double'))
+if ~( (isa(X, 'ellipsoid') && isa(Y, 'double')) ||...
+        (isa(X, 'double') || isa(Y, 'ellipsoid')) )
     error('PLUS: this operation is only permitted between ellipsoid and vector in R^n.');
-  end
-  if isa(Y, 'ellipsoid') && ~(isa(X, 'double'))
-    error('PLUS: this operation is only permitted between ellipsoid and vector in R^n.');
-  end
-
-  if isa(X, 'ellipsoid')
-    E = X;
-    b = Y;
-  else
-    E = Y;
-    b = X;
-  end
-
-  d = dimension(E);
-  m = max(d);
-  n = min(d);
-  if m ~= n
-    error('PLUS: all ellipsoids in the array must be of the same dimension.');
-  end
-
-  [k, l] = size(b);
-  if (l ~= 1) || (k ~= n)
-    error('PLUS: vector dimension does not match.');
-  end
-
-  [m, n] = size(E);
-  for i = 1:m
-    for j = 1:n
-      r(j)        = E(i, j);
-      r(j).center = E(i, j).center + b;
-    end
-    if i == 1
-      res = r;
-    else
-      res = [res; r];
-    end
-    clear r;
-  end
-
 end
+if isa(X, 'ellipsoid')
+    ellArr = X;
+    b = Y;
+else
+    ellArr = Y;
+    b = X;
+end
+
+d = dimension(ellArr);
+m = max(d);
+n = min(d);
+if m ~= n
+    error('PLUS: all ellipsoids in the array must be of the same dimension.');
+end
+
+[k, l] = size(b);
+if (l ~= 1) || (k ~= n)
+    error('PLUS: vector dimension does not match.');
+end
+
+ellCArr = arrayfun(@(x) ellipsoid(x.center + b, x.shape), ellArr,...
+    'UniformOutput',false);
+
+outEllArr=reshape([ellCArr{:}],size(ellArr));
