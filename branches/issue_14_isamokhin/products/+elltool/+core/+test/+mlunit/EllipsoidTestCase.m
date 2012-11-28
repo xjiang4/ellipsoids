@@ -20,25 +20,17 @@ classdef EllipsoidTestCase < mlunitext.test_case
         end
         function self = testIsInside(self)
             [test1Ell, test2Ell] = createTypicalEll(11);
-            testRes = isinside(test1Ell, [test1Ell test2Ell], 'i');
-            mlunit.assert_equals(1, testRes);
-            testRes = isinside(test1Ell, [test1Ell test2Ell]);
-            mlunit.assert_equals(0, testRes);
+            myFunctionForIsInside(test1Ell, [test1Ell test2Ell], 'i', 1);
+            myFunctionForIsInside(test1Ell, [test1Ell test2Ell], [], 0);
             [test1Ell, test2Ell] = createTypicalEll(12);
-            testRes = isinside(test1Ell, [test1Ell test2Ell], 'i');
-            mlunit.assert_equals(1, testRes);
-            testRes = isinside(test1Ell, [test1Ell test2Ell], 'u');
-            mlunit.assert_equals(0, testRes);
+            myFunctionForIsInside(test1Ell, [test1Ell test2Ell], 'i', 1);
+            myFunctionForIsInside(test1Ell, [test1Ell test2Ell], 'u', 0);
             [test1Ell, test2Ell] = createTypicalEll(13);
-            testRes = isinside(test1Ell, [test1Ell test2Ell], 'i');
-            mlunit.assert_equals(-1, testRes);
-            testRes = isinside(test1Ell, [test1Ell test2Ell], 'u');
-            mlunit.assert_equals(0, testRes);
+            myFunctionForIsInside(test1Ell, [test1Ell test2Ell], 'i', -1);
+            myFunctionForIsInside(test1Ell, [test1Ell test2Ell], 'u', 0);
             [test1Ell, test2Ell] = createTypicalEll(14);
-            testRes = isinside([test1Ell test2Ell], test1Ell, 'i');
-            mlunit.assert_equals(0, testRes);
-            testRes = isinside([test1Ell test2Ell], [test1Ell test2Ell]);
-            mlunit.assert_equals(0, testRes);            
+            myFunctionForIsInside([test1Ell test2Ell], test1Ell, 'i', 0);
+            myFunctionForIsInside([test1Ell test2Ell], [test1Ell test2Ell], [], 0);
         end
         function self = testIsBadDirection(self)
             [test1Ell, test2Ell] = createTypicalEll(15);
@@ -47,113 +39,33 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testRes = any(testRes);
             mlunit.assert_equals(0, testRes);
             [test1Ell, test2Ell] = createTypicalEll(16);
-            aVecArr = [1, -1; 0, 0];
-            testRes = isbaddirection(test1Ell, test2Ell, aVecArr);
-            testRes = all(testRes);
-            mlunit.assert_equals(1, testRes);
-            aVecArr = [1, -1; 2, 3];
-            testRes = isbaddirection(test1Ell, test2Ell, aVecArr);
-            testRes = any(testRes);
-            mlunit.assert_equals(0, testRes);
+            myFunctionForIsBadDirections(test1Ell, test2Ell, [1, -1; 0, 0], [1, -1; 2, 3]);
             [test1Ell, test2Ell] = createTypicalEll(17);
-            aVecArr = [1, -1, 1000, 1000; 0, 0, 0.5, 0.5; 0, 0, -0.5, -1];
-            testRes = isbaddirection(test1Ell, test2Ell, aVecArr);
-            testRes = all(testRes);
-            mlunit.assert_equals(1, testRes);
-            aVecArr = [1, -1, 0, 0; 1, -2, 1, 2; 7, 3, 2, 1];
-            testRes = isbaddirection(test1Ell, test2Ell, aVecArr);
-            testRes = any(testRes);
-            mlunit.assert_equals(0, testRes); 
+            myFunctionForIsBadDirections(test1Ell, test2Ell, [1, -1, 1000, 1000; 0, 0, 0.5, 0.5; 0, 0, -0.5, -1], [1, -1, 0, 0; 1, -2, 1, 2; 7, 3, 2, 1]);
         end
         function self = testMinkmp_ea(self)
-            [e0Vec, E0Mat, test0Ell, qEll, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalEll(18);
-            aVecArr = diag(ones(1, 5));
-            testRes = minkmp_ea(test0Ell, qEll, EllVec, aVecArr);
-            mlunit.assert_equals([], testRes);
-            [qVec, qMat, qEll] = createTypicalEll(19);
-            testRes = minkmp_ea(test0Ell, qEll, EllVec, aVecArr);
-            analyticRes = myAnalyticSolverForMinkmp(1, 5, aVecArr, e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat, qVec, qMat);
-            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
-            clear analyticRes testRes;
-            [e0Vec, E0Mat, test0Ell, qVec, qMat, qEll, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalEll(20);
-            aVecArr = diag(ones(1, 5));
-            testRes = minkmp_ea(test0Ell, qEll, EllVec, aVecArr);
-            analyticRes = myAnalyticSolverForMinkmp(1, 2, aVecArr, e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat, qVec, qMat);
-            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
-            clear analyticRes testRes;
-            [e0Vec, E0Mat, test0Ell, qVec, qMat, qEll, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalHighDimEll(13);
-            aVecArr = diag(ones(1, 100));
-            testRes = minkmp_ea(test0Ell, qEll, EllVec, aVecArr);
-            analyticRes = myAnalyticSolverForMinkmp(1, 100, aVecArr, e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat, qVec, qMat);
-            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));            
+            myFunctionForMinkmp(1, 1, 18, 5, 0, [])
+            myFunctionForMinkmp(1, 1, 19, 5, 5, true)
+            myFunctionForMinkmp(1, 1, 20, 5, 2, true)
+            myFunctionForMinkmp(1, 2, 13, 100, 100, true)
         end
         function self = testMinkmp_ia(self)
-            [e0Vec, E0Mat, test0Ell, qEll, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalEll(18);
-            aVecArr = diag(ones(1, 5));
-            testRes = minkmp_ia(test0Ell, qEll, EllVec, aVecArr);
-            mlunit.assert_equals([], testRes);
-            [qVec, qMat, qEll] = createTypicalEll(19);
-            testRes = minkmp_ia(test0Ell, qEll, EllVec, aVecArr);
-            analyticRes = myAnalyticSolverForMinkmp(2, 5, aVecArr, e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat, qVec, qMat);
-            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
-            clear analyticRes testRes;
-            [e0Vec, E0Mat, test0Ell, qVec, qMat, qEll, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalEll(20);
-            aVecArr = diag(ones(1, 5));
-            testRes = minkmp_ia(test0Ell, qEll, EllVec, aVecArr);
-            analyticRes = myAnalyticSolverForMinkmp(2, 2, aVecArr, e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat, qVec, qMat);
-            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
-            clear analyticRes testRes;
-            [e0Vec, E0Mat, test0Ell, qVec, qMat, qEll, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalHighDimEll(13);
-            aVecArr = diag(ones(1, 100));
-            testRes = minkmp_ia(test0Ell, qEll, EllVec, aVecArr);
-            analyticRes = myAnalyticSolverForMinkmp(2, 100, aVecArr, e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat, qVec, qMat);
-            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));            
+            myFunctionForMinkmp(2, 1, 18, 5, 0, [])
+            myFunctionForMinkmp(2, 1, 19, 5, 5, true)
+            myFunctionForMinkmp(2, 1, 20, 5, 2, true)
+            myFunctionForMinkmp(2, 2, 13, 100, 100, true)
         end
         function self = testMinksum_ea(self)
-            [e0Vec, E0Mat, test0Ell, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalEll(21);
-            aVecArr = diag(ones(1, 5));
-            testRes = minksum_ea(test0Ell, aVecArr);
-            analyticRes = [test0Ell, test0Ell, test0Ell, test0Ell, test0Ell];
-            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
-            aVecArr = diag(ones(1, 5));
-            testRes = minksum_ea(EllVec, aVecArr);
-            analyticRes = myAnalyticSolverForMinksum(1, 5, aVecArr, e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat);
-            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
-            clear analyticRes testRes;
-            [e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalEll(22);
-            aVecArr = diag(ones(1, 5));
-            testRes = minksum_ea(EllVec, aVecArr);
-            analyticRes = myAnalyticSolverForMinksum(1, 5, aVecArr, e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat);
-            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
-            clear analyticRes testRes;
-            [e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalHighDimEll(14);
-            aVecArr = diag(ones(1, 100));
-            testRes = minksum_ea(EllVec, aVecArr);
-            analyticRes = myAnalyticSolverForMinksum(1, 100, aVecArr, e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat);
-            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));            
+            myFunctionForMinksum(1, 1, 21, 5, 5, true)
+            myFunctionForMinksum(1, 1, 22, 5, 5, true)
+            myFunctionForMinksum(1, 1, 23, 5, 5, true)
+            myFunctionForMinksum(1, 2, 14, 100, 100, true)
         end
         function self = testMinksum_ia(self)
-            [e0Vec, E0Mat, test0Ell, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalEll(21);
-            aVecArr = diag(ones(1, 5));
-            testRes = minksum_ea(test0Ell, aVecArr);
-            analyticRes = [test0Ell, test0Ell, test0Ell, test0Ell, test0Ell];
-            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
-            aVecArr = diag(ones(1, 5));
-            testRes = minksum_ia(EllVec, aVecArr);
-            analyticRes = myAnalyticSolverForMinksum(2, 5, aVecArr, e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat);
-            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
-            clear analyticRes testRes;
-            [e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalEll(22);
-            aVecArr = diag(ones(1, 5));
-            testRes = minksum_ia(EllVec, aVecArr);
-            analyticRes = myAnalyticSolverForMinksum(2, 5, aVecArr, e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat);
-            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
-            clear analyticRes testRes;
-            [e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalHighDimEll(14);
-            aVecArr = diag(ones(1, 100));
-            testRes = minksum_ia(EllVec, aVecArr);
-            analyticRes = myAnalyticSolverForMinksum(2, 100, aVecArr, e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat);
-            mlunit.assert_equals(true, all(eq(analyticRes, testRes)));            
+            myFunctionForMinksum(2, 1, 21, 5, 5, true)
+            myFunctionForMinksum(2, 1, 22, 5, 5, true)
+            myFunctionForMinksum(2, 1, 23, 5, 5, true)
+            myFunctionForMinksum(2, 2, 14, 100, 100, true)
         end
         function self = testDistance(self)
             
@@ -1832,18 +1744,30 @@ function [varargout] = createTypicalEll(flag)
             varargout{1} = [3; 3; 8; 3; 23];
             varargout{2} = diag(ones(1, 5));
             varargout{3} = ellipsoid(varargout{1}, varargout{2});
-            varargout{4} = ellipsoid([6.5; 1; 1; 1; 1], diag([5, 2, 2, 2, 2]));
-            varargout{5} = [3; 3; 65; 4; 23];
-            varargout{6} = diag([13, 3, 2, 2, 2]);
-            test1Ell = ellipsoid(varargout{5}, varargout{6});
-            varargout{7} = [3; 8; 3; 2; 6];
-            varargout{8} = diag([7, 2, 6, 2, 2]);
-            test2Ell = ellipsoid(varargout{7}, varargout{8});
-            varargout{9} = [test1Ell, test2Ell];
+            varargout{4} = [6.5; 1; 1; 1; 1];
+            varargout{5} = diag([5, 2, 2, 2, 2]);
+            varargout{6} = ellipsoid(varargout{4}, varargout{5});
+            varargout{7} = [3; 3; 65; 4; 23];
+            varargout{8} = diag([13, 3, 2, 2, 2]);
+            test1Ell = ellipsoid(varargout{7}, varargout{8});
+            varargout{9} = [3; 8; 3; 2; 6];
+            varargout{10} = diag([7, 2, 6, 2, 2]);
+            test2Ell = ellipsoid(varargout{9}, varargout{10});
+            varargout{11} = [test1Ell, test2Ell];
         case 19
-            varargout{1} = [6.5; 1; 1; 1; 1];
-            varargout{2} = diag([0.25, 0.25, 0.25, 0.25, 0.25]);
+            varargout{1} = [3; 3; 8; 3; 23];
+            varargout{2} = diag(ones(1, 5));
             varargout{3} = ellipsoid(varargout{1}, varargout{2});
+            varargout{4} = [6.5; 1; 1; 1; 1];
+            varargout{5} = diag([0.25, 0.25, 0.25, 0.25, 0.25]);
+            varargout{6} = ellipsoid(varargout{4}, varargout{5});
+            varargout{7} = [3; 3; 65; 4; 23];
+            varargout{8} = diag([13, 3, 2, 2, 2]);
+            test1Ell = ellipsoid(varargout{7}, varargout{8});
+            varargout{9} = [3; 8; 3; 2; 6];
+            varargout{10} = diag([7, 2, 6, 2, 2]);
+            test2Ell = ellipsoid(varargout{9}, varargout{10});
+            varargout{11} = [test1Ell, test2Ell];
          case 20
             varargout{1} = [3; 76; 8; 3; 23];
             varargout{2} = diag([3, 5, 6, 2, 7]);
@@ -1861,15 +1785,24 @@ function [varargout] = createTypicalEll(flag)
         case 21
             varargout{1} = [3; 61; 2; 34; 3];
             varargout{2} = diag(5 * ones(1, 5));
-            varargout{3} = ellipsoid(varargout{1}, varargout{2});
-            varargout{4} = [31; 34; 51; 42; 3];
-            varargout{5} = diag([13, 3, 22, 2, 24]);
-            test1Ell = ellipsoid(varargout{4}, varargout{5});
-            varargout{6} = [3; 8; 23; 12; 6];
-            varargout{7} = diag([7, 6, 6, 8, 2]);
-            test2Ell = ellipsoid(varargout{6}, varargout{7});
-            varargout{8} = [varargout{3}, test1Ell, test2Ell];
-        case 22    
+            test0Ell = ellipsoid(varargout{1}, varargout{2});
+            varargout{3} = 0;
+            varargout{4} = 0;
+            varargout{5} = 0;
+            varargout{6} = 0;
+            varargout{7} = test0Ell;
+        case 22
+            varargout{1} = [3; 61; 2; 34; 3];
+            varargout{2} = diag(5 * ones(1, 5));
+            test0Ell = ellipsoid(varargout{1}, varargout{2});
+            varargout{3} = [31; 34; 51; 42; 3];
+            varargout{4} = diag([13, 3, 22, 2, 24]);
+            test1Ell = ellipsoid(varargout{3}, varargout{4});
+            varargout{5} = [3; 8; 23; 12; 6];
+            varargout{6} = diag([7, 6, 6, 8, 2]);
+            test2Ell = ellipsoid(varargout{5}, varargout{6});
+            varargout{7} = [test0Ell, test1Ell, test2Ell];
+        case 23    
             varargout{1} = [32; 0; 8; 1; 23];
             varargout{2} = diag([3, 5, 6, 5, 2]);
             test0Ell = ellipsoid(varargout{1}, varargout{2});
@@ -1958,13 +1891,13 @@ function [varargout] = createTypicalHighDimEll(flag)
         otherwise
     end
 end
-function analyticRes = myAnalyticSolverForMinkmp(flag, maxIndi, aVecArr, e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat, qVec, qMat)
+function analyticRes = myAnalyticSolverForMinkmp(flag, maxIndi, aVecArr, e0Vec, e0Mat, e1Vec, E1Mat, e2Vec, E2Mat, qVec, qMat)
     analyticResVec = e0Vec - qVec + e1Vec + e2Vec;
     analyticRes(maxIndi) = ellipsoid;
     for indi = 1 : maxIndi
         lVec = aVecArr(:, indi);
         if (flag == 1) % minkmp_ea
-            supp1Mat = sqrt(E0Mat);
+            supp1Mat = sqrt(e0Mat);
             supp1Mat = 0.5 * (supp1Mat + supp1Mat.');
             supp1Vec = supp1Mat * lVec;
             supp2Mat = sqrt(qMat);
@@ -1981,9 +1914,9 @@ function analyticRes = myAnalyticSolverForMinkmp(flag, maxIndi, aVecArr, e0Vec, 
             a1Double = sqrt(dot(lVec, E1Mat * lVec));
             a2Double = sqrt(dot(lVec, E2Mat * lVec));
             analyticResMat = (aDouble + a1Double + a2Double) .* ( Q_plusMat ./ aDouble + E1Mat ./ a1Double + E2Mat ./ a2Double);
-        else
-            pDouble  = (sqrt(dot(lVec, E0Mat * lVec))) / (sqrt(dot(lVec, qMat * lVec)));
-            Q_minusMat  = (1 - (1 / pDouble)) * E0Mat + (1 - pDouble) * qMat;
+        else % minkmp_ia
+            pDouble  = (sqrt(dot(lVec, e0Mat * lVec))) / (sqrt(dot(lVec, qMat * lVec)));
+            Q_minusMat  = (1 - (1 / pDouble)) * e0Mat + (1 - pDouble) * qMat;
             Q_minusMat = 0.5 * (Q_minusMat + Q_minusMat.');
             supp1Mat = sqrtm(Q_minusMat);
             supp2Mat = sqrtm(E1Mat);
@@ -2004,18 +1937,18 @@ function analyticRes = myAnalyticSolverForMinkmp(flag, maxIndi, aVecArr, e0Vec, 
             analyticRes(1, indi) = ellipsoid(analyticResVec, analyticResMat);
     end
 end
-function analyticRes = myAnalyticSolverForMinksum(flag, maxIndi, aVecArr, e0Vec, E0Mat, e1Vec, E1Mat, e2Vec, E2Mat)
+function analyticRes = myAnalyticSolverForMinksum(flag, maxIndi, aVecArr, e0Vec, e0Mat, e1Vec, E1Mat, e2Vec, E2Mat)
     analyticResVec = e0Vec + e1Vec + e2Vec;
     analyticRes(maxIndi) = ellipsoid;
     for indi = 1 : maxIndi
         lVec = aVecArr(:, indi);
         if (flag == 1) % minksum_ea
-            a0Double = sqrt(dot(lVec, E0Mat * lVec));
+            a0Double = sqrt(dot(lVec, e0Mat * lVec));
             a1Double = sqrt(dot(lVec, E1Mat * lVec));
             a2Double = sqrt(dot(lVec, E2Mat * lVec));
-            analyticResMat = (a0Double + a1Double + a2Double) .* ( E0Mat ./ a0Double + E1Mat ./ a1Double + E2Mat ./ a2Double);
+            analyticResMat = (a0Double + a1Double + a2Double) .* ( e0Mat ./ a0Double + E1Mat ./ a1Double + E2Mat ./ a2Double);
         else % minksum_ia
-            supp1Mat = sqrtm(E0Mat);
+            supp1Mat = sqrtm(e0Mat);
             supp2Mat = sqrtm(E1Mat);
             supp3Mat = sqrtm(E2Mat);
             supp1lVec = supp1Mat * lVec;
@@ -2032,5 +1965,61 @@ function analyticRes = myAnalyticSolverForMinksum(flag, maxIndi, aVecArr, e0Vec,
             analyticResMat = Q_starMat' * Q_starMat;
         end 
         analyticRes(1, indi) = ellipsoid(analyticResVec, analyticResMat);
+    end
+end
+function myFunctionForIsInside(test1EllVec, test2EllVec, myString, myResult)
+    if isempty(myString)
+        testRes = isinside(test1EllVec, test2EllVec);
+    else
+        testRes = isinside(test1EllVec, test2EllVec, myString);
+    end
+    mlunit.assert_equals(myResult, testRes);
+end
+function myFunctionForIsBadDirections(test1Ell, test2Ell, a1VecArr, a2VecArr)
+    testRes = isbaddirection(test1Ell, test2Ell, a1VecArr);
+    testRes = all(testRes);
+    mlunit.assert_equals(1, testRes);
+    testRes = isbaddirection(test1Ell, test2Ell, a2VecArr);
+    testRes = any(testRes);
+    mlunit.assert_equals(0, testRes);
+end
+function myFunctionForMinkmp(my1flag, my2flag, my1Int, my2Int, my3Int, myResult)
+    if (my2flag == 1) % createTypicalEll
+        [e0Vec, e0Mat, test0Ell, qVec, qMat, qEll, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalEll(my1Int);
+    else % createTypicalHighDimEll
+        [e0Vec, e0Mat, test0Ell, qVec, qMat, qEll, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalHighDimEll(my1Int);
+    end
+    aVecArr = diag(ones(1, my2Int));
+    if (my1flag == 1) % minkmp_ea
+        testRes = minkmp_ea(test0Ell, qEll, EllVec, aVecArr);
+    else % minkmp_ia
+        testRes = minkmp_ia(test0Ell, qEll, EllVec, aVecArr);
+    end
+    if ~isempty(myResult)
+        analyticRes = myAnalyticSolverForMinkmp(my1flag, my3Int, aVecArr, e0Vec, e0Mat, e1Vec, E1Mat, e2Vec, E2Mat, qVec, qMat);
+        mlunit.assert_equals(true, all(eq(analyticRes, testRes)));
+    else
+        mlunit.assert_equals(myResult, testRes);
+    end
+end
+function myFunctionForMinksum(my1flag, my2flag, my1Int, my2Int, my3Int, myResult)
+    if (my2flag == 1) % createTypicalEll
+        [e0Vec, e0Mat, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalEll(my1Int);
+    else % createTypicalHighDimEll
+        [e0Vec, e0Mat, e1Vec, E1Mat, e2Vec, E2Mat, EllVec] = createTypicalHighDimEll(my1Int);
+    end
+    aVecArr = diag(ones(1, my2Int));
+    if (my1flag == 1) % minksum_ea
+        testRes = minksum_ea(EllVec, aVecArr);
+    else % minksum_ia
+        testRes = minksum_ia(EllVec, aVecArr);
+    end
+    if (my2flag == 1) && (my1Int == 21)
+        test0Ell = ellipsoid(e0Vec, e0Mat);
+        analyticRes = [test0Ell, test0Ell, test0Ell, test0Ell, test0Ell];
+        mlunit.assert_equals(myResult, all(eq(analyticRes, testRes)));
+    else
+        analyticRes = myAnalyticSolverForMinksum(my1flag, my3Int, aVecArr, e0Vec, e0Mat, e1Vec, E1Mat, e2Vec, E2Mat);
+        mlunit.assert_equals(myResult, all(eq(analyticRes, testRes)));
     end
 end
