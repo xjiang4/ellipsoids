@@ -23,7 +23,7 @@ if ~(isa(inpEllMat, 'ellipsoid'))
         'MOVE2ORIGIN: argument must be array of ellipsoids.');
 end
 
-outEllMat     = inpEllMat;
+outEllMat = inpEllMat;
 [mRows, nCols] = size(outEllMat);
 
 for iRow = 1:mRows
