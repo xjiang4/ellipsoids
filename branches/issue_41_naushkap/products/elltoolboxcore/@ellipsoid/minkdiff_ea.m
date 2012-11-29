@@ -4,34 +4,32 @@ function extApprEllVec = minkdiff_ea(fstEll, secEll, directionsMat)
 %               of the geometric difference of two ellipsoids in
 %               given directions.
 %
-%   extApprEllVec = MINKDIFF_EA(fstEll, secEll, L) - Computes external
-%       approximating ellipsoids of the geometric difference
-%       of two ellipsoids fstEll - secEll in directions specified by
-%       columns of matrix directionsMat
+%   extApprEllVec = MINKDIFF_EA(fstEll, secEll, directionsMat) -
+%       Computes external approximating ellipsoids of the
+%       geometric difference of two ellipsoids fstEll - secEll
+%       in directions specified by columns of matrix directionsMat
 %
 %   First condition for the approximations to be computed, is that
 %   ellipsoid fstEll must be bigger than ellipsoid secEll in the
 %   sense that if they had the same center, secEll would be contained
 %   inside fstEll. Otherwise, the geometric difference fstEll - secEll
 %   is an empty set.
-%   Second condition for the approximation in the given direction lVec
+%   Second condition for the approximation in the given direction l
 %   to exist, is the following. Given
-%       param = sqrt(<lVec, fstShMat lVec>)/sqrt(<lVec, secShMat lVec>)
-%   where fstShMat is the shape matrix of ellipsoid fstEll, and
-%   secShMat - shape matrix of secEll, and minRoot being minimal root
+%       P = sqrt(<l, Q1 l>)/sqrt(<l, Q2 l>)
+%   where Q1 is the shape matrix of ellipsoid fstEll, and
+%   Q2 - shape matrix of secEll, and R being minimal root
 %   of the equation
-%       det(fstShMat - minRoot secShMat) = 0,
-%   parameter param should be less than minRoot.
+%       det(Q1 - R Q2) = 0,
+%   parameter P should be less than R.
 %   If both of these conditions are satisfied, then external
 %   approximating ellipsoid is defined by its shape matrix
-%       shMat = (fstShMat^(1/2) + ortMat secShMat^(1/2))' *
-%               * (fstShMat^(1/2) + ortMat secShMat^(1/2)),
-%   where ortMat is orthogonal matrix such that vectors
-%       fstShMat^(1/2) lVec and ortMat secShMat^(1/2) lVec
+%       Q = (Q1^(1/2) + S Q2^(1/2))' (Q1^(1/2) + S Q2^(1/2)),
+%   where S is orthogonal matrix such that vectors
+%       Q1^(1/2)l and SQ2^(1/2)l
 %   are parallel, and its center
-%       centVec = fstCentVec - secCentVec,
-%   where fstCentVec is center of ellipsoid fstEll
-%   and secCentVec - center of secEll.
+%       q = q1 - q2,
+%   where q1 is center of ellipsoid fstEll and q2 - center of secEll.
 %
 % Input:
 %   regular:
@@ -71,7 +69,7 @@ end
 
 extApprEllVec = [];
 
-if isbigger(fstEll, secEll) == false
+if ~isbigger(fstEll, secEll)
     if Properties.getIsVerbose()
         fstStr = 'MINKDIFF_EA: geometric difference of these two ';
         secStr = 'ellipsoids is empty set.\n'

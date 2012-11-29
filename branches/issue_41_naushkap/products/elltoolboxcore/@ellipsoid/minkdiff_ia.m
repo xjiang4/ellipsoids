@@ -14,23 +14,21 @@ function intApprEllVec = minkdiff_ia(fstEll, secEll, directionsMat)
 %   sense that if they had the same center, secEll would be contained
 %   inside fstEll. Otherwise, the geometric difference
 %   fstEll - secEll is an empty set. Second condition for the
-%   approximation in the given direction lVec to exist,
+%   approximation in the given direction l to exist,
 %   is the following. Given
-%       param = sqrt(<lVec, fstShMat lVec>)/sqrt(<lVec, secShMat lVec>)
-%   where fstShMat is the shape matrix of ellipsoid fstEll,
-%   and secShMat - shape matrix of secEll, and minRoot being minimal
+%       P = sqrt(<l, Q1 l>)/sqrt(<l, Q2 lV>)
+%   where Q1 is the shape matrix of ellipsoid fstEll,
+%   and Q2 - shape matrix of secEll, and R being minimal
 %   root of the equation
-%       det(fstShMat - minRoot secShMat) = 0,
-%   parameter param should be less than minRoot.
+%       det(Q1 - R Q2) = 0,
+%   parameter P should be less than R.
 %   If these two conditions are satisfied, then internal approximating
 %   ellipsoid for the geometric difference fstEll - secEll in the
-%   direction lVec
-%   is defined by its shape matrix
-%       shMat = (1 - (1/param)) fstShMat + (1 - param) secShMat
+%   direction l is defined by its shape matrix
+%       Q = (1 - (1/P)) Q1 + (1 - P) Q2
 %   and its center
-%       centVec = fstCentVec - secCentVec,
-%   where fstCentVec is center of fstEll and
-%   secCentVec - center of secEll.
+%       q = q1 - q2,
+%   where q1 is center of fstEll and q2 - center of secEll.
 %
 % Input:
 %   regular:
@@ -70,7 +68,7 @@ end
 
 intApprEllVec = [];
 
-if isbigger(fstEll, secEll) == false
+if ~isbigger(fstEll, secEll)
     if Properties.getIsVerbose()
         fstStr = 'MINKDIFF_IA: geometric difference of these two ';
         secStr = 'ellipsoids is empty set.\n';
