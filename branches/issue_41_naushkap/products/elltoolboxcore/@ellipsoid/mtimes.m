@@ -3,26 +3,27 @@ function outEllVec = mtimes(multMat, inpEllVec)
 % MTIMES - overloaded operator '*'.
 %
 %   Multiplication of the ellipsoid by a matrix or a scalar.
-%   If E(q,Q) is an ellipsoid, and A - matrix of suitable dimensions,
+%   If E(q, Q) is an ellipsoid, and A - matrix of suitable dimensions,
 %   then A E(q, Q) = E(Aq, AQA').
 %
 % Input:
 %   regular:
-%       A: double[mRows, nDims]/[1, 1] - scalar or
+%       multMat: double[mRows, nDims]/[1, 1] - scalar or
 %           matrix in R^{mRows x nDim}
-%       E: ellipsoid [1, nCols] - array of ellipsoids.
+%       inpEllVec: ellipsoid [1, nCols] - array of ellipsoids.
 %
 % Output:
-%   res: ellipsoid [1, nCols] - resulting ellipsoids.
+%   outEllVec: ellipsoid [1, nCols] - resulting ellipsoids.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
 import modgen.common.throwerror;
 if ~(isa(multMat, 'double')) || ~(isa(inpEllVec, 'ellipsoid'))
-    fstStr = 'MTIMES: first multiplier is expected to be a matrix or a ';
-    secStr = 'scalar,\n        and second multiplier - an ellipsoid.';
-    throwerror('wrongInput', [fstStr secStr]);
+    fstStr = 'MTIMES: first multiplier is expected';
+    secStr = ' to be a matrix or a scalar,\n        ';
+    thdStr = 'and second multiplier - an ellipsoid.';
+    throwerror('wrongInput', [fstStr secStr thdStr]);
 end
 
 [mRows, nDims] = size(multMat);

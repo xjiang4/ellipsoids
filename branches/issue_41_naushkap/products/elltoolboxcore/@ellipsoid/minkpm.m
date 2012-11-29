@@ -2,21 +2,23 @@ function [centVec, boundPointMat] = minkpm(varargin)
 %
 % MINKPM - computes and plots geometric (Minkowski) difference
 %          of the geometric sum of ellipsoids and a single ellipsoid
-%          in 2D or 3D: (E1 + E2 + ... + En) - E
+%          in 2D or 3D: (E1 + E2 + ... + En) - inpEll
 %
-%   MINKPM(EA, E, OPTIONS)  Computes geometric difference of the
-%       geometric sum of ellipsoids in EA and ellipsoid E,
-%       if 1 <= dimension(EA) = dimension(E) <= 3,
+%   MINKPM(inpEllMat, inpEll, OPTIONS)  Computes geometric difference
+%       of the geometric sum of ellipsoids in inpEllMat and
+%       ellipsoid inpEll, if
+%       1 <= dimension(inpEllMat) = dimension(inpEll) <= 3,
 %       and plots it if no output arguments are specified.
 %
-%   [y, Y] = MINKPM(EA, E) - pomputes
-%       (geometric sum of ellipsoids in EA) - E.
-%       Here y is the center, and Y - array of boundary points.
-%   MINKPM(EA, E) - plots (geometric sum of ellipsoids in EA) - E
-%       in default (red) color.
-%   MINKPM(EA, E, Options) - plots
-%       (geometric sum of ellipsoids in EA) - E using options given
-%       in the Options structure.
+%   [centVec, boundPointMat] = MINKPM(inpEllMat, inpEll) - pomputes
+%       (geometric sum of ellipsoids in inpEllMat) - inpEll.
+%       Here centVec is the center, and boundPointMat - array
+%       of boundary points.
+%   MINKPM(inpEllMat, inpEll) - plots (geometric sum of ellipsoids
+%       in inpEllMat) - inpEll in default (red) color.
+%   MINKPM(inpEllMat, inpEll, Options) - plots
+%       (geometric sum of ellipsoids in inpEllMat) - inpEll using
+%       options given in the Options structure.
 %
 % Input:
 %   regular:
@@ -39,10 +41,10 @@ function [centVec, boundPointMat] = minkpm(varargin)
 %               (0 - transparent, 1 - opaque).
 %
 % Output:
-%    centVec: double[nDim, 1]/double[] - center of the resulting set.
+%    centVec: double[nDim, 1]/double[0, 0] - center of the resulting set.
 %       centerVec may be empty.
-%    boundPointMat: double[nDim, ]/double[] - set of boundary points
-%       (vertices) of resulting set. boundPointMat may be empty.
+%    boundPointMat: double[nDim, ]/double[0, 0] - set of boundary
+%       points (vertices) of resulting set. boundPointMat may be empty.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
@@ -92,13 +94,13 @@ switch nDimsInpEll
     case 3,
         nPlot3dPnt = inpEllMat.nPlot3dPoints/2;
         nPlot3dPntSub = nPlot3dPnt/2;
-        psy = linspace(0, pi, nPlot3dPntSub);
+        psyVec = linspace(0, pi, nPlot3dPntSub);
         phiVec = linspace(0, 2*pi, nPlot3dPnt);
         dirMat   = [];
         for iCol = 2:(nPlot3dPntSub - 1)
-            arrVec = cos(psy(iCol))*ones(1, nPlot3dPnt);
-            dirMat   = [dirMat [cos(phiVec)*sin(psy(iCol)); ...
-                sin(phiVec)*sin(psy(iCol)); arrVec]];
+            subDirVec = cos(psyVec(iCol))*ones(1, nPlot3dPnt);
+            dirMat   = [dirMat [cos(phiVec)*sin(psyVec(iCol)); ...
+                sin(phiVec)*sin(psyVec(iCol)); subDirVec]];
         end
         
     otherwise,
@@ -243,7 +245,7 @@ switch nDimsInpEll
             extApprEll = extApproxEllVec(iCol);
             if ~isbaddirection(extApprEll, inpEll, dirVec)
                 intApprEll = minksum_ia(inpEllMat, dirVec);
-                if isbigger(intApprEll, inpEll);
+                if isbigger(intApprEll, inpEll)
                     if ~isbaddirection(intApprEll, inpEll, dirVec)
                         [~, boundPointSubMat] = ...
                             rho(minkdiff_ea(extApprEll, inpEll, ...

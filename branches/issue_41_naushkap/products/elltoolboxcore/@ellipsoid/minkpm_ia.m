@@ -1,24 +1,25 @@
 function intApprEllVec = minkpm_ia(inpEllMat, inpEll, dirMat)
 %
 % MINKPM_IA - computation of internal approximating ellipsoids
-%             of (E1 + E2 + ... + En) - E in given directions.
+%             of (E1 + E2 + ... + En) - inpEll in given directions.
 %
-%   IA = MINKPM_IA(EE, E, L) - Computes internal approximating
-%       ellipsoids of (E1 + E2 + ... + En) - E,
-%       where E1, E2, ..., En are ellipsoids in array EE,
-%       in directions specified by columns of matrix L.
+%   intApprEllVec = MINKPM_IA(inpEllMat, inpEll, L) - Computes
+%       internal approximating ellipsoids of
+%       (E1 + E2 + ... + En) - inpEll,
+%       where E1, E2, ..., En are ellipsoids in array inpEllMat,
+%       in directions specified by columns of matrix dirMat.
 %
 % Input:
 %   regular:
-%       inpEllMat: ellipsoid [mRowsInpEllMat, nColsInpEllMat] - matrix
-%           of ellipsoids of the same dimentions.
+%       inpEllMat: ellipsoid [mRowsInpEllMat, nColsInpEllMat] -
+%           matrix of ellipsoids of the same dimentions.
 %       inpEll: ellipsoid [1, 1] - ellipsoid of the same dimention.
 %       dirMat: double[nDim, nCols] - matrix whose columns specify
 %           the directions for which the approximations
 %           should be computed.
 %
 % Output:
-%   intApprEllVec: ellipsoid [1, nCols]/[] - array of internal
+%   intApprEllVec: ellipsoid [1, nCols]/[0, 0] - array of internal
 %       approximating ellipsoids. Empty, if for all specified
 %       directions approximations cannot be computed.
 %
@@ -75,7 +76,8 @@ Properties.setIsVerbose(isVrb);
 
 if isempty(intApprEllVec)
     if Properties.getIsVerbose()
-        fprintf('MINKPM_IA: cannot compute internal approximation ');
-        fprintf('for any\n           of the specified directions.\n');
+        fprintf('MINKPM_IA: cannot compute internal ');
+        fprintf('approximation for any\n           ');
+        fprintf('of the specified directions.\n')
     end
 end

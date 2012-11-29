@@ -1,24 +1,25 @@
 function ExtApprEllVec = minkpm_ea(inpEllMat, inpEll, dirMat)
 %
 % MINKPM_EA - computation of external approximating ellipsoids
-%             of (E1 + E2 + ... + En) - E in given directions.
+%             of (E1 + E2 + ... + En) - inpEll in given directions.
 %
-%   EA = MINKPM_EA(EE, E, L) - Computes external approximating
-%       ellipsoids of (E1 + E2 + ... + En) - E,
-%       where E1, E2, ..., En are ellipsoids in array EE,
-%       in directions specified by columns of matrix L.
+%   ExtApprEllVec = MINKPM_EA(inpEllMat, inpEll, dirMat) - Computes
+%       external approximating ellipsoids of
+%       (E1 + E2 + ... + En) - inpEll,
+%       where E1, E2, ..., En are ellipsoids in array inpEllMat,
+%       in directions specified by columns of matrix dirMat.
 %
 % Input:
 %   regular:
-%       inpEllMat: ellipsoid [mRowsInpEllMat, nColsInpEllMat] - matrix
-%           of ellipsoids of the same dimentions.
+%       inpEllMat: ellipsoid [mRowsInpEllMat, nColsInpEllMat] -
+%           matrix of ellipsoids of the same dimentions.
 %       inpEll: ellipsoid [1, 1] - ellipsoid of the same dimention.
 %       dirMat: double[nDim, nCols] - matrix whose columns specify
 %           the directions for which the approximations
 %           should be computed.
 %
 % Output:
-%   extApprEllVec: ellipsoid [1, nCols]/[] - array of external
+%   extApprEllVec: ellipsoid [1, nCols]/[0, 0] - array of external
 %       approximating ellipsoids. Empty, if for all specified
 %       directions approximations cannot be computed.
 %
@@ -86,7 +87,8 @@ Properties.setIsVerbose(isVrb);
 
 if isempty(ExtApprEllVec)
     if Properties.getIsVerbose()
-        fprintf('MINKPM_EA: cannot compute external approximation ');
-        fprintf('for any\n           of the specified directions.\n');
+        fprintf('MINKPM_EA: cannot compute external ');
+        fprintf('approximation for any\n           ');
+        fprintf('of the specified directions.\n');
     end
 end

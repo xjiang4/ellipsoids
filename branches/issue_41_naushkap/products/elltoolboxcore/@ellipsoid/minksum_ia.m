@@ -3,13 +3,14 @@ function intApprEllVec = minksum_ia(inpEllMat, dirMat)
 % MINKSUM_IA - computation of internal approximating ellipsoids
 %              of the geometric sum of ellipsoids in given directions.
 %
-%   IA = MINKSUM_IA(E, L)  Computes tight internal approximating
-%       ellipsoids for the geometric sum of the ellipsoids in the
-%       array E in directions specified by columns of L.
-%       If ellipsoids in E are n-dimensional, matrix L must have
+%   intApprEllVec = MINKSUM_IA(inpEllMat, dirMat) - Computes
+%       tight internal approximating ellipsoids for the geometric
+%       sum of the ellipsoids in the array inpEllMat in directions
+%       specified by columns of dirMat. If ellipsoids in
+%       inpEllMat are n-dimensional, matrix dirMat must have
 %       dimension (n x k) where k can be arbitrarily chosen.
 %       In this case, the output of the function will contain k
-%       ellipsoids computed for k directions specified in L.
+%       ellipsoids computed for k directions specified in dirMat.
 %
 %   Let E(q1, Q1), E(q2, Q2), ..., E(qm, Qm) be ellipsoids in R^n,
 %   and l - some vector in R^n. Then tight internal approximating
@@ -59,9 +60,9 @@ end
 
 [nDims, nCols] = size(dirMat);
 if (nDims ~= maxDim)
-    msg = ...
-        sprintf('MINKSUM_IA: second argument must be vector(s) in R^%d.',...
-        maxDim);
+    fstStr = 'MINKSUM_IA: second argument must ';
+    secStr = 'be vector(s) in R^%d.';
+    msg = sprintf([fstStr secStr], maxDim);
     throwerror(msg);
 end
 
@@ -80,8 +81,9 @@ for iCol = 1:nCols
             shMat = inpEllMat(iRow, jColsInpEllMatrix).shape;
             if size(shMat, 1) > rank(shMat)
                 if Properties.getIsVerbose()
-                    fprintf('MINKSUM_IA: Warning! Degenerate ');
-                    fprintf('ellipsoid.\n            Regularizing...\n');
+                    fprintf('MINKSUM_IA: Warning!');
+                    fprintf(' Degenerate ellipsoid.\n');
+                    fprintf('            Regularizing...\n')
                 end
                 shMat = ellipsoid.regularize(shMat, ...
                     absTolMat(iRow,jColsInpEllMatrix));

@@ -2,22 +2,23 @@ function [centVec, boundPointMat] = minksum(varargin)
 %
 % MINKSUM - computes geometric (Minkowski) sum of ellipsoids in 2D or 3D.
 %
-%   MINKSUM(EA, OPTIONS) - Computes geometric sum of ellipsoids
-%       in the array EA, if
-%       1 <= min(dimension(EA)) = max(dimension(EA)) <= 3,
+%   MINKSUM(inpEllMat, OPTIONS) - Computes geometric sum of ellipsoids
+%       in the array inpEllMat, if
+%       1 <= min(dimension(inpEllMat)) = max(dimension(inpEllMat)) <= 3,
 %       and plots it if no output arguments are specified.
 %
-%   [y, Y] = MINKSUM(EA) - Computes geometric sum of ellipsoids in EA.
-%       Here y is the center, and Y - array of boundary points.
-%   MINKSUM(EA) - Plots geometric sum of ellipsoids in EA
-%       in default (red) color.
-%   MINKSUM(EA, Options) - Plots geometric sum of EA using options
-%       given in the Options structure.
+%   [centVec, boundPointMat] = MINKSUM(inpEllMat) - Computes
+%       geometric sum of ellipsoids in inpEllMat. Here centVec is
+%       the center, and boundPointMat - array of boundary points.
+%   MINKSUM(inpEllMat) - Plots geometric sum of ellipsoids in
+%       inpEllMat in default (red) color.
+%   MINKSUM(inpEllMat, Options) - Plots geometric sum of inpEllMat
+%       using options given in the Options structure.
 %
 % Input:
 %   regular:
 %       inpEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids
-%       of the same dimentions 2D or 3D.
+%           of the same dimentions 2D or 3D.
 %
 %   optional:
 %       Options: structure[1, 1] - fields:

@@ -4,28 +4,33 @@ function intApprEllVec = minkdiff_ia(fstEll, secEll, directionsMat)
 %               of the geometric difference of two ellipsoids in
 %               given directions.
 %
-%   IA = MINKDIFF_IA(E1, E2, L) - Computes internal approximating
-%       ellipsoids of the geometric difference of two ellipsoids E1 - E2
-%       in directions specified by columns of matrix L.
+%   intApprEllVec = MINKDIFF_IA(fstEll, secEll, directionsMat) -
+%       Computes internal approximating ellipsoids of the geometric
+%       difference of two ellipsoids fstEll - secEll in directions
+%       specified by columns of matrix directionsMat.
 %
 %   First condition for the approximations to be computed, is that
-%   ellipsoid E1 must be bigger than ellipsoid E2 in the sense that
-%   if they had the same center, E2 would be contained inside E1.
-%   Otherwise, the geometric difference E1 - E2 is an empty set.
-%   Second condition for the approximation in the given direction l
-%   to exist, is the following. Given
-%                  P = sqrt(<l, Q1 l>)/sqrt(<l, Q2 l>)
-%   where Q1 is the shape matrix of ellipsoid E1, and Q2 - shape
-%   matrix of E2, and R being minimal root of the equation
-%                  det(Q1 - R Q2) = 0,
-%   parameter P should be less than R.
+%   ellipsoid fstEll must be bigger than ellipsoid secEll in the
+%   sense that if they had the same center, secEll would be contained
+%   inside fstEll. Otherwise, the geometric difference
+%   fstEll - secEll is an empty set. Second condition for the
+%   approximation in the given direction lVec to exist,
+%   is the following. Given
+%       param = sqrt(<lVec, fstShMat lVec>)/sqrt(<lVec, secShMat lVec>)
+%   where fstShMat is the shape matrix of ellipsoid fstEll,
+%   and secShMat - shape matrix of secEll, and minRoot being minimal
+%   root of the equation
+%       det(fstShMat - minRoot secShMat) = 0,
+%   parameter param should be less than minRoot.
 %   If these two conditions are satisfied, then internal approximating
-%   ellipsoid for the geometric difference E1 - E2 in the direction l
+%   ellipsoid for the geometric difference fstEll - secEll in the
+%   direction lVec
 %   is defined by its shape matrix
-%                Q = (1 - (1/P)) Q1 + (1 - P) Q2
+%       shMat = (1 - (1/param)) fstShMat + (1 - param) secShMat
 %   and its center
-%                q = q1 - q2,
-%   where q1 is center of E1 and q2 - center of E2.
+%       centVec = fstCentVec - secCentVec,
+%   where fstCentVec is center of fstEll and
+%   secCentVec - center of secEll.
 %
 % Input:
 %   regular:
@@ -65,7 +70,7 @@ end
 
 intApprEllVec = [];
 
-if isbigger(fstEll, secEll) == 0
+if isbigger(fstEll, secEll) == false
     if Properties.getIsVerbose()
         fstStr = 'MINKDIFF_IA: geometric difference of these two ';
         secStr = 'ellipsoids is empty set.\n';
