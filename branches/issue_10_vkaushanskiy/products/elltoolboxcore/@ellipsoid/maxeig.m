@@ -1,51 +1,34 @@
-function M = maxeig(E)
+function maxEigMat = maxeig(inpEllMat)
 %
 % MAXEIG - return the maximal eigenvalue of the ellipsoid.
 %
-%
-% Description:
-% ------------
-%
-%    M = MAXEIG(E)  Returns the largest eigenvalues of ellipsoids in the array E.
-%
+% Input:
+%   regular:
+%       inpEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
 %
 % Output:
-% -------
+%   maxEigMat: double[mRows, nCols] - matrix of maximal eigenvalues
+%       of ellipsoids in the input matrix inpEllMat.
 %
-%    M - array of maximal eigenvalues of ellipsoids in the input array E.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID, ISDEGENERATE, MINEIG.
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
+import modgen.common.throwerror;
+import elltool.conf.Properties;
 
-  global ellOptions;
+if ~(isa(inpEllMat, 'ellipsoid'))
+    throwerror('wrongInput', ...
+        'MAXEIG: input argument must be ellipsoid.');
+end
 
-  if ~isstruct(ellOptions)
-    evalin('base', 'ellipsoids_init;');
-  end
-
-  if ~(isa(E, 'ellipsoid'))
-    error('MAXEIG: input argument must be ellipsoid.')
-  end
-
-  [m, n] = size(E);
-  M      = [];
-  for i = 1:m
-    mx = [];
-    for j = 1:n
-      mx = [mx max(eig(E(i, j).shape))];
+[mRows, nCols] = size(inpEllMat);
+maxEigMat = zeros(mRows,nCols);
+for iRow = 1:mRows
+    for jCol = 1:nCols
+        if isempty(inpEllMat(iRow,jCol))
+            throwerror('wrongInput:emptyEllipsoid', ...
+                'MAXEIG: input argument is empty.');
+        end
+        maxEigMat(iRow,jCol) = max(eig(inpEllMat(iRow, jCol).shape));
     end
-    M = [M; mx];
-  end
-
-  return;
+end
