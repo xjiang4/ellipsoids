@@ -1,27 +1,28 @@
-function [res, status] = isinside(fstEllMat, secEllMat, mode)
+function [res, status] = isinside(fstEllMat, secObjMat, mode)
 %
-% ISINSIDE - checks if the intersection of ellipsoids contains the union or
-%            intersection of given ellipsoids or polytopes.
+% ISINSIDE - checks if the intersection of ellipsoids contains the
+%            union or intersection of given ellipsoids or polytopes.
 %
-%   RES = ISINSIDE(E1, E2, s) Checks if the union (s = 'u') or
-%       intersection (s = 'i') of ellipsoids in E2 lies inside the
-%       intersection of ellipsoids in E1.
-%       Ellipsoids in E1 and E2 must be of the same dimension.
-%       s = 'u' (default) - union of ellipsoids in E2.
-%       s = 'i' - intersection.
-%   RES = ISINSIDE(E, P, s) Checks if the union (s = 'u') or
-%       intersection (s = 'i')  of polytopes in P lies inside the
-%       intersection of ellipsoids in E.
-%       Ellipsoids in E and polytopes in P must be of the same dimension.
-%       s = 'u' (default) - union of polytopes in P.
-%       s = 'i' - intersection.
+%   res = ISINSIDE(fstEllMat, secEllMat, s) Checks if the union
+%       (mode = 'u') or intersection (mode = 'i') of ellipsoids in
+%       secEllMat lies inside the intersection of ellipsoids in
+%       fstEllMat. Ellipsoids in fstEllMat and secEllMat must be
+%       of the same dimension. mode = 'u' (default) - union of
+%       ellipsoids in secEllMat. mode = 'i' - intersection.
+%   res = ISINSIDE(fstEllMat, secPolyMat, mode) Checks if the union
+%       (mode = 'u') or intersection (mode = 'i')  of polytopes in
+%       secPolyMat lies inside the intersection of ellipsoids in
+%       fstEllMat. Ellipsoids in fstEllMat and polytopes in secPolyMat
+%       must be of the same dimension. mode = 'u' (default) - union of
+%       polytopes in secPolyMat. mode = 'i' - intersection.
 %
-%   To check if the union of ellipsoids E2 belongs to the intersection of
-%   ellipsoids E1, it is enough to check that every ellipsoid of E2 is
-%   contained in every ellipsoid of E1.
-%   Checking if the intersection of ellipsoids in E2 is inside
-%   intersection E1 can be formulated as quadratically constrained
-%   quadratic programming (QCQP) problem.
+%   To check if the union of ellipsoids secEllMat belongs to the
+%   intersection of ellipsoids fstEllMat, it is enough to check that
+%   every ellipsoid of secEllMat is contained in every
+%   ellipsoid of fstEllMat.
+%   Checking if the intersection of ellipsoids in secEllMat is inside
+%   intersection fstEllMat can be formulated as quadratically
+%   constrained quadratic programming (QCQP) problem.
 %   Let E(q, Q) be an ellipsoid with center q and shape matrix Q.
 %   To check if this ellipsoid contains the intersection of ellipsoids
 %   E(q1, Q1), E(q2, Q2), ..., E(qn, Qn), we define the QCQP problem:
@@ -36,8 +37,8 @@ function [res, status] = isinside(fstEllMat, secEllMat, mode)
 %   contradict, or, in other words, intersection of ellipsoids
 %   E(q1, Q1), E(q2, Q2), ..., E(qn, Qn) is nonempty, then we can find
 %   vector y such that it satisfies inequalities (1)-(n)
-%   and maximizes function J. If J(y) <= 1, then ellipsoid E(q, Q) contains
-%   the given intersection, otherwise, it does not.
+%   and maximizes function J. If J(y) <= 1, then ellipsoid E(q, Q)
+%   contains the given intersection, otherwise, it does not.
 %
 %   The intersection of polytopes is a polytope, which is computed
 %   by the standard routine of MPT. If the vertices of this polytope
@@ -73,7 +74,7 @@ function [res, status] = isinside(fstEllMat, secEllMat, mode)
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 %
-% $Author: Vadim Kaushanskiy <vkaushanskiy@gmail.com> $  $Date: 10-11-2012$
+% $Author: Vadim Kaushanskiy <vkaushanskiy@gmail.com>$ $Date: 10-11-2012$
 % $Copyright: Moscow State University,
 %            Faculty of Computational Mathematics and Computer Science,
 %            System Analysis Department 2012 $
@@ -86,9 +87,10 @@ if ~(isa(fstEllMat, 'ellipsoid'))
         'ISINSIDE: first input argument must be ellipsoid.');
 end
 
-if ~(isa(secEllMat, 'ellipsoid')) && ~(isa(secEllMat, 'polytope'))
-    throwerror('wrongInput', ...
-        'ISINSIDE: second input arguments must be ellipsoids or polytope.');
+if ~(isa(secObjMat, 'ellipsoid')) && ~(isa(secObjMat, 'polytope'))
+    fstStr = 'ISINSIDE: second input arguments must be ';
+    secStr = 'ellipsoids or polytope.';
+    throwerror('wrongInput', [fstStr secStr]);
 end
 
 if (nargin < 3) || ~(ischar(mode))
@@ -97,18 +99,18 @@ end
 
 status = [];
 
-if isa(secEllMat, 'polytope')
-    [~, nCols] = size(secEllMat);
+if isa(secObjMat, 'polytope')
+    [~, nCols] = size(secObjMat);
     if mode == 'i'
-        poly = secEllMat(1);
+        poly = secObjMat(1);
         for jCol = 1:nCols
-            poly = poly & secEllMat(jCol);
+            poly = poly & secObjMat(jCol);
         end
         xVec = extreme(poly);
     else
         xVec = [];
         for jCol = 1:nCols
-            xVec = [xVec; extreme(secEllMat(jCol))];
+            xVec = [xVec; extreme(secObjMat(jCol))];
         end
     end
     if isempty(xVec)
@@ -129,7 +131,7 @@ if mode == 'u'
     res    = 1;
     for iRow = 1:mRows
         for jCol = 1:nCols
-            if min(min(contains(fstEllMat(iRow, jCol), secEllMat))) < 1
+            if min(min(contains(fstEllMat(iRow, jCol), secObjMat))) < 1
                 res = 0;
                 if nargout < 2
                     clear status;
@@ -138,19 +140,19 @@ if mode == 'u'
             end
         end
     end
-elseif min(size(secEllMat) == [1 1]) == 1
+elseif min(size(secObjMat) == [1 1]) == 1
     res = 1;
-    if min(min(contains(fstEllMat, secEllMat))) < 1
+    if min(min(contains(fstEllMat, secObjMat))) < 1
         res = 0;
     end
 else
     nFstEllDimsMat = dimension(fstEllMat);
     minFstEllDim    = min(min(nFstEllDimsMat));
     maxFsrEllDim    = max(max(nFstEllDimsMat));
-    nSecEllDimsMat = dimension(secEllMat);
+    nSecEllDimsMat = dimension(secObjMat);
     minSecEllDim    = min(min(nSecEllDimsMat));
     maxSecEllDim    = max(max(nSecEllDimsMat));
-    if (minFstEllDim ~= maxFsrEllDim) || (minSecEllDim ~= maxSecEllDim) ...
+    if (minFstEllDim ~= maxFsrEllDim) || (minSecEllDim ~= maxSecEllDim)...
             || (minSecEllDim ~= minFstEllDim)
         throwerror('wrongSizes', ...
             'ISINSIDE: ellipsoids must be of the same dimension.');
@@ -162,7 +164,7 @@ else
     res    = 1;
     for iRow = 1:mRows
         for jCol = 1:nCols
-            [res, status] = qcqp(secEllMat, fstEllMat(iRow, jCol));
+            [res, status] = qcqp(secObjMat, fstEllMat(iRow, jCol));
             if res < 1
                 if nargout < 2
                     clear status;
@@ -187,8 +189,8 @@ end
 
 function [res, status] = qcqp(fstEllMat, secObj)
 %
-% QCQP - formulate quadratically constrained quadratic programming problem
-%        and invoke external solver.
+% QCQP - formulate quadratically constrained quadratic programming
+%        problem and invoke external solver.
 %
 % Input:
 %   regular:
@@ -231,7 +233,8 @@ for iRow = 1:mRows
     for jCol = 1:nCols
         [qVec, invQMat] = parameters(fstEllMat(iRow, jCol));
         if size(invQMat, 2) > rank(invQMat)
-            invQMat = ellipsoid.regularize(invQMat,absTolScal(iRow,jCol));
+            invQMat = ...
+                ellipsoid.regularize(invQMat,absTolScal(iRow,jCol));
         end
         invQMat = ell_inv(invQMat);
         invQMat = 0.5*(invQMat + invQMat');

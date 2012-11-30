@@ -3,7 +3,7 @@ function intApprEllVec = minkpm_ia(inpEllMat, inpEll, dirMat)
 % MINKPM_IA - computation of internal approximating ellipsoids
 %             of (E1 + E2 + ... + En) - inpEll in given directions.
 %
-%   intApprEllVec = MINKPM_IA(inpEllMat, inpEll, L) - Computes
+%   intApprEllVec = MINKPM_IA(inpEllMat, inpEll, dirMat) - Computes
 %       internal approximating ellipsoids of
 %       (E1 + E2 + ... + En) - inpEll,
 %       where E1, E2, ..., En are ellipsoids in array inpEllMat,

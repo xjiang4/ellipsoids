@@ -1,9 +1,10 @@
-function [fstOutEmpt, ellConstr, secOutEmpt, GVec] = ellconstraint(xVec, Q1, Q2, varargin)
+function [fstOutEmpt, ellConstr, secOutEmpt, gVec] = ...
+    ellconstraint(xVec, Q1, Q2, varargin)
 %
 % ELLCONSTRAINT - describes ellipsoidal constraint.
 %                 This function describes ellipsoidal constraint
-%                 <lVec, QMat lVec> = 1,
-%                 where QMat is positive semidefinite.
+%                 <lVec, shMat lVec> = 1,
+%                 where shMat is positive semidefinite.
 %
 % Input:
 %   regular:
@@ -11,7 +12,7 @@ function [fstOutEmpt, ellConstr, secOutEmpt, GVec] = ellconstraint(xVec, Q1, Q2,
 %           Q1, Q2: are ignored.
 %
 %   optional:
-%       QMat: double[ellDimension, ellDimension] - shape matrix of 
+%       shMat: double[ellDimension, ellDimension] - shape matrix of 
 %           ellipsoid. Default values - identity matrix.
 %
 % Output:
@@ -26,10 +27,10 @@ fstOutEmpt = [];
 secOutEmpt = [];
 
 if nargin > 3
-    QMat = varargin{1};
-    ellConstr = (xVec' * QMat * xVec) - 1;
-    GVec = 2 * QMat * xVec;
+    shMat = varargin{1};
+    ellConstr = (xVec' * shMat * xVec) - 1;
+    gVec = 2 * shMat * xVec;
 else
     ellConstr = (xVec' * xVec) - 1;
-    GVec = 2 * xVec;
+    gVec = 2 * xVec;
 end
