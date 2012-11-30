@@ -34,7 +34,7 @@ function intApprEllVec = minksum_ia(inpEllMat, dirMat)
 %           directions for which the approximations should be computed.
 %
 % Output:
-%   intApprEllVec: ellipsoid [1, nCols] - array internal
+%   intApprEllVec: ellipsoid [1, nCols] - array of internal
 %       approximating ellipsoids.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>

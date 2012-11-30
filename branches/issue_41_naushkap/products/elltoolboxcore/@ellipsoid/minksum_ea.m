@@ -34,7 +34,7 @@ function extApprEllVec = minksum_ea(inpEllMat, dirMat)
 %           should be computed.
 %
 % Output:
-%   extApprEllVec: ellipsoid [1, nCols] - array external
+%   extApprEllVec: ellipsoid [1, nCols] - array of external
 %       approximating ellipsoids.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>

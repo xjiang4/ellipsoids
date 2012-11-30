@@ -26,8 +26,8 @@ function [res, status] = isinside(fstEllMat, secObjMat, mode)
 %
 %   Let fstEllMat(iEll) = E(q, Q) be an ellipsoid with center q and shape
 %   matrix Q. To check if this ellipsoid contains the intersection of
-%   ellipsoids: E(q1, Q1), E(q2, Q2), ..., E(qn, Qn), we define
-%   the QCQP problem:
+%   ellipsoids in secObjMat:
+%   E(q1, Q1), E(q2, Q2), ..., E(qn, Qn), we define the QCQP problem:
 %                     J(x) = <(x - q), Q^(-1)(x - q)> --> max
 %   with constraints:
 %                     <(x - q1), Q1^(-1)(x - q1)> <= 1   (1)
