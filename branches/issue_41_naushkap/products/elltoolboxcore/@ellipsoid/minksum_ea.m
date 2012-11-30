@@ -1,11 +1,11 @@
 function extApprEllVec = minksum_ea(inpEllMat, dirMat)
 %
 % MINKSUM_EA - computation of external approximating ellipsoids
-%              of the geometric sum of ellipsoids in given directions.
+%              of the geometric sum of ellipsoids along given directions.
 %
 %   extApprEllVec = MINKSUM_EA(inpEllMat, dirMat) - Computes
 %       tight external approximating ellipsoids for the geometric
-%       sum of the ellipsoids in the array inpEllMat in directions
+%       sum of the ellipsoids in the array inpEllMat along directions
 %       specified by columns of dirMat.
 %       If ellipsoids in inpEllMat are n-dimensional, matrix
 %       dirMat must have dimension (n x k) where k can be
@@ -16,8 +16,8 @@ function extApprEllVec = minksum_ea(inpEllMat, dirMat)
 %   Let inpEllMat consists from: E(q1, Q1), E(q2, Q2), ..., E(qm, Qm) -
 %   ellipsoids in R^n, and dirMat(:, iCol) = l - some vector in R^n.
 %   Then tight external approximating ellipsoid E(q, Q) for the
-%   geometric sum E(q1, Q1) + E(q2, Q2) + ... + E(qm, Qm) in direction l,
-%   is such that
+%   geometric sum E(q1, Q1) + E(q2, Q2) + ... + E(qm, Qm)
+%   along direction l, is such that
 %       rho(l | E(q, Q)) = rho(l | (E(q1, Q1) + ... + E(qm, Qm)))
 %   and is defined as follows:
 %       q = q1 + q2 + ... + qm,

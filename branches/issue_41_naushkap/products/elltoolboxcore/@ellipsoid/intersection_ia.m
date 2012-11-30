@@ -1,7 +1,7 @@
 function outEllMat = intersection_ia(myEllMat, objMat)
 %
 % INTERSECTION_IA - internal ellipsoidal approximation of the
-%                   intersection of of ellipsoid and ellipsoid,
+%                   intersection of ellipsoid and ellipsoid,
 %                   or ellipsoid and halfspace, or ellipsoid
 %                   and polytope.
 %
@@ -19,10 +19,11 @@ function outEllMat = intersection_ia(myEllMat, objMat)
 %       If v is normal vector of hyperplane and c - shift,
 %       then this hyperplane defines halfspace
 %                  <v, x> <= c.
-%   E = INTERSECTION_IA(myEllMat, objMat) - Given matrix of ellipsoids
-%       myEllMat and matrix of polytopes objMat = polyMat whose sizes
-%       match, computes the internal ellipsoidal approximations of
-%       intersections of ellipsoids myEllMat and polytopes polyMat.
+%   outEllMat = INTERSECTION_IA(myEllMat, objMat) - Given matrix of
+%       ellipsoids  myEllMat and matrix of polytopes objMat = polyMat
+%       whose sizes match, computes the internal ellipsoidal
+%       approximations of intersections of ellipsoids myEllMat
+%       and polytopes polyMat.
 %
 %   The method used to compute the minimal volume overapproximating
 %   ellipsoid is described in "Ellipsoidal Calculus Based on

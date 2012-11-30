@@ -30,8 +30,8 @@ minEllDim   = min(min(ellDimensions));
 maxEllDim   = max(max(ellDimensions));
 
 if minEllDim ~= maxEllDim
-    fstStr = 'ELLINTERSECTION_IA: all ellipsoids must '
-    secStr = 'be of the same dimension.'
+    fstStr = 'ELLINTERSECTION_IA: all ellipsoids must ';
+    secStr = 'be of the same dimension.';
     throwerror('wrongSizes', [fstStr secStr]);
 end
 

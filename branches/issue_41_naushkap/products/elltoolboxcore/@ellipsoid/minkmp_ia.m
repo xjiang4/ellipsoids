@@ -1,7 +1,7 @@
 function intApprEllVec = minkmp_ia(fstEll, secEll, inpEllMat, dirMat)
 %
 % MINKMP_IA - computation of internal approximating ellipsoids
-%             of (E - Em) + (E1 + ... + En) in given directions.
+%             of (E - Em) + (E1 + ... + En) along given directions.
 %             where E = fstEll, Em = secEll,
 %             E1, E2, ..., En - are ellipsoids in sumEllMat
 %
@@ -10,7 +10,7 @@ function intApprEllVec = minkmp_ia(fstEll, secEll, inpEllMat, dirMat)
 %       ellipsoids of (E - Em) + (E1 + E2 + ... + En),
 %       where E1, E2, ..., En are ellipsoids in array inpEllMat,
 %       E = fstEll, Em = secEll,
-%       in directions specified by columns of matrix dirMat.
+%       along directions specified by columns of matrix dirMat.
 %
 % Input:
 %   regular:
@@ -20,7 +20,7 @@ function intApprEllVec = minkmp_ia(fstEll, secEll, inpEllMat, dirMat)
 %           of the same dimention.
 %       inpEllMat: ellipsoid [1, nCols] - array of ellipsoids
 %           of the same dimentions.
-%       dirMat: numeric[nDim, nCols] - matrix whose columns specify the
+%       dirMat: double[nDim, nCols] - matrix whose columns specify the
 %           directions for which the approximations should be computed.
 %
 % Output:

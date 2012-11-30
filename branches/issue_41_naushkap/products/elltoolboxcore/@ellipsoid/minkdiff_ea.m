@@ -1,13 +1,13 @@
 function extApprEllVec = minkdiff_ea(fstEll, secEll, directionsMat)
 %
 % MINKDIFF_EA - computation of external approximating ellipsoids
-%               of the geometric difference of two ellipsoids in
+%               of the geometric difference of two ellipsoids along
 %               given directions.
 %
 %   extApprEllVec = MINKDIFF_EA(fstEll, secEll, directionsMat) -
 %       Computes external approximating ellipsoids of the
 %       geometric difference of two ellipsoids fstEll - secEll
-%       in directions specified by columns of matrix directionsMat
+%       along directions specified by columns of matrix directionsMat
 %
 %   First condition for the approximations to be computed, is that
 %   ellipsoid fstEll = E1 must be bigger than ellipsoid secEll = E2

@@ -24,16 +24,16 @@ function [res, status] = isinside(fstEllMat, secObjMat, mode)
 %   intersection fstEllMat can be formulated as quadratically
 %   constrained quadratic programming (QCQP) problem.
 %
-%   Let fstEllMat = E(q, Q) be an ellipsoid with center q and shape
+%   Let fstEllMat(iEll) = E(q, Q) be an ellipsoid with center q and shape
 %   matrix Q. To check if this ellipsoid contains the intersection of
-%   ellipsoids in secObjMat: 
-%   E(q1, Q1), E(q2, Q2), ..., E(qn, Qn), we define the QCQP problem:
+%   ellipsoids: E(q1, Q1), E(q2, Q2), ..., E(qn, Qn), we define
+%   the QCQP problem:
 %                     J(x) = <(x - q), Q^(-1)(x - q)> --> max
 %   with constraints:
-%                      <(x - q1), Q1^(-1)(x - q1)> <= 1   (1)
-%                      <(x - q2), Q2^(-1)(x - q2)> <= 1   (2)
-%                      ................................
-%                      <(x - qn), Qn^(-1)(x - qn)> <= 1   (n)
+%                     <(x - q1), Q1^(-1)(x - q1)> <= 1   (1)
+%                     <(x - q2), Q2^(-1)(x - q2)> <= 1   (2)
+%                     ................................
+%                     <(x - qn), Qn^(-1)(x - qn)> <= 1   (n)
 %
 %   If this problem is feasible, i.e. inequalities (1)-(n) do not
 %   contradict, or, in other words, intersection of ellipsoids

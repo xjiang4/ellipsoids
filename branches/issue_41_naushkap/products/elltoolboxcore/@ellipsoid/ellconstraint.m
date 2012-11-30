@@ -1,5 +1,5 @@
 function [fstOutEmpt, ellConstr, secOutEmpt, gVec] = ...
-    ellconstraint(xVec, Q1, Q2, varargin)
+    ellconstraint(xVec, varargin)
 %
 % ELLCONSTRAINT - describes ellipsoidal constraint.
 %                 This function describes ellipsoidal constraint
@@ -9,7 +9,6 @@ function [fstOutEmpt, ellConstr, secOutEmpt, gVec] = ...
 % Input:
 %   regular:
 %       xVec: double[ellDimension, 1] - direction vector.
-%           Q1, Q2: are ignored.
 %
 %   optional:
 %       shMat: double[ellDimension, ellDimension] - shape matrix of 
@@ -26,7 +25,7 @@ function [fstOutEmpt, ellConstr, secOutEmpt, gVec] = ...
 fstOutEmpt = [];
 secOutEmpt = [];
 
-if nargin > 3
+if nargin > 1
     shMat = varargin{1};
     ellConstr = (xVec' * shMat * xVec) - 1;
     gVec = 2 * shMat * xVec;

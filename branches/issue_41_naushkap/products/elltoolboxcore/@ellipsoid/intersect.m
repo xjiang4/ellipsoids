@@ -23,7 +23,7 @@ function [resMat, statusMat] = intersect(myEllMat, objMat, mode)
 %   difficult. This problem can be formulated as quadratically
 %   constrained quadratic programming (QCQP) problem.
 %
-%   Let objMat = E(q, Q) be an ellipsoid with center q and shape matrix Q.
+%   Let objMat(iObj) = E(q, Q) be an ellipsoid with center q and shape matrix Q.
 %   To check if this ellipsoid intersects (or touches) the intersection
 %   of ellipsoids in meEllMat: E(q1, Q1), E(q2, Q2), ..., E(qn, Qn),
 %   we define the QCQP problem:

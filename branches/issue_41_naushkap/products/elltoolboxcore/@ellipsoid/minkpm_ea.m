@@ -1,7 +1,7 @@
 function ExtApprEllVec = minkpm_ea(inpEllMat, inpEll, dirMat)
 %
 % MINKPM_EA - computation of external approximating ellipsoids
-%             of (E1 + E2 + ... + En) - E in given directions.
+%             of (E1 + E2 + ... + En) - E along given directions.
 %             where E = inpEll,
 %             E1, E2, ... En - are ellipsoids in inpEllMat.
 %
@@ -9,7 +9,7 @@ function ExtApprEllVec = minkpm_ea(inpEllMat, inpEll, dirMat)
 %       external approximating ellipsoids of
 %       (E1 + E2 + ... + En) - E, where E1, E2, ..., En are ellipsoids
 %       in array inpEllMat, E = inpEll,
-%       in directions specified by columns of matrix dirMat.
+%       along directions specified by columns of matrix dirMat.
 %
 % Input:
 %   regular:

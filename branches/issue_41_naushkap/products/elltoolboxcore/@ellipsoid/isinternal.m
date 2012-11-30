@@ -12,7 +12,7 @@ function isPositiveVec = isinternal(myEllMat, matrixOfVecMat, mode)
 %       of the same dimension. Column size of matrix  matrixOfVecMat
 %       should match the dimension of ellipsoids.
 %
-%    Let myEllMat = E(q, Q) be an ellipsoid with center q and shape
+%    Let myEllMat(iEll) = E(q, Q) be an ellipsoid with center q and shape
 %    matrix Q. Checking if given vector matrixOfVecMat = x belongs
 %    to E(q, Q) is equivalent to checking if inequality
 %                    <(x - q), Q^(-1)(x - q)> <= 1

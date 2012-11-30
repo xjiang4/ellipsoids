@@ -34,8 +34,8 @@ function [centVec, boundPointMat] = minksum(varargin)
 %               (0 - transparent, 1 - opaque).
 %
 % Output:
-%   centVec: numeric[nDim, 1] - center of the resulting set.
-%   boundPointMat: numeric[nDim, nBoundPoints] - set of boundary
+%   centVec: double[nDim, 1] - center of the resulting set.
+%   boundPointMat: double[nDim, nBoundPoints] - set of boundary
 %       points (vertices) of resulting set.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>

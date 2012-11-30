@@ -1,12 +1,12 @@
 function intApprEllVec = minkdiff_ia(fstEll, secEll, directionsMat)
 %
 % MINKDIFF_IA - computation of internal approximating ellipsoids
-%               of the geometric difference of two ellipsoids in
+%               of the geometric difference of two ellipsoids along
 %               given directions.
 %
 %   intApprEllVec = MINKDIFF_IA(fstEll, secEll, directionsMat) -
 %       Computes internal approximating ellipsoids of the geometric
-%       difference of two ellipsoids fstEll - secEll in directions
+%       difference of two ellipsoids fstEll - secEll along directions
 %       specified by columns of matrix directionsMat.
 %
 %   First condition for the approximations to be computed, is that
@@ -21,7 +21,7 @@ function intApprEllVec = minkdiff_ia(fstEll, secEll, directionsMat)
 %       det(Q1 - R Q2) = 0,
 %   parameter P should be less than R.
 %   If these two conditions are satisfied, then internal approximating
-%   ellipsoid for the geometric difference E1 - E2 in the
+%   ellipsoid for the geometric difference E1 - E2 along the
 %   direction l is defined by its shape matrix
 %       Q = (1 - (1/P)) Q1 + (1 - P) Q2
 %   and its center
