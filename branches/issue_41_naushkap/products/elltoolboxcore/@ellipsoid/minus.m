@@ -2,10 +2,10 @@ function outEllVec = minus(inpEllVec, inpVec)
 %
 % MINUS - overloaded operator '-'
 %
-%   Operation inpEll - inpVec where inpEll is an ellipsoid in R^n,
-%   and inpVec - vector in R^n. If E(cendVec, shMat) is an ellipsoid
-%   with center cendVec and shape matrix shMat, then
-%   E(cendVec, shMat) - inpVec = E(cendVec - inpVec, shMat).
+%   Operation E - b where E = inpEll is an ellipsoid in R^n,
+%   and b = inpVec - vector in R^n. If E(q, Q) is an ellipsoid
+%   with center q and shape matrix Q, then
+%   E(q, Q) - b = E(q - b, Q).
 %
 % Input:
 %   regular:

@@ -3,7 +3,8 @@ function outEllVec = mtimes(multMat, inpEllVec)
 % MTIMES - overloaded operator '*'.
 %
 %   Multiplication of the ellipsoid by a matrix or a scalar.
-%   If E(q, Q) is an ellipsoid, and A - matrix of suitable dimensions,
+%   If inpEllVec(iEll) = E(q, Q) is an ellipsoid, and
+%   multMat = A - matrix of suitable dimensions,
 %   then A E(q, Q) = E(Aq, AQA').
 %
 % Input:

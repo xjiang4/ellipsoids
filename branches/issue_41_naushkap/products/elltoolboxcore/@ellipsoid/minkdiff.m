@@ -3,7 +3,7 @@ function [centVec, boundPointMat] = minkdiff(varargin)
 % MINKDIFF - computes geometric (Minkowski) difference of two
 %            ellipsoids in 2D or 3D.
 %
-%   MINKDIFF(fstEll, secEll, OPTIONS) - Computes geometric difference
+%   MINKDIFF(fstEll, secEll, Options) - Computes geometric difference
 %       of two ellipsoids fstEll - secEll, if 1 <= dimension(fstEll) =
 %       = dimension(secEll) <= 3, and plots it if no output arguments
 %       are specified.

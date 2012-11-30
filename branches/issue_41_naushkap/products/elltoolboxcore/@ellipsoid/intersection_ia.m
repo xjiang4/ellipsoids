@@ -5,23 +5,23 @@ function outEllMat = intersection_ia(myEllMat, objMat)
 %                   or ellipsoid and halfspace, or ellipsoid
 %                   and polytope.
 %
-%   outEllMat = INTERSECTION_IA(myEllMat, ellMat) - Given two
-%       ellipsoidal matrixes of equal sizes, myEllMat and ellMat, or,
-%       alternatively, myEllMat or ellMat must be a single ellipsoid,
-%       comuptes the internal ellipsoidal approximations of
-%       intersections of two corresponding ellipsoids from
-%       myEllMat and from ellMat.
-%   outEllMat = INTERSECTION_IA(myEllMat, hypMat) Given matrix of
-%       ellipsoids myEllMat and matrix of hyperplanes hypMat whose
-%       sizes match, computes the internal ellipsoidal approximations
-%       of intersections of ellipsoids and halfspaces
+%   outEllMat = INTERSECTION_IA(myEllMat, objMat) - Given two
+%       ellipsoidal matrixes of equal sizes, myEllMat and
+%       objMat = ellMat, or, alternatively, myEllMat or ellMat must be
+%       a single ellipsoid, comuptes the internal ellipsoidal
+%       approximations of intersections of two corresponding ellipsoids
+%       from myEllMat and from ellMat.
+%   outEllMat = INTERSECTION_IA(myEllMat, objMat) - Given matrix of
+%       ellipsoids myEllMat and matrix of hyperplanes objMat = hypMat
+%       whose sizes match, computes the internal ellipsoidal
+%       approximations of intersections of ellipsoids and halfspaces
 %       defined by hyperplanes in hypMat.
 %       If v is normal vector of hyperplane and c - shift,
 %       then this hyperplane defines halfspace
 %                  <v, x> <= c.
-%   E = INTERSECTION_IA(myEllMat, polyMat) Given matrix of ellipsoids
-%       myEllMat and matrix of polytopes polyMat whose sizes match,
-%       computes the internal ellipsoidal approximations of
+%   E = INTERSECTION_IA(myEllMat, objMat) - Given matrix of ellipsoids
+%       myEllMat and matrix of polytopes objMat = polyMat whose sizes
+%       match, computes the internal ellipsoidal approximations of
 %       intersections of ellipsoids myEllMat and polytopes polyMat.
 %
 %   The method used to compute the minimal volume overapproximating
@@ -33,13 +33,13 @@ function outEllMat = intersection_ia(myEllMat, objMat)
 %
 % Input:
 %   regular:
-%       myEllMat: ellipsod [mRows, nCols] - matrix of ellipsoids.
+%       myEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
 %       objMat: ellipsoid [mRows, nCols] / hyperplane [mRows, nCols] /
 %           / polytope [mRows, nCols]  - matrix of ellipsoids or
 %           hyperplanes or polytopes of the same sizes.
 %
 % Output:
-%    outEllMat: ellipsod [mRows, nCols] - matrix of internal
+%    outEllMat: ellipsoid [mRows, nCols] - matrix of internal
 %       approximating ellipsoids; entries can be empty ellipsoids
 %       if the corresponding intersection is empty.
 %

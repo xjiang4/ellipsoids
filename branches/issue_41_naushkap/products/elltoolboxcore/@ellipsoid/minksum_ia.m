@@ -12,10 +12,10 @@ function intApprEllVec = minksum_ia(inpEllMat, dirMat)
 %       In this case, the output of the function will contain k
 %       ellipsoids computed for k directions specified in dirMat.
 %
-%   Let E(q1, Q1), E(q2, Q2), ..., E(qm, Qm) be ellipsoids in R^n,
-%   and l - some vector in R^n. Then tight internal approximating
-%   ellipsoid E(q, Q) for the geometric sum
-%   E(q1, Q1) + E(q2, Q2) + ... + E(qm, Qm) in direction l,
+%   Let inpEllMat consists from: E(q1, Q1), E(q2, Q2), ..., E(qm, Qm) - 
+%   ellipsoids in R^n, and dirMat(:, iCol) = l - some vector in R^n.
+%   Then tight internal approximating ellipsoid E(q, Q) for the
+%   geometric sum E(q1, Q1) + E(q2, Q2) + ... + E(qm, Qm) in direction l,
 %   is such that
 %       rho(l | E(q, Q)) = rho(l | (E(q1, Q1) + ... + E(qm, Qm)))
 %   and is defined as follows:

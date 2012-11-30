@@ -12,9 +12,9 @@ function isBadDirVec = isbaddirection(fstEll, secEll, dirsMat)
 %
 % Input:
 %   regular:
-%       fstEll: ellipsod [1, 1] - first ellipsoid. Suppose nDim - space
-%       dimension.
-%       secEll: ellipsod [1, 1] - second ellipsoid of the same dimention.
+%       fstEll: ellipsoid [1, 1] - first ellipsoid. Suppose nDim - space
+%           dimension.
+%       secEll: ellipsoid [1, 1] - second ellipsoid of the same dimention.
 %       dirsMat: numeric[nDims, nCols] - matrix whose columns are
 %           direction vectors that need to be checked.
 %

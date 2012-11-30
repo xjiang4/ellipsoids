@@ -2,7 +2,9 @@ function [centVec, boundPointMat] = minkpm(varargin)
 %
 % MINKPM - computes and plots geometric (Minkowski) difference
 %          of the geometric sum of ellipsoids and a single ellipsoid
-%          in 2D or 3D: (E1 + E2 + ... + En) - inpEll
+%          in 2D or 3D: (E1 + E2 + ... + En) - E,
+%          where E = inpEll,
+%          E1, E2, ... En - are ellipsoids in inpEllMat.
 %
 %   MINKPM(inpEllMat, inpEll, OPTIONS)  Computes geometric difference
 %       of the geometric sum of ellipsoids in inpEllMat and

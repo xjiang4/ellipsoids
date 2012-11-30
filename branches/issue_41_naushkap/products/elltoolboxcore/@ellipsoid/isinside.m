@@ -3,7 +3,7 @@ function [res, status] = isinside(fstEllMat, secObjMat, mode)
 % ISINSIDE - checks if the intersection of ellipsoids contains the
 %            union or intersection of given ellipsoids or polytopes.
 %
-%   res = ISINSIDE(fstEllMat, secEllMat, s) Checks if the union
+%   res = ISINSIDE(fstEllMat, secEllMat, mode) Checks if the union
 %       (mode = 'u') or intersection (mode = 'i') of ellipsoids in
 %       secEllMat lies inside the intersection of ellipsoids in
 %       fstEllMat. Ellipsoids in fstEllMat and secEllMat must be
@@ -23,8 +23,10 @@ function [res, status] = isinside(fstEllMat, secObjMat, mode)
 %   Checking if the intersection of ellipsoids in secEllMat is inside
 %   intersection fstEllMat can be formulated as quadratically
 %   constrained quadratic programming (QCQP) problem.
-%   Let E(q, Q) be an ellipsoid with center q and shape matrix Q.
-%   To check if this ellipsoid contains the intersection of ellipsoids
+%
+%   Let fstEllMat = E(q, Q) be an ellipsoid with center q and shape
+%   matrix Q. To check if this ellipsoid contains the intersection of
+%   ellipsoids in secObjMat: 
 %   E(q1, Q1), E(q2, Q2), ..., E(qn, Qn), we define the QCQP problem:
 %                     J(x) = <(x - q), Q^(-1)(x - q)> --> max
 %   with constraints:
@@ -50,8 +52,8 @@ function [res, status] = isinside(fstEllMat, secObjMat, mode)
 %
 % Input:
 %   regular:
-%       fstEllMat: ellipsod [mRows, mCols] - array or matrix of
-%           ellipsoids of the same size.
+%       fstEllMat: ellipsoid [mRows, mCols] - matrix of ellipsoids
+%           of the same size.
 %       secEllMat: ellipsoid [mSecRows, nSecCols] / 
 %           polytope [mSecRows, nSecCols] - matrix of ellipsoids or
 %           polytopes of the same sizes.
@@ -59,7 +61,7 @@ function [res, status] = isinside(fstEllMat, secObjMat, mode)
 %           note: if mode == 'i', then fstEllMat, secEllVec should be
 %               array.
 %
-%   properties:
+%   optional:
 %       mode: char[1, 1] - 'u' or 'i', go to description.
 %
 % Output:
@@ -68,7 +70,7 @@ function [res, status] = isinside(fstEllMat, secObjMat, mode)
 %           but the intersection of ellipsoids in E2 is an empty set;
 %       0 - intersection is empty;
 %       1 - if intersection is nonempty.
-%   status: double[]/double[1, 1] - status variable. status is empty
+%   status: double[0, 0]/double[1, 1] - status variable. status is empty
 %       if mode == 'u' or mSecRows == nSecCols == 1.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>

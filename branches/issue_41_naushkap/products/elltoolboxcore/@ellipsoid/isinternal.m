@@ -3,7 +3,7 @@ function isPositiveVec = isinternal(myEllMat, matrixOfVecMat, mode)
 % ISINTERNAL - checks if given points belong to the union or intersection
 %              of ellipsoids in the given array.
 %
-%   isPositiveVec = ISINTERNAL(myEllMat,  matrixOfVecMat, smode) - Checks
+%   isPositiveVec = ISINTERNAL(myEllMat,  matrixOfVecMat, mode) - Checks
 %       if vectors specified as columns of matrix matrixOfVecMat
 %       belong to the union (mode = 'u'), or intersection (mode = 'i')
 %       of the ellipsoids in myEllMat. If myEllMat is a single
@@ -12,9 +12,9 @@ function isPositiveVec = isinternal(myEllMat, matrixOfVecMat, mode)
 %       of the same dimension. Column size of matrix  matrixOfVecMat
 %       should match the dimension of ellipsoids.
 %
-%    Let E(q, Q) be an ellipsoid with center q and shape matrix Q.
-%    Checking if given vector x belongs to E(q, Q) is equivalent
-%    to checking if inequality
+%    Let myEllMat = E(q, Q) be an ellipsoid with center q and shape
+%    matrix Q. Checking if given vector matrixOfVecMat = x belongs
+%    to E(q, Q) is equivalent to checking if inequality
 %                    <(x - q), Q^(-1)(x - q)> <= 1
 %    holds.
 %    If x belongs to at least one of the ellipsoids in the array, then it
@@ -27,12 +27,12 @@ function isPositiveVec = isinternal(myEllMat, matrixOfVecMat, mode)
 %
 % Input:
 %   regular:
-%       myEllMat: ellipsod [mRowsOfEllMat, nColsOfEllMat] - matrix
+%       myEllMat: ellipsoid [mRowsOfEllMat, nColsOfEllMat] - matrix
 %           of ellipsoids.
 %       matrixOfVecMat: double [mRows, nColsOfVec] - matrix which
 %           specifiy points.
 %
-%   properties:
+%   optional:
 %       mode: char[1, 1] - 'u' or 'i', go to description.
 %
 % Output:

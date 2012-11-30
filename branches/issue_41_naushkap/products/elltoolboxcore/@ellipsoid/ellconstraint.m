@@ -3,8 +3,8 @@ function [fstOutEmpt, ellConstr, secOutEmpt, gVec] = ...
 %
 % ELLCONSTRAINT - describes ellipsoidal constraint.
 %                 This function describes ellipsoidal constraint
-%                 <lVec, shMat lVec> = 1,
-%                 where shMat is positive semidefinite.
+%                 <l, Q l> = 1,
+%                 where Q is positive semidefinite.
 %
 % Input:
 %   regular:
@@ -16,9 +16,9 @@ function [fstOutEmpt, ellConstr, secOutEmpt, gVec] = ...
 %           ellipsoid. Default values - identity matrix.
 %
 % Output:
-%   fstOutEmpt, secOutEmpt: [] - always empty.
+%   fstOutEmpt, secOutEmpt: double[0, 0] - always empty.
 %   ellConstr: double[1, 1] - ellipsoidal constraint
-%   GVec: double[ellDimension, 1] -
+%   gVec: double[ellDimension, 1] -
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $

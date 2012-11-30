@@ -10,16 +10,15 @@ function extApprEllVec = minkdiff_ea(fstEll, secEll, directionsMat)
 %       in directions specified by columns of matrix directionsMat
 %
 %   First condition for the approximations to be computed, is that
-%   ellipsoid fstEll must be bigger than ellipsoid secEll in the
-%   sense that if they had the same center, secEll would be contained
-%   inside fstEll. Otherwise, the geometric difference fstEll - secEll
+%   ellipsoid fstEll = E1 must be bigger than ellipsoid secEll = E2
+%   in the sense that if they had the same center, E2 would be contained
+%   inside E1. Otherwise, the geometric difference E1 - E2
 %   is an empty set.
 %   Second condition for the approximation in the given direction l
 %   to exist, is the following. Given
 %       P = sqrt(<l, Q1 l>)/sqrt(<l, Q2 l>)
-%   where Q1 is the shape matrix of ellipsoid fstEll, and
-%   Q2 - shape matrix of secEll, and R being minimal root
-%   of the equation
+%   where Q1 is the shape matrix of ellipsoid E1, and
+%   Q2 - shape matrix of E2, and R being minimal root of the equation
 %       det(Q1 - R Q2) = 0,
 %   parameter P should be less than R.
 %   If both of these conditions are satisfied, then external
@@ -29,7 +28,7 @@ function extApprEllVec = minkdiff_ea(fstEll, secEll, directionsMat)
 %       Q1^(1/2)l and SQ2^(1/2)l
 %   are parallel, and its center
 %       q = q1 - q2,
-%   where q1 is center of ellipsoid fstEll and q2 - center of secEll.
+%   where q1 is center of ellipsoid E1 and q2 - center of E2.
 %
 % Input:
 %   regular:

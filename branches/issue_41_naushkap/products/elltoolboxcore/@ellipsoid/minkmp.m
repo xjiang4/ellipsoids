@@ -3,9 +3,11 @@ function [centVec, boundPntMat] = minkmp(varargin)
 % MINKMP - computes and plots geometric (Minkowski) sum of the
 %          geometric difference of two ellipsoids and the geometric
 %          sum of n ellipsoids in 2D or 3D:
-%          (firstEll - secondEll) + (E1 + E2 + ... + En)
+%          (E - Em) + (E1 + E2 + ... + En),
+%          where E = firstEll, Em = secondEll,
+%          E1, E2, ..., En - are ellipsoids in sumEllMat
 %
-%   MINKMP(firstEll, secondEll, sumEllMat, OPTIONS) - Computes
+%   MINKMP(firstEll, secondEll, sumEllMat, Options) - Computes
 %       geometric sum of the geometric difference of two ellipsoids
 %       firstEll - secondEll and the geometric sum of ellipsoids in
 %       the ellipsoidal array sumEllMat, if
@@ -16,7 +18,8 @@ function [centVec, boundPntMat] = minkmp(varargin)
 %   [centVec, boundPntMat] = MINKMP(firstEll, secondEll, sumEllMat) -
 %       computes: (firstEll - secondEll) +
 %       + (geometric sum of ellipsoids in sumEllMat).
-%       Here y is the center, and Y - array of boundary points.
+%       Here centVec is the center, and
+%       boundPntMat - array of boundary points.
 %   MINKMP(firstEll, secondEll, sumEllMat) - plots
 %       (firstEll - secondEll) +
 %       +(geometric sum of ellipsoids in sumEllMat)

@@ -10,8 +10,9 @@ function isPositive = isbigger(fstEll, secEll)
 %
 % Input:
 %   regular:
-%       fstEll: ellipsod [1, 1] - first ellipsoid.
-%       secEll: ellipsod [1, 1] - second ellipsoid of the same dimention.
+%       fstEll: ellipsoid [1, 1] - first ellipsoid.
+%       secEll: ellipsoid [1, 1] - second ellipsoid
+%           of the same dimention.
 %
 % Output:
 %   isPositive: logical[1, 1], true - if ellipsoid fstEll
