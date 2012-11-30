@@ -18,7 +18,7 @@ classdef Suite113regBasic < mlunitext.test_case
             odeRegPropList={'regAbsTol',regAbsTol,'regMaxStepTol',regMaxStepTol,...
                 'nMaxRegSteps',nMaxRegSteps};
             %
-            fOdeDeriv=@(t, y) cos(t);
+            fOdeDeriv=@(t, y) sqrt(y) - 3*sin(t)^2;
             fReg=@(y)fOdeRegPos(y,1);
             s=warning('off','MATLAB:ode45:IntegrationTolNotMet');
             try
@@ -37,7 +37,7 @@ classdef Suite113regBasic < mlunitext.test_case
             
             function [isStrictViolVec,yRegMat]=fOdeRegPos(yMat,indNonNegative)
                 %isStrictViolVec=false(1,size(yMat,2));
-                isStrictViolVec=any(yMat(indNonNegative,:)<-0.01,1);
+                isStrictViolVec=any(yMat(indNonNegative,:)<0,1);
                 yRegMat=yMat;
                 yRegMat(indNonNegative,:)=max(yRegMat(indNonNegative,:),0);
             end
