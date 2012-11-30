@@ -59,9 +59,8 @@ end
 function ell = fSinglePolar(singEll)
     q = singEll.center; 
     Q = singEll.shape;
-    d      = size(Q, 2);
-    z      = zeros(d, 1);
-    chk    = (z' - q') * ell_inv(Q) * (z - q);
+    chk    = q' * ell_inv(Q) * q;
+    %chk checks if zero belongs to singEll ellipsoid
     if chk < 1
         M  = ell_inv(Q - q*q');
         M  = 0.5*(M + M');

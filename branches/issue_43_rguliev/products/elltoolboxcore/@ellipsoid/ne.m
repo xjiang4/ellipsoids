@@ -1,4 +1,4 @@
-function res = ne(E1, E2)
+function [isNeqArr, reportStr] = ne(ellFirstArr, ellSecArr)
 %
 %
 % Description:
@@ -14,4 +14,5 @@ function res = ne(E1, E2)
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
 
-res = ~(eq(E1, E2));
+[isEqualArr, reportStr] = eq(ellFirstArr, ellSecArr);
+isNeqArr = ~isEqualArr;

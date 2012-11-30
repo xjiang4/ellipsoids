@@ -53,17 +53,18 @@ end
 
 % check the orthogonality of the columns of B
 scalProdMat = B' * B;
-normsVec = diag(scalProdMat);
-isOrtogonalMat =(scalProdMat - diag(normsVec))> min(ellArr(:).getAbsTol());
+normSqVec = diag(scalProdMat);
+
+absTolArr = ellArr.getAbsTol();
+absTol = max(absTolArr);
+isOrtogonalMat =(scalProdMat - diag(normSqVec))> absTol;
 if any(isOrtogonalMat(:))
     error('PROJECTION: basis vectors must be orthogonal.');
 end
 
 % normalize the basis vectors
-BB = zeros(k,l);
-for iCout = 1:l
-    BB(:, iCout) = B(:, iCout)/normsVec(iCout);
-end
+normVec = sqrt(normSqVec);
+BB = B./normVec(ones(1,dims),1);
 
 % compute projection
 ellCArr = arrayfun(@(x) BB'*x, ellArr,'UniformOutput',false);

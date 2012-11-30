@@ -17,7 +17,7 @@ nSecElems = mDim * nDim;
 firstSizeVec = [kDim, lDim];
 secSizeVec = [mDim, nDim];
 relTol = ellFirstArr(1, 1).relTol;
-if (nFirstElems > 1) & (nSecElems > 1)
+if (nFirstElems > 1) && (nSecElems > 1)
  
     if ~isequal(firstSizeVec, secSizeVec)
         throwerror...

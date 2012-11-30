@@ -16,8 +16,7 @@ function [myEllCentVec, myEllshMat] = double(myEll)
 
 import modgen.common.throwerror;
 
-[mRows, nCols] = size(myEll);
-if (mRows > 1) || (nCols > 1)
+if ~isscalar(myEll)
     throwerror('wrongInput', ...
         'DOUBLE: the argument of this function must be single ellipsoid.');
 end

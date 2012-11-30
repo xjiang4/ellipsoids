@@ -33,64 +33,64 @@ function plot3(varargin)
 %    ELLIPSOID/ELLIPSOID, ELLIPSOID/PLOT.
 %
 
-%
+% 
 % Author:
 % -------
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
 
-import elltool.conf.Properties;
+  import elltool.conf.Properties;
 
-nai = nargin;
-E   = varargin{1};
-if ~isa(E, 'ellipsoid')
+  nai = nargin;
+  E   = varargin{1};
+  if ~isa(E, 'ellipsoid')
     error('PLOT: input argument must be an ellipsoid.');
-end
+  end
 
-if nai > 1
+  if nai > 1
     if isstruct(varargin{nai})
-        Options = varargin{nai};
-        nai     = nai - 1;
+      Options = varargin{nai};
+      nai     = nai - 1;
     else
-        Options = [];
+      Options = [];
     end
-else
+  else
     Options = [];
-end
+  end
 
-if ~isfield(Options, 'newfigure')
+  if ~isfield(Options, 'newfigure')
     Options.newfigure = 0;
-end
+  end
 
-ucolor    = [];
-vcolor    = [];
-ells      = [];
-ell_count = 0;
+  ucolor    = [];
+  vcolor    = [];
+  ells      = [];
+  ell_count = 0;
 
-for i = 1:nai
+  for i = 1:nai
     if isa(varargin{i}, 'ellipsoid')
-        E      = varargin{i};
-        [m, n] = size(E);
-        cnt    = m * n;
-        E1     = reshape(E, 1, cnt);
-        ells   = [ells E1];
-        if (i < nai) && ischar(varargin{i + 1})
-            clr = ellipsoid.my_color_table(varargin{i + 1});
-            val = 1;
-        else
-            clr = [0 0 0];
-            val = 0;
-        end
-        for j = (ell_count + 1):(ell_count + cnt)
-            ucolor(j) = val;
-            vcolor    = [vcolor; clr];
-        end
-        ell_count = ell_count + cnt;
+      E      = varargin{i};
+      [m, n] = size(E);
+      cnt    = m * n;
+      E1     = reshape(E, 1, cnt);
+      ells   = [ells E1];
+      if (i < nai) && ischar(varargin{i + 1})
+        clr = ellipsoid.my_color_table(varargin{i + 1});
+        val = 1;
+      else
+        clr = [0 0 0];
+        val = 0;
+      end
+      for j = (ell_count + 1):(ell_count + cnt)
+        ucolor(j) = val;
+        vcolor    = [vcolor; clr];
+      end
+      ell_count = ell_count + cnt;
     end
-end
+  end
 
-if ~isfield(Options, 'color')
+  if ~isfield(Options, 'color')
     % Color maps:
     %    hsv       - Hue-saturation-value color map.
     %    hot       - Black-red-yellow-white color map.
@@ -115,156 +115,157 @@ if ~isfield(Options, 'color')
     colors     = auxcolors;
     multiplier = 7;
     if mod(size(auxcolors, 1), multiplier) == 0
-        multiplier = multiplier + 1;
+      multiplier = multiplier + 1;
     end
     
     for i = 1:ell_count
-        jj           = mod(i*multiplier, size(auxcolors, 1)) + 1;
-        colors(i, :) = auxcolors(jj, :);
+      jj           = mod(i*multiplier, size(auxcolors, 1)) + 1;
+      colors(i, :) = auxcolors(jj, :);
     end
     colors        = flipud(colors);
     Options.color = colors;
-else
+  else
     if size(Options.color, 1) ~= ell_count
-        if size(Options.color, 1) > ell_count
-            Options.color = Options.color(1:ell_count, :);
-        else
-            Options.color = repmat(Options.color, ell_count, 1);
-        end
+      if size(Options.color, 1) > ell_count
+        Options.color = Options.color(1:ell_count, :);
+      else
+        Options.color = repmat(Options.color, ell_count, 1);
+      end
     end
-end
+  end
 
-if ~isfield(Options, 'shade')
+  if ~isfield(Options, 'shade')
     Options.shade = 0.4*ones(1, ell_count);
-else
+  else
     [m, n] = size(Options.shade);
     m      = m * n;
     if m == 1
-        Options.shade = Options.shade * ones(1, ell_count);
+      Options.shade = Options.shade * ones(1, ell_count);
     else
-        Options.shade = reshape(Options.shade, 1, m);
-        if m < ell_count
-            for i = (m + 1):ell_count
-                Options.shade = [Options.shade 0.4];
-            end
+      Options.shade = reshape(Options.shade, 1, m);
+      if m < ell_count
+        for i = (m + 1):ell_count
+          Options.shade = [Options.shade 0.4];
         end
+      end
     end
-end
+  end
 
-if ~isfield(Options, 'width')
+  if ~isfield(Options, 'width')
     Options.width = ones(1, ell_count);
-else
+  else
     [m, n] = size(Options.width);
     m      = m * n;
     if m == 1
-        Options.width = Options.width * ones(1, ell_count);
+      Options.width = Options.width * ones(1, ell_count);
     else
-        Options.width = reshape(Options.width, 1, m);
-        if m < ell_count
-            for i = (m + 1):ell_count
-                Options.width = [Options.width 1];
-            end
+      Options.width = reshape(Options.width, 1, m);
+      if m < ell_count
+        for i = (m + 1):ell_count
+          Options.width = [Options.width 1];
         end
+      end
     end
-end
+  end
 
-if ~isfield(Options, 'fill')
+  if ~isfield(Options, 'fill')
     Options.fill = zeros(1, ell_count);
-else
+  else
     [m, n] = size(Options.fill);
     m      = m * n;
     if m == 1
-        Options.fill = Options.fill * ones(1, ell_count);
+      Options.fill = Options.fill * ones(1, ell_count);
     else
-        Options.fill = reshape(Options.fill, 1, m);
-        if m < ell_count
-            for i = (m + 1):ell_count
-                Options.fill = [Options.fill 0];
-            end
+      Options.fill = reshape(Options.fill, 1, m);
+      if m < ell_count
+        for i = (m + 1):ell_count
+          Options.fill = [Options.fill 0];
         end
+      end
     end
-end
+  end
 
-if size(Options.color, 1) < ell_count
+  if size(Options.color, 1) < ell_count
     error('PLOT: not enough colors.');
-end
+  end
 
-dims = dimension(ells);
-m    = min(dims);
-n    = max(dims);
-if m ~= n
+  dims = dimension(ells);
+  m    = min(dims);
+  n    = max(dims);
+  if m ~= n
     error('PLOT: ellipsoids must be of the same dimension.');
-end
-if (n > 3) || (n < 1)
+  end
+  if (n > 3) || (n < 1)
     error('PLOT: ellipsoid dimension can be 1, 2 or 3.');
-end
+  end
 
-if Properties.getIsVerbose()
+  if Properties.getIsVerbose()
     if ell_count == 1
-        fprintf('Plotting ellipsoid...\n');
+      fprintf('Plotting ellipsoid...\n');
     else
-        fprintf('Plotting %d ellipsoids...\n', ell_count);
+      fprintf('Plotting %d ellipsoids...\n', ell_count);
     end
-end
+  end
 
-ih = ishold;
+  ih = ishold;
 
-for i = 1:ell_count
+  for i = 1:ell_count
     if Options.newfigure ~= 0
-        figure;
+      figure;
     else
-        newplot;
+      newplot;
     end
-    
+
     hold on;
-    
+
     E = ells(i);
     q = E.center;
     Q = E.shape;
-    
+
     if ucolor(i) == 1
-        clr = vcolor(i, :);
+      clr = vcolor(i, :);
     else
-        clr = Options.color(i, :);
+      clr = Options.color(i, :);
     end
-    
+      
     switch n
-        case 2,
-            x = ellbndr_2d(E);
-            if Options.fill(i) ~= 0
-                fill(x(1, :), x(2, :), clr);
-            end
-            h = ell_plot(x);
-            set(h, 'Color', clr, 'LineWidth', Options.width(i));
-            h = ell_plot(q, '.');
-            set(h, 'Color', clr);
-            
-        case 3,
-            x    = ellbndr_3d(E);
-            chll = convhulln(x');
-            vs   = size(x, 2);
-            patch('Vertices', x', 'Faces', chll, ...
-                'FaceVertexCData', clr(ones(1, vs), :), 'FaceColor', 'flat', ...
-                'EdgeColor', clr, 'FaceAlpha', 0);
-            %shading interp;
-            lighting phong;
-            material('metal');
-            view(3);
-            %camlight('headlight','local');
-            %camlight('headlight','local');
-            %camlight('right','local');
-            %camlight('left','local');
-            
-        otherwise,
-            h = ell_plot([(q-sqrt(Q)) (q+sqrt(Q))]);
-            set(h, 'Color', clr, 'LineWidth', Options.width(i));
-            h = ell_plot(q(1, 1), '*');
-            set(h, 'Color', clr);
-            
+      case 2,
+        x = ellbndr_2d(E);
+        if Options.fill(i) ~= 0
+          fill(x(1, :), x(2, :), clr);
+        end
+        h = ell_plot(x);
+        set(h, 'Color', clr, 'LineWidth', Options.width(i));
+        h = ell_plot(q, '.');
+        set(h, 'Color', clr);
+
+      case 3,
+        x    = ellbndr_3d(E);
+        chll = convhulln(x');
+        vs   = size(x, 2);
+        patch('Vertices', x', 'Faces', chll, ...
+              'FaceVertexCData', clr(ones(1, vs), :), 'FaceColor', 'flat', ...
+              'EdgeColor', clr, 'FaceAlpha', 0);
+        %shading interp;
+        lighting phong;
+        material('metal');
+        view(3);
+        %camlight('headlight','local');
+        %camlight('headlight','local');
+        %camlight('right','local');
+        %camlight('left','local');
+
+      otherwise,
+        h = ell_plot([(q-sqrt(Q)) (q+sqrt(Q))]);
+        set(h, 'Color', clr, 'LineWidth', Options.width(i));
+        h = ell_plot(q(1, 1), '*');
+        set(h, 'Color', clr);
+
     end
-end
+  end
 
-if ih == 0;
+  if ih == 0;
     hold off;
-end
+  end
 
+end

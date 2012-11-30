@@ -83,7 +83,7 @@ if mn ~= k
 end
 
 
-if ea > 0 % multiple ellipsoids, one direction    
+if ea > 0 % multiple ellipsoids, one direction
     [resCArr xCArr] =arrayfun(@(x) fSingleRhoForOneDir(x),ellArr,...
         'UniformOutput',false);
     resArr = cell2mat(resCArr);
@@ -91,10 +91,8 @@ if ea > 0 % multiple ellipsoids, one direction
 else % one ellipsoid, multiple directions
     q = ellArr.center;
     Q = ellArr.shape;
-    dirsCVec = cell(1,d);
-    for iDirs = 1:d
-        dirsCVec{iDirs} = L(:,iDirs);
-    end
+    dirsCVec = mat2cell(L,k,ones(1,d));
+    
     [resCArr xCArr] =cellfun(@(x) fSingleRhoForOneEll(x),dirsCVec,...
         'UniformOutput',false);
     resArr = cell2mat(resCArr);
@@ -120,5 +118,3 @@ end
         xVec = ((Q*lVec)/sq) + q;
     end
 end
-
-
