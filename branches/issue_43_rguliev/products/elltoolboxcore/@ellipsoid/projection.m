@@ -38,8 +38,8 @@ modgen.common.checkvar(B, @(x)isa(x,'double'),'errorMessage',...
     'PROJECTION: second input argument must be matrix with orthogonal columns.');
 
 [nDim, nBasis] = size(B);
-nDimsVec   = dimension(ellArr);
-modgen.common.checkmultvar('all(x3==x1)&&(x2<=x1)',3,nDim,nBasis,nDimsVec,...
+nDimsArr   = dimension(ellArr);
+modgen.common.checkmultvar('(x2<=x1) && all(x3(:)==x1)',3,nDim,nBasis,nDimsArr,...
     'errorMessage','PROJECTION: dimensions mismatch or number of basis vectors too large.');
 
 % check the orthogonality of the columns of B
@@ -47,15 +47,15 @@ scalProdMat = B' * B;
 normSqVec = diag(scalProdMat);
 
 absTolArr = ellArr.getAbsTol();
-absTol = max(absTolArr);
+absTol = max(absTolArr(:));
 isOrtogonalMat =(scalProdMat - diag(normSqVec))> absTol;
 if any(isOrtogonalMat(:))
     error('PROJECTION: basis vectors must be orthogonal.');
 end
 
 % normalize the basis vectors
-normVec = sqrt(normSqVec);
-BB = B./normVec(ones(1,nDimsVec),1);
+normMat = repmat( sqrt(normSqVec.'), nDim, 1);
+BB = B./normMat;
 
 % compute projection
 ellCArr = arrayfun(@(x) BB'*x, ellArr,'UniformOutput',false);

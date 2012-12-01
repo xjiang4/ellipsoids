@@ -21,7 +21,7 @@ phiVec = linspace(0, 2*pi, nMPoints);
 lMat   = zeros(3,nMPoints*(nNPoints-2));
 for i = 2:(nNPoints - 1)
     arrVec = cos(psyVec(i))*ones(1, nMPoints);
-    lMat(:,(i-2)*nMPoints+(1:nNPoints))   = [cos(phiVec)*sin(psyVec(i)); ...
+    lMat(:,(i-2)*nMPoints+(1:nMPoints))   = [cos(phiVec)*sin(psyVec(i)); ...
         sin(phiVec)*sin(psyVec(i)); arrVec];
 end
 [~, xMat] = rho(myEll, lMat);

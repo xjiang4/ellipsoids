@@ -3,10 +3,10 @@ classdef BasicTestCase < mlunitext.test_case
         function self=BasicTestCase(varargin)
             self=self@mlunitext.test_case(varargin{:});
         end
-        function testDemo1(~)
+        function dtestDemo1(~)
             runDemo(@ell_demo1);
         end
-        function testDemo2(~)
+        function dtestDemo2(~)
             runDemo(@ell_demo2);
         end
         function testDemo3(~)
