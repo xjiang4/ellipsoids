@@ -56,32 +56,25 @@ function [resArr, xMat] = rho(ellArr, L)
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %    Rustam Guliev <glvrst@gmail.com>
 
-checkIsMe(ellArr);
-modgen.common.type.simple.checkgen(L, @(x)isa(x,'double'),...
-    'Input argumet');
+import modgen.common.checkmultvar;
 
-[m, n] = size(ellArr);
-[k, d] = size(L);
-if (m > 1) || (n > 1)
-    if d > 1
-        msg = sprintf('RHO: arguments must be single ellipsoid and matrix of direction vectors,\n     or array of ellipsoids and single direction vector.');
-        error(msg);
-    end
-    ea = 1;
-else
+checkIsMe(ellArr,...
+    'errorMessage','RHO: first argument must be ellipsoid.');
+modgen.common.checkvar(L, @(x)isa(x,'double'),...
+    'errorMessage','RHO: second argument must be matrix of direction vectors.');
+checkmultvar('isscalar(x1)||(size(x2,2)==1)',2,ellArr, L, 'errorMessage',...
+    'RHO: arguments must be single ellipsoid and matrix of direction vectors,\n     or array of ellipsoids and single direction vector.');
+
+[nDim, nDirs] = size(L);
+if isscalar(ellArr)
     ea = 0;
+else
+    ea = 1;
 end
 
-dims = dimension(ellArr);
-mn   = min(dims(:));
-mx   = max(dims(:));
-if mn ~= mx
-    error('RHO: ellipsoids in the array must be of the same dimension.');
-end
-if mn ~= k
-    error('RHO: dimensions of the direction vector and the ellipsoid do not match.');
-end
-
+nDimsVec = dimension(ellArr);
+checkmultvar('all(x2==x1)',2,nDim,nDimsVec, 'errorMessage',...
+    'RHO: dimension of ellipsoids array not same or dimensions of the direction vector and the ellipsoid do not match.');
 
 if ea > 0 % multiple ellipsoids, one direction
     [resCArr xCArr] =arrayfun(@(x) fSingleRhoForOneDir(x),ellArr,...
@@ -91,7 +84,7 @@ if ea > 0 % multiple ellipsoids, one direction
 else % one ellipsoid, multiple directions
     q = ellArr.center;
     Q = ellArr.shape;
-    dirsCVec = mat2cell(L,k,ones(1,d));
+    dirsCVec = mat2cell(L,nDim,ones(1,nDirs));
     
     [resCArr xCArr] =cellfun(@(x) fSingleRhoForOneEll(x),dirsCVec,...
         'UniformOutput',false);

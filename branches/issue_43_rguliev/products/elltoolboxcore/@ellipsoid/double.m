@@ -14,12 +14,8 @@ function [myEllCentVec, myEllshMat] = double(myEll)
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-import modgen.common.throwerror;
-
-if ~isscalar(myEll)
-    throwerror('wrongInput', ...
-        'DOUBLE: the argument of this function must be single ellipsoid.');
-end
+modgen.common.checkvar(myEll,'isscalar(myEll)',...
+    'errorMessage','DOUBLE: the argument of this function must be single ellipsoid.');
 
 if nargout < 2
     myEllCentVec = myEll.shape;

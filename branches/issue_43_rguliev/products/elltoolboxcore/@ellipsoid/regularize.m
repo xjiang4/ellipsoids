@@ -2,11 +2,9 @@ function regQMat = regularize(qMat,absTol)
 %
 % REGULARIZE - regularization of singular symmetric matrix.
 %
-import gras.la.ismatsymm;
 
-if ~ismatsymm(qMat)
-    error('REGULARIZE: matrix must be symmetric.');
-end
+modgen.common.checkvar(qMat,'gras.la.ismatsymm(x)',...
+    'errorMessage','REGULARIZE: matrix must be symmetric.');
 
 [~, n] = size(qMat);
 r      = rank(qMat);

@@ -34,9 +34,10 @@ function modEllArr = shape(ellArr, modMat)
 %    Rustam Guliev <glvrst@gmail.com>
 
 
-checkIsMe(ellArr);
-modgen.common.type.simple.checkgen(modMat, @(x)isa(x,'double'),...
-    'Input argumet');
+checkIsMe(ellArr,...
+    'errorMessage','SHAPE: first input argument must be array of ellipsoids.');
+modgen.common.checkvar(modMat, @(x)isa(x,'double'),...
+    'errorMessage','SHAPE: second input argument must be double');
 
 if isscalar(modMat)
     modMatSq = modMat*modMat;
@@ -44,15 +45,10 @@ if isscalar(modMat)
         'UniformOutput',false);
 else
     [nRows, nDim] = size(modMat);
-    if nRows ~= nDim
-        error('SHAPE: only square matrices are allowed.');
-    end
     nDimsVec = dimension(ellArr);
-    if any(nDimsVec ~= nDim)
-        error('SHAPE: dimensions do not match.');
-    end
-    modEllCArr = arrayfun(@(x) fSingleShape(x),  ellArr,...
-        'UniformOutput',false);
+    modgen.common.checkmultvar('(x1==x2)&&all(x3==x2)',3,nRows,nDim,nDimsVec,...
+        'errorMessage', 'SHAPE: input matrix not square or dimensions do not match');
+    modEllCArr = arrayfun(@(x) fSingleShape(x),  ellArr,'UniformOutput',false);
 end
 modEllArr=reshape([modEllCArr{:}],size(ellArr));
 

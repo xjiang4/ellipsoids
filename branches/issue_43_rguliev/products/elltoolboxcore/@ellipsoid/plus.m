@@ -30,11 +30,11 @@ function outEllArr = plus(X, Y)
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %    Rustam Guliev <glvrst@gmail.com>
 %
+import modgen.common.checkmultvar;
 
-if ~( (isa(X, 'ellipsoid') && isa(Y, 'double')) ||...
-        (isa(X, 'double') || isa(Y, 'ellipsoid')) )
-    error('PLUS: this operation is only permitted between ellipsoid and vector in R^n.');
-end
+checkmultvar(@(x1,x2) ~( (isa(x1, 'ellipsoid') && isa(x2, 'double')) ||...
+    (isa(x1, 'double') || isa(x2, 'ellipsoid')) ),2,X,Y,...
+    'errorMessage','PLUS: this operation is only permitted between ellipsoid and vector in R^n.');
 if isa(X, 'ellipsoid')
     ellArr = X;
     b = Y;
@@ -43,17 +43,9 @@ else
     b = X;
 end
 
-d = dimension(ellArr);
-m = max(d);
-n = min(d);
-if m ~= n
-    error('PLUS: all ellipsoids in the array must be of the same dimension.');
-end
-
-[k, l] = size(b);
-if (l ~= 1) || (k ~= n)
-    error('PLUS: vector dimension does not match.');
-end
+dimsVec = dimension(ellArr);
+checkmultvar('iscolumn(x1)&&all(x2==length(x1))',2,b,dimsVec,...
+    'errorMessage','PLUS: dimensions mismatch');
 
 ellCArr = arrayfun(@(x) ellipsoid(x.center + b, x.shape), ellArr,...
     'UniformOutput',false);

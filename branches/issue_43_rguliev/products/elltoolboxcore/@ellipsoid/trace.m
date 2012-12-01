@@ -28,12 +28,9 @@ function trArr = trace(ellArr)
 %    Rustam Guliev <glvrst@gmail.com>
 %
 
-import modgen.common.throwerror;
-
-checkIsMe(ellArr);
-
-if any(isempty(ellArr(:)))
-    throwerror('wrongInput:emptyEllipsoid','TRACE: input argument is empty.');
-end
+checkIsMe(ellArr,...
+    'errorMessage','TRACE: input argument must be array of ellipsoids.');
+modgen.common.checkvar(ellArr,'~any(isempty(ellArr(:)))',...
+    'errorTag','wrongInput:emptyEllipsoid',...
+    'erroeMessage','TRACE: input argument contains empty ellipsoid.')
 trArr = arrayfun(@(x) trace(x.shape), ellArr);
-

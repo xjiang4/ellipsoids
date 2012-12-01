@@ -18,10 +18,10 @@ nNPoints   = nMPoints/2;
 psyVec = linspace(0, pi, nNPoints);
 phiVec = linspace(0, 2*pi, nMPoints);
 
-lMat   = [];
+lMat   = zeros(3,nMPoints*(nNPoints-2));
 for i = 2:(nNPoints - 1)
     arrVec = cos(psyVec(i))*ones(1, nMPoints);
-    lMat   = [lMat [cos(phiVec)*sin(psyVec(i)); ...
-        sin(phiVec)*sin(psyVec(i)); arrVec]];
+    lMat(:,(i-2)*nMPoints+(1:nNPoints))   = [cos(phiVec)*sin(psyVec(i)); ...
+        sin(phiVec)*sin(psyVec(i)); arrVec];
 end
-[rVec, xMat] = rho(myEll, lMat);
+[~, xMat] = rho(myEll, lMat);

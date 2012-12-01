@@ -15,5 +15,5 @@ function xMat = ellbndr_2d(myEll)
 nPoints = myEll.nPlot2dPoints;
 phiVec = linspace(0, 2*pi, nPoints);
 lMat = [cos(phiVec); sin(phiVec)];
-[rVec, xMat] = rho(myEll, lMat);
+[~, xMat] = rho(myEll, lMat);
 xMat = [xMat xMat(:, 1)];

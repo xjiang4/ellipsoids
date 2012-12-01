@@ -6,8 +6,8 @@ import gras.la.sqrtm;
 import elltool.conf.Properties;
 import modgen.common.type.simple.*;
 
-checkgen(ellFirstArr,@(x)isa(x,'ellipsoid'));
-checkgen(ellSecArr,@(x)isa(x,'ellipsoid'));
+checkIsMe(ellFirstArr);
+checkIsMe(ellSecArr);
 
 [kDim, lDim] = size(ellFirstArr);
 nFirstElems = kDim * lDim;

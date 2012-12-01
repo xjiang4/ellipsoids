@@ -11,8 +11,7 @@ function disp(myEllMat)
 
 fprintf('Ellipsoid with parameters\n');
 
-[mRows, nCols] = size(myEllMat);
-if (mRows > 1) || (nCols > 1)
+if ~isscalar(myEllMat)
     fprintf('%dx%d array of ellipsoids.\n\n', mRows, nCols);
 else
     fprintf('Center:\n'); disp(myEllMat.center);

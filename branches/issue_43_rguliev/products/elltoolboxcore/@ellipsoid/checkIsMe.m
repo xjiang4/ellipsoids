@@ -1,5 +1,7 @@
-function checkIsMe(ellArr)
+function checkIsMe(ellArr,varargin)
 
-
-modgen.common.type.simple.checkgen(ellArr,@(x) isa(x,'ellipsoid'),...
-    'Input argument');
+if nargin == 1
+    modgen.common.checkvar(ellArr,@(x) isa(x,'ellipsoid'));
+else
+    modgen.common.checkvar(ellArr,@(x) isa(x,'ellipsoid'),varargin{:});
+end

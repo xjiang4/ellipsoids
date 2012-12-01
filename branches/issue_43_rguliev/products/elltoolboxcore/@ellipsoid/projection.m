@@ -32,24 +32,15 @@ function projEllArr = projection(ellArr, B)
 %    Rustam Guliev <glvrst@gmail.com>
 %
 
-checkIsMe(ellArr);
-modgen.common.type.simple.checkgen(B, @(x)isa(x,'double'),...
-    'Input argumet');
+checkIsMe(ellArr,...
+    'errorMessage','PROJECTION: first input argument must be array of ellipsoids.');
+modgen.common.checkvar(B, @(x)isa(x,'double'),'errorMessage',...
+    'PROJECTION: second input argument must be matrix with orthogonal columns.');
 
-[k, l] = size(B);
-dims   = dimension(ellArr);
-m = min(dims(:));
-n = max(dims(:));
-if (m ~= n)
-    error('PROJECTION: ellipsoids in the array must be of the same dimenion.');
-end
-if (k ~= n)
-    error('PROJECTION: dimension of basis vectors does not dimension of ellipsoids.');
-end
-if (k < l)
-    msg = sprintf('PROJECTION: number of basis vectors must be less or equal to %d.', n);
-    error(msg);
-end
+[nDim, nBasis] = size(B);
+nDimsVec   = dimension(ellArr);
+modgen.common.checkmultvar('all(x3==x1)&&(x2<=x1)',3,nDim,nBasis,nDimsVec,...
+    'errorMessage','PROJECTION: dimensions mismatch or number of basis vectors too large.');
 
 % check the orthogonality of the columns of B
 scalProdMat = B' * B;
@@ -64,7 +55,7 @@ end
 
 % normalize the basis vectors
 normVec = sqrt(normSqVec);
-BB = B./normVec(ones(1,dims),1);
+BB = B./normVec(ones(1,nDimsVec),1);
 
 % compute projection
 ellCArr = arrayfun(@(x) BB'*x, ellArr,'UniformOutput',false);

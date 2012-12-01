@@ -33,15 +33,12 @@ function volArr = volume(ellArr)
 %    Rustam Guliev <glvrst@gmail.com>
 %
 
-import modgen.common.throwerror;
-checkIsMe(ellArr); 
-%modgen.common.type.simple.checkgen(ellArr,@(x) isa(x,'ellipsoid'),...
-%    'Input argument');
-if any(isempty(ellArr(:)))
-    throwerror('wrongInput:emptyEllipsoid',...
-        'VOLUME: input argument is empty.');
-end
+checkIsMe(ellArr,...
+    'errorMessage','VOLUME: input argument must be array of ellipsoids.'); 
 
+modgen.common.checkvar(ellArr,'~any(isempty(ellArr(:)))',...
+    'errorTag','wrongInput:emptyEllipsoid',...
+    'errorMessage','VOLUME: input argument is empty.');
 volArr = arrayfun(@(x) fSingleVolume(x), ellArr);
 
 end

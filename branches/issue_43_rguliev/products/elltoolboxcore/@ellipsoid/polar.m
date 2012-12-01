@@ -44,11 +44,12 @@ function polEllArr = polar(ellArr)
 
 import modgen.common.throwerror
 
-checkIsMe(ellArr);
+checkIsMe(ellArr,...
+    'errorMessage','POLAR: input argument must be array of ellipsoids.');
+modgen.common.checkvar(ellArr,'~any(isdegenerate(ellArr))',...
+    'errorTag','degenerateEllipsoid',...
+    'errorMessage','The resulting ellipsoid is not bounded');
 
-if any(isdegenerate(ellArr))
-    throwerror('degenerateEllipsoid','The resulting ellipsoid is not bounded');
-end
 polEllCArr = arrayfun(@(x) fSinglePolar(x), ellArr,...
     'UniformOutput',false);
 
