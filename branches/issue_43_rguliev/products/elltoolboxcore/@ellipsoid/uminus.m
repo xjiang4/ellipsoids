@@ -15,7 +15,7 @@ function outEllArr = uminus(ellArr)
 %
 
 checkIsMe(ellArr,...
-    'errorMessage','UMINUS: input argument must be array of ellipsoids.');
+    'errorMessage','input argument must be array of ellipsoids.');
 
 sizeVec = size(ellArr);
 ellCArr = arrayfun(@(x) ellipsoid(-x.center,x.shape), ellArr,...

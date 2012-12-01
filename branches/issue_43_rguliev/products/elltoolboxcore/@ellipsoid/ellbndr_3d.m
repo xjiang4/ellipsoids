@@ -12,16 +12,16 @@ function xMat = ellbndr_3d(myEll)
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-nMPoints   = myEll.nPlot3dPoints/2;
-nNPoints   = nMPoints/2;
+nMPoints   = 0.5*myEll.nPlot3dPoints;
+nNPoints   = 0.5*nMPoints;
 
 psyVec = linspace(0, pi, nNPoints);
 phiVec = linspace(0, 2*pi, nMPoints);
 
 lMat   = zeros(3,nMPoints*(nNPoints-2));
-for i = 2:(nNPoints - 1)
-    arrVec = cos(psyVec(i))*ones(1, nMPoints);
-    lMat(:,(i-2)*nMPoints+(1:nMPoints))   = [cos(phiVec)*sin(psyVec(i)); ...
-        sin(phiVec)*sin(psyVec(i)); arrVec];
+for iLayer = 2:(nNPoints - 1)
+    arrVec = cos(psyVec(iLayer))*ones(1, nMPoints);
+    lMat(:,(iLayer-2)*nMPoints+(1:nMPoints)) = [cos(phiVec)*sin(psyVec(iLayer));...
+        sin(phiVec)*sin(psyVec(iLayer)); arrVec];
 end
 [~, xMat] = rho(myEll, lMat);

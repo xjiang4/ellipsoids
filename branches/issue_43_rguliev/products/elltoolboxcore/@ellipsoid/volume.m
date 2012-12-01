@@ -34,11 +34,11 @@ function volArr = volume(ellArr)
 %
 
 checkIsMe(ellArr,...
-    'errorMessage','VOLUME: input argument must be array of ellipsoids.'); 
+    'errorMessage','input argument must be array of ellipsoids.'); 
 
 modgen.common.checkvar(ellArr,'~any(isempty(x(:)))',...
     'errorTag','wrongInput:emptyEllipsoid',...
-    'errorMessage','VOLUME: input argument is empty.');
+    'errorMessage','input argument is empty.');
 volArr = arrayfun(@(x) fSingleVolume(x), ellArr);
 
 end

@@ -33,8 +33,8 @@ function outEllArr = plus(X, Y)
 import modgen.common.checkmultvar;
 
 checkmultvar(@(x1,x2) (isa(x1, 'ellipsoid') && isa(x2, 'double')) ||...
-    (isa(x1, 'double') && isa(x2, 'ellipsoid')), 2,X,Y,...
-    'errorMessage','PLUS: this operation is only permitted between ellipsoid and vector in R^n.');
+    (isa(x1, 'double') && isa(x2, 'ellipsoid')), 2,X,Y,'errorMessage',...
+    'this operation is only permitted between ellipsoid and vector in R^n.');
 if isa(X, 'ellipsoid')
     ellArr = X;
     b = Y;
@@ -45,7 +45,7 @@ end
 
 dimsVec = dimension(ellArr);
 checkmultvar('iscolumn(x1)&&all(x2==length(x1))',2,b,dimsVec,...
-    'errorMessage','PLUS: dimensions mismatch');
+    'errorMessage','dimensions mismatch');
 
 ellCArr = arrayfun(@(x) ellipsoid(x.center + b, x.shape), ellArr,...
     'UniformOutput',false);

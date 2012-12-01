@@ -4,7 +4,7 @@ function regQMat = regularize(qMat,absTol)
 %
 
 modgen.common.checkvar(qMat,'gras.la.ismatsymm(x)',...
-    'errorMessage','REGULARIZE: matrix must be symmetric.');
+    'errorMessage','matrix must be symmetric.');
 
 [~, n] = size(qMat);
 r      = rank(qMat);

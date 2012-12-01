@@ -20,8 +20,8 @@ relTol = ellFirstArr(1, 1).relTol;
 if (nFirstElems > 1) && (nSecElems > 1)
  
     if ~isequal(firstSizeVec, secSizeVec)
-        throwerror...
-        ('wrongSizes', '==: sizes of ellipsoidal arrays do not... match.');
+        throwerror('wrongSizes',...
+            '==: sizes of ellipsoidal arrays do not... match.');
     end;
     SEll1Array=arrayfun(@(x)struct('Q',gras.la.sqrtm(x.shape),'q',...
         x.center'),ellFirstArr(:, :));

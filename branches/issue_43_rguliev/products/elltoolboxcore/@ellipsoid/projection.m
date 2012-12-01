@@ -33,14 +33,14 @@ function projEllArr = projection(ellArr, B)
 %
 
 checkIsMe(ellArr,...
-    'errorMessage','PROJECTION: first input argument must be array of ellipsoids.');
+    'errorMessage','first input argument must be array of ellipsoids.');
 modgen.common.checkvar(B, @(x)isa(x,'double'),'errorMessage',...
-    'PROJECTION: second input argument must be matrix with orthogonal columns.');
+    'second input argument must be matrix with orthogonal columns.');
 
 [nDim, nBasis] = size(B);
 nDimsArr   = dimension(ellArr);
 modgen.common.checkmultvar('(x2<=x1) && all(x3(:)==x1)',3,nDim,nBasis,nDimsArr,...
-    'errorMessage','PROJECTION: dimensions mismatch or number of basis vectors too large.');
+    'errorMessage','dimensions mismatch or number of basis vectors too large.');
 
 % check the orthogonality of the columns of B
 scalProdMat = B' * B;
@@ -50,7 +50,7 @@ absTolArr = ellArr.getAbsTol();
 absTol = max(absTolArr(:));
 isOrtogonalMat =(scalProdMat - diag(normSqVec))> absTol;
 if any(isOrtogonalMat(:))
-    error('PROJECTION: basis vectors must be orthogonal.');
+    error('basis vectors must be orthogonal.');
 end
 
 % normalize the basis vectors

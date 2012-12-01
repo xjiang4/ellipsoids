@@ -29,8 +29,8 @@ function trArr = trace(ellArr)
 %
 
 checkIsMe(ellArr,...
-    'errorMessage','TRACE: input argument must be array of ellipsoids.');
+    'errorMessage','input argument must be array of ellipsoids.');
 modgen.common.checkvar(ellArr,'~any(isempty(x(:)))',...
     'errorTag','wrongInput:emptyEllipsoid',...
-    'errorMessage','TRACE: input argument contains empty ellipsoid.')
+    'errorMessage','input argument contains empty ellipsoid.')
 trArr = arrayfun(@(x) trace(x.shape), ellArr);

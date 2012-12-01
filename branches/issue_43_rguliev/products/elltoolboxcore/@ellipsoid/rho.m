@@ -59,11 +59,11 @@ function [resArr, xMat] = rho(ellArr, L)
 import modgen.common.checkmultvar;
 
 checkIsMe(ellArr,...
-    'errorMessage','RHO: first argument must be ellipsoid.');
+    'errorMessage','first argument must be ellipsoid.');
 modgen.common.checkvar(L, @(x)isa(x,'double'),...
-    'errorMessage','RHO: second argument must be matrix of direction vectors.');
+    'errorMessage','second argument must be matrix of direction vectors.');
 checkmultvar('isscalar(x1)||(size(x2,2)==1)',2,ellArr, L, 'errorMessage',...
-    'RHO: arguments must be single ellipsoid and matrix of direction vectors,\n     or array of ellipsoids and single direction vector.');
+    'arguments must be single ellipsoid or single direction vector.');
 
 [nDim, nDirs] = size(L);
 if isscalar(ellArr)
@@ -74,7 +74,7 @@ end
 
 nDimsVec = dimension(ellArr);
 checkmultvar('all(x2==x1)',2,nDim,nDimsVec, 'errorMessage',...
-    'RHO: dimension of ellipsoids array not same or dimensions of the direction vector and the ellipsoid do not match.');
+    'dimension of ellipsoids array not same or dimensions of the direction vector and the ellipsoid do not match.');
 
 if ea > 0 % multiple ellipsoids, one direction
     [resCArr xCArr] =arrayfun(@(x) fSingleRhoForOneDir(x),ellArr,...
