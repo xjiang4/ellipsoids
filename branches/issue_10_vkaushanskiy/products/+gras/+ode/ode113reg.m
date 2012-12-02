@@ -1,12 +1,12 @@
-function [tout,yout,dyRegMat] = ode45reg(fOdeDeriv,fOdeReg,tspan,y0,...
+function [tout,yout,dyRegMat] = ode113reg(fOdeDeriv,fOdeReg,tspan,y0,...
     options,varargin)
 
 import modgen.common.throwerror;
 import modgen.common.type.simple.*;
 
-dyRegMat = 0;
 solver_name = 'ode113reg';
-
+global ttVec;
+global yyMat;
 % Constants
 N_MAX_REG_STEPS_DEFAULT=3;
 N_PROGRESS_DOTS_SHOWN=10;
@@ -74,10 +74,12 @@ tout = []; yout = [];
 if ntspan > 2                         % output only at tspan points
     tout = zeros(1,ntspan,dataType);
     yout = zeros(neq,ntspan,dataType);
+    dyRegMat=yout;
 else                                  % alloc in chunks
     chunk = min(max(100,50*refine), refine+floor((2^13)/neq));
     tout = zeros(1,chunk,dataType);
     yout = zeros(neq,chunk,dataType);
+    dyRegMat=yout;
 end
 nout = 1;
 tout(nout) = t;
@@ -128,7 +130,7 @@ klast = 0;
 phase1 = true;
 
 % THE MAIN LOOP
-
+dyNewCorrVec=zeros(neq,1,dataType);
 done = false;
 while ~done
     
@@ -153,10 +155,10 @@ while ~done
         invwt = 1 ./ max(abs(y),threshold);
     end
     
-    dpNewCorrVec=zeros(neq,1,dataType);
+    dpNewCorrVec=dyNewCorrVec;
     dyNewCorrVec=zeros(neq,1,dataType);
-    
     iRegStep = 0;
+
     while true
         
         % Compute coefficients of formulas for this step.  Avoid computing
@@ -165,7 +167,8 @@ while ~done
         % ns is the number of steps taken with h, including the
         % current one.  When k < ns, no coefficients change
         if iRegStep==0
-            dpCurCorrVec=zeros(neq,1,dataType);
+            dpNewCorrVec=dyNewCorrVec;
+            dyNewCorrVec=zeros(neq,1,dataType);
         end
         isRejectedStep=false;
         if h ~= hlast
@@ -218,8 +221,8 @@ while ~done
                 g(i) = w(1);
             end
         end
-        
         % Change phi to phi star.
+        phi(:, k) = phi(:, k) + dpNewCorrVec;
         i = ns+1:k;
         phi(:,i) = phi(:,i) * diag(beta(i));
         
@@ -227,38 +230,38 @@ while ~done
         phi(:,k+2) = phi(:,k+1);
         phi(:,k+1) = zeros(neq,1,dataType);
         p = zeros(neq,1,dataType);
+        
         for i = k:-1:1
             p = p + g(i) * phi(:,i);
             phi(:,i) = phi(:,i) + phi(:,i+1);
         end
-        
+
         p = y + h * p;
-         [isStrictViol, pRegNew] = fOdeReg(p);
-         pCurCorrVec = pRegNew - p;
-         errReg = max(abs(pCurCorrVec));
-         isWeakViol=errReg>=regAbsTol;
-         if isStrictViol
-             isRejectedStep = true;
-         elseif isWeakViol
+        [isStrictViol, pRegNew] = fOdeReg(t, p);
+        pCurCorrVec = pRegNew - p;
+        errReg = max(abs(pCurCorrVec));
+        isWeakViol=errReg>=regAbsTol;
+        if isStrictViol
+            isRejectedStep=true;
+        elseif isWeakViol
             if errReg>regMaxStepTol
-             isRejectedStep = true;
+                isRejectedStep = true;
             end
-            dpCurCorrVec=pCurCorrVec./h;
-         end;
+            dpCurCorrVec=pCurCorrVec./(h*g(k)*beta(k)); 
+        end
         
-        p = pRegNew;
         tlast = t;
         t = tlast + h;
         if done
             t = tfinal;   % Hit end point exactly.
         end
         
-        yp = feval(fOdeDeriv,t,p);
-        nfevals = nfevals + 1;
-        
         % Estimate errors at orders k, k-1, k-2.
         if ~isRejectedStep
-            phikp1 = yp - phi(:,1);
+            yp = feval(fOdeDeriv,t,p);
+            nfevals = nfevals + 1;
+  
+            phikp1 = yp - phi(:,1) + dyNewCorrVec;
             if normcontrol
                 temp3 = norm(phikp1) * invwt;
                 err = absh * (g(k) - g(k+1)) * temp3;
@@ -292,24 +295,19 @@ while ~done
                     erkm2 = 0.0;
                 end
             end
-            
-            % Test if order should be lowered
-            knew = k;
-            if (k == 2) && (erkm1 <= 0.5*erk)
-                knew = k - 1;
-            end
-            if (k > 2) && (max(erkm1,erkm2) <= erk)
-                knew = k - 1;
-            end
+        end   
+        % Test if order should be lowered
+        knew = k;
+        if (k == 2) && (erkm1 <= 0.5*erk)
+            knew = k - 1;
+        end
+        if (k > 2) && (max(erkm1,erkm2) <= erk)
+            knew = k - 1;
         end
         % Test if step successful
         isFailedStep = isRejectedStep||(err>rtol);
         if isFailedStep                      % Failed step
-            if iRegStep>0
-                throwerror('wrongState',...
-                    ['Oops, we shouldn''t be here, regularization ',...
-                    'haven''t worked']);
-            end
+            
             nfailed = nfailed + 1;
             if absh <= hmin
                 warning(message('MATLAB:ode45:IntegrationTolNotMet', ...
@@ -320,11 +318,17 @@ while ~done
             end
             
             % Restore t, phi, and psi.
+            iRegStep = 0;
             phase1 = false;
             t = tlast;
             for i = K
-                phi(:,i) = (phi(:,i) - phi(:,i+1)) / beta(i);
+                phi(:,i) = (phi(:,i) - phi(:,i+1));
             end
+    
+            for i = K
+                phi(:, i) = phi(:, i) ./ beta(i);
+            end
+            phi(:, k) = phi(:, k) - dpNewCorrVec;
             for i = 2:k
                 psi(i-1) = psi(i) - h;
             end
@@ -343,8 +347,103 @@ while ~done
             done = false;
             
         else
-            break;
+            if isWeakViol
+                t = tlast;
+                for i = K
+                    phi(:,i) = (phi(:,i) - phi(:,i+1));
+                end
+                
+                for i = K
+                    phi(:, i) = phi(:, i) ./ beta(i);
+                end
+                phi(:, k) = phi(:, k) - dpNewCorrVec;
+                for i = 2:k
+                    psi(i-1) = psi(i) - h;
+                end
+  
+                iRegStep=iRegStep+1;
+                dpNewCorrVec=dpNewCorrVec+dpCurCorrVec;
+            else
+
             % Successful step
+                ylast = y;
+                y = p + h * g(k+1) * phikp1;
+   
+                [isStrictViol, yRegNew] = fOdeReg(t,y);
+                yCurCorrVec = yRegNew - y;
+                errReg = max(abs(yCurCorrVec));
+                isWeakViol=errReg>=regAbsTol;
+
+                if isStrictViol
+                    isRejectedStep = true;
+                elseif isWeakViol
+                    if errReg>regMaxStepTol
+                        isRejectedStep = true;
+                    end
+                    dyCurCorrVec=yCurCorrVec./(h*g(k+1));
+                end
+
+                
+                if isRejectedStep
+                    if absh <= hmin
+                        warning(message('MATLAB:ode45:IntegrationTolNotMet', ...
+                            sprintf( '%e', t ), sprintf( '%e', hmin )));
+                        shrinkResults();
+                        prDispObj.finish();
+                        return;
+                    end
+                    % Restore t, phi, and psi.
+                    iRegStep = 0;
+                    phase1 = false;
+                    y = ylast;
+                    t = tlast;
+                    for i = K
+                        phi(:,i) = (phi(:,i) - phi(:,i+1));
+                    end
+                    
+                    for i = K
+                        phi(:, i) = phi(:, i) ./ beta(i);
+                    end
+                    phi(:, k) = phi(:, k) - dpNewCorrVec;
+                    for i = 2:k
+                        psi(i-1) = psi(i) - h;
+                    end
+                    dpNewCorrVec=zeros(neq,1,dataType);
+                    failed = failed + 1;
+                    reduce = 0.5;
+                    if failed == 3
+                        knew = 1;
+                    elseif failed > 3
+                        reduce = min(0.5, sqrt(0.5*rtol/erk));
+                    end
+                    absh = max(reduce * absh, hmin);
+                    h = absh;
+                    k = knew;
+                    K = 1:k;
+                    done = false;
+
+                else
+                    if isWeakViol
+                        t = tlast;
+                        y = ylast;
+                        for i = K
+                            phi(:,i) = (phi(:,i) - phi(:,i+1));
+                        end
+                        
+                        for i = K
+                            phi(:, i) = phi(:, i) ./ beta(i);
+                        end
+                        phi(:, k) = phi(:, k) - dpNewCorrVec;
+                        for i = 2:k
+                            psi(i-1) = psi(i) - h;
+                        end
+                        
+                        dyNewCorrVec=dyNewCorrVec+dyCurCorrVec;
+                    else
+                        break;
+                    end
+                end
+            end  
         end
     end
     
@@ -352,32 +451,17 @@ while ~done
     
     klast = k;
     hlast = h;
-    
-    % Correct and evaluate.
-    ylast = y;
-    y = p + h * g(k+1) * phikp1;
-    [isStrictViol, yRegNew] = fOdeReg(y);
-    yCurCorrVec = yRegNew - y;
-    errReg = max(abs(yCurCorrVec));
-    errReg = 0;
-    isWeakViol=errReg>=regAbsTol;
+
+
+    y = yRegNew;
     yp = feval(fOdeDeriv,t,y);%
     nfevals = nfevals + 1;
-    
-      if isStrictViol
-          isRejectedStep = true;
-      elseif isWeakViol
-           if errReg>regMaxStepTol
-            isRejectedStep = true;
-           end
-           dyCurCorrVec=yCurCorrVec./h;
-      end;
-    if isRejectedStep
-        fff = 1;
-    end;
-    y = yRegNew;
+
     % Update differences for next step.
     phi(:,k+1) = yp - phi(:,1);
+    if max(dyNewCorrVec) > 0
+        fff = 1;
+    end
     phi(:,k+2) = phi(:,k+1) - phi(:,k+2);
     for i = K
         phi(:,i) = phi(:,i) + phi(:,k+1);
@@ -419,7 +503,6 @@ while ~done
         K = 1:k;
     end
     
-    NNreset_phi = false;
     
     switch outputAt
         case 'SolverSteps'        % computed points, no refinement
@@ -462,10 +545,14 @@ while ~done
         if nout > length(tout)
             tout = [tout, zeros(1,chunk,dataType)];  % requires chunk >= refine
             yout = [yout, zeros(neq,chunk,dataType)];
+            dyRegMat = [dyRegMat, zeros(neq,chunk,dataType)];
         end
         idx = oldnout+1:nout;
+        rind = oldnout+2:nout+1;
         tout(idx) = tout_new;
         yout(:,idx) = yout_new;
+
+        dyRegMat(:,idx)=repmat(dyNewCorrVec ,1,nout_new);
     end
     
     if done
@@ -482,12 +569,6 @@ while ~done
         absh = absh * max(0.5, min(0.9, reduce));
     end
     
-    if NNreset_phi
-        % Used phi for unperturbed solution to select order and interpolate.
-        % In perturbing y, defined NNidx.  Use now to reset phi to move along
-        % constraint.
-        phi(NNidx,:) = 0;
-    end
 end
 
 shrinkResults();
@@ -495,7 +576,7 @@ prDispObj.finish();
     function shrinkResults()
         tout = tout(1:nout).';
         yout = yout(:,1:nout).';
-        %dyRegMat = dyRegMat(:,1:nout).';
+        dyRegMat = dyRegMat(:,1:nout).';
     end
 
 end
@@ -526,7 +607,7 @@ for k = 1:length(tinterp)
         rho(j) = gamma * rho(j-1);
         term = psi(j-1);
     end
-    [~, yinterp(:,k)] = fOdeReg(ynew + hi * phi(:,KI) * g(KI));
+    [~, yinterp(:,k)] = fOdeReg(tinterp, ynew + hi * phi(:,KI) * g(KI));
 end
 
 end
