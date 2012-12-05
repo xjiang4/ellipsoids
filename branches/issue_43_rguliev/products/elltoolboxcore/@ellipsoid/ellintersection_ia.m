@@ -26,14 +26,11 @@ import elltool.conf.Properties;
 
 
 ellDimensions = dimension(inpEllMat);
-minEllDim   = min(min(ellDimensions));
-maxEllDim   = max(max(ellDimensions));
+minEllDim   = min(ellDimensions(:));
 
-if minEllDim ~= maxEllDim
-    fstStr = 'ELLINTERSECTION_IA: all ellipsoids must ';
-    secStr = 'be of the same dimension.';
-    throwerror('wrongSizes', [fstStr secStr]);
-end
+modgen.common.checkvar(ellDimensions,'all(x(:)==x(1))',...
+    'errorTag','wrongSizes',...
+    'errorMessage','all ellipsoids must be of the same dimension.');
 
 [mRows, nCols] = size(inpEllMat);
 nEllipsoids = mRows * nCols;

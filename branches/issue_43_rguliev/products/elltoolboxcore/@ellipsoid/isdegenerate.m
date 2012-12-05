@@ -1,4 +1,4 @@
-function isPositiveMat = isdegenerate(myEllMat)
+function isPositiveMat = isdegenerate(myEllArr)
 %
 % ISDEGENERATE - checks if the ellipsoid is degenerate.
 %
@@ -14,18 +14,10 @@ function isPositiveMat = isdegenerate(myEllMat)
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-import modgen.common.throwerror;
-[mRows, nCols] = size(myEllMat);
-isPositiveMat = false(mRows, nCols);
-for iRow = 1:mRows
-    for jCol = 1:nCols
-        if isempty(myEllMat(iRow,jCol))
-            throwerror('wrongInput:emptyEllipsoid', ...
-                'ISDEGENERATE: input argument is empty.');
-        end
-        if rank(myEllMat(iRow, jCol).shape) ...
-                < size(myEllMat(iRow, jCol).shape, 1)
-            isPositiveMat(iRow, jCol) = true;
-        end
-    end
-end
+ellipsoid.checkIsMe(myEllArr,...
+    'errorTag','wrongInput',...
+    'errorMessage','input argument must be ellipsoid.');
+modgen.common.checkvar(myEllArr,'~any(isempty(x(:)))',...
+    'errorTag','wrongInput:emptyEllipsoid',...
+    'errorMessage','input argument contains empty ellipsoid.');
+isPositiveMat = arrayfun(@(x) rank(x.shape) < size(x.shape,1) ,myEllArr);

@@ -17,26 +17,23 @@ function invEllMat = inv(myEllMat)
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-import modgen.common.throwerror;
+ellipsoid.checkIsMe(myEllMat,...
+    'errorMessage', 'input argument must be array of ellipsoids.');
 
-if ~(isa(myEllMat, 'ellipsoid'))
-    throwerror('wrongInput', ...
-        'INV: input argument must be array of ellipsoids.');
+invEllCMat = arrayfun(@(x) fSingleInv(x),myEllMat,'UniformOutput',false);
+
+invEllMat = reshape([invEllCMat{:}],size(myEllMat));
 end
 
-invEllMat = myEllMat;
-[mRows, nCols] = size(invEllMat);
+function invEll = fSingleInv(singEll)
 
-absTolMat = getAbsTol(invEllMat);
-for iRow = 1:mRows
-    for jCol = 1:nCols
-        if isdegenerate(invEllMat(iRow, jCol))
-            regShMat = ellipsoid.regularize(invEllMat(iRow, jCol).shape,...
-                absTolMat(iRow,jCol));
-        else
-            regShMat = invEllMat(iRow, jCol).shape;
-        end
-        regShMat = ell_inv(regShMat);
-        invEllMat(iRow, jCol).shape = 0.5*(regShMat + regShMat');
-    end
+if isdegenerate(singEll)
+    regShMat = ellipsoid.regularize(singEll.shape,...
+        absTolMat(singEll));
+else
+    regShMat = singEll.shape;
+end
+regShMat = ell_inv(regShMat);
+invEll = ellipsoid(singEll.center , 0.5*(regShMat + regShMat'));
+
 end

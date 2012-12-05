@@ -1,4 +1,4 @@
-function outEllMat = move2origin(inpEllMat)
+function outEllArr = move2origin(inpEllArr)
 %
 % MOVE2ORIGIN - moves ellipsoids in the given array to the origin.
 %
@@ -16,19 +16,10 @@ function outEllMat = move2origin(inpEllMat)
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-import modgen.common.throwerror;
+ellipsoid.checkIsMe(inpEllArr,...
+    'errorTag','wrongInput',...
+    'errorMessage','argument must be array of ellipsoid.');
 
-if ~(isa(inpEllMat, 'ellipsoid'))
-    throwerror('wrongInput', ...
-        'MOVE2ORIGIN: argument must be array of ellipsoids.');
-end
-
-outEllMat = inpEllMat;
-[mRows, nCols] = size(outEllMat);
-
-for iRow = 1:mRows
-    for jCol = 1:nCols
-        nDims = dimension(outEllMat(iRow, jCol));
-        outEllMat(iRow, jCol).center = zeros(nDims, 1);
-    end
-end
+outEllCArr = arrayfun(@(x) ellipsoid(x.shape), inpEllArr,...
+        'UniformOutput',false);
+outEllArr=reshape([outEllCArr{:}],size(inpEllArr));

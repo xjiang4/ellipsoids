@@ -20,74 +20,50 @@ function resMat = contains(firstEllMat, secondEllMat)
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-  import elltool.conf.Properties;
-  import modgen.common.throwerror;
-  
-  if ~(isa(firstEllMat, 'ellipsoid')) || ~(isa(secondEllMat, 'ellipsoid'))
-    throwerror('wrongInput', ...
-        'CONTAINS: input arguments must be ellipsoids.');
-  end
+import elltool.conf.Properties;
+import modgen.common.throwerror;
+import modgen.common.checkmultvar;
 
-  [mRowsFirst, nColsFirst] = size(firstEllMat);
-  [mRowsSecond, nColsSecond] = size(secondEllMat);
-  nSizeFirst = mRowsFirst * nColsFirst;
-  nSizeSecond = mRowsSecond * nColsSecond;
-  if (nSizeFirst > 1) && (nSizeSecond > 1) && ...
-          ((mRowsFirst ~= mRowsSecond) || (nColsFirst ~= nColsSecond))
-    throwerror('wrongInput', ...
-        'CONTAINS: sizes of ellipsoidal arrays do not match.');
-  end
+ellipsoid.checkIsMe(firstEllMat,...
+    'errorTag','wrongInput',...
+    'errorMessage','input arguments must be ellipsoids.');
+ellipsoid.checkIsMe(secondEllMat,...
+    'errorTag','wrongInput',...
+    'errorMessage','input arguments must be ellipsoids.');
 
-  dimFirst = dimension(firstEllMat);
-  dimSecond = dimension(secondEllMat);
-  minDimFirst   = min(min(dimFirst));
-  minDimSecond   = min(min(dimSecond));
-  maxDimFirst   = max(max(dimFirst));
-  maxDimSecond   = max(max(dimSecond));
-  if (minDimFirst ~= maxDimFirst) || (minDimSecond ~= maxDimSecond) ...
-          || (minDimFirst ~= minDimSecond)
-    throwerror('wrongSizes', ...
-        'CONTAINS: ellipsoids must be of the same dimension.');
-  end
+nSizeFirst = numel(firstEllMat);
+nSizeSecond = numel(secondEllMat);
+isFirScal = nSizeFirst==1;
+isSecScal = nSizeSecond==1;
 
-  if Properties.getIsVerbose()
-    if (nSizeFirst > 1) || (nSizeSecond > 1)
-      fprintf('Checking %d ellipsoid-in-ellipsoid containments...\n',...
-          max([nSizeFirst nSizeSecond]));
+checkmultvar('isscalar(x1)||isscalar(x2)|| all( size(x1)==size(x2) )',...
+    2,firstEllMat,secondEllMat,...
+    'errorTag','wrongInput',...
+    'errorMessage','sizes of ellipsoidal arrays do not match.');
+
+dimFirMat = dimension(firstEllMat);
+dimSecMat = dimension(secondEllMat);
+
+checkmultvar('all(x1(:)==x1(1)) && all(x2(:)==x1(1))',2,dimFirMat,dimSecMat,...
+    'errorTag','wrongSizes',...
+    'errorMessage','ellipsoids must be of the same dimension.');
+
+if Properties.getIsVerbose()
+    if isFirScal && isSecScal
+        fprintf('Checking ellipsoid-in-ellipsoid containment...\n');
     else
-      fprintf('Checking ellipsoid-in-ellipsoid containment...\n');
+        fprintf('Checking %d ellipsoid-in-ellipsoid containments...\n',...
+            max([nSizeFirst nSizeSecond]));
     end
-  end
+end
 
-  resMat = [];
-  if (nSizeFirst > 1) && (nSizeSecond > 1)
-    for iRowsFirst = 1:mRowsFirst
-      resPart = [];
-      for jColsFirst = 1:nColsFirst
-        resPart = [resPart l_check_containment(firstEllMat(iRowsFirst, ...
-            jColsFirst), secondEllMat(iRowsFirst, jColsFirst))];
-      end
-      resMat = [resMat; resPart];
-    end
-  elseif (nSizeFirst > 1)
-    for iRowsFirst = 1:mRowsFirst
-      resPart = [];
-      for jColsFirst = 1:nColsFirst
-        resPart = [resPart l_check_containment(firstEllMat(iRowsFirst, ...
-            jColsFirst), secondEllMat)];
-      end
-      resMat = [resMat; resPart];
-    end
-  else
-    for iRowsSecond = 1:mRowsSecond
-      resPart = [];
-      for jColsSecond = 1:nColsSecond
-        resPart = [resPart l_check_containment(firstEllMat, ...
-            secondEllMat(iRowsSecond, jColsSecond))];
-      end
-      resMat = [resMat; resPart];
-    end
-  end
+if isFirScal
+    resMat = arrayfun(@(x) l_check_containment(firstEllMat,x), secondEllMat);
+elseif isSecScal
+    resMat = arrayfun(@(x) l_check_containment(x, secondEllMat), firstEllMat);
+else
+    resMat = arrayfun(@(x,y) l_check_containment(x,y), firstEllMat,secondEllMat);
+end
 
 end
 
@@ -112,46 +88,46 @@ function res = l_check_containment(firstEll, secondEll)
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-  import elltool.conf.Properties;
-  import modgen.common.throwerror;
-  
-  [fstEllCentVec, fstEllShMat] = double(firstEll);
-  [secEllCentVec, secEllShMat] = double(secondEll);
-  if size(fstEllShMat, 2) > rank(fstEllShMat)
-      fstEllShMat = ellipsoid.regularize(fstEllShMat,firstEll.absTol);
-  end
-  if size(secEllShMat, 2) > rank(secEllShMat)
-      secEllShMat = ellipsoid.regularize(secEllShMat,secondEll.absTol);
-  end
-  
-  invFstEllShMat = ell_inv(fstEllShMat);
-  invSecEllShMat = ell_inv(secEllShMat);
-  
-  AMat = [invFstEllShMat -invFstEllShMat*fstEllCentVec;...
-      (-invFstEllShMat*fstEllCentVec)' ...
-      (fstEllCentVec'*invFstEllShMat*fstEllCentVec-1)];
-  BMat = [invSecEllShMat -invSecEllShMat*secEllCentVec;...
-      (-invSecEllShMat*secEllCentVec)'...
-      (secEllCentVec'*invSecEllShMat*secEllCentVec-1)];
+import elltool.conf.Properties;
+import modgen.common.throwerror;
 
-  AMat = 0.5*(AMat + AMat');
-  BMat = 0.5*(BMat + BMat');
-  if Properties.getIsVerbose()
+[fstEllCentVec, fstEllShMat] = double(firstEll);
+[secEllCentVec, secEllShMat] = double(secondEll);
+if size(fstEllShMat, 2) > rank(fstEllShMat)
+    fstEllShMat = ellipsoid.regularize(fstEllShMat,firstEll.absTol);
+end
+if size(secEllShMat, 2) > rank(secEllShMat)
+    secEllShMat = ellipsoid.regularize(secEllShMat,secondEll.absTol);
+end
+
+invFstEllShMat = ell_inv(fstEllShMat);
+invSecEllShMat = ell_inv(secEllShMat);
+
+AMat = [invFstEllShMat -invFstEllShMat*fstEllCentVec;...
+    (-invFstEllShMat*fstEllCentVec)' ...
+    (fstEllCentVec'*invFstEllShMat*fstEllCentVec-1)];
+BMat = [invSecEllShMat -invSecEllShMat*secEllCentVec;...
+    (-invSecEllShMat*secEllCentVec)'...
+    (secEllCentVec'*invSecEllShMat*secEllCentVec-1)];
+
+AMat = 0.5*(AMat + AMat');
+BMat = 0.5*(BMat + BMat');
+if Properties.getIsVerbose()
     fprintf('Invoking CVX...\n');
-  end
-  cvx_begin sdp
-    variable cvxxVec(1, 1)
-    AMat <= cvxxVec*BMat
-    cvxxVec >= 0
-  cvx_end
+end
+cvx_begin sdp
+variable cvxxVec(1, 1)
+AMat <= cvxxVec*BMat
+cvxxVec >= 0
+cvx_end
 
-  if strcmp(cvx_status,'Failed')
+if strcmp(cvx_status,'Failed')
     throwerror('cvxError','Cvx failed');
-  end;
-  if strcmp(cvx_status,'Solved') ...
-          || strcmp(cvx_status, 'Inaccurate/Solved')
+end;
+if strcmp(cvx_status,'Solved') ...
+        || strcmp(cvx_status, 'Inaccurate/Solved')
     res = 1;
-  else
+else
     res = 0;
-  end
+end
 end

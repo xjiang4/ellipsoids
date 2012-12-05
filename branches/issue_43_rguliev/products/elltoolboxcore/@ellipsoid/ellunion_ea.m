@@ -23,13 +23,11 @@ import elltool.conf.Properties;
 import modgen.common.throwerror;
 
 ellDimensions = dimension(inpEllMat);
-minEllDim   = min(min(ellDimensions));
-maxEllDim   = max(max(ellDimensions));
+minEllDim   = min(ellDimensions(:));
 
-if minEllDim ~= maxEllDim
-    throwerror('wrongSizes', ...
-        'ELLUNION_EA: all ellipsoids must be of the same dimension.');
-end
+modgen.common.checkvar(ellDimensions,'all(x(:)==x(1))',...
+    'errorTag','wrongSizes',...
+    'errorMessage','all ellipsoids must be of the same dimension.');
 
 [mRows, nCols] = size(inpEllMat);
 nEllipsoids = mRows * nCols;

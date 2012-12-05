@@ -23,41 +23,21 @@ function outEllVec = minus(inpEllVec, inpVec)
 
 import modgen.common.throwerror;
 
-if ~(isa(inpEllVec, 'ellipsoid'))
-    throwerror('wrongInput', ...
-        'MINUS: first argument must be ellipsoid.');
-end
-if isa(inpEllVec, 'ellipsoid') && ~(isa(inpVec, 'double'))
-    fstStr = 'MINUS: this operation is only permitted between ';
-    secStr = 'ellipsoid and vector in R^n.';
-    throwerror('wrongInput', [fstStr secStr]);
-end
+ellipsoid.checkIsMe(inpEllVec,...
+    'errorTag','wrongInput',...
+    'errorMessage','first input argument must be ellipsoid.');
+modgen.common.checkvar(inpVec,@(x) isa(x, 'double'),...
+    'errorTag','wrongInput',...
+    'errorMessage','second argument must be vector in R^n.');
 
-nDimsInpEll = dimension(inpEllVec);
-maxDim = max(max(nDimsInpEll));
-minDim = min(min(nDimsInpEll));
-if maxDim ~= minDim
-    fstStr = 'MINUS: all ellipsoids in the array must be ';
-    secStr = 'of the same dimension.';
-    throwerror('wrongSizes', [fstStr secStr]);
-end
-
+nDimsVec = dimension(inpEllVec);
 [mRows, nColsInpVec] = size(inpVec);
-if (nColsInpVec ~= 1) || (mRows ~= minDim)
-    throwerror('wrongSizes', ...
-        'MINUS: vector dimension does not match.');
-end
 
-[mRows, nCOls] = size(inpEllVec);
-for iRow = 1:mRows
-    for jCol = 1:nCOls
-        subEll(jCol) = inpEllVec(iRow, jCol);
-        subEll(jCol).center = inpEllVec(iRow, jCol).center - inpVec;
-    end
-    if iRow == 1
-        outEllVec = subEll;
-    else
-        outEllVec = [outEllVec; subEll];
-    end
-    clear subEll;
-end
+modgen.common.checkmultvar('all(x1(:)==x2)&&(x3==1)',...
+    3,nDimsVec,mRows,nColsInpVec,...
+    'errorTag','wrongSizes',...
+    'errorMessage','dimensions mismatch.');
+
+outEllCVec = arrayfun(@(x) ellipsoid(x.center-inpVec,x.shape), inpEllVec,...
+        'UniformOutput',false);
+outEllVec=reshape([outEllCVec{:}],size(inpEllVec));

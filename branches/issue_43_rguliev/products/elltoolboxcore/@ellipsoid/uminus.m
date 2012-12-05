@@ -14,7 +14,7 @@ function outEllArr = uminus(ellArr)
 %    Rustam Guliev <glvrst@gmail.com>
 %
 
-checkIsMe(ellArr,...
+ellipsoid.checkIsMe(ellArr,...
     'errorMessage','input argument must be array of ellipsoids.');
 
 sizeVec = size(ellArr);

@@ -16,6 +16,13 @@ function [resD, resGVec] = distobjfun(xVec, firstEll, secondEll, varargin)
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
+ellipsoid.checkIsMe(firstEll,...
+    'errorTag','wrongInput',...
+    'errorMessage','second input argument must be ellipsoid.');
+ellipsoid.checkIsMe(secondEll,...
+    'errorTag','wrongInput',...
+    'errorMessage','trird input argument must be ellipsoid.');
+
 fstEllCentVec = firstEll.center;
 fstEllShMat = firstEll.shape;
 secEllCentVec = secondEll.center;

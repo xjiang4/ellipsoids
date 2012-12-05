@@ -1,4 +1,4 @@
-function [spaceDimArr, ellDimArr] = dimension(myEllArr)
+function [dimArr, rankArr] = dimension(myEllArr)
 %
 % DIMENSION - returns the dimension of the space in which the ellipsoid
 %             is defined and the actual dimension of the ellipsoid.
@@ -20,8 +20,12 @@ function [spaceDimArr, ellDimArr] = dimension(myEllArr)
 
 import elltool.conf.Properties;
 
-spaceDimArr = arrayfun(@(x) size(x.shape,1), myEllArr);
+ellipsoid.checkIsMe(myEllArr,...
+    'errorTag','wrongInput',...
+    'errorMessage','input argument must be ellipsoid.');
+
+dimArr = arrayfun(@(x) size(x.shape,1), myEllArr);
 if nargout > 1
-    ellDimArr = arrayfun(@(x) rank(x.shape), myEllArr);
+    rankArr = arrayfun(@(x) rank(x.shape), myEllArr);
 end
 

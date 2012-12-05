@@ -1,4 +1,4 @@
-function outEllMat = intersection_ia(myEllMat, objMat)
+function outEllArr = intersection_ia(myEllArr, objArr)
 %
 % INTERSECTION_IA - internal ellipsoidal approximation of the
 %                   intersection of ellipsoid and ellipsoid,
@@ -48,119 +48,59 @@ function outEllMat = intersection_ia(myEllMat, objMat)
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
 import modgen.common.throwerror;
+import modgen.common.checkmultvar;
 
-if ~(isa(myEllMat, 'ellipsoid'))
-    throwerror('wrongInput', ...
-        'INTERSECTION_IA: first input argument must be ellipsoid.');
-end
-if ~(isa(objMat, 'ellipsoid')) && ~(isa(objMat, 'hyperplane')) ...
-        && ~(isa(objMat, 'polytope'))
-    fstErrMsg = 'INTERSECTION_IA: second input argument must be ';
-    secErrMsg = 'ellipsoid, hyperplane or polytope.';
-    throwerror('wrongInput', [fstErrMsg secErrMsg]);
-end
+ellipsoid.checkIsMe(myEllArr,...
+    'errorTag','wrongInput',...
+    'errorMessage', 'first input argument must be ellipsoid.');
+modgen.common.checkvar(objArr,@(x) isa(x, 'ellipsoid') ||...
+    isa(x, 'hyperplane') || isa(x, 'polytope'),...
+    'errorTag','wrongInput', 'errorMessage',...
+    'second input argument must be ellipsoid,hyperplane or polytope.');
 
-[mEllRows, nEllCols] = size(myEllMat);
-[mObjRows, nObjCols] = size(objMat);
-nDimsMat  = dimension(myEllMat);
+isPoly = isa(objArr, 'polytope');
 
-if isa(objMat, 'polytope')
-    nObjDimsMat = [];
-    for iRow = 1:mObjRows
-        nObjDimsPartVec = [];
-        for jCol = 1:nObjCols
-            nObjDimsPartVec = [nObjDimsPartVec dimension(objMat(jCol))];
-        end
-        nObjDimsMat = [nObjDimsMat; nObjDimsPartVec];
-    end
+nDimsArr  = dimension(myEllArr);
+if isPoly
+    nObjDimsArr = arrayfun(@(x) dimension(x), objArr);
 else
-    nObjDimsMat = dimension(objMat);
+    nObjDimsArr = dimension(objArr);
 end
 
-minDim   = min(min(nDimsMat));
-minObjDim   = min(min(nObjDimsMat));
-maxDim   = max(max(nDimsMat));
-maxObjDim   = max(max(nObjDimsMat));
-if (minDim ~= maxDim) || (minObjDim ~= maxObjDim) ...
-        || (maxDim ~= maxObjDim)
-    if isa(objMat, 'hyperplane')
-        fstErrMsg = 'INTERSECTION_IA: ellipsoids and hyperplanes ';
-        secErrMsg = 'must be of the same dimension.';
-        throwerror('wrongSizes', [fstErrMsg secErrMsg]);
-    elseif isa(objMat, 'polytope')
-        fstErrMsg = 'INTERSECTION_IA: ellipsoids and polytopes ';
-        secErrMsg = 'must be of the same dimension.';
-        throwerror('wrongSizes', [fstErrMsg secErrMsg]);
-    else
-        throwerror('wrongSizes', ...
-            'INTERSECTION_IA: ellipsoids must be of the same dimension.');
-    end
-end
 
-nEllipsoids     = mEllRows * nEllCols;
-nObjects     = mObjRows * nObjCols;
-if (nEllipsoids > 1) && (nObjects > 1) && ((mEllRows ~= mObjRows) ...
-        || (nEllCols ~= nObjCols))
-    if isa(objMat, 'hyperplane')
-        fstErrMsg = 'INTERSECTION_IA: sizes of ellipsoidal and';
-        secErrMsg = ' hyperplane arrays do not match.';
-        throwerror('wrongSizes', [fstErrMsg secErrMsg]);
-    elseif isa(objMat, 'polytope')
-        fstErrMsg = 'INTERSECTION_EA: sizes of ellipsoidal and';
-        secErrMsg = ' polytope arrays do not match.';
-        throwerror('wrongSizes', [fstErrMsg secErrMsg]);
-    else
-        throwerror('wrongSizes', ...
-            'INTERSECTION_EA: sizes of ellipsoidal arrays do not match.');
-    end
-end
+checkmultvar( '(numel(x1)==1)||(numel(x2)==1)&&all(size(x1)==size(x2) )',...
+	2,myEllArr,objArr,...
+    'errorTag','wrongSizes',...
+    'errorMessage','sizes of input arrays do not match.');
 
-outEllMat = [];
+checkmultvar('(x1(1)==x2(1))&&all(x1(:)==x1(1))&&all(x2(:)==x2(1))',...
+	2,nDimsArr,nObjDimsArr,...
+    'errorTag','wrongSizes',...
+    'errorMessage','input arguments must be of the same dimension.');
+
+nEllipsoids     = numel(myEllArr);
+nObjects     = numel(objArr);
+
 if (nEllipsoids > 1) && (nObjects > 1)
-    for iRow = 1:mEllRows
-        ellPartVec = [];
-        for jCol = 1:nEllCols
-            if isa(objMat, 'polytope')
-                ellPartVec = [ellPartVec ...
-                    l_polyintersect(myEllMat(iRow, jCol), objMat(jCol))];
-            else
-                ellPartVec = [ellPartVec ...
-                    l_intersection_ia(myEllMat(iRow, jCol), ...
-                    objMat(iRow, jCol))];
-            end
-        end
-        outEllMat = [outEllMat; ellPartVec];
-    end
-elseif nEllipsoids > 0
-    for iRow = 1:mEllRows
-        ellPartVec = [];
-        for jCol = 1:nEllCols
-            if isa(objMat, 'polytope')
-                ellPartVec = [ellPartVec ...
-                    l_polyintersect(myEllMat(iRow, jCol), objMat)];
-            else
-                ellPartVec = [ellPartVec ...
-                    l_intersection_ia(myEllMat(iRow, jCol), objMat)];
-            end
-        end
-        outEllMat = [outEllMat; ellPartVec];
-    end
+    outEllCArr = arrayfun(@(x,y) fCoose(x, y),myEllArr,objArr,...
+        'UniformOutput',false);
+    outEllArr = reshape([outEllCArr{:}],size(myEllArr));
+elseif nEllipsoids > 1
+    outEllCArr = arrayfun(@(x) fCoose(x, objArr),myEllArr,...
+        'UniformOutput',false);
+    outEllArr = reshape([outEllCArr{:}],size(myEllArr));
 else
-    for iRow = 1:mObjRows
-        ellPartVec = [];
-        for jCol = 1:nObjCols
-            if isa(objMat, 'polytope')
-                ellPartVec = [ellPartVec ...
-                    l_polyintersect(myEllMat(iRow, jCol), objMat(jCol))];
-            else
-                ellPartVec = [ellPartVec ...
-                    l_intersection_ia(myEllMat, objMat(iRow, jCol))];
-            end
-        end
-        outEllMat = [outEllMat; ellPartVec];
-    end
+    outEllCArr = arrayfun(@(x) fCoose(myEllArr, x), objArr,...
+        'UniformOutput',false);
+    outEllArr = reshape([outEllCArr{:}],size(objArr));
 end
-
+    function eaEll = fCoose(singEll, obj)
+        if isPoly
+            eaEll = l_polyintersect(singEll, obj);
+        else
+            eaEll = l_intersection_ia(singEll, obj);
+        end
+    end
 end
 
 

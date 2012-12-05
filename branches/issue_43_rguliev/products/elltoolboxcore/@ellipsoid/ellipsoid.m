@@ -135,5 +135,7 @@ classdef ellipsoid < handle
         x = ellbndr_2d(E)
         x = ellbndr_3d(E)
     end
-    
+    methods (Static)
+        checkIsMe(someObj,varargin)
+    end
 end
