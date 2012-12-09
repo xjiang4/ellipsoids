@@ -35,9 +35,9 @@ classdef EllipsoidSecTestCase < mlunitext.test_case
         function self = testIsBadDirection(self)
             [test1Ell, test2Ell] = createTypicalEll(15);
             aMat = [diag(ones(6, 1)), [1; 2; 3; 3; 4; 5]];
-            testRes = isbaddirection(test1Ell, test2Ell, aMat);
-            testRes = any(testRes);
-            mlunit.assert_equals(0, testRes);
+            isTestResVec = isbaddirection(test1Ell, test2Ell, aMat);
+            isTestRes = any(isTestResVec);
+            mlunit.assert_equals(0, isTestRes);
             [test1Ell, test2Ell] = createTypicalEll(16);
             compareExpForIsBadDir(test1Ell, test2Ell, [1, -1; 0, 0], [1, -1; 2, 3]);
             [test1Ell, test2Ell] = createTypicalEll(17);
@@ -252,11 +252,12 @@ function analyticResEllVec = calcExpMinkSum(isExtApx, nDirs, aMat, e0Vec, e0Mat,
     analyticResEllVec(nDirs) = ellipsoid;
     for iDir = 1 : nDirs
         lVec = aMat(:, iDir);
-        if (isExtApx == 1) % minksum_ea
+        if isExtApx % minksum_ea
             a0Double = sqrt(dot(lVec, e0Mat * lVec));
             a1Double = sqrt(dot(lVec, e1Mat * lVec));
             a2Double = sqrt(dot(lVec, e2Mat * lVec));
-            analyticResMat = (a0Double + a1Double + a2Double) .* ( e0Mat ./ a0Double + e1Mat ./ a1Double + e2Mat ./ a2Double);
+            analyticResMat = (a0Double + a1Double + a2Double) .* ...
+                ( e0Mat ./ a0Double + e1Mat ./ a1Double + e2Mat ./ a2Double);
         else % minksum_ia
             supp1Mat = sqrtm(e0Mat);
             supp2Mat = sqrtm(e1Mat);
@@ -295,7 +296,8 @@ function compareExpForIsBadDir(test1Ell, test2Ell, a1Mat, a2Mat)
 end
 function compareAnalyticForMinkMp(isEA, isHighDim, indTypicalExample, nDirs, nGoodDirs, myResult)
     if isHighDim % createTypicalHighDimEll
-        [e0Vec, e0Mat, test0Ell, qVec, qMat, qEll, e1Vec, e1Mat, e2Vec, e2Mat, aEllVec] = createTypicalHighDimEll(indTypicalExample);
+        [e0Vec, e0Mat, test0Ell, qVec, qMat, qEll, e1Vec, e1Mat, e2Vec, e2Mat, aEllVec] = ...
+            createTypicalHighDimEll(indTypicalExample);
     else % createTypicalEll
         [e0Vec, e0Mat, test0Ell, qVec, qMat, qEll, e1Vec, e1Mat, e2Vec, e2Mat, aEllVec] = createTypicalEll(indTypicalExample);
     end
