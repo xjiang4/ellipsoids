@@ -1,28 +1,28 @@
-function invEllMat = inv(myEllMat)
+function invEllArr = inv(myEllArr)
 %
 % INV - inverts shape matrices of ellipsoids in the given array.
 %
-%   invEllMat = INV(myEllMat)  Inverts shape matrices of ellipsoids
+%   invEllArr = INV(myEllArr)  Inverts shape matrices of ellipsoids
 %       in the array myEllMat. In case shape matrix is sigular, it is
 %       regularized before inversion.
 %
 % Input:
 %   regular:
-%       myEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
+%       myEllArr: ellipsoid [] - matrix of ellipsoids.
 %
 % Output:
-%    invEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids with
+%    invEllArr: ellipsoid [] - matrix of ellipsoids with
 %       inverted shape matrices.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-ellipsoid.checkIsMe(myEllMat,...
+ellipsoid.checkIsMe(myEllArr,...
     'errorMessage', 'input argument must be array of ellipsoids.');
 
-invEllCMat = arrayfun(@(x) fSingleInv(x),myEllMat,'UniformOutput',false);
+invEllCMat = arrayfun(@(x) fSingleInv(x),myEllArr,'UniformOutput',false);
 
-invEllMat = reshape([invEllCMat{:}],size(myEllMat));
+invEllArr = reshape([invEllCMat{:}],size(myEllArr));
 end
 
 function invEll = fSingleInv(singEll)

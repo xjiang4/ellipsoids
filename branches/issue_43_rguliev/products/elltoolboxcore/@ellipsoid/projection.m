@@ -6,16 +6,19 @@ function projEllArr = projection(ellArr, B)
 % Description:
 % ------------
 %
-%    EP = PROJECTION(E, B)  Computes projection of the ellipsoid E onto a subspace,
-%                           specified by orthogonal basis vectors B.
-%                           E can be an array of ellipsoids of the same dimension.
-%                           Columns of B must be orthogonal vectors.
+%    projEllArr = projection(ellArr, B)  Computes projection of the 
+%                                        ellipsoid ellArr onto a subspace,
+%                                        specified by orthogonal basis vectors B.
+%                                        ellArr can be an array of ellipsoids of 
+%                                        the same dimension. Columns of B must
+%                                        be orthogonal vectors.
 %
 %
 % Output:
 % -------
 %
-%    EP - projected ellipsoid (or array of ellipsoids), generally, of lower dimension.
+%    projEllArr - projected ellipsoid (or array of ellipsoids), 
+%                 generally, of lower dimension.
 %
 %
 % See also:
@@ -32,8 +35,7 @@ function projEllArr = projection(ellArr, B)
 %    Rustam Guliev <glvrst@gmail.com>
 %
 
-ellipsoid.checkIsMe(ellArr,...
-    'errorMessage','first input argument must be array of ellipsoids.');
+ellipsoid.checkIsMe(ellArr,'first');
 modgen.common.checkvar(B, @(x)isa(x,'double'),'errorMessage',...
     'second input argument must be matrix with orthogonal columns.');
 

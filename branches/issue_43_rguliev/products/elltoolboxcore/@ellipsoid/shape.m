@@ -6,18 +6,18 @@ function modEllArr = shape(ellArr, modMat)
 % Description:
 % ------------
 %
-%    EM = SHAPE(E, A)  Modifies the shape matrices of the ellipsoids in the
-%                      ellipsoidal array E. The centers remain untouched -
+%    modEllArr = SHAPE(ellArr, modMat)  Modifies the shape matrices of the ellipsoids in the
+%                      ellipsoidal array ellArr. The centers remain untouched -
 %                      that is the difference of the function SHAPE and
-%                      linear transformation A*E.
-%                      A is expected to be a scalar or a square matrix
+%                      linear transformation modMat*ellArr.
+%                      modMat is expected to be a scalar or a square matrix
 %                      of suitable dimension.
 %
 %
 % Output:
 % -------
 %
-%    EM - array of modified ellipsoids.
+%    modEllArr - array of modified ellipsoids.
 %
 %
 % See also:
@@ -34,8 +34,7 @@ function modEllArr = shape(ellArr, modMat)
 %    Rustam Guliev <glvrst@gmail.com>
 
 
-ellipsoid.checkIsMe(ellArr,...
-    'errorMessage','first input argument must be array of ellipsoids.');
+ellipsoid.checkIsMe(ellArr,'first');
 modgen.common.checkvar(modMat, @(x)isa(x,'double'),...
     'errorMessage','second input argument must be double');
 

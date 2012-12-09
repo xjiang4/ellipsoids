@@ -5,25 +5,25 @@ function outEllArr = intersection_ia(myEllArr, objArr)
 %                   or ellipsoid and halfspace, or ellipsoid
 %                   and polytope.
 %
-%   outEllMat = INTERSECTION_IA(myEllMat, objMat) - Given two
-%       ellipsoidal matrixes of equal sizes, myEllMat and
-%       objMat = ellMat, or, alternatively, myEllMat or ellMat must be
+%   outEllArr = INTERSECTION_IA(myEllArr, objArr) - Given two
+%       ellipsoidal matrixes of equal sizes, myEllArr and
+%       objArr = ellArr, or, alternatively, myEllMat or ellMat must be
 %       a single ellipsoid, comuptes the internal ellipsoidal
 %       approximations of intersections of two corresponding ellipsoids
 %       from myEllMat and from ellMat.
-%   outEllMat = INTERSECTION_IA(myEllMat, objMat) - Given matrix of
-%       ellipsoids myEllMat and matrix of hyperplanes objMat = hypMat
+%   outEllArr = INTERSECTION_IA(myEllArr, objArr) - Given matrix of
+%       ellipsoids myEllArr and matrix of hyperplanes objArr = hypArr
 %       whose sizes match, computes the internal ellipsoidal
 %       approximations of intersections of ellipsoids and halfspaces
 %       defined by hyperplanes in hypMat.
 %       If v is normal vector of hyperplane and c - shift,
 %       then this hyperplane defines halfspace
 %                  <v, x> <= c.
-%   outEllMat = INTERSECTION_IA(myEllMat, objMat) - Given matrix of
-%       ellipsoids  myEllMat and matrix of polytopes objMat = polyMat
+%   outEllArr = INTERSECTION_IA(myEllArr, objArr) - Given matrix of
+%       ellipsoids  myEllArr and matrix of polytopes objArr = polyArr
 %       whose sizes match, computes the internal ellipsoidal
-%       approximations of intersections of ellipsoids myEllMat
-%       and polytopes polyMat.
+%       approximations of intersections of ellipsoids myEllArr
+%       and polytopes polyArr.
 %
 %   The method used to compute the minimal volume overapproximating
 %   ellipsoid is described in "Ellipsoidal Calculus Based on
@@ -34,13 +34,13 @@ function outEllArr = intersection_ia(myEllArr, objArr)
 %
 % Input:
 %   regular:
-%       myEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
-%       objMat: ellipsoid [mRows, nCols] / hyperplane [mRows, nCols] /
-%           / polytope [mRows, nCols]  - matrix of ellipsoids or
+%       myEllArr: ellipsoid [] - array of ellipsoids.
+%       objArr: ellipsoid [] / hyperplane [] /
+%           / polytope []  - array of ellipsoids or
 %           hyperplanes or polytopes of the same sizes.
 %
 % Output:
-%    outEllMat: ellipsoid [mRows, nCols] - matrix of internal
+%    outEllArr: ellipsoid [] - array of internal
 %       approximating ellipsoids; entries can be empty ellipsoids
 %       if the corresponding intersection is empty.
 %
@@ -50,9 +50,7 @@ function outEllArr = intersection_ia(myEllArr, objArr)
 import modgen.common.throwerror;
 import modgen.common.checkmultvar;
 
-ellipsoid.checkIsMe(myEllArr,...
-    'errorTag','wrongInput',...
-    'errorMessage', 'first input argument must be ellipsoid.');
+ellipsoid.checkIsMe(myEllArr,'first');
 modgen.common.checkvar(objArr,@(x) isa(x, 'ellipsoid') ||...
     isa(x, 'hyperplane') || isa(x, 'polytope'),...
     'errorTag','wrongInput', 'errorMessage',...

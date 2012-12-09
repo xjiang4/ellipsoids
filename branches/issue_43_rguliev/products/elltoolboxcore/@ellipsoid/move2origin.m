@@ -2,16 +2,16 @@ function outEllArr = move2origin(inpEllArr)
 %
 % MOVE2ORIGIN - moves ellipsoids in the given array to the origin.
 %
-%   outEllMat = MOVE2ORIGIN(inpEll) - Replaces the centers of
-%       ellipsoids in inpEllMat with zero vectors.
+%   outEllArr = MOVE2ORIGIN(inpEll) - Replaces the centers of
+%       ellipsoids in inpEllArr with zero vectors.
 %
 % Input:
 %   regular:
-%       inpEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
+%       inpEllArr: ellipsoid [] - array of ellipsoids.
 %
 % Output:
-%   outEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids
-%       with the same shapes as in inpEllMat centered at the origin.
+%   outEllArr: ellipsoid [] - matrix of ellipsoids
+%       with the same shapes as in inpEllArr centered at the origin.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $

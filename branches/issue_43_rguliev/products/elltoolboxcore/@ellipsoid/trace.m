@@ -6,13 +6,13 @@ function trArr = trace(ellArr)
 % Description:
 % ------------
 %
-%    T = TRACE(E)  Computes the trace of ellipsoids in ellipsoidal array E.
+%    trArr = TRACE(ellArr)  Computes the trace of ellipsoids in ellipsoidal array ellArr.
 %
 %
 % Output:
 % -------
 %
-%    T - array of trace values, same size as E.
+%    trArr - array of trace values, same size as ellArr.
 %
 %
 % See also:
@@ -28,8 +28,7 @@ function trArr = trace(ellArr)
 %    Rustam Guliev <glvrst@gmail.com>
 %
 
-ellipsoid.checkIsMe(ellArr,...
-    'errorMessage','input argument must be array of ellipsoids.');
+ellipsoid.checkIsMe(ellArr);
 modgen.common.checkvar(ellArr,'~any(isempty(x(:)))',...
     'errorTag','wrongInput:emptyEllipsoid',...
     'errorMessage','input argument contains empty ellipsoid.')

@@ -6,7 +6,7 @@ function volArr = volume(ellArr)
 % Description:
 % ------------
 %
-%    V = VOLUME(E)  Computes the volume of ellipsoids in ellipsoidal array E.
+%    volArr = VOLUME(ellArr)  Computes the volume of ellipsoids in ellipsoidal array E.
 %
 %    The volume of ellipsoid E(q, Q) with center q and shape matrix Q is given by
 %                  V = S sqrt(det(Q))
@@ -16,7 +16,7 @@ function volArr = volume(ellArr)
 % Output:
 % -------
 %
-%    V - array of volume values, same size as E.
+%    volArr - array of volume values, same size as ellArr.
 %
 %
 % See also:
@@ -33,8 +33,7 @@ function volArr = volume(ellArr)
 %    Rustam Guliev <glvrst@gmail.com>
 %
 
-ellipsoid.checkIsMe(ellArr,...
-    'errorMessage','input argument must be array of ellipsoids.'); 
+ellipsoid.checkIsMe(ellArr); 
 
 modgen.common.checkvar(ellArr,'~any(isempty(x(:)))',...
     'errorTag','wrongInput:emptyEllipsoid',...
