@@ -1,105 +1,73 @@
-function res = eq(E1, E2)
+function [isEqualArr, reportStr] = eq(ellFirstArr, ellSecArr)
+% EQ - compares two arrays of ellipsoids
 %
-%
-% Description:
-% ------------
-%
-%    Implementation of '==' operation.
-%
+% Input:
+%   regular:
+%       ellFirstArr: ellipsoid: [nDims1,nDims2,...,nDimsN]/[1,1]- the first
+%           array of ellipsoid objects
+%       ellSecArr: ellipsoid: [nDims1,nDims2,...,nDimsN]/[1,1] - the second
+%           array of ellipsoid objects
 %
 % Output:
-% -------
+%   isEqualArr: logical: [nDims1,nDims2,...,nDimsN]- array of comparison
+%       results
 %
-%    1 - if E1 = E2, 0 - otherwise.
+%   reportStr: char[1,] - comparison report
 %
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
+% $Author: Vadim Kaushansky  <vkaushanskiy@gmail.com> $    $Date: Nov-2012$
+% $Copyright: Moscow State University,
+%            Faculty of Computational Mathematics and Cybernetics,
+%            System Analysis Department 2012 $
+% $Author: Peter Gagarinov  <pgagarinov@gmail.com> $    $Date: Dec-2012$
+% $Copyright: Moscow State University,
+%            Faculty of Computational Mathematics and Cybernetics,
+%            System Analysis Department 2012 $
 
+import modgen.common.throwerror;
+import modgen.struct.structcomparevec;
+import gras.la.sqrtm;
+import elltool.conf.Properties;
+import modgen.common.checkvar;
 %
-% Author:
-% -------
+checkvar(ellFirstArr,@(x)isa(x,'ellipsoid'));
+checkvar(ellSecArr,@(x)isa(x,'ellipsoid'));
 %
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+nFirstElems = numel(ellFirstArr);
+nSecElems = numel(ellSecArr);
+
+firstSizeVec = size(ellFirstArr);
+secSizeVec = size(ellSecArr);
+isnFirstScalar=nFirstElems > 1;
+isnSecScalar=nSecElems > 1;
+relTolArr = ellFirstArr.getRelTol;
+relTol=min(relTolArr(:));
 %
-  import gras.la.sqrtm;
-  global ellOptions;
-
-  if ~isstruct(ellOptions)
-    evalin('base', 'ellipsoids_init;');
-  end
-
-  if ~(isa(E1, 'ellipsoid')) | ~(isa(E2, 'ellipsoid'))
-    error('==: both arguments must be ellipsoids.');
-  end
-
-  [k, l] = size(E1);
-  s      = k * l;
-  [m, n] = size(E2);
-  t      = m * n;
-
-  if ((k ~= m) | (l ~= n)) & (s > 1) & (t > 1)
-    error('==: sizes of ellipsoidal arrays do not match.');
-  end
-
-  res = [];
-  if (s > 1) & (t > 1)
-    for i = 1:m
-      r = [];
-      for j = 1:n
-        if dimension(E1(i, j)) ~= dimension(E2(i, j))
-          r = [r 0];
-          continue;
-        end
-        q = E1(i, j).center - E2(i, j).center;
-        Q = sqrtm(E1(i, j).shape) - sqrtm(E2(i, j).shape);
-        if (norm(q) > ellOptions.rel_tol) | (norm(Q) > ellOptions.rel_tol)
-          r = [r 0];
-        else
-          r = [r 1];
-        end
-      end
-      res = [res; r];
+SEll1Array=arrayfun(@formCompStruct,ellFirstArr);
+SEll2Array=arrayfun(@formCompStruct,ellSecArr);
+%
+if isnFirstScalar&&isnSecScalar
+    
+    if ~isequal(firstSizeVec, secSizeVec)
+        throwerror('wrongSizes',...
+            'sizes of ellipsoidal arrays do not... match');
+    end;
+    compare();
+    isEqualArr = reshape(isEqualArr, firstSizeVec);
+elseif isnFirstScalar
+    SEll2Array=repmat(SEll2Array, firstSizeVec);
+    compare();
+    
+    isEqualArr = reshape(isEqualArr, firstSizeVec);
+else
+    SEll1Array=repmat(SEll1Array, secSizeVec);
+    compare();
+    isEqualArr = reshape(isEqualArr, secSizeVec);
+end
+    function compare()
+        [isEqualArr,reportStr]=modgen.struct.structcomparevec(SEll1Array,...
+            SEll2Array,relTol);
     end
-  elseif (s > 1)
-    for i = 1:k
-      r = [];
-      for j = 1:l
-        if dimension(E1(i, j)) ~= dimension(E2)
-          r = [r 0];
-          continue;
-        end
-        q = E1(i, j).center - E2.center;
-        Q = sqrtm(E1(i, j).shape) - sqrtm(E2.shape);
-        if (norm(q) > ellOptions.rel_tol) | (norm(Q) > ellOptions.rel_tol)
-          r = [r 0];
-        else
-          r = [r 1];
-        end
-      end
-      res = [res; r];
-    end
-  else
-    for i = 1:m
-      r = [];
-      for j = 1:n
-        if dimension(E1) ~= dimension(E2(i, j))
-          r = [r 0];
-          continue;
-        end
-        q = E1.center - E2(i, j).center;
-        Q = sqrtm(E1.shape) - sqrtm(E2(i, j).shape);
-        if (norm(q) > ellOptions.rel_tol) | (norm(Q) > ellOptions.rel_tol)
-           r = [r 0];
-        else
-          r = [r 1];
-        end
-      end
-      res = [res; r];
-    end
-  end
-
-  return; 
+end
+function SComp=formCompStruct(ellObj)
+SComp=struct('Q',gras.la.sqrtm(ellObj.shape),'q',ellObj.center.');
+end

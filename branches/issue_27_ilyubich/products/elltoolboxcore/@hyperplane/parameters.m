@@ -1,53 +1,24 @@
-function [v, c] = parameters(H)
+function [normVec, hypScal] = parameters(myHyp)
 %
 % PARAMETERS - return parameters of hyperplane - normal vector and shift.
 %
+%   [normVec, hypScal] = PARAMETERS(myHyp) - returns normal vector
+%       and scalar value of the hyperplane.
 %
-% Description:
-% ------------
-%
-%    [V, C] = PARAMETERS(H)  Returns normal vector and scalar value of the hyperplane.
+% Input:
+%   regular:
+%       myHyp: hyperplane [1, 1] - single hyperplane of dimention nDims.
 %
 % Output:
-% -------
+%   normVec: double[nDims, 1] - normal vector of the hyperplane myHyp.
+%   hypScal: double[1, 1] - scalar of the hyperplane myHyp.
 %
-%    V - normal vector,
-%    C - scalar constant.
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 %
-%
-% See also:
-% ---------
-%
-%    HYPERPLANE/HYPERPLANE.
-%
+% $Author: Aushkap Nikolay <n.aushkap@gmail.com> $  $Date: 30-11-2012$
+% $Copyright: Moscow State University,
+%   Faculty of Computational Mathematics and Computer Science,
+%   System Analysis Department 2012 $
 
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
-
-  global ellOptions;
-
-  if ~isstruct(ellOptions)
-    evalin('base', 'ellipsoids_init;');
-  end
-
-  if ~(isa(H, 'hyperplane'))
-    error('PARAMETERS: input argument must be hyperplane.');
-  end
-
-  if min(size(H) == [1 1]) < 1
-    error('PARAMETERS: input argument must be single hyperplane.');
-  end
-
-  v = H.normal;
-  
-  if nargout < 2
-    return;
-  end
-
-  c = H.shift;
-
-  return;
+[normVec, hypScal] = double(myHyp);
