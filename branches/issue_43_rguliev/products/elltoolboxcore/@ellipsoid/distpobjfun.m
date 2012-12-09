@@ -16,9 +16,7 @@ function [resD, resGVec] = distpobjfun(xVec, myEll, yVec, varargin)
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-ellipsoid.checkIsMe(myEll,...
-    'errorTag','wrongInput',...
-    'errorMessage','second input argument must be ellipsoid.');
+ellipsoid.checkIsMe(myEll,'second');
 
 myEllCentVec = myEll.center;
 myEllShMat = myEll.shape;

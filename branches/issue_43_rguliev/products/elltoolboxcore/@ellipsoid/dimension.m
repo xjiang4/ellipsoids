@@ -5,24 +5,22 @@ function [dimArr, rankArr] = dimension(myEllArr)
 %
 % Input:
 %   regular:
-%       myEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
+%       myEllArr: ellipsoid[,] - array of ellipsoids.
 %
 % Output:
 %   regular:
-%       spaceDimMat: double[mRows, nCols] - space dimensions.
+%       dimArr: double[,] - space dimensions.
 %
 %   optional:
-%       ellDimMat: double[mRows, nCols] - dimensions of the ellipsoids
-%           in myEllMat.
+%       rankArr: double[,] - dimensions of the ellipsoids
+%           in myEllArr.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
 import elltool.conf.Properties;
 
-ellipsoid.checkIsMe(myEllArr,...
-    'errorTag','wrongInput',...
-    'errorMessage','input argument must be ellipsoid.');
+ellipsoid.checkIsMe(myEllArr);
 
 dimArr = arrayfun(@(x) size(x.shape,1), myEllArr);
 if nargout > 1

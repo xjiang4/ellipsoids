@@ -5,12 +5,8 @@ import gras.la.sqrtm;
 import elltool.conf.Properties;
 import modgen.common.type.simple.*;
 
-ellipsoid.checkIsMe(ellFirstArr,...
-    'errorTag','wrongInput',...
-    'errorMessage','input arguments must be ellipsoids.');
-ellipsoid.checkIsMe(ellSecArr,...
-    'errorTag','wrongInput',...
-    'errorMessage','input arguments must be ellipsoids.');
+ellipsoid.checkIsMe(ellFirstArr,'first');
+ellipsoid.checkIsMe(ellSecArr,'second');
 
 [kDim, lDim] = size(ellFirstArr);
 nFirstElems = kDim * lDim;

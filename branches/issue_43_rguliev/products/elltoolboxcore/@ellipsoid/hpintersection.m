@@ -1,22 +1,22 @@
-function [intEllMat, isnIntersectedMat] = ...
-    hpintersection(myEllMat, myHypMat)
+function [intEllArr, isnIntersectedArr] = ...
+    hpintersection(myEllArr, myHypArr)
 %
 % HPINTERSECTION - computes the intersection of ellipsoid with hyperplane.
 %
 % Input:
 %   regular:
-%       myEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
-%       myHypMat: hyperplane [mRows, nCols] - matrix of hyperplanes
+%       myEllArr: ellipsoid [,] - matrix of ellipsoids.
+%       myHypArr: hyperplane [,] - matrix of hyperplanes
 %           of the same size.
 %
 % Output:
-%   intEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids
+%   intEllArr: ellipsoid [,] - matrix of ellipsoids
 %       resulting from intersections.
 %
-%   isnIntersectedMat: logical[mRows, nCols].
-%       isnIntersectedMat(i, j) = true, if myEllMat(i, j)
-%       doesn't intersect myHipMat(i, j),
-%       isnIntersectedMat(i, j) = false, otherwise.
+%   isnIntersectedMat: logical[,].
+%       isnIntersectedArr(iCount) = true, if myEllArr(iCount)
+%       doesn't intersect myHipArr(iCount),
+%       isnIntersectedArr(iCount) = false, otherwise.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
@@ -25,37 +25,35 @@ import elltool.conf.Properties;
 import modgen.common.throwerror;
 import modgen.common.checkmultvar;
 
-ellipsoid.checkIsMe(myEllMat,...
-    'errorTag','wrongInput',...
-    'errorMessage','first argument must be ellipsoid.');
-modgen.common.checkvar(myHypMat,@(x) isa(x,'hyperplane'),...
+ellipsoid.checkIsMe(myEllArr,'first');
+modgen.common.checkvar(myHypArr,@(x) isa(x,'hyperplane'),...
     'errorTag','wrongInput',...
     'errorMessage','second argument must be hyperplane.');
 
-if ndims(myEllMat) ~= 2
+if ndims(myEllArr) ~= 2
     throwerror('wrongInput:wrongDim','The dimension of input must be 2');
 end;
-if ndims(myHypMat) ~= 2
+if ndims(myHypArr) ~= 2
     throwerror('wrongInput:wrongDim','The dimension of input must be 2');
 end;
 
-[mEllRows, nEllCols] = size(myEllMat);
-[mHipRows, nHipCols] = size(myHypMat);
+[mEllRows, nEllCols] = size(myEllArr);
+[mHipRows, nHipCols] = size(myHypArr);
 nEllipsoids     = mEllRows * nEllCols;
 nHiperplanes     = mHipRows * nHipCols;
 
 checkmultvar('(x1==1)||(x2==1)||all(size(x3)==size(x4))',...
-    4,nEllipsoids,nHiperplanes,myEllMat,myHypMat,...
+    4,nEllipsoids,nHiperplanes,myEllArr,myHypArr,...
     'errorTag','wrongSizes',...
     'errorMessage','sizes of ellipsoidal and hyperplane arrays do not match.');
 
 isSecondOutput = nargout==2;
 
-nEllDimsMat = dimension(myEllMat);
+nEllDimsMat = dimension(myEllArr);
 maxEllDim   = max(nEllDimsMat(:));
 
 checkmultvar('all(x1(:)==x1(1))&&all(x2(:)==x2(1))',...
-    2,nEllipsoids,nHiperplanes,myEllMat,myHypMat,...
+    2,nEllipsoids,nHiperplanes,myEllArr,myHypArr,...
     'errorTag','wrongSizes',...
     'errorMessage','ellipsoids and hyperplanes must be of the same dimension.');
 
@@ -70,22 +68,22 @@ end
 
 if (nEllipsoids > 1) && (nHiperplanes > 1)
     [intEllCMat isnInterCMat] = arrayfun(@(x,y) fSingleCase(x,y),...
-        myEllMat,myHypMat,'UniformOutput',false);
+        myEllArr,myHypArr,'UniformOutput',false);
     
-    intEllMat = reshape([intEllCMat{:}],size(myEllMat));
-    isnIntersectedMat = cell2mat(isnInterCMat);
+    intEllArr = reshape([intEllCMat{:}],size(myEllArr));
+    isnIntersectedArr = cell2mat(isnInterCMat);
 elseif (nEllipsoids > 1)
-    [intEllCMat isnInterCMat] = arrayfun(@(x) fSingleCase(x,myHypMat),...
-        myEllMat,'UniformOutput',false);
+    [intEllCMat isnInterCMat] = arrayfun(@(x) fSingleCase(x,myHypArr),...
+        myEllArr,'UniformOutput',false);
     
-    intEllMat = reshape([intEllCMat{:}],size(myEllMat));
-    isnIntersectedMat = cell2mat(isnInterCMat);
+    intEllArr = reshape([intEllCMat{:}],size(myEllArr));
+    isnIntersectedArr = cell2mat(isnInterCMat);
 else
-    [intEllCMat isnInterCMat] = arrayfun(@(x) fSingleCase(myEllMat,x),...
-        myHypMat,'UniformOutput',false);
+    [intEllCMat isnInterCMat] = arrayfun(@(x) fSingleCase(myEllArr,x),...
+        myHypArr,'UniformOutput',false);
     
-    intEllMat = reshape([intEllCMat{:}],size(myHypMat));
-    isnIntersectedMat = cell2mat(isnInterCMat);
+    intEllArr = reshape([intEllCMat{:}],size(myHypArr));
+    isnIntersectedArr = cell2mat(isnInterCMat);
 end
 
     function [intEll isnInter] = fSingleCase(myEll, myHyp)

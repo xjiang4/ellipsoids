@@ -1,20 +1,20 @@
-function resMat = contains(firstEllMat, secondEllMat)
+function resArr = contains(firstEllArr, secondEllArr)
 % CONTAINS - checks if one ellipsoid contains the other.
-%            The condition for E1 = firstEllMat to contain
-%            E2 = secondEllMat is
+%            The condition for E1 = firstEllArr to contain
+%            E2 = secondEllArr is
 %            min(rho(l | E1) - rho(l | E2)) > 0, subject to <l, l> = 1.
 %
 % Input:
 %   regular:
-%       firstEllMat: ellipsoid [mRows, nCols] - first matrix
+%       firstEllArr: ellipsoid [,] - first array
 %           of ellipsoids.
-%       secondEllMat: ellipsoid [mRows, nCols] - second matrix
+%       secondEllArr: ellipsoid [,] - second array
 %           of ellipsoids.
 %
 % Output:
-%   resMat: double[mRows, nCols],
-%       resMat(iRows, jCols) = 1 - firstEllMat(iRows, jCols)
-%       contains secondEllMat(iRows, jCols), 0 - otherwise.
+%   resArr: double[,],
+%       resArr(iCount) = 1 - firstEllMat(iCount)
+%       contains secondEllMat(iCount), 0 - otherwise.
 %
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
@@ -24,25 +24,21 @@ import elltool.conf.Properties;
 import modgen.common.throwerror;
 import modgen.common.checkmultvar;
 
-ellipsoid.checkIsMe(firstEllMat,...
-    'errorTag','wrongInput',...
-    'errorMessage','input arguments must be ellipsoids.');
-ellipsoid.checkIsMe(secondEllMat,...
-    'errorTag','wrongInput',...
-    'errorMessage','input arguments must be ellipsoids.');
+ellipsoid.checkIsMe(firstEllArr,'first');
+ellipsoid.checkIsMe(secondEllArr,'second');
 
-nSizeFirst = numel(firstEllMat);
-nSizeSecond = numel(secondEllMat);
+nSizeFirst = numel(firstEllArr);
+nSizeSecond = numel(secondEllArr);
 isFirScal = nSizeFirst==1;
 isSecScal = nSizeSecond==1;
 
 checkmultvar('isscalar(x1)||isscalar(x2)|| all( size(x1)==size(x2) )',...
-    2,firstEllMat,secondEllMat,...
+    2,firstEllArr,secondEllArr,...
     'errorTag','wrongInput',...
     'errorMessage','sizes of ellipsoidal arrays do not match.');
 
-dimFirMat = dimension(firstEllMat);
-dimSecMat = dimension(secondEllMat);
+dimFirMat = dimension(firstEllArr);
+dimSecMat = dimension(secondEllArr);
 
 checkmultvar('all(x1(:)==x1(1)) && all(x2(:)==x1(1))',2,dimFirMat,dimSecMat,...
     'errorTag','wrongSizes',...
@@ -58,11 +54,11 @@ if Properties.getIsVerbose()
 end
 
 if isFirScal
-    resMat = arrayfun(@(x) l_check_containment(firstEllMat,x), secondEllMat);
+    resArr = arrayfun(@(x) l_check_containment(firstEllArr,x), secondEllArr);
 elseif isSecScal
-    resMat = arrayfun(@(x) l_check_containment(x, secondEllMat), firstEllMat);
+    resArr = arrayfun(@(x) l_check_containment(x, secondEllArr), firstEllArr);
 else
-    resMat = arrayfun(@(x,y) l_check_containment(x,y), firstEllMat,secondEllMat);
+    resArr = arrayfun(@(x,y) l_check_containment(x,y), firstEllArr,secondEllArr);
 end
 
 end

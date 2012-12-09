@@ -14,11 +14,9 @@ function [myEllCentVec, myEllshMat] = double(myEll)
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-ellipsoid.checkIsMe(myEll,...
-    'errorTag','wrongInput',...
-    'errorMessage','input argument must be ellipsoid.');
+ellipsoid.checkIsMe(myEll);
 modgen.common.checkvar(myEll,'isscalar(x)',...
-    'errorMessage','the argument of this function must be single ellipsoid.');
+    'errorMessage','input argument must be single ellipsoid.');
 
 if nargout < 2
     myEllCentVec = myEll.shape;
