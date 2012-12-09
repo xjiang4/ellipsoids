@@ -15,8 +15,8 @@ classdef EllipsoidSecTestCase < mlunitext.test_case
             self=self@mlunitext.test_case(varargin{:});
             [~,className]=modgen.common.getcallernameext(1);
             shortClassName=mfilename('classname');
-            self.testDataRootDir=[fileparts(which(className)),filesep,'TestData',...
-                filesep,shortClassName];
+            self.testDataRootDir=[fileparts(which(className)),filesep,...
+                'TestData', filesep,shortClassName];
         end
         function self = testIsInside(self)
             [test1Ell, test2Ell] = createTypicalEll(11);
@@ -30,7 +30,8 @@ classdef EllipsoidSecTestCase < mlunitext.test_case
             compareForIsInside(test1Ell, [test1Ell test2Ell], 'u', 0);
             [test1Ell, test2Ell] = createTypicalEll(14);
             compareForIsInside([test1Ell test2Ell], test1Ell, 'i', 0);
-            compareForIsInside([test1Ell test2Ell], [test1Ell test2Ell], [], 0);
+            compareForIsInside([test1Ell test2Ell], [test1Ell test2Ell],...
+                [], 0);
         end
         function self = testIsBadDirection(self)
             [test1Ell, test2Ell] = createTypicalEll(15);
@@ -39,7 +40,8 @@ classdef EllipsoidSecTestCase < mlunitext.test_case
             isTestRes = any(isTestResVec);
             mlunit.assert_equals(0, isTestRes);
             [test1Ell, test2Ell] = createTypicalEll(16);
-            compareExpForIsBadDir(test1Ell, test2Ell, [1, -1; 0, 0], [1, -1; 2, 3]);
+            compareExpForIsBadDir(test1Ell, test2Ell, [1, -1; 0, 0], ...
+                [1, -1; 2, 3]);
             [test1Ell, test2Ell] = createTypicalEll(17);
             compareExpForIsBadDir(test1Ell, test2Ell,...
             [1, -1, 1000, 1000; 0, 0, 0.5, 0.5; 0, 0, -0.5, -1],...
@@ -77,13 +79,16 @@ function [varargout] = createTypicalEll(flag)
             varargout{1} = ellipsoid([2; 1], [4, 1; 1, 1]);
             varargout{2} = ell_unitball(2);
         case 12
-            varargout{1} = ellipsoid([2; 1; 0], [4, 1, 1; 1, 2, 1; 1, 1, 5]);
+            varargout{1} = ellipsoid([2; 1; 0], ...
+                [4, 1, 1; 1, 2, 1; 1, 1, 5]);
             varargout{2} = ell_unitball(3);
         case 13
-            varargout{1} = ellipsoid([5; 5; 5], [4, 1, 1; 1, 2, 1; 1, 1, 5]);
+            varargout{1} = ellipsoid([5; 5; 5], ...
+                [4, 1, 1; 1, 2, 1; 1, 1, 5]);
             varargout{2} = ell_unitball(3);
         case 14
-            varargout{1} = ellipsoid([5; 5; 5; 5], [4, 1, 1, 1; 1, 2, 1, 1; 1, 1, 5, 1; 1, 1, 1, 6]);
+            varargout{1} = ellipsoid([5; 5; 5; 5], ...
+                [4, 1, 1, 1; 1, 2, 1, 1; 1, 1, 5, 1; 1, 1, 1, 6]);
             varargout{2} = ell_unitball(4);    
         case 15
             varargout{1} = ell_unitball(6);
@@ -93,7 +98,8 @@ function [varargout] = createTypicalEll(flag)
             varargout{2} = ellipsoid([0; 0], diag([1 / 8, 1/ 2]));
         case 17
             varargout{1} = ellipsoid([0; 0; 0], diag([4, 1, 1]));
-            varargout{2} = ellipsoid([0; 0; 0], diag([1 / 8, 1/ 2, 1 / 2]));
+            varargout{2} = ellipsoid([0; 0; 0], ...
+                diag([1 / 8, 1/ 2, 1 / 2]));
         case 18
             varargout{1} = [3; 3; 8; 3; 23];
             varargout{2} = diag(ones(1, 5));
@@ -201,7 +207,8 @@ function [varargout] = createTypicalHighDimEll(flag)
         otherwise
     end
 end
-function analyticResEllVec = calcExpMinkMp(isExtApx, nDirs, aMat, e0Vec, e0Mat, e1Vec, e1Mat, e2Vec, e2Mat, qVec, qMat)
+function analyticResEllVec = calcExpMinkMp(isExtApx, nDirs, aMat,...
+    e0Vec, e0Mat, e1Vec, e1Mat, e2Vec, e2Mat, qVec, qMat)
     analyticResVec = e0Vec - qVec + e1Vec + e2Vec;
     analyticResEllVec(nDirs) = ellipsoid;
     for iDir = 1 : nDirs
@@ -215,7 +222,8 @@ function analyticResEllVec = calcExpMinkMp(isExtApx, nDirs, aMat, e0Vec, e0Mat, 
             supp2Vec = supp2Mat * lVec;
             [unitaryU1Mat, ~, unitaryV1Mat] = svd(supp1Vec);
             [unitaryU2Mat, ~, unitaryV2Mat] = svd(supp2Vec);
-            sMat = unitaryU1Mat * unitaryV1Mat * unitaryV2Mat' * unitaryU2Mat';
+            sMat = unitaryU1Mat * unitaryV1Mat * ...
+                unitaryV2Mat.' * unitaryU2Mat.';
             sMat = real(sMat);
             qStarMat = supp1Mat - sMat * supp2Mat;
             qPlusMat = qStarMat.' * qStarMat;
@@ -223,10 +231,14 @@ function analyticResEllVec = calcExpMinkMp(isExtApx, nDirs, aMat, e0Vec, e0Mat, 
             aDouble = sqrt(dot(lVec, qPlusMat * lVec));
             a1Double = sqrt(dot(lVec, e1Mat * lVec));
             a2Double = sqrt(dot(lVec, e2Mat * lVec));
-            analyticResMat = (aDouble + a1Double + a2Double) .* ( qPlusMat ./ aDouble + e1Mat ./ a1Double + e2Mat ./ a2Double);
+            analyticResMat = (aDouble + a1Double + a2Double) .* ...
+                ( qPlusMat ./ aDouble + e1Mat ./ a1Double + ...
+                e2Mat ./ a2Double);
         else % minkmp_ia
-            pDouble  = (sqrt(dot(lVec, e0Mat * lVec))) / (sqrt(dot(lVec, qMat * lVec)));
-            qMinusMat  = (1 - (1 / pDouble)) * e0Mat + (1 - pDouble) * qMat;
+            pDouble  = (sqrt(dot(lVec, e0Mat * lVec))) / ...
+                (sqrt(dot(lVec, qMat * lVec)));
+            qMinusMat  = (1 - (1 / pDouble)) * e0Mat + ...
+                (1 - pDouble) * qMat;
             qMinusMat = 0.5 * (qMinusMat + qMinusMat.');
             supp1Mat = sqrtm(qMinusMat);
             supp2Mat = sqrtm(e1Mat);
@@ -237,17 +249,21 @@ function analyticResEllVec = calcExpMinkMp(isExtApx, nDirs, aMat, e0Vec, e0Mat, 
             [unitaryU1Mat, ~, unitaryV1Mat] = svd(supp1lVec);
             [unitaryU2Mat, ~, unitaryV2Mat] = svd(supp2lVec);
             [unitaryU3Mat, ~, unitaryV3Mat] = svd(supp3lVec);
-            s2Mat = unitaryU1Mat * unitaryV1Mat * unitaryV2Mat' * unitaryU2Mat';
+            s2Mat = unitaryU1Mat * unitaryV1Mat * unitaryV2Mat.' * ...
+                unitaryU2Mat.';
             s2Mat = real(s2Mat);
-            s3Mat = unitaryU1Mat * unitaryV1Mat * unitaryV3Mat' * unitaryU3Mat';
+            s3Mat = unitaryU1Mat * unitaryV1Mat * unitaryV3Mat.' * ...
+                unitaryU3Mat.';
             s3Mat = real(s3Mat);
             qStarMat = supp1Mat + s2Mat * supp2Mat + s3Mat * supp3Mat;
             analyticResMat = qStarMat' * qStarMat;
         end
-            analyticResEllVec(1, iDir) = ellipsoid(analyticResVec, analyticResMat);
+            analyticResEllVec(1, iDir) = ellipsoid(analyticResVec, ...
+                analyticResMat);
     end
 end
-function analyticResEllVec = calcExpMinkSum(isExtApx, nDirs, aMat, e0Vec, e0Mat, e1Vec, e1Mat, e2Vec, e2Mat)
+function analyticResEllVec = calcExpMinkSum(isExtApx, nDirs, aMat, ...
+    e0Vec, e0Mat, e1Vec, e1Mat, e2Vec, e2Mat)
     analyticResVec = e0Vec + e1Vec + e2Vec;
     analyticResEllVec(nDirs) = ellipsoid;
     for iDir = 1 : nDirs
@@ -257,7 +273,8 @@ function analyticResEllVec = calcExpMinkSum(isExtApx, nDirs, aMat, e0Vec, e0Mat,
             a1Double = sqrt(dot(lVec, e1Mat * lVec));
             a2Double = sqrt(dot(lVec, e2Mat * lVec));
             analyticResMat = (a0Double + a1Double + a2Double) .* ...
-                ( e0Mat ./ a0Double + e1Mat ./ a1Double + e2Mat ./ a2Double);
+                ( e0Mat ./ a0Double + e1Mat ./ a1Double + ...
+                e2Mat ./ a2Double);
         else % minksum_ia
             supp1Mat = sqrtm(e0Mat);
             supp2Mat = sqrtm(e1Mat);
@@ -268,9 +285,11 @@ function analyticResEllVec = calcExpMinkSum(isExtApx, nDirs, aMat, e0Vec, e0Mat,
             [unitaryU1Mat, ~, unitaryV1Mat] = svd(supp1lVec);
             [unitaryU2Mat, ~, unitaryV2Mat] = svd(supp2lVec);
             [unitaryU3Mat, ~, unitaryV3Mat] = svd(supp3lVec);
-            s2Mat = unitaryU1Mat * unitaryV1Mat * unitaryV2Mat.' * unitaryU2Mat.';
+            s2Mat = unitaryU1Mat * unitaryV1Mat * unitaryV2Mat.' ...
+                * unitaryU2Mat.';
             s2Mat = real(s2Mat);
-            s3Mat = unitaryU1Mat * unitaryV1Mat * unitaryV3Mat.' * unitaryU3Mat.';
+            s3Mat = unitaryU1Mat * unitaryV1Mat * unitaryV3Mat.' * ...
+                unitaryU3Mat.';
             s3Mat = real(s3Mat);
             qStarMat = supp1Mat + s2Mat * supp2Mat + s3Mat * supp3Mat;
             analyticResMat = qStarMat.' * qStarMat;
@@ -294,12 +313,14 @@ function compareExpForIsBadDir(test1Ell, test2Ell, a1Mat, a2Mat)
     isTestRes = any(isTestResVec);
     mlunit.assert_equals(false, isTestRes);
 end
-function compareAnalyticForMinkMp(isEA, isHighDim, indTypicalExample, nDirs, nGoodDirs, myResult)
+function compareAnalyticForMinkMp(isEA, isHighDim, indTypicalExample, ...
+    nDirs, nGoodDirs, myResult)
     if isHighDim % createTypicalHighDimEll
-        [e0Vec, e0Mat, test0Ell, qVec, qMat, qEll, e1Vec, e1Mat, e2Vec, e2Mat, aEllVec] = ...
-            createTypicalHighDimEll(indTypicalExample);
+        [e0Vec, e0Mat, test0Ell, qVec, qMat, qEll, e1Vec, e1Mat, e2Vec, ...
+            e2Mat, aEllVec] = createTypicalHighDimEll(indTypicalExample);
     else % createTypicalEll
-        [e0Vec, e0Mat, test0Ell, qVec, qMat, qEll, e1Vec, e1Mat, e2Vec, e2Mat, aEllVec] = createTypicalEll(indTypicalExample);
+        [e0Vec, e0Mat, test0Ell, qVec, qMat, qEll, e1Vec, e1Mat, ...
+            e2Vec, e2Mat, aEllVec] = createTypicalEll(indTypicalExample);
     end
     aMat = diag(ones(1, nDirs));
     if isEA % minkmp_ea
@@ -308,7 +329,8 @@ function compareAnalyticForMinkMp(isEA, isHighDim, indTypicalExample, nDirs, nGo
         testRes = minkmp_ia(test0Ell, qEll, aEllVec, aMat);
     end
     if ~isempty(myResult)
-        analyticResEllVec = calcExpMinkMp(isEA, nGoodDirs, aMat, e0Vec, e0Mat, e1Vec, e1Mat, e2Vec, e2Mat, qVec, qMat);
+        analyticResEllVec = calcExpMinkMp(isEA, nGoodDirs, aMat, e0Vec, ...
+            e0Mat, e1Vec, e1Mat, e2Vec, e2Mat, qVec, qMat);
         [isEqVec, reportStr] = eq(analyticResEllVec, testRes);
         isEq = all(isEqVec);
         mlunit.assert_equals(true, isEq, reportStr);
@@ -316,11 +338,14 @@ function compareAnalyticForMinkMp(isEA, isHighDim, indTypicalExample, nDirs, nGo
         mlunit.assert_equals(myResult, testRes);
     end
 end
-function compareAnalyticForMinkSum(isEA, isHighDim, indTypicalExample, nDirs, nGoodDirs, myResult)
+function compareAnalyticForMinkSum(isEA, isHighDim, indTypicalExample, ...
+    nDirs, nGoodDirs, myResult)
     if isHighDim % createTypicalHighDimEll
-        [e0Vec, e0Mat, e1Vec, e1Mat, e2Vec, e2Mat, aEllVec] = createTypicalHighDimEll(indTypicalExample);
+        [e0Vec, e0Mat, e1Vec, e1Mat, e2Vec, e2Mat, aEllVec] = ...
+            createTypicalHighDimEll(indTypicalExample);
     else % createTypicalEll
-        [e0Vec, e0Mat, e1Vec, e1Mat, e2Vec, e2Mat, aEllVec] = createTypicalEll(indTypicalExample);
+        [e0Vec, e0Mat, e1Vec, e1Mat, e2Vec, e2Mat, aEllVec] = ...
+            createTypicalEll(indTypicalExample);
     end
     aMat = diag(ones(1, nDirs));
     if isEA % minksum_ea
@@ -330,12 +355,14 @@ function compareAnalyticForMinkSum(isEA, isHighDim, indTypicalExample, nDirs, nG
     end
     if ~isHighDim && (indTypicalExample == 21)
         test0Ell = ellipsoid(e0Vec, e0Mat);
-        analyticResEllVec = [test0Ell, test0Ell, test0Ell, test0Ell, test0Ell];
+        analyticResEllVec = [test0Ell, test0Ell, test0Ell, test0Ell, ...
+            test0Ell];
         [isEqVec, reportStr] = eq(analyticResEllVec, testRes);
         isEq = all(isEqVec);
         mlunit.assert_equals(true, isEq, reportStr);
    else
-        analyticResEllVec = calcExpMinkSum(isEA, nGoodDirs, aMat, e0Vec, e0Mat, e1Vec, e1Mat, e2Vec, e2Mat);
+        analyticResEllVec = calcExpMinkSum(isEA, nGoodDirs, aMat, e0Vec,...
+            e0Mat, e1Vec, e1Mat, e2Vec, e2Mat);
         [isEqVec, reportStr] = eq(analyticResEllVec, testRes);
         isEq = all(isEqVec);
         mlunit.assert_equals(myResult, isEq, reportStr);
