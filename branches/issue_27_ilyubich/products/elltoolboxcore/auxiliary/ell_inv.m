@@ -28,11 +28,13 @@ function I = ell_inv(A)
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
 
-[m, n] = size(A);
+  [m, n] = size(A);
 
-if m ~= n
+  if m ~= n
     error('ELL_INV: matrix must be square.');
-end
-%
-B = inv(A);
-I = inv(B*A) * B;
+  end
+
+  B = inv(A);
+  I = inv(B*A) * B;
+
+  return;

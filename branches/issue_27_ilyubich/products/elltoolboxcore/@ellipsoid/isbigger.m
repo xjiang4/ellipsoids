@@ -1,66 +1,77 @@
-function isPositive = isbigger(fstEll, secEll)
+function res = isbigger(E1, E2)
 %
-% ISBIGGER - checks if one ellipsoid would contain the other if their
-%            centers would coincide.
+% ISBIGGER - checks if one ellipsoid would contain the other if their centers
+%            would coincide.
 %
-%   isPositive = ISBIGGER(fstEll, secEll) - Given two single ellipsoids
-%       of the same dimension, fstEll and secEll, check if fstEll
-%       would contain secEll inside if they were both
-%       centered at origin.
 %
-% Input:
-%   regular:
-%       fstEll: ellipsoid [1, 1] - first ellipsoid.
-%       secEll: ellipsoid [1, 1] - second ellipsoid
-%           of the same dimention.
+% Description:
+% ------------
+%
+%    RES = ISBIGGER(E1, E2)  Given two single ellipsoids of the same dimension,
+%                            E1 and E2, check if E1 would contain E2 inside if
+%                            they were both centered at origin.
+%
 %
 % Output:
-%   isPositive: logical[1, 1], true - if ellipsoid fstEll
-%       would contain secEll inside, false - otherwise.
+% -------
 %
-% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+%    1 - if ellipsoid E1 would contain E2 inside, 0 - otherwise.
+%
+%
+% See also:
+% ---------
+%
+%    ELLIPSOID/ELLIPSOID.
+%
 
-import elltool.conf.Properties;
-import modgen.common.throwerror;
+%
+% Author:
+% -------
+%
+%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+%
 
-if ~(isa(fstEll, 'ellipsoid')) || ~(isa(secEll, 'ellipsoid'))
-    throwerror('wrongInput', ...
-        'ISBIGGER: both arguments must be single ellipsoids.');
-end
+  global ellOptions;
 
-[mFstEllRows, nFstEllCols] = size(fstEll);
-[mSecEllRows, nSecEllCols] = size(secEll);
-if (mFstEllRows > 1) || (nFstEllCols > 1) || (mSecEllRows > 1) ...
-        || (nSecEllCols > 1)
-    throwerror('wrongInput', ...
-        'ISBIGGER: both arguments must be single ellipsoids.');
-end
+  if ~isstruct(ellOptions)
+    evalin('base', 'ellipsoids_init;');
+  end
 
-[nFstEllSpaceDim, nFstEllDim] = dimension(fstEll);
-[nSecEllSpaceDim, nSecEllDim] = dimension(secEll);
-if nFstEllSpaceDim ~= nSecEllSpaceDim
-    throwerror('wrongSizes', ...
-        'ISBIGGER: both ellipsoids must be of the same dimension.');
-end
-if nFstEllDim < nSecEllDim
-    isPositive = false;
+  if ~(isa(E1, 'ellipsoid')) | ~(isa(E2, 'ellipsoid'))
+    error('ISBIGGER: both arguments must be single ellipsoids.');
+  end
+
+  [k, l] = size(E1);
+  [m, n] = size(E2);
+  if (k > 1) | (l > 1) | (m > 1) | (n > 1)
+    error('ISBIGGER: both arguments must be single ellipsoids.');
+  end
+
+  [m, r1] = dimension(E1);
+  [n, r2] = dimension(E2);
+  if m ~= n
+    error('ISBIGGER: both ellipsoids must be of the same dimension.');
+  end
+  if r1 < r2
+    res = 0;
     return;
-end
+  end
 
-fstEllShMat = fstEll.shape;
-secEllShMat = secEll.shape;
-if nFstEllDim < nFstEllSpaceDim
-    if Properties.getIsVerbose()
-        fprintf('ISBIGGER: Warning! First ellipsoid is degenerate.');
-        fprintf('          Regularizing...');
+  A = E1.shape;
+  B = E2.shape;
+  if r1 < m
+    if ellOptions.verbose > 0
+      fprintf('ISBIGGER: Warning! First ellipsoid is degenerate.');
+      fprintf('          Regularizing...');
     end
-    fstEllShMat = ellipsoid.regularize(fstEllShMat,fstEll.absTol);
-end
+    A = regularize(A);
+  end
 
-tMat = ell_simdiag(fstEllShMat, secEllShMat);
-if max(abs(diag(tMat*secEllShMat*tMat'))) < (1 + fstEll.absTol)
-    isPositive = true;
-else
-    isPositive = false;
-end
+  T = ell_simdiag(A, B);
+  if max(abs(diag(T*B*T'))) < (1 + ellOptions.abs_tol)
+    res = 1;
+  else
+    res = 0;
+  end
+
+  return;

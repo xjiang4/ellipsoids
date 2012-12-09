@@ -28,7 +28,11 @@ function res = isempty(rs)
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
 
-  import elltool.conf.Properties;
+  global ellOptions;
+
+  if ~isstruct(ellOptions)
+    evalin('base', 'ellipsoids_init;');
+  end
 
   if ~(isa(rs, 'reach'))
     error('ISEMPTY: input argument must be reach set object.');

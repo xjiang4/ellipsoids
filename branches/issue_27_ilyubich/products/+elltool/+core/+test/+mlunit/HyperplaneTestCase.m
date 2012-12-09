@@ -15,9 +15,7 @@ classdef HyperplaneTestCase < mlunitext.test_case
             self.testDataRootDir=[fileparts(which(className)),filesep,'TestData',...
                 filesep,shortClassName];     
         end
-        function tear_down(~)
-            close all;
-        end
+        
         function self = testHyperplaneAndDouble(self)  
             %method double is implicitly tested in every comparison between
             %hyperplanes contents and normals and constants, from which it 
@@ -25,17 +23,17 @@ classdef HyperplaneTestCase < mlunitext.test_case
             %
             SInpData =  self.auxReadFile(self);
             testNormalVec = SInpData.testNormalVec;
-            testConst = SInpData.testConstant;
+            testConstant = SInpData.testConstant;
             %
             %simple construction test
-            testingHyperplane = hyperplane(testNormalVec, testConst);
-            res = self.isNormalAndConstantRight(testNormalVec, testConst,testingHyperplane);
+            testingHyperplane = hyperplane(testNormalVec, testConstant);
+            res = self.isNormalAndConstantRight(testNormalVec, testConstant,testingHyperplane);
             mlunit.assert_equals(1, res);
             %
             %omitting constant test
-            testConst = 0;
+            testConstant = 0;
             testingHyperplane = hyperplane(testNormalVec);
-            res = self.isNormalAndConstantRight(testNormalVec, testConst,testingHyperplane);
+            res = self.isNormalAndConstantRight(testNormalVec, testConstant,testingHyperplane);
             mlunit.assert_equals(1, res);
             %
             %
@@ -55,38 +53,16 @@ classdef HyperplaneTestCase < mlunitext.test_case
             %
             %mutliple Hyperplane one constant test
             testNormalsMat = [[3; 4; 43; 1], [1; 0; 3; 3], [5; 2; 2; 12]];
-            testConst = 2;
-            testingHyraplaneVec = hyperplane(testNormalsMat, testConst);
+            testConstant = 2;
+            testingHyraplaneVec = hyperplane(testNormalsMat, testConstant);
             %
             nHypeplanes = size(testNormalsMat,2);
             nRes = 0;
             for iHyperplane = 1:nHypeplanes
                 nRes = nRes + self.isNormalAndConstantRight(testNormalsMat(:,iHyperplane),...
-                    testConst, testingHyraplaneVec(iHyperplane));
+                    testConstant, testingHyraplaneVec(iHyperplane));
             end
             mlunit.assert_equals(nHypeplanes, nRes);
-            
-            testNormArr = ones(10, 2, 2);
-            testConstArr = 2*ones(2, 2);
-            testHypArr = hyperplane(testNormArr, testConstArr);
-            isPos = all(size(testHypArr) == [2, 2]);
-            isPos = (isPos && ...
-                (self.isNormalAndConstantRight(testNormArr(:, 1, 1), ...
-                testConstArr(1, 1), testHypArr(1))));
-            isPos = (isPos && ...
-                (self.isNormalAndConstantRight(testNormArr(:, 1, 2), ...
-                testConstArr(1, 2), testHypArr(3))));
-            mlunit.assert(isPos);
-            %
-            %mutliple constantants and single vector
-            testNormalVec = [3; 4; 43; 1];
-            testConst = [2,3,4,5,6,7];            
-            nConst=length(testConst);
-            testingHyraplaneVec = hyperplane(testNormalVec, testConst);
-            mlunitext.assert_equals(nConst,size(testingHyraplaneVec,2))
-            mlunitext.assert_equals(1,size(testingHyraplaneVec,1))
-            mlunitext.assert_equals(2,ndims(testingHyraplaneVec))
-            %
         end
         %
         function self = testContains(self)
@@ -98,35 +74,6 @@ classdef HyperplaneTestCase < mlunitext.test_case
             isContainedTestedVec = contains(testHyperplanesVec,testVectorsMat);
             isOk = all(isContainedVec == isContainedTestedVec);
             %
-            mlunit.assert(isOk);
-            
-            testHyp = hyperplane([1; 0; 0], 1);
-            testVectorsMat = [1 0 0 2; 0 1 0 0; 0 0 1 0];
-            isContainedVec = contains(testHyp, testVectorsMat);
-            isContainedTestedVec = [true; 0; 0; 0];
-            isOk = all(isContainedVec == isContainedTestedVec);
-            mlunit.assert(isOk);
-            
-            testFstHyp = hyperplane([1; 0], 1);
-            testSecHyp = hyperplane([1; 1], 1);
-            testThrHyp = hyperplane([0; 1], 1);
-            testHypMat = [testFstHyp testSecHyp; testFstHyp testThrHyp];
-            testVectors = [1; 0];
-            isContainedMat = contains(testHypMat, testVectors);
-            isContainedTestedMat = [true false; true false];
-            isOk = all(isContainedMat == isContainedTestedMat);
-            mlunit.assert(isOk);
-            
-            nElems = 24;
-            testHypArr(nElems) = hyperplane();
-            testHypArr(:) = hyperplane([1; 1], 1);
-            testHypArr = reshape(testHypArr, [2 3 4]);
-            testVectorsArr = zeros(2, 2, 3, 4);
-            testVectorsArr(:, 2, 3 ,4) = [1; 1];
-            isContainedArr = contains(testHypArr, testVectorsArr);
-            isContainedTestedArr = false(2, 3, 4);
-            isContainedTestedArr(end) = true;
-            isOk = all(isContainedArr == isContainedTestedArr);
             mlunit.assert(isOk);
         end
         %
@@ -154,19 +101,6 @@ classdef HyperplaneTestCase < mlunitext.test_case
             %
             isOk =  all(isEqVec ~= testedNeVec);
             mlunit.assert(isOk);
-            %
-            testHypHighDimFst = hyperplane([1:1:75]', 1);
-            testHypHighDimSec = hyperplane([1:1:75]', 2);
-            checkHypEqual(testHypHighDimFst, testHypHighDimSec, false, ...
-                '(1).shift-->Max. difference (2.640278e-03) is greater than the specified tolerance(1.000000e-07)');
-            %
-            testFstHyp = hyperplane([1; 0], 0);
-            testSecHyp = hyperplane([1; 0], 0);
-            testThrHyp = hyperplane([2; 1], 0);
-            str = ['(1).shift-->Max. difference (2.640278e-03) is greater than the specified tolerance(1.000000e-07)' char(10) '(3).normal-->Max. difference (4.472136e-01) is greater than the specified tolerance(1.000000e-07)'];
-            checkHypEqual([testHypHighDimFst testFstHyp testFstHyp], ...
-                [testHypHighDimSec testSecHyp testThrHyp], ...
-                [false true false], str);
         end
         %
         function self = testIsEmpty(self)
@@ -175,14 +109,6 @@ classdef HyperplaneTestCase < mlunitext.test_case
             isEmptyVec = SInpData.isEmptyVec;
             isEmptyTestedVec = isempty(testHyperplanesVec);
             isOk = all(isEmptyVec == isEmptyTestedVec);
-            mlunit.assert(isOk);
-            
-            nFstDim = 10;
-            nSecDim = 20;
-            nThrDim = 30;
-            testHypArr(nFstDim, nSecDim, nThrDim) = hyperplane();
-            isEmptyArr = isempty(testHypArr);
-            isOk = all(isEmptyArr);
             mlunit.assert(isOk);
         end
         %
@@ -232,13 +158,6 @@ classdef HyperplaneTestCase < mlunitext.test_case
             pHandle = plot(testHplane3D1Vec,'g',testHplane3D2Vec,'r');
             close(pHandle);            
         end
-        function testPlotSimple(~)
-            HA = hyperplane([1 0; 1 -2]'', [4 -2]);
-            o.width = 2; o.size = [3 6.6]; o.center = [0 -2; 0 0];
-            hFig=figure();
-            h=plot(HA, 'r', o); hold off;
-            close(hFig);
-        end
         %    
         function self = testWrongInput(self)
             SInpData =  self.auxReadFile(self);
@@ -247,35 +166,16 @@ classdef HyperplaneTestCase < mlunitext.test_case
             nanVec = SInpData.nanVector;
             infVec = SInpData.infVector;
             %
-            self.runAndCheckError('contains(testHyperplane,nanVec)',...
-                'wrongInput');
-            self.runAndCheckError('hyperplane(infVec,testConstant)',...
-                'wrongInput');
-            self.runAndCheckError('hyperplane(nanVec,testConstant)',...
-                'wrongInput');
+            self.runAndCheckError('contains(testHyperplane,nanVec)','wrongInput',...
+                'X is expected');
+            self.runAndCheckError('hyperplane(infVec,testConstant)','wrongInput',...
+                'v,c is');
+            self.runAndCheckError('hyperplane(nanVec,testConstant)','wrongInput',...
+                'v,c is');
         end
-       %
-       function self = testGetAbsTol(self)
-           normVec = ones(3,1);
-           const = 0;
-           testAbsTol = 1;
-           args = {normVec,const, 'absTol',testAbsTol};
-           %              
-           hplaneArr = [hyperplane(args{:}),hyperplane(args{:});...
-                           hyperplane(args{:}),hyperplane(args{:})];
-           hplaneArr(:,:,2) = [hyperplane(args{:}),hyperplane(args{:});...
-                           hyperplane(args{:}),hyperplane(args{:})];
-           sizeArr = size(hplaneArr);
-            testAbsTolArr = repmat(testAbsTol,sizeArr);
-            %
-            isOkArr = (testAbsTolArr == hplaneArr.getAbsTol());
-            %  
-            isOk = all(isOkArr(:));
-            mlunit.assert(isOk);
-       end
     end
     %
-    methods(Static, Access = private)
+    methods(Static)
          function res = isNormalAndConstantRight(testNormal, testConstant, testingHyraplane)
             [resultNormal, resultConstant] = double(testingHyraplane);
             %
@@ -301,10 +201,4 @@ classdef HyperplaneTestCase < mlunitext.test_case
          end
 
     end
-end
-
-function checkHypEqual(testFstHypArr, testSecHypArr, isEqualArr, ansStr)
-    [isEqArr, reportStr] = eq(testFstHypArr, testSecHypArr);
-    mlunit.assert_equals(isEqArr, isEqualArr);
-    mlunit.assert_equals(reportStr, ansStr);
 end

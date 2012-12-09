@@ -1,102 +1,98 @@
-function intApprEllVec = minkmp_ia(fstEll, secEll, inpEllMat, dirMat)
+function IA = minkmp_ia(E1, E2, EE, L)
 %
 % MINKMP_IA - computation of internal approximating ellipsoids
-%             of (E - Em) + (E1 + ... + En) along given directions.
-%             where E = fstEll, Em = secEll,
-%             E1, E2, ..., En - are ellipsoids in sumEllMat
+%             of (E0 - E) + (E1 + ... + En) in given directions.
 %
-%   intApprEllVec = MINKMP_IA(fstEll, secEll, inpEllMat, dirMat) -
-%       Computes internal approximating
-%       ellipsoids of (E - Em) + (E1 + E2 + ... + En),
-%       where E1, E2, ..., En are ellipsoids in array inpEllMat,
-%       E = fstEll, Em = secEll,
-%       along directions specified by columns of matrix dirMat.
 %
-% Input:
-%   regular:
-%       fstEll: ellipsoid [1, 1] - first ellipsoid. Suppose
-%           nDim - space dimension.
-%       secEll: ellipsoid [1, 1] - second ellipsoid
-%           of the same dimention.
-%       inpEllMat: ellipsoid [1, nCols] - array of ellipsoids
-%           of the same dimentions.
-%       dirMat: double[nDim, nCols] - matrix whose columns specify the
-%           directions for which the approximations should be computed.
+% Description:
+% ------------
+%
+% IA = MINKMP_IA(E0, E, EE, L)  Computes internal approximating ellipsoids
+%                               of (E0 - E) + (E1 + E2 + ... + En),
+%                               where E1, E2, ..., En are ellipsoids in array EE,
+%                               in directions specified by columns of matrix L.
+%
 %
 % Output:
-%   intApprEllVec: ellipsoid [1, nCols] - array of internal
-%       approximating ellipsoids (empty, if for all specified
-%       directions approximations cannot be computed).
+% -------
 %
-% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+%    IA - array of internal approximating ellipsoids
+%         (empty, if for all specified directions approximations cannot be computed).
+%
+%
+% See also:
+% ---------
+%
+%    ELLIPSOID/ELLIPSOID, MINKMP, MINKMP_EA, MINKSUM_IA, MINKDIFF_IA, MINKPM_IA.
+%
 
-import elltool.conf.Properties;
-import modgen.common.throwerror;
+%
+% Author:
+% -------
+%
+%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+%
 
-if ~(isa(inpEllMat, 'ellipsoid')) || ~(isa(secEll, 'ellipsoid')) ...
-        || ~(isa(fstEll, 'ellipsoid'))
-    fstStr = 'MINKMP_IA: first, second and third arguments ';
-    secStr = 'must be ellipsoids.';
-    throwerror('wrongInput', [fstStr secStr]);
-end
+  global ellOptions;
 
-[mRowsFstEll, nColsFstEll] = size(fstEll);
-[mRowsSecEll, nColsFstEll] = size(secEll);
-if (mRowsFstEll ~= 1) || (nColsFstEll ~= 1) || (mRowsSecEll ~= 1) ...
-        || (nColsFstEll ~= 1)
-    fstStr = 'MINKMP_IA: first and second arguments must ';
-    secStr = 'be single ellipsoids.';
-    throwerror('wrongInput', [fstStr secStr]);
-end
+  if ~isstruct(ellOptions)
+    evalin('base', 'ellipsoids_init;');
+  end
 
-mRowsDirMatrix  = size(dirMat, 1);
-nDimsFstEll  = dimension(fstEll);
-nDimsSecEll  = dimension(secEll);
-minDimEll = min(min(dimension(inpEllMat)));
-maxDimEll = max(max(dimension(inpEllMat)));
-if (minDimEll ~= maxDimEll) || (minDimEll ~= nDimsSecEll) ...
-        || (nDimsFstEll ~= nDimsSecEll)
-    throwerror('wrongSizes', ...
-        'MINKMP_IA: all ellipsoids must be of the same dimension.');
-end
-if nDimsSecEll ~= mRowsDirMatrix
-    fstStr = 'MINKMP_IA: dimension of the direction vectors must ';
-    secStr = 'be the same as dimension of ellipsoids.';
-    throwerror('wrongSizes', [fstStr secStr]);
-end
+  if ~(isa(EE, 'ellipsoid')) | ~(isa(E2, 'ellipsoid')) | ~(isa(E1, 'ellipsoid'))
+    error('MINKMP_IA: first, second and third arguments must be ellipsoids.');
+  end
 
-intApprEllVec = [];
+  [k, l] = size(E1);
+  [m, n] = size(E2);
+  if (k ~= 1) | (l ~= 1) | (m ~= 1) | (n ~= 1)
+    error('MINKMP_IA: first and second arguments must be single ellipsoids.');
+  end
 
-if ~isbigger(fstEll, secEll)
-    if Properties.getIsVerbose()
-        fprintf('MINKMP_IA: the resulting set is empty.\n');
+  k  = size(L, 1);
+  m  = dimension(E1);
+  n  = dimension(E2);
+  mn = min(min(dimension(EE)));
+  mx = max(max(dimension(EE)));
+  if (mn ~= mx) | (mn ~= n) | (m ~= n)
+    error('MINKMP_IA: all ellipsoids must be of the same dimension.');
+  end
+  if n ~= k
+    error('MINKMP_IA: dimension of the direction vectors must be the same as dimension of ellipsoids.');
+  end
+
+  IA = [];
+
+  if ~isbigger(E1, E2)
+    if ellOptions.verbose > 0
+      fprintf('MINKMP_IA: the resulting set is empty.\n');
     end
     return;
-end
+  end
 
-goodDirMat = [];
-nCols = size(dirMat, 2);
-[mRowsEllMatrix, nColsEllMatrix] = size(inpEllMat);
-inpEllVec = reshape(inpEllMat, 1, mRowsEllMatrix*nColsEllMatrix);
-isVrb = Properties.getIsVerbose();
-Properties.setIsVerbose(false);
+  LL                 = [];
+  N                  = size(L, 2);
+  [m, n]             = size(EE);
+  EE                 = reshape(EE, 1, m*n);
+  vrb                = ellOptions.verbose;
+  ellOptions.verbose = 0;
 
 
-for iCol = 1:nCols
-    dirVec = dirMat(:, iCol);
-    if ~isbaddirection(fstEll, secEll, dirVec)
-        goodDirMat = [goodDirMat dirVec];
-        intApprEllVec = [intApprEllVec ...
-            minksum_ia([minkdiff_ia(fstEll, secEll, dirVec) ...
-            inpEllVec], dirVec)];
+  for i = 1:N
+    l = L(:, i);
+    if ~isbaddirection(E1, E2, l)
+      LL = [LL l];
+      IA = [IA minksum_ia([minkdiff_ia(E1, E2, l) EE], l)];
     end
-end
+  end
+  
+  ellOptions.verbose = vrb;
 
-Properties.setIsVerbose(isVrb);
-if isempty(intApprEllVec)
-    if Properties.getIsVerbose()
-        fprintf('MINKMP_IA: cannot compute external approximation ');
-        fprintf('for any\n           of the specified directions.\n');
+  if isempty(IA)
+    if ellOptions.verbose > 0
+      fprintf('MINKMP_IA: cannot compute external approximation for any\n');
+      fprintf('           of the specified directions.\n');
     end
-end
+  end
+
+  return;

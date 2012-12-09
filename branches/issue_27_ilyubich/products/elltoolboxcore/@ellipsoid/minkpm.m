@@ -1,313 +1,334 @@
-function [centVec, boundPointMat] = minkpm(varargin)
+function [y, Y] = minkpm(varargin)
 %
-% MINKPM - computes and plots geometric (Minkowski) difference
-%          of the geometric sum of ellipsoids and a single ellipsoid
-%          in 2D or 3D: (E1 + E2 + ... + En) - E,
-%          where E = inpEll,
-%          E1, E2, ... En - are ellipsoids in inpEllMat.
+% MINKPM - computes and plots geometric (Minkowski) difference of the geometric
+%          sum of ellipsoids and a single ellipsoid in 2D or 3D:
 %
-%   MINKPM(inpEllMat, inpEll, OPTIONS)  Computes geometric difference
-%       of the geometric sum of ellipsoids in inpEllMat and
-%       ellipsoid inpEll, if
-%       1 <= dimension(inpEllMat) = dimension(inpEll) <= 3,
-%       and plots it if no output arguments are specified.
+%          (E1 + E2 + ... + En) - E
 %
-%   [centVec, boundPointMat] = MINKPM(inpEllMat, inpEll) - pomputes
-%       (geometric sum of ellipsoids in inpEllMat) - inpEll.
-%       Here centVec is the center, and boundPointMat - array
-%       of boundary points.
-%   MINKPM(inpEllMat, inpEll) - plots (geometric sum of ellipsoids
-%       in inpEllMat) - inpEll in default (red) color.
-%   MINKPM(inpEllMat, inpEll, Options) - plots
-%       (geometric sum of ellipsoids in inpEllMat) - inpEll using
-%       options given in the Options structure.
 %
-% Input:
-%   regular:
-%       inpEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids
-%           of the same dimentions 2D or 3D.
-%       inpEll: ellipsoid [1, 1] - ellipsoid of the same
-%           dimention 2D or 3D.
+% Description:
+% ------------
 %
-%   optional:
-%       Options: structure[1, 1] - fields:
-%           show_all: double[1, 1] - if 1, displays
-%               also ellipsoids fstEll and secEll.
-%           newfigure: double[1, 1] - if 1, each plot
-%               command will open a new figure window.
-%           fill: double[1, 1] - if 1, the resulting
-%               set in 2D will be filled with color.
-%           color: double[1, 3] - sets default colors
-%               in the form [x y z].
-%           shade: double[1, 1] = 0-1 - level of transparency
-%               (0 - transparent, 1 - opaque).
+% MINKPM(EA, E, OPTIONS)  Computes geometric difference of the geometric sum
+%                         of ellipsoids in EA and ellipsoid E,
+%                         if 1 <= dimension(EA) = dimension(E) <= 3,
+%                         and plots it if no output arguments are specified.
+%
+%    [y, Y] = MINKPM(EA, E)  Computes (geometric sum of ellipsoids in EA) - E.
+%                            Here y is the center, and Y - array of boundary points.
+%             MINKPM(EA, E)  Plots (geometric sum of ellipsoids in EA) - E
+%                            in default (red) color.
+%    MINKPM(EA, E, Options)  Plots (geometric sum of ellipsoids in EA) - E
+%                            using options given in the Options structure.
+%
+% Options.show_all     - if 1, displays also ellipsoids E1 and E2.
+% Options.newfigure    - if 1, each plot command will open a new figure window.
+% Options.fill         - if 1, the resulting set in 2D will be filled with color.
+% Options.color        - sets default colors in the form [x y z].
+% Options.shade = 0-1  - level of transparency (0 - transparent, 1 - opaque).
+%
 %
 % Output:
-%    centVec: double[nDim, 1]/double[0, 0] - center of the resulting set.
-%       centerVec may be empty.
-%    boundPointMat: double[nDim, ]/double[0, 0] - set of boundary
-%       points (vertices) of resulting set. boundPointMat may be empty.
+% -------
 %
-% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+%    y - center of the resulting set.
+%    Y - set of boundary points (vertices) of resulting set.
+%
+%
+% See also:
+% ---------
+%
+%    ELLIPSOID/ELLIPSOID, MINKSUM, MINKDIFF, MINKMP.
+%
 
-import elltool.conf.Properties;
-import modgen.common.throwerror;
+% 
+% Author:
+% -------
+%
+%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+%
 
-if nargin < 2
-    throwerror('wrongInput', ...
-        'MINKPM: first and second arguments must be ellipsoids.');
-end
+  global ellOptions;
 
-inpEllMat = varargin{1};
-inpEll = varargin{2};
+  if ~isstruct(ellOptions)
+    evalin('base', 'ellipsoids_init;');
+  end
 
-if ~(isa(inpEllMat, 'ellipsoid')) || ~(isa(inpEll, 'ellipsoid'))
-    throwerror('wrongInput', ...
-        'MINKPM: first and second arguments must be ellipsoids.');
-end
+  if nargin < 2
+    error('MINKPM: first and second arguments must be ellipsoids.');
+  end
 
-[mRowsInpEll, nColsInpEll] = size(inpEll);
-if (mRowsInpEll ~= 1) || (nColsInpEll ~= 1)
-    throwerror('wrongInput', ...
-        'MINKPM: second argument must be single ellipsoid.');
-end
+  EE = varargin{1};
+  E2 = varargin{2};
 
-nDimsMat = dimension(inpEllMat);
-minEllDim = min(min(nDimsMat));
-maxEllDim = max(max(nDimsMat));
-nDimsInpEll = dimension(inpEll);
-if (minEllDim ~= maxEllDim) || (maxEllDim ~= nDimsInpEll)
-    throwerror('wrongSizes', ...
-        'MINKPM: all ellipsoids must be of the same dimension.');
-end
-if nDimsInpEll > 3
-    throwerror('wrongSizes', ...
-        'MINKPM: ellipsoid dimension must be not higher than 3.');
-end
+  if ~(isa(EE, 'ellipsoid')) | ~(isa(E2, 'ellipsoid'))
+    error('MINKPM: first and second arguments must be ellipsoids.');
+  end
 
-switch nDimsInpEll
+  [m, n] = size(E2);
+  if (m ~= 1) | (n ~= 1)
+    error('MINKPM: second argument must be single ellipsoid.');
+  end
+
+  dims = dimension(EE);
+  k    = min(min(dims));
+  m    = max(max(dims));
+  n    = dimension(E2);
+  if (k ~= m) | (m ~= n)
+    error('MINKPM: all ellipsoids must be of the same dimension.');
+  end
+  if n > 3
+    error('MINKPM: ellipsoid dimension must be not higher than 3.');
+  end
+
+  switch n
     case 2,
-        nPlot2dPointsInpEllMat = inpEllMat.nPlot2dPoints;
-        nPlot2dPoints = max(nPlot2dPointsInpEllMat(:));
-        phiVec = linspace(0, 2*pi, nPlot2dPoints);
-        dirMat = [cos(phiVec); sin(phiVec)];
-        
+      phi = linspace(0, 2*pi, ellOptions.plot2d_grid);
+      L   = [cos(phi); sin(phi)];
+
     case 3,
-        nPlot3dPnt = inpEllMat.nPlot3dPoints/2;
-        nPlot3dPntSub = nPlot3dPnt/2;
-        psyVec = linspace(0, pi, nPlot3dPntSub);
-        phiVec = linspace(0, 2*pi, nPlot3dPnt);
-        dirMat   = [];
-        for iCol = 2:(nPlot3dPntSub - 1)
-            subDirVec = cos(psyVec(iCol))*ones(1, nPlot3dPnt);
-            dirMat   = [dirMat [cos(phiVec)*sin(psyVec(iCol)); ...
-                sin(phiVec)*sin(psyVec(iCol)); subDirVec]];
-        end
-        
+      M   = ellOptions.plot3d_grid/2;
+      N   = M/2;
+      psy = linspace(0, pi, N);
+      phi = linspace(0, 2*pi, M);
+      L   = [];
+      for i = 2:(N - 1)
+        arr = cos(psy(i))*ones(1, M);
+        L   = [L [cos(phi)*sin(psy(i)); sin(phi)*sin(psy(i)); arr]];
+      end
+      
     otherwise,
-        dirMat = [-1 1];
-        
-end
+      L = [-1 1];
 
-isVrb = Properties.getIsVerbose();
-Properties.setIsVerbose(false);
-extApproxEllVec = minksum_ea(inpEllMat, dirMat);
-Properties.setIsVerbose(isVrb);
+  end
 
-if min(extApproxEllVec > inpEll) == 0
+  vrb                = ellOptions.verbose;
+  ellOptions.verbose = 0;
+  EA                 = minksum_ea(EE, L);
+  ellOptions.verbose = vrb;
+  
+  if min(EA > E2) == 0
     switch nargout
-        case 0,
-            fprintf('The resulting set is empty.');
-            return;
-            
-        case 1,
-            centVec = [];
-            return;
-            
-        otherwise,
-            centVec = [];
-            boundPointMat = [];
-            return;
-            
+      case 0,
+        fprintf('The resulting set is empty.');
+        return;
+
+      case 1,
+        y = [];
+        return;
+
+      otherwise,
+        y = [];
+        Y = [];
+        return;
+
     end
-end
-%
-if nargin > 2
+  end
+
+  if nargin > 2
     if isstruct(varargin{3})
-        Options = varargin{3};
+      Options = varargin{3};
     else
-        Options = [];
+      Options = [];
     end
-else
+  else
     Options = [];
-end
+  end
 
-if ~isfield(Options, 'newfigure')
+  if ~isfield(Options, 'newfigure')
     Options.newfigure = 0;
-end
+  end
 
-if ~isfield(Options, 'fill')
+  if ~isfield(Options, 'fill')
     Options.fill = 0;
-end
+  end
 
-if ~isfield(Options, 'show_all')
+  if ~isfield(Options, 'show_all')
     Options.show_all = 0;
-end
+  end
 
-if ~isfield(Options, 'color')
+  if ~isfield(Options, 'color')
     Options.color = [1 0 0];
-end
+  end
 
-if ~isfield(Options, 'shade')
+  if ~isfield(Options, 'shade')
     Options.shade = 0.4;
-else
+  else
     Options.shade = Options.shade(1, 1);
-end
+  end
 
-clrVec  = Options.color;
+  clr  = Options.color;
 
-if nargout == 0
+  if nargout == 0
     ih = ishold;
-end
+  end
 
-if (Options.show_all ~= 0) && (nargout == 0)
-    plot(inpEllMat, 'b', inpEll, 'k');
+  if (Options.show_all ~= 0) & (nargout == 0)
+    plot(EE, 'b', E2, 'k');
     hold on;
     if Options.newfigure ~= 0
-        figure;
+      figure;
     else
-        newplot;
+      newplot;
     end
-end
+  end
 
-if Properties.getIsVerbose()
+  if ellOptions.verbose > 0
     if nargout == 0
-        fprintf('Computing and plotting (sum(E_i) - E) ...\n');
+      fprintf('Computing and plotting (sum(E_i) - E) ...\n');
     else
-        fprintf('Computing (sum(E_i) - E) ...\n');
+      fprintf('Computing (sum(E_i) - E) ...\n');
     end
-end
+  end
 
-centVec= extApproxEllVec(1).center - inpEll.center;
-boundPointMat=[];
-nCols = size(dirMat, 2);
-Properties.setIsVerbose(false);
+  y                  = EA(1).center - E2.center;
+  Y                  = [];
+%  EF                 = [];
+%  LL                 = [];
+  N                  = size(L, 2);
+  ellOptions.verbose = 0;
+
+%  for i = 1:N
+%    l = L(:, i);
+%    E = EA(i);
+%    if ~isbaddirection(E, E2, l)
+%      EF = [EF minkdiff_ea(E, E2, l)];
+%      LL = [LL l];
+%    end
+%  end
 %
-switch nDimsInpEll
+%  M = size(EF, 2);
+%  
+%  for i = 1:N
+%    l    = L(:, i);
+%    mval = 0;
+%
+%    for j = 1:M
+%      Q = parameters(EF(j));
+%      v = l' * ell_inv(Q) * l;
+%      if v > mval
+%        mval = v;
+%      end
+%    end
+%    
+%    if mval > 0
+%      Y = [Y ((l/sqrt(mval))+y)];
+%    end
+%  end
+%
+%  if isempty(Y)
+%    Y = y;
+%  end
+
+  switch n
     case 2,
-        extApprEllVec(nCols) = ellipsoid();
-        directionMat = zeros(nDimsInpEll, nCols);
-        for iCol = 1:nCols
-            dirVec = dirMat(:, iCol);
-            extApprEll = extApproxEllVec(iCol);
-            if ~isbaddirection(extApprEll, inpEll, dirVec)
-                extApprEllVec(iCol)=minkdiff_ea(extApprEll, ...
-                    inpEll, dirVec);
-                directionMat(:,iCol)=dirVec;
-            end
+      EF = [];
+      LL = [];
+      for i = 1:N
+        l = L(:, i);
+        E = EA(i);
+        if ~isbaddirection(E, E2, l)
+          EF = [EF minkdiff_ea(E, E2, l)];
+          LL = [LL l];
         end
-        nExtApprEllVec = size(extApprEllVec, 2);
-        mValVec=zeros(1, nCols);
-        for jExtApprEll = 1:nExtApprEllVec
-            extApprEllShMat = extApprEllVec(jExtApprEll).shape;
-            invShMat = ell_inv(extApprEllShMat);
-            for iCol = 1:nCols
-                dirVec = dirMat(:, iCol);
-                val = dirVec' * invShMat * dirVec;
-                if val > mValVec(iCol)
-                    mValVec(iCol) = val;
-                end
-            end
+      end
+      M = size(EF, 2);
+      for i = 1:N
+        l    = L(:, i);
+        mval = 0;
+        for j = 1:M
+          Q = parameters(EF(j));
+          v = l' * ell_inv(Q) * l;
+          if v > mval
+            mval = v;
+          end
         end
-        isPosVec=mValVec>0;
-        nPos=sum(isPosVec);
-        mValMultVec = 1./sqrt(mValVec(isPosVec));
-        boundPointMat=dirMat(:,isPosVec).* ...
-            mValMultVec(ones(1,nDimsInpEll),:)+centVec(:,ones(1,nPos));
-        if isempty(boundPointMat)
-            boundPointMat = centVec;
+        if mval > 0
+          Y = [Y ((l/sqrt(mval))+y)];
         end
-        boundPointMat = [boundPointMat boundPointMat(:, 1)];
-        if nargout == 0
-            if Options.fill ~= 0
-                fill(boundPointMat(1, :), boundPointMat(2, :), clrVec);
-                hold on;
-            end
-            hPlot = ell_plot(boundPointMat);
-            hold on;
-            set(hPlot, 'Color', clrVec, 'LineWidth', 2);
-            hPlot = ell_plot(centVec, '.');
-            set(hPlot, 'Color', clrVec);
+      end
+      if isempty(Y)
+        Y = y;
+      end
+      Y = [Y Y(:, 1)];
+      if nargout == 0
+        if Options.fill ~= 0
+          fill(Y(1, :), Y(2, :), clr);
+          hold on;
         end
-        
+        h = ell_plot(Y);
+        hold on;
+        set(h, 'Color', clr, 'LineWidth', 2);
+        h = ell_plot(y, '.');
+        set(h, 'Color', clr);
+      end
+
     case 3,
-        for iCol = 1:nCols
-            dirVec = dirMat(:, iCol);
-            extApprEll = extApproxEllVec(iCol);
-            if ~isbaddirection(extApprEll, inpEll, dirVec)
-                intApprEll = minksum_ia(inpEllMat, dirVec);
-                if isbigger(intApprEll, inpEll)
-                    if ~isbaddirection(intApprEll, inpEll, dirVec)
-                        [~, boundPointSubMat] = ...
-                            rho(minkdiff_ea(extApprEll, inpEll, ...
-                            dirVec), dirVec);
-                        boundPointMat = [boundPointMat boundPointSubMat];
-                    end
-                end
+      for i = 1:N
+        l = L(:, i);
+        E = EA(i);
+        if ~isbaddirection(E, E2, l)
+          I = minksum_ia(EE, l);
+          if isbigger(I, E2);
+            if ~isbaddirection(I, E2, l)
+              [r, x] = rho(minkdiff_ea(E, E2, l), l);
+              Y      = [Y x];
             end
+          end
         end
-        if isempty(boundPointMat)
-            boundPointMat = centVec;
+      end
+      if isempty(Y)
+        Y = y;
+      end
+      if nargout == 0
+        vs = size(Y, 2);
+        if vs > 1
+          chll = convhulln(Y');
+          patch('Vertices', Y', 'Faces', chll, ...
+                'FaceVertexCData', clr(ones(1, vs), :), 'FaceColor', 'flat', ...
+                'FaceAlpha', Options.shade(1, 1));
+        else
+          h = ell_plot(y, '*');
+          set(h, 'Color', clr);
         end
-        if nargout == 0
-            nBoundPoints = size(boundPointMat, 2);
-            if nBoundPoints > 1
-                chll = convhulln(boundPointMat');
-                patch('Vertices', boundPointMat', 'Faces', chll, ...
-                    'FaceVertexCData', clrVec(ones(1, nBoundPoints), :),...
-                    'FaceColor', 'flat', ...
-                    'FaceAlpha', Options.shade(1, 1));
-            else
-                hPlot = ell_plot(centVec, '*');
-                set(hPlot, 'Color', clrVec);
-            end
-            hold on;
-            shading interp;
-            lighting phong;
-            material('metal');
-            view(3);
-        end
-        
+        hold on;
+        shading interp;
+        lighting phong;
+        material('metal');
+        view(3);
+        %camlight('headlight','local');
+        %camlight('headlight','local');
+        %camlight('right','local');
+        %camlight('left','local');
+      end
+
     otherwise,
-        boundPointMat = [centVec centVec];
-        boundPointMat(1, 1) = extApproxEllVec(1).center - ...
-            inpEll.center + sqrt(inpEll.shape) - ...
-            sqrt(extApproxEllVec(1).shape);
-        boundPointMat(1, 2) = extApproxEllVec(1).center - ...
-            inpEll.center + sqrt(extApproxEllVec(1).shape) - ...
-            sqrt(inpEll.shape);
-        if nargout == 0
-            hPlot = ell_plot(boundPointMat);
-            hold on;
-            set(hPlot, 'Color', clrVec, 'LineWidth', 2);
-            hPlot = ell_plot(centVec, '*');
-            set(hPlot, 'Color', clrVec);
-        end
-        
-end
+      Y       = [y y];
+      Y(1, 1) = EA(1).center - E2.center + sqrt(E2.shape) - sqrt(EA(1).shape);
+      Y(1, 2) = EA(1).center - E2.center + sqrt(EA(1).shape) - sqrt(E2.shape);
+      if nargout == 0
+        h = ell_plot(Y);
+        hold on;
+        set(h, 'Color', clr, 'LineWidth', 2);
+        h = ell_plot(y, '*');
+        set(h, 'Color', clr);
+      end
 
-Properties.setIsVerbose(isVrb);
+  end
 
-if nargout == 0
+  ellOptions.verbose = vrb;
+
+  if nargout == 0
     if ih == 0
-        hold off;
+      hold off;
     end
-end
+  end
 
-if nargout == 1
-    centVec = boundPointMat;
-end
-if nargout == 0
-    clear centVec  boundPointMat;
-end
+  if nargout == 1
+    y = Y;
+  end
+  if nargout == 0
+    clear y, Y;
+  end
+
+  return;

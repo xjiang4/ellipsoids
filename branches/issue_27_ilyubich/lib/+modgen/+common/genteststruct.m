@@ -24,7 +24,11 @@ Data.dConf.gen.curRevision=19641;
 
 % number of processor used (increase of this parameter may lead to speeding
 % up some of blocks)
-Data.dConf.gen.nProcessors=2;
+if ispc,
+    Data.dConf.gen.nProcessors=1;
+else
+    Data.dConf.gen.nProcessors=2;
+end
 
 %% Data.dConf.gen.input.database
 Connectors(1).type='mym'; % matlab4b
@@ -472,7 +476,3 @@ Data.dConf.backtest.calc.portfolioGen.methods.markowitz.portopt.riskCombSelectMe
 Data.dConf.backtest.calc.portfolioGen.methods.markowitz.portopt.riskAversionScnPrefix='RA=';
 Data.dConf.backtest.calc.portfolioGen.methods.markowitz.portopt.timeIndiffExpScnPrefix='TIE=';
 Data.dConf.backtest.calc.portfolioGen.methods.markowitz.portopt.assetGroupDistrMethod='byPairs';
-end
-function resChar=filesep()
-resChar='/';
-end

@@ -1,96 +1,99 @@
-function ExtApprEllVec = minkpm_ea(inpEllMat, inpEll, dirMat)
+function EA = minkpm_ea(EE, E2, L)
 %
 % MINKPM_EA - computation of external approximating ellipsoids
-%             of (E1 + E2 + ... + En) - E along given directions.
-%             where E = inpEll,
-%             E1, E2, ... En - are ellipsoids in inpEllMat.
+%             of (E1 + E2 + ... + En) - E in given directions.
 %
-%   ExtApprEllVec = MINKPM_EA(inpEllMat, inpEll, dirMat) - Computes
-%       external approximating ellipsoids of
-%       (E1 + E2 + ... + En) - E, where E1, E2, ..., En are ellipsoids
-%       in array inpEllMat, E = inpEll,
-%       along directions specified by columns of matrix dirMat.
 %
-% Input:
-%   regular:
-%       inpEllMat: ellipsoid [mRowsInpEllMat, nColsInpEllMat] -
-%           matrix of ellipsoids of the same dimentions.
-%       inpEll: ellipsoid [1, 1] - ellipsoid of the same dimention.
-%       dirMat: double[nDim, nCols] - matrix whose columns specify
-%           the directions for which the approximations
-%           should be computed.
+% Description:
+% ------------
+%
+%    EA = MINKPM_EA(EE, E, L)  Computes external approximating ellipsoids
+%                              of (E1 + E2 + ... + En) - E,
+%                              where E1, E2, ..., En are ellipsoids in array EE,
+%                              in directions specified by columns of matrix L.
+%
 %
 % Output:
-%   extApprEllVec: ellipsoid [1, nCols]/[0, 0] - array of external
-%       approximating ellipsoids. Empty, if for all specified
-%       directions approximations cannot be computed.
+% -------
 %
-% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+%    EA - array of external approximating ellipsoids
+%         (empty, if for all specified directions approximations cannot be computed).
+%
+%
+% See also:
+% ---------
+%
+%    ELLIPSOID/ELLIPSOID, MINKPM, MINKPM_IA, MINKSUM_EA, MINKDIFF_EA, MINKMP_EA.
+%
 
-import modgen.common.throwerror;
-import elltool.conf.Properties;
+%
+% Author:
+% -------
+%
+%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+%
 
-if ~(isa(inpEllMat, 'ellipsoid')) || ~(isa(inpEll, 'ellipsoid'))
-    throwerror('wrongInput', ...
-        'MINKPM_EA: first and second arguments must be ellipsoids.');
-end
+  global ellOptions;
 
-[mRowsInpEll, nColsInpEll] = size(inpEll);
-if (mRowsInpEll ~= 1) || (nColsInpEll ~= 1)
-    throwerror('wrongInput', ...
-        'MINKPM_EA: second argument must be single ellipsoid.');
-end
+  if ~isstruct(ellOptions)
+    evalin('base', 'ellipsoids_init;');
+  end
 
-mRowsDirMatrix  = size(dirMat, 1);
-nDims = dimension(inpEll);
-minDimInpEll = min(min(dimension(inpEllMat)));
-maxDimInpEll = max(max(dimension(inpEllMat)));
-if (minDimInpEll ~= maxDimInpEll) || (minDimInpEll ~= nDims)
-    throwerror('wrongSizes', ...
-        'MINKPM_EA: all ellipsoids must be of the same dimension.');
-end
-if nDims ~= mRowsDirMatrix
-    fstStr = 'MINKPM_EA: dimension of the direction vectors must ';
-    secStr = 'be the same as dimension of ellipsoids.';
-    throwerror('wrongSizes', [fstStr secStr]);
-end
+  if ~(isa(EE, 'ellipsoid')) | ~(isa(E2, 'ellipsoid'))
+    error('MINKPM_EA: first and second arguments must be ellipsoids.');
+  end
 
-nCols = size(dirMat, 2);
-ExtApprEllVec = [];
-isVrb = Properties.getIsVerbose();
-Properties.setIsVerbose(false);
+  [m, n] = size(E2);
+  if (m ~= 1) | (n ~= 1)
+    error('MINKPM_EA: second argument must be single ellipsoid.');
+  end
 
-% sanity check: the approximated set should be nonempty
-for iCol = 1:nCols
-    [svdUMat, ~, ~] = svd(dirMat(:, iCol));
-    fstExtApprEllVec = minksum_ea(inpEllMat, svdUMat);
-    if min(fstExtApprEllVec > inpEll) < 1
-        if isVrb > 0
-            fprintf('MINKPM_EA: the resulting set is empty.\n');
-        end
-        Properties.setIsVerbose(isVrb);
-        return;
+  k  = size(L, 1);
+  n  = dimension(E2);
+  mn = min(min(dimension(EE)));
+  mx = max(max(dimension(EE)));
+  if (mn ~= mx) | (mn ~= n)
+    error('MINKPM_EA: all ellipsoids must be of the same dimension.');
+  end
+  if n ~= k
+    error('MINKPM_EA: dimension of the direction vectors must be the same as dimension of ellipsoids.');
+  end
+
+  N                  = size(L, 2);
+  EA                 = [];
+  vrb                = ellOptions.verbose;
+  ellOptions.verbose = 0;
+  
+  % sanity check: the approximated set should be nonempty
+  for i = 1:N
+    [U, S, V] = svd(L(:, i));
+    ET        = minksum_ea(EE, U);
+    if min(ET > E2) < 1
+      if vrb > 0
+        fprintf('MINKPM_EA: the resulting set is empty.\n');
+      end
+      ellOptions.verbose = vrb;
+      return;
     end
-end
+  end
 
-secExtApprEllVec = minksum_ea(inpEllMat, dirMat);
+  ES = minksum_ea(EE, L);
 
-for iCol = 1:nCols
-    extApprEll = secExtApprEllVec(iCol);
-    dirVec = dirMat(:, iCol);
-    if ~isbaddirection(extApprEll, inpEll, dirVec)
-        ExtApprEllVec = [ExtApprEllVec ...
-            minkdiff_ea(extApprEll, inpEll, dirVec)];
+  for i = 1:N
+    E = ES(i);
+    l = L(:, i);
+    if ~isbaddirection(E, E2, l)
+      EA = [EA minkdiff_ea(E, E2, l)];
     end
-end
+  end
+  
+  ellOptions.verbose = vrb;
 
-Properties.setIsVerbose(isVrb);
-
-if isempty(ExtApprEllVec)
-    if Properties.getIsVerbose()
-        fprintf('MINKPM_EA: cannot compute external ');
-        fprintf('approximation for any\n           ');
-        fprintf('of the specified directions.\n');
+  if isempty(EA)
+    if ellOptions.verbose > 0
+      fprintf('MINKPM_EA: cannot compute external approximation for any\n');
+      fprintf('           of the specified directions.\n');
     end
-end
+  end
+
+  return;

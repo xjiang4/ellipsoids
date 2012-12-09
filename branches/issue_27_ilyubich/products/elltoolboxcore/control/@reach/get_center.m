@@ -32,7 +32,11 @@ function [C, T] = get_center(rs)
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
 
-  import elltool.conf.Properties;
+  global ellOptions;
+
+  if ~isstruct(ellOptions)
+    evalin('base', 'ellipsoids_init;');
+  end
 
   if ~(isa(rs, 'reach'))
     error('GET_CENTER: input argument must be reach set object.');

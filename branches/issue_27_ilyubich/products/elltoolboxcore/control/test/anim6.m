@@ -1,15 +1,16 @@
-import elltool.conf.Properties;
+global ellOptions;
 o.fill = 1;
 
-Properties.setNPlot2dPoints(500);
-Properties.setNTimeGridPoints(135);
+ellOptions.plot2d_grid = 500;
+ellOptions.time_grid = 135;
+
 A = {'0' '-10'; '1/(2 + sin(t))' '-4/(2 + sin(t))'};
 B = {'10' '0'; '0' '1/(2 + sin(t))'};
 U.center = {'10 -t'; '1'};
 U.shape = {'4 - sin(t)' '-1'; '-1' '1 + (cos(t))^2'};
 s = linsys(A, B, U);
 
-X0 = Properties.getAbsTol()*ell_unitball(2);
+X0 = ellOptions.abs_tol*ell_unitball(2);
 
 T = 5;
 
@@ -21,12 +22,12 @@ xx = xx{7};
 clear MM;
 h = figure;
 
-for i = 1:Properties.getNTimeGridPoints();
+for i = 1:ellOptions.time_grid;
 	cla;
 	t0 = tt(i);
 	t1 = t0 + T;
 	x0 = xx(:, i);
-	X0 = x0 + Properties.getAbsTol()*ell_unitball(2);
+	X0 = x0 + ellOptions.abs_tol*ell_unitball(2);
 	rs = reach(s, X0, L0, [t0 t1]);
 
 	ct = cut(rs, t1);

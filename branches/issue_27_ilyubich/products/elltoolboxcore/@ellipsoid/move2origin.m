@@ -1,34 +1,45 @@
-function outEllMat = move2origin(inpEllMat)
+function EO = move2origin(E)
 %
 % MOVE2ORIGIN - moves ellipsoids in the given array to the origin.
 %
-%   outEllMat = MOVE2ORIGIN(inpEll) - Replaces the centers of
-%       ellipsoids in inpEllMat with zero vectors.
 %
-% Input:
-%   regular:
-%       inpEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
+% Description:
+% ------------
+%
+%    EO = MOVE2ORIGIN(E)  Replaces the centers of ellipsoids in E with zero vectors.
+%
 %
 % Output:
-%   outEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids
-%       with the same shapes as in inpEllMat centered at the origin.
+% -------
 %
-% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+%    EO - array of ellipsoids with the same shapes as in E centered at the origin.
+%
+%
+% See also:
+% ---------
+%
+%    ELLIPSOID/ELLIPSOID.
+%
 
-import modgen.common.throwerror;
+%
+% Author:
+% -------
+%
+%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+%
 
-if ~(isa(inpEllMat, 'ellipsoid'))
-    throwerror('wrongInput', ...
-        'MOVE2ORIGIN: argument must be array of ellipsoids.');
-end
+  if ~(isa(E, 'ellipsoid'))
+    error('MOVE2ORIGIN: argument must be array of ellipsoids.');
+  end
 
-outEllMat = inpEllMat;
-[mRows, nCols] = size(outEllMat);
+  EO     = E;
+  [m, n] = size(EO);
 
-for iRow = 1:mRows
-    for jCol = 1:nCols
-        nDims = dimension(outEllMat(iRow, jCol));
-        outEllMat(iRow, jCol).center = zeros(nDims, 1);
+  for i = 1:m
+    for j = 1:n
+      d               = dimension(EO(i, j));
+      EO(i, j).center = zeros(d, 1);
     end
-end
+  end
+
+  return;

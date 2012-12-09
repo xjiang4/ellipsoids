@@ -96,7 +96,7 @@ classdef mlunit_test_mixed < mlunitext.test_case
                         modgen.struct.structcompare(SRes,SExpRes);
                     mlunit.assert_equals(true,isPos,reportStr);
                     %
-                    evalc('strucdisp(S,resFileName,inpArgList{:});');
+                    strucdisp(S,resFileName,inpArgList{:});
                     fid=fopen(resFileName,'r');
                     try
                         resCell=textscan(fid,'%[^\n]','delimiter','','whitespace','');

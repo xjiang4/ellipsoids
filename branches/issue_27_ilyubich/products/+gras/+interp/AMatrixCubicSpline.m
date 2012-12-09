@@ -1,4 +1,4 @@
-classdef AMatrixCubicSpline<gras.mat.IMatrixFunction
+classdef AMatrixCubicSpline<gras.interp.IMatrixInterpolant
     % $Author: Peter Gagarinov  <pgagarinov@gmail.com> $	$Date: 2011-08$
     % $Copyright: Moscow State University,
     %            Faculty of Computational Mathematics and Computer Science,

@@ -1,24 +1,44 @@
-function isPositiveArr = isempty(myHypArr)
+function res = isempty(H)
 %
 % ISEMPTY - checks if hyperplanes in H are empty.
 %
-% Input:
-%   regular:
-%       myHypArr: hyperplane [nDims1, nDims2, ...] - array
-%           of hyperplanes.
+%
+% Description:
+% ------------
+%
+%    RES = ISEMPTY(H)  Checks if hyperplanes in H are empty objects or not,
+%                      returns array of ones and zeros of the same size as H.
+%
 %
 % Output:
-%   isPositiveArr: logical[nDims1, nDims2, ...],
-%       isPositiveArr(iDim1, iDim2, ...) = true - if ellipsoid
-%       myHypArr(iDim1, iDim2, ...) is empty, false - otherwise.
+% -------
 %
-% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+%    1 - if hyperplane is empty, 0 - otherwise.
 %
-% $Author: Aushkap Nikolay <n.aushkap@gmail.com> $  $Date: 30-11-2012$
-% $Copyright: Moscow State University,
-%   Faculty of Computational Mathematics and Computer Science,
-%   System Analysis Department 2012 $
+%
+% See also:
+% ---------
+%
+%    HYPERPLANE/HYPERPLANE, DIMENSION.
+%
 
-hyperplane.checkIsMe(myHypArr);
-isPositiveArr = (dimension(myHypArr) == 0);
+%
+% Author:
+% -------
+%
+%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+%
+
+  global ellOptions;
+
+  if ~isstruct(ellOptions)
+    evalin('base', 'ellipsoids_init;');
+  end
+
+  if ~(isa(H, 'hyperplane'))
+    error('ISEMPTY: input argument must be hyperplane.');
+  end
+
+  res = ~dimension(H);
+
+  return;

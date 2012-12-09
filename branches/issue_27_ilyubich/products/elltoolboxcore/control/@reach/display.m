@@ -12,6 +12,13 @@ function display(rs)
 %
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
+
+  global ellOptions;
+
+  if ~isstruct(ellOptions)
+    evalin('base', 'ellipsoids_init;');
+  end
+
   fprintf('\n');
   disp([inputname(1) ' =']);
 

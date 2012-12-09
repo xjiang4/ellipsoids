@@ -12,7 +12,7 @@ clear P1;
   P2.center = {'0'};
   P2.shape  = 1;
   V = ellipsoid(1);
-  import elltool.conf.Properties;
+  global ellOptions;
   T        = [0 5];
   phi      = 0:0.1:pi;
   L0       = [cos(phi); sin(phi)];

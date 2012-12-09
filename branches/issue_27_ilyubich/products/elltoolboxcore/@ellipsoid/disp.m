@@ -1,23 +1,32 @@
-function disp(myEllMat)
+function disp(E)
 %
-% DISP - Displays ellipsoid object.
+% Description:
+% ------------
 %
-% Input:
-%   regular:
-%       myEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
+%    Displays ellipsoid object.
 %
-% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
 
-fprintf('Ellipsoid with parameters\n');
+%
+% Author:
+% -------
+%
+%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+%
 
-[mRows, nCols] = size(myEllMat);
-if (mRows > 1) || (nCols > 1)
-    fprintf('%dx%d array of ellipsoids.\n\n', mRows, nCols);
-else
-    fprintf('Center:\n'); disp(myEllMat.center);
-    fprintf('Shape Matrix:\n'); disp(myEllMat.shape);
-    if isempty(myEllMat)
-        fprintf('Empty ellipsoid.\n\n');
-    end
-end
+  fprintf('Ellipsoid with parameters\n');
+
+  [m, n] = size(E);
+  if (m > 1) | (n > 1)
+    fprintf('%dx%d array of ellipsoids.\n\n', m, n);
+    return;
+  end
+
+  fprintf('Center:\n'); disp(E.center);
+  fprintf('Shape Matrix:\n'); disp(E.shape);
+
+  if isempty(E)
+    fprintf('Empty ellipsoid.\n\n');
+    return;
+  end
+
+  return;

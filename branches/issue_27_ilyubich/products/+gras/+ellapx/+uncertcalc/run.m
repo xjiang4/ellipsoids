@@ -46,11 +46,6 @@ sysConfRepoMgr.selectConf(sysConfName,'reloadIfSelected',false);
 %% Configure logging
 Log4jConfigurator.configure(confRepoMgr);
 logger=Log4jConfigurator.getLogger();
-%% Configure Matrix Operations factory
-isSplineUsed=confRepoMgr.getParam(...
-    'genericProps.isSplineForMatrixCalcUsed');
-gras.mat.MatrixOperationsFactory.setIsSplineUsed(...
-    isSplineUsed);
 %% Create directory for storing the results
 isCustomResDir=confRepoMgr.getParam('customResultDir.isEnabled');
 if isCustomResDir

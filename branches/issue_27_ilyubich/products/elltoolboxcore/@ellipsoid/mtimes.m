@@ -1,53 +1,61 @@
-function outEllVec = mtimes(multMat, inpEllVec)
+function res = mtimes(A, E)
 %
-% MTIMES - overloaded operator '*'.
 %
-%   Multiplication of the ellipsoid by a matrix or a scalar.
-%   If inpEllVec(iEll) = E(q, Q) is an ellipsoid, and
-%   multMat = A - matrix of suitable dimensions,
-%   then A E(q, Q) = E(Aq, AQA').
+% Description:
+% ------------
 %
-% Input:
-%   regular:
-%       multMat: double[mRows, nDims]/[1, 1] - scalar or
-%           matrix in R^{mRows x nDim}
-%       inpEllVec: ellipsoid [1, nCols] - array of ellipsoids.
+%    Multiplication of the ellipsoid by a matrix or a scalar.
+%    If E(q,Q) is an ellipsoid, and A - matrix of suitable dimensions,
+%    then
+%          A E(q, Q) = E(Aq, AQA').
+%        
+%
 %
 % Output:
-%   outEllVec: ellipsoid [1, nCols] - resulting ellipsoids.
+% -------
 %
-% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+%    Resulting ellipsoid E(Aq, AQA').
+%
+%
+% See also:
+% ---------
+%
+%    ELLIPSOID/ELLIPSOID.
+%
 
-import modgen.common.throwerror;
-if ~(isa(multMat, 'double')) || ~(isa(inpEllVec, 'ellipsoid'))
-    fstStr = 'MTIMES: first multiplier is expected';
-    secStr = ' to be a matrix or a scalar,\n        ';
-    thdStr = 'and second multiplier - an ellipsoid.';
-    throwerror('wrongInput', [fstStr secStr thdStr]);
-end
+%
+% Author:
+% -------
+%
+%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+%
 
-[mRows, nDims] = size(multMat);
-nDimsInpEll = dimension(inpEllVec);
-maxDims = max(max(nDimsInpEll));
-minDims = min(min(nDimsInpEll));
-if ((maxDims ~= minDims) && (nDims ~= 1) && (mRows ~= 1)) ...
-        || ((maxDims ~= nDims) && (nDims ~= 1) && (mRows ~= 1))
-    throwerror('wrongSizes', 'MTIMES: dimensions do not match.');
-end
+  if ~(isa(A, 'double')) | ~(isa(E, 'ellipsoid'))
+    msg = sprintf('MTIMES: first multiplier is expected to be a matrix or a scalar,\n        and second multiplier - an ellipsoid.');
+    error(msg);
+  end
 
-[mRowsInpEll, nCols] = size(inpEllVec);
-for iRow = 1:mRowsInpEll
-    for jCol = 1:nCols
-        shMat = multMat*(inpEllVec(iRow, jCol).shape)*multMat';
-        shMat = 0.5*(shMat + shMat');
-        subOutEll(jCol) = ellipsoid(multMat *...
-            (inpEllVec(iRow, jCol).center), shMat);
+  [m, n] = size(A); 
+  d      = dimension(E);
+  k      = max(d);
+  l      = min(d);
+  if ((k ~= l) & (n ~= 1) & (m ~= 1)) | ((k ~= n) & (n ~= 1) & (m ~= 1))
+    error('MTIMES: dimensions do not match.');
+  end
+
+  [m, n] = size(E);
+  for i = 1:m
+    for j = 1:n
+     Q    = A*(E(i, j).shape)*A';
+     Q    = 0.5*(Q + Q');
+     r(j) = ellipsoid(A*(E(i, j).center), Q);
     end
-    if iRow == 1
-        outEllVec = subOutEll;
+    if i == 1
+      res = r;
     else
-        outEllVec = [outEllVec; subOutEll];
+      res = [res; r];
     end
-    clear subOutEll;
-end
+    clear r;
+  end
+
+  return;

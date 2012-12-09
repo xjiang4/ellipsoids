@@ -1,140 +1,146 @@
-function [intEllMat, isnIntersectedMat] = ...
-    hpintersection(myEllMat, myHypMat)
+function [I, isnIntersectedMat] = hpintersection(E, H)
+
+import modgen.common.throwerror 
+
 %
 % HPINTERSECTION - computes the intersection of ellipsoid with hyperplane.
 %
-% Input:
-%   regular:
-%       myEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
-%       myHypMat: hyperplane [mRows, nCols] - matrix of hyperplanes
-%           of the same size.
+%
+% Description:
+% ------------
+%
+%    I = HPINTERSECTION(E, H)  Given array of ellipsoids E and array of hyperplane
+%                              structures H of the same size, or, alternatively,
+%                              E can be single ellipsoid or H - single hyperplane,
+%                              compute intersections of ellipsoids with
+%                              hyperplanes pairwise.
+%
+%
+% 
+%
 %
 % Output:
-%   intEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids
-%       resulting from intersections.
+% -------
+%      I - array of ellipsoids resulting from intersections.
+%      isnIntersectedMat - logical matrix. 
+%      isnIntersectedMat(i, j) = true, if E(i, j) doesn't intersect H(i, j)
+%      isnIntersectedMat(i, j) = false, otherwise. 
+%        
 %
-%   isnIntersectedMat: logical[mRows, nCols].
-%       isnIntersectedMat(i, j) = true, if myEllMat(i, j) 
-%       doesn't intersect myHipMat(i, j),
-%       isnIntersectedMat(i, j) = false, otherwise.
+% See also:
+% ---------
 %
-% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+%    ELLIPSOID/ELLIPSOID, DISTANCE, INTERSECT, HYPERPLANE/HYPERPLANE.
+%
 
-import elltool.conf.Properties;
-import modgen.common.throwerror;
+%
+% Author:
+% -------
+%
+%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+%
 
-if ~(isa(myEllMat, 'ellipsoid')) || ~(isa(myHypMat, 'hyperplane'))
-    fstErrMsg = 'HPINTERSECTION: first argument must be ellipsoid';
-    secErrMsg = 'second argument - hyperplane.';
-    throwerror('wrongInput', [fstErrMsg ', ' secErrMsg]);
-end
-if ndims(myEllMat) ~= 2
-    throwerror('wrongInput:wrongDim','The dimension of input must be 2');
-end;
-if ndims(myHypMat) ~= 2
-    throwerror('wrongInput:wrongDim','The dimension of input must be 2');
-end;
+  global ellOptions;
 
-[mEllRows, nEllCols] = size(myEllMat);
-[mHipRows, nHipCols] = size(myHypMat);
-nEllipsoids     = mEllRows * nEllCols;
-nHiperplanes     = mHipRows * nHipCols;
-if (nEllipsoids > 1) && (nHiperplanes > 1) && ...
-        ((mEllRows ~= mHipRows) || (nEllCols ~= nHipCols))
-    fstErrMsg = 'HPINTERSECTION: ';
-    secErrMsg = 'sizes of ellipsoidal and hyperplane arrays do not match.';
-    throwerror('wrongSizes', [fstErrMsg secErrMsg]);
-end
+  if ~isstruct(ellOptions)
+    evalin('base', 'ellipsoids_init;');
+  end
 
-isSecondOutput = nargout==2;
+  if ~(isa(E, 'ellipsoid')) | ~(isa(H, 'hyperplane'))
+    error('HPINTERSECTION: first argument must be ellipsoid, second argument - hyperplane.');
+  end 
+  if ndims(E) ~= 2
+      throwerror('wrongInput:wrongDim','The dimension of input must be 2');
+  end;
+  if ndims(H) ~= 2
+       throwerror('wrongInput:wrongDim','The dimension of input must be 2');
+  end;
 
-if (isSecondOutput)
-    isnIntersectedMat = false(mEllRows, nEllCols);
-end;
+  [m, n] = size(E);
+  [k, l] = size(H);
+  t1     = m * n;
+  t2     = k * l;
+  if (t1 > 1) & (t2 > 1) & ((m ~= k) | (n ~= l))
+    error('HPINTERSECTION: sizes of ellipsoidal and hyperplane arrays do not match.');
+  end
+  
+  isSecondOutput = nargout==2;
+  
+  if (isSecondOutput)
+    isnIntersectedMat = false(m, n);
+  end;
 
-nEllDimsMat = dimension(myEllMat);
-nHipDimsMat = dimension(myHypMat);
-minEllDim   = min(min(nEllDimsMat));
-minHipDim   = min(min(nHipDimsMat));
-maxEllDim   = max(max(nEllDimsMat));
-maxHipDim   = max(max(nHipDimsMat));
-if (minEllDim ~= maxEllDim)
-    throwerror('wrongSizes', ...
-        'HPINTERSECTION: ellipsoids must be of the same dimension.');
-end
-if (minHipDim ~= maxHipDim)
-    throwerror('wrongSizes', ...
-        'HPINTERSECTION: hyperplanes must be of the same dimension.');
-end
+  dims1 = dimension(E);
+  dims2 = dimension(H);
+  mn1   = min(min(dims1));
+  mn2   = min(min(dims2));
+  mx1   = max(max(dims1));
+  mx2   = max(max(dims2));
+  if (mn1 ~= mx1)
+    error('HPINTERSECTION: ellipsoids must be of the same dimension.');
+  end
+  if (mn2 ~= mx2)
+    error('HPINTERSECTION: hyperplanes must be of the same dimension.');
+  end
 
-if Properties.getIsVerbose()
-    if (nEllipsoids > 1) || (nHiperplanes > 1)
-        fprintf('Computing %d ellipsoid-hyperplane intersections...\n',...
-            max([nEllipsoids nHiperplanes]));
+  if ellOptions.verbose > 0
+    if (t1 > 1) | (t2 > 1)
+      fprintf('Computing %d ellipsoid-hyperplane intersections...\n', max([t1 t2]));
     else
-        fprintf('Computing ellipsoid-hyperplane intersection...\n');
+      fprintf('Computing ellipsoid-hyperplane intersection...\n');
     end
-end
+  end
 
-intEllMat = [];
-if (nEllipsoids > 1) && (nHiperplanes > 1)
-    for iRow = 1:mEllRows
-        intEllVec = [];
-        for jCol = 1:nEllCols
-            if distance(myEllMat(iRow, jCol), myHypMat(iRow, jCol)) > 0
-                intEllVec = [intEllVec ellipsoid];
-                if (~isSecondOutput)
-                    throwerror('degenerateEllipsoid',...
-                        'Hypeplane doesn''t intersect ellipsoid');
-                else
-                    isnIntersectedMat(iRow, jCol) = true;
-                end;
-            else
-                intEllVec = [intEllVec ...
-                    l_compute1intersection(myEllMat(iRow, jCol), ...
-                    myHypMat(iRow, jCol), maxEllDim)];
-            end
-        end
-        intEllMat = [intEllMat; intEllVec];
+  I = [];
+  if (t1 > 1) & (t2 > 1)
+    for i = 1:m
+      Q = [];
+      for j = 1:n
+        if distance(E(i, j), H(i, j)) > 0
+          Q = [Q ellipsoid];
+          if (~isSecondOutput)
+            throwerror('degenerateEllipsoid','Hypeplane doesn''t intersect ellipsoid');
+          else
+            isnIntersectedMat(i, j) = true;
+          end;
+	else
+          Q = [Q l_compute1intersection(E(i, j), H(i, j), mx1)];
+	end
+      end
+      I = [I; Q];
     end
-elseif (nEllipsoids > 1)
-    for iRow = 1:mEllRows
-        intEllVec = [];
-        for jCol = 1:nEllCols
-            if distance(myEllMat(iRow, jCol), myHypMat) > 0
-                intEllVec = [intEllVec ellipsoid];
-            else
-                intEllVec = [intEllVec ...
-                    l_compute1intersection(myEllMat(iRow, jCol), ...
-                    myHypMat, maxEllDim)];
-            end
-        end
-        intEllMat = [intEllMat; intEllVec];
+  elseif (t1 > 1)
+    for i = 1:m
+      Q = [];
+      for j = 1:n
+        if distance(E(i, j), H) > 0
+          Q = [Q ellipsoid];
+	else
+          Q = [Q l_compute1intersection(E(i, j), H, mx1)];
+	end
+      end
+      I = [I; Q];
     end
-else
-    for iRow = 1:mHipRows
-        intEllVec = [];
-        for jCol = 1:nHipCols
-            if distance(myEllMat, myHypMat(iRow, jCol)) > 0
-                intEllVec = [intEllVec ellipsoid];
-                if (~isSecondOutput)
-                    throwerror('degenerateEllipsoid',...
-                        'Hypeplane doesn''t intersect ellipsoid');
-                else
-                    isnIntersectedMat(iRow, jCol) = true;
-                end;
-            else
-                intEllVec = [intEllVec ...
-                    l_compute1intersection(myEllMat, ...
-                    myHypMat(iRow, jCol), maxEllDim)];
-            end
-        end
-        intEllMat = [intEllMat; intEllVec];
+  else
+    for i = 1:k
+      Q = [];
+      for j = 1:l
+        if distance(E, H(i, j)) > 0
+          Q = [Q ellipsoid];
+          if (~isSecondOutput)
+            throwerror('degenerateEllipsoid','Hypeplane doesn''t intersect ellipsoid');
+          else
+            isnIntersectedMat(i, j) = true;
+          end;
+	else
+          Q = [Q l_compute1intersection(E, H(i, j), mx1)];
+	end
+      end
+      I = [I; Q];
     end
-end
+  end
 
-end
+  return;
 
 
 
@@ -142,56 +148,42 @@ end
 
 %%%%%%%%
 
-function intEll = l_compute1intersection(myEll, myHyp, maxEllDim)
+function I = l_compute1intersection(E, H, n)
 %
 % L_COMPUTE1INTERSECTION - computes intersection of single ellipsoid with
 %                          single hyperplane.
 %
-% Input:
-%   regular:
-%       myEll: ellipsoid [1, 1] - ellipsoid.
-%       myHyp: hyperplane [1, 1] - hyperplane.
-%       maxEllDim: double [1, 1] - maximum dimension of ellipsoids.
-%
-% Output:
-%   intEll: ellipsoid [1, 1] - ellipsoid resulting from intersections.
-%
-% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
 
-import elltool.conf.Properties;
+  global ellOptions;
 
-[normHypVec, hypScalar] = parameters(myHyp);
-if hypScalar < 0
-    normHypVec = - normHypVec;
-    hypScalar = - hypScalar;
-end
-tMat = ell_valign([1; zeros(maxEllDim-1, 1)], normHypVec);
-rotVec = (hypScalar*tMat*normHypVec)/(normHypVec'*normHypVec);
-myEll = tMat*myEll - rotVec;
-myEllCentVec = myEll.center;
-myEllShMat = myEll.shape;
+  [v, c] = parameters(H);
+  if c < 0
+    v = - v;
+    c = - c;
+  end
+  T = ell_valign([1; zeros(n-1, 1)], v);
+  f = (c*T*v)/(v'*v);
+  E = T*E - f;
+  q = E.center;
+  Q = E.shape;
 
-if rank(myEllShMat) < maxEllDim
-    if Properties.getIsVerbose()
-        fprintf('HPINTERSECTION: Warning! Degenerate ellipsoid.\n');
-        fprintf('                Regularizing...\n');
+  if rank(Q) < n
+    if ellOptions.verbose > 0
+      fprintf('HPINTERSECTION: Warning! Degenerate ellipsoid.\n');
+      fprintf('                Regularizing...\n');
     end
-    myEllShMat = ellipsoid.regularize(myEllShMat,myEll.absTol);
-end
+    Q = regularize(Q);
+  end
 
-invMyEllShMat   = ell_inv(myEllShMat);
-invMyEllShMat   = 0.5*(invMyEllShMat + invMyEllShMat');
-invShMatrixVec   = invMyEllShMat(2:maxEllDim, 1);
-invShMatrixElem = invMyEllShMat(1, 1);
-invMyEllShMat   = ell_inv(invMyEllShMat(2:maxEllDim, 2:maxEllDim));
-invMyEllShMat   = 0.5*(invMyEllShMat + invMyEllShMat');
-hCoefficient   = (myEllCentVec(1, 1))^2 * (invShMatrixElem - ...
-    invShMatrixVec'*invMyEllShMat*invShMatrixVec);
-intEllcentVec   = myEllCentVec + myEllCentVec(1, 1)*...
-    [-1; invMyEllShMat*invShMatrixVec];
-intEllShMat   = (1 - hCoefficient) * [0 zeros(1, maxEllDim-1); ...
-    zeros(maxEllDim-1, 1) invMyEllShMat];
-intEll   = ellipsoid(intEllcentVec, intEllShMat);
-intEll   = ell_inv(tMat)*(intEll + rotVec);
-end
+  W   = ell_inv(Q);
+  W   = 0.5*(W + W');
+  w   = W(2:n, 1);
+  w11 = W(1, 1);
+  W   = ell_inv(W(2:n, 2:n));
+  W   = 0.5*(W + W');
+  h   = (q(1, 1))^2 * (w11 - w'*W*w);
+
+  z   = q + q(1, 1)*[-1; W*w];
+  Z   = (1 - h) * [0 zeros(1, n-1); zeros(n-1, 1) W];
+  I   = ellipsoid(z, Z);
+  I   = ell_inv(T)*(I + f);

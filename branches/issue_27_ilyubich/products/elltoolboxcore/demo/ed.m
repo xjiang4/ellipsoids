@@ -10,18 +10,21 @@ function slide = ell_demo1
 %    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 %
 
-  import elltool.conf.Properties;
+  global ellOptions;
 
+  if ~isstruct(ellOptions)
+    evalin('base', 'ellipsoids_init;');
+  end
 
-  verbose                = Properties.getIsVerbose();
-  plot2d_grid            = Properties.getNPlot2dPoints();
-  Properties.setIsVerbose(false);
-  Properties.setNPlot2dPoints(1000);
+  verbose                = ellOptions.verbose;
+  plot2d_grid            = ellOptions.plot2d_grid;
+  ellOptions.verbose     = 0;
+  ellOptions.plot2d_grid = 1000;
 
   if nargout < 1
     playshow ed;
-    Properties.setIsVerbose(verbose);
-    Properties.setNPlot2dPoints(plot2d_grid);
+    ellOptions.verbose     = verbose;
+    ellOptions.plot2d_grid = plot2d_grid;
   else
     NN = 1;
     slide(NN).code = {

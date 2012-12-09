@@ -1,25 +1,44 @@
-function isPositiveMat = isempty(myEllMat)
+function res = isempty(E)
 %
 % ISEMPTY - checks if the ellipsoid object is empty.
 %
-% Input:
-%   regular:
-%       myEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
+%
+% Description:
+% ------------
+%
+%    RES = ISEMPTY(E)  Given ellipsoidal array E, returns array of ones and zeros
+%                      specifying which ellipsoids in the array are empty.
+%
 %
 % Output:
-%   isPositiveMat: logical[1mRows, nCols], 
-%       isPositiveMat(iRow, jCol) = true - if ellipsoid
-%       myEllMat(iRow, jCol) is empty, false - otherwise.
+% -------
 %
-% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+%    1 - if ellipsoid is empty, 0 - otherwise.
+%
+%
+% See also:
+% ---------
+%
+%    ELLIPSOID/ELLIPSOID.
+%
 
-import elltool.conf.Properties;
-import modgen.common.throwerror;
+%
+% Author:
+% -------
+%
+%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+%
 
-if ~(isa(myEllMat, 'ellipsoid'))
-    throwerror('wrongInput', ...
-        'ISEMPTY: input argument must be ellipsoid.');
-end
+  global ellOptions;
 
-isPositiveMat = ~dimension(myEllMat);
+  if ~isstruct(ellOptions)
+    evalin('base', 'ellipsoids_init;');
+  end
+
+  if ~(isa(E, 'ellipsoid'))
+    error('ISEMPTY: input argument must be ellipsoid.');
+  end
+
+  res = ~dimension(E);
+
+  return;
