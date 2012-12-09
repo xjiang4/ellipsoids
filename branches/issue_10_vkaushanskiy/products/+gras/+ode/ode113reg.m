@@ -129,8 +129,8 @@ phase1 = true;
 
 % THE MAIN LOOP
 dyNewCorrVec=zeros(neq,1,dataType);
-done = false;
-while ~done
+isDone = false;
+while ~isDone
     
     % By default, hmin is a small number such that t+hmin is only slightly
     % different than t.  It might be 0 if t is 0.
@@ -142,7 +142,7 @@ while ~done
     if 1.1*absh >= abs(tfinal - t)
         h = tfinal - t;
         absh = abs(h);
-        done = true;
+        isDone = true;
     end
     
     % LOOP FOR ADVANCING ONE STEP.
@@ -164,6 +164,7 @@ while ~done
         
         % ns is the number of steps taken with h, including the
         % current one.  When k < ns, no coefficients change
+        prDispObj.progress(t);
         if iRegStep==0
             dpNewCorrVec=dyNewCorrVec;
             dyNewCorrVec=zeros(neq,1,dataType);
@@ -250,7 +251,7 @@ while ~done
         
         tlast = t;
         t = tlast + h;
-        if done
+        if isDone
             t = tfinal;   % Hit end point exactly.
         end
         
@@ -342,7 +343,7 @@ while ~done
             h = absh;
             k = knew;
             K = 1:k;
-            done = false;
+            isDone = false;
             
         else
             if isWeakViol
@@ -418,7 +419,7 @@ while ~done
                     h = absh;
                     k = knew;
                     K = 1:k;
-                    done = false;
+                    isDone = false;
 
                 else
                     if isWeakViol
@@ -457,9 +458,7 @@ while ~done
 
     % Update differences for next step.
     phi(:,k+1) = yp - phi(:,1);
-    if max(dyNewCorrVec) > 0
-        fff = 1;
-    end
+ 
     phi(:,k+2) = phi(:,k+1) - phi(:,k+2);
     for i = K
         phi(:,i) = phi(:,i) + phi(:,k+1);
@@ -553,7 +552,7 @@ while ~done
         dyRegMat(:,idx)=repmat(dyNewCorrVec ,1,nout_new);
     end
     
-    if done
+    if isDone
         break
     end
     
