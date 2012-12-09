@@ -5,8 +5,6 @@ import modgen.common.throwerror;
 import modgen.common.type.simple.*;
 
 solver_name = 'ode113reg';
-global ttVec;
-global yyMat;
 % Constants
 N_MAX_REG_STEPS_DEFAULT=3;
 N_PROGRESS_DOTS_SHOWN=10;
@@ -33,7 +31,7 @@ options=odeset(options,opts{:});
 
 checkgen(fOdeDeriv,'isfunction(x)');
 checkgen(fOdeReg,'isfunction(x)');
-
+%checkvar!!!
 
 sol = []; klastvec = []; phi3d = []; psi2d = [];
 

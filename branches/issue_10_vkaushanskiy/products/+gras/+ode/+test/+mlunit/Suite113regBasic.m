@@ -1,4 +1,8 @@
 classdef Suite113regBasic < mlunitext.test_case
+    properties (Access=private)
+        odeSolver;
+        odeSolverNonReg;
+    end
     methods (Static,Access=private)
         function y=fDeriv(t,y)
             aMat=[sin(t),cos(t),0;cos(t),0,1;0,0,1];
@@ -11,7 +15,8 @@ classdef Suite113regBasic < mlunitext.test_case
         end
         %
         function self = set_up_param(self,varargin)
-            
+            self.odeSolver = varargin{1};
+            self.odeSolverNonReg = varargin{2};
         end
         function self=testode113regStrict(self)
             tStart=0;
@@ -31,7 +36,8 @@ classdef Suite113regBasic < mlunitext.test_case
             s=warning('off','MATLAB:ode45:IntegrationTolNotMet');
             try
                 [tVec,yMat,dyRegMat]=...
-                    gras.ode.ode113reg(@(t,y)fOdeDerivReg(t,y,fReg),...
+                    feval(self.odeSolver,...
+                    @(t,y)fOdeDerivReg(t,y,fReg),...
                     @(t,y)fReg(y),...
                     [tStart,tEnd],initVec,odeset(odePropList{:}),...
                     odeRegPropList{:});
@@ -67,6 +73,9 @@ classdef Suite113regBasic < mlunitext.test_case
         end
         function self=testode113regPosSame(self)
             import modgen.common.throwerror;
+            import gras.ode.ode45reg;
+            import gras.ode.ode113reg;
+ 
             tStart=0;
             tEnd=0.65;
             aTol=0.00001;
@@ -146,7 +155,7 @@ classdef Suite113regBasic < mlunitext.test_case
                          [ttVec,yyMat]=ode45(fOdeDeriv,tsVec,initVec,...
                             odeset(odePropList{:},'nonNegative',1));
                         [tVec,yMat,dyRegMat]=...
-                            gras.ode.ode113reg(@(t,y)fOdeDerivReg(t,y,fReg),...
+                            feval(self.odeSolver, @(t,y)fOdeDerivReg(t,y,fReg),...
                             @(t,y)fReg(y),...
                             tsVec,initVec,odeset(odePropList{:}),...
                             odeRegPropList{:});
@@ -160,11 +169,11 @@ classdef Suite113regBasic < mlunitext.test_case
                         %
                         fReg=@(y)fOdeRegNeg(y,1);
                         fOdeRevDeriv=@(t,y)-fOdeDeriv(t,-y);
-                        [ttVec,yyMat]=ode45(fOdeRevDeriv,tsVec,-initVec,...
+                        [ttVec,yyMat]=feval(self.odeSolverNonReg, fOdeRevDeriv,tsVec,-initVec,...
                             odeset(odePropList{:},'nonNegative',1));
                         yyMat=-yyMat;
                         [tVec,yMat,dyRegMat]=...
-                            gras.ode.ode113reg(@(t,y)fOdeDerivReg(t,y,fReg),...
+                            feval(self.odeSolver, @(t,y)fOdeDerivReg(t,y,fReg),...
                             @(t,y)fReg(y),...
                             tsVec,initVec,odeset(odePropList{:}),...
                             odeRegPropList{:});
@@ -239,17 +248,17 @@ classdef Suite113regBasic < mlunitext.test_case
                 %check that for the positive solution ode113reg works in the same
                 %way as plain ode45
                 [~,yMat,mMat]=...
-                    gras.ode.ode113reg(@(t,y)cos(y),@fRegDummy,tVec,initVec,...
+                    feval(self.odeSolver, @(t,y)cos(y),@fRegDummy,tVec,initVec,...
                     odePropList{:});
-                [~,yyMat]=ode113(@(t,y)cos(y),tVec,initVec,...
+                [~,yyMat]=feval(self.odeSolverNonReg, @(t,y)cos(y),tVec,initVec,...
                     odeset(odePropList{:}));
                 mlunit.assert_equals(true,isequal(yMat,yyMat));
                 mlunit.assert_equals(true,all(mMat(:)==0));
                 %% check that zero derivative doesn't change initial value
                 [ttVec,yMat,mMat]=...
-                    gras.ode.ode113reg(@fDeriv,@fReg,tVec,initVec,...
+                    feval(self.odeSolver, @fDeriv,@fReg,tVec,initVec,...
                     odePropList{:});
-                [~,yyMat]=ode45(@(t,y)cos(y),tVec,initVec,...
+                [~,yyMat]=feval(self.odeSolverNonReg, @(t,y)cos(y),tVec,initVec,...
                     odeset(odePropList{:}));
                 isOk=isequal(yMat,repmat(initVec,nTimePoints,1));
                 mlunit.assert_equals(true,isOk);
@@ -262,17 +271,17 @@ classdef Suite113regBasic < mlunitext.test_case
                 function checkReg(tSpanVec)
                     fDeriv=@(t,y)cos(t).*[1;1;1;1];
                     %% check the way regularization works correctly when tVec is specified
-                    tRegVec=gras.ode.ode113reg(fDeriv,...
+                    tRegVec=feval(self.odeSolver, fDeriv,...
                         @fReg,tSpanVec,initVec,odePropList{:},'Refine',1,...
                         odeRegPropList{:});
                     %
-                    [tNotRegVec,~]=ode45(fDeriv,...
+                    [tNotRegVec,~]=feval(self.odeSolverNonReg, fDeriv,...
                         tSpanVec,initVec,odeset(odePropList{:},'Refine',1));
                     %
                     tVec=union(tRegVec,tNotRegVec).';
                     %
                     [tRegVec,yRegMat,mMat]=...
-                        gras.ode.ode113reg(fDeriv,...
+                        feval(self.odeSolver, fDeriv,...
                         @fReg,tVec,initVec,odePropList{:},...
                         odeRegPropList{:});
                     %
@@ -285,15 +294,17 @@ classdef Suite113regBasic < mlunitext.test_case
                     yRegRestoredVec=muVec+yNotRegVec;
                     yRegVec=yRegMat(:,1);
                     isOk=max(abs(yRegRestoredVec-yRegVec))<=1.2*absTol;
-                    plot(tNotRegVec,yRegRestoredVec,'g');hold on;plot(tRegVec,yRegVec,'r')
+                    %plot(tNotRegVec,yRegRestoredVec,'g');hold on;plot(tRegVec,yRegVec,'r')
                     mlunit.assert_equals(true,isOk);
                     %
-                    plot(tNotRegVec,yRegRestoredVec,'g');hold on;plot(tRegVec,yRegVec,'r')
+                    %plot(tNotRegVec,yRegRestoredVec,'g');hold on;plot(tRegVec,yRegVec,'r')
                 end
             end
             
         end
         function self=testMatrixSysODESolver(self)
+        
+ 
             odePropList={'NormControl','on','RelTol',0.001,'AbsTol',0.0001};
             sizeVecList={[3 3],[2 2],[2 4 1],[2 1]};
             nTimePoints=100;
@@ -302,9 +313,9 @@ classdef Suite113regBasic < mlunitext.test_case
                 'UniformOutput',false);
             indEqNoDyn=2;
             indFuncEqNoDyn=1;
-            fSolver=@gras.ode.ode113reg;
+            fSolver=str2func(self.odeSolver);
             check({@fSimpleDerivFunc,@fAdvRegFunc},'outArgStartIndVec',[1 2]);
-            fSolver=@ode113;            
+            fSolver=str2func(self.odeSolverNonReg);            
             check(@fSimpleDerivFunc);
             %
             function resList=check(fDerivFuncList,varargin)
@@ -360,7 +371,8 @@ classdef Suite113regBasic < mlunitext.test_case
         end
         %
         function self=testMatrixODESolver(self)
-            odePropList={@ode113,'NormControl','on','RelTol',0.001,'AbsTol',0.0001};
+    
+            odePropList={@ode45,'NormControl','on','RelTol',0.001,'AbsTol',0.0001};
             sizeVec=[3 3];
             nTimePoints=100;
             timeVec=linspace(0,1,nTimePoints);
