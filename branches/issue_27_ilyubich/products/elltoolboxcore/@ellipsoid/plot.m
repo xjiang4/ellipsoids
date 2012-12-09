@@ -209,7 +209,7 @@ SData.figureNumCMat = repmat({1},ell_count,1);
 SData.faceVertexCDataXCMat = repmat({1},ell_count,1);
 SData.faceVertexCDataYCMat = repmat({1},ell_count,1);
 SData.faceVertexCDataZCMat = repmat({1},ell_count,1);
-
+SData.clrVec = repmat({1},ell_count,1);
 SData.widVec = lineWidth.';
 SData.shadVec = shad.';
 for iEll = 1:ell_count
@@ -222,11 +222,8 @@ for iEll = 1:ell_count
     qMat = ell.shape;
     
     if ucolor(iEll) == 1
-        clr = vcolor(iEll, :);
-    else
-        clr = colorVec(iEll, :);
+        colorVec(iEll,:) = vcolor(iEll, :);    
     end
-    
     switch nDim
         case 2,
             x = ellbndr_2d(ell);
@@ -248,6 +245,7 @@ for iEll = 1:ell_count
             SData.faceXCMat{iEll} = chll(:,1);
             SData.faceYCMat{iEll} = chll(:,2);
             SData.faceZCMat{iEll} = chll(:,3);  
+            clr = colorVec(iEll,:);
             col = clr(ones(1, vs), :);
             SData.faceVertexCDataXCMat{iEll} = col(:,1);
             SData.faceVertexCDataYCMat{iEll} = col(:,2);
@@ -257,9 +255,9 @@ for iEll = 1:ell_count
             SData.x2CMat{iEll} = q+sqrt(qMat);
             SData.qCMat{iEll} = q(1, 1);
     end
+    SData.clrVec{iEll} = colorVec(iEll,:);
 end
 SData.fill = (isFill~=0)';
-SData.clrVec = colorVec;
 rel=smartdb.relations.DynamicRelation(SData);
 if (nDim==2)
     if isFill(iEll) ~= 0
