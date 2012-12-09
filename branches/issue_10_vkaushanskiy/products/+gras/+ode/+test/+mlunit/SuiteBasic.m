@@ -1,4 +1,4 @@
-classdef Suite113regBasic < mlunitext.test_case
+classdef SuiteBasic < mlunitext.test_case
     properties (Access=private)
         odeSolver;
         odeSolverNonReg;
@@ -10,7 +10,7 @@ classdef Suite113regBasic < mlunitext.test_case
         end
     end
     methods
-        function self = Suite113regBasic(varargin)
+        function self = SuiteBasic(varargin)
             self = self@mlunitext.test_case(varargin{:});
         end
         %
@@ -18,7 +18,7 @@ classdef Suite113regBasic < mlunitext.test_case
             self.odeSolver = varargin{1};
             self.odeSolverNonReg = varargin{2};
         end
-        function self=testode113regStrict(self)
+        function self=testStrict(self)
             tStart=0;
             aTol=0.00001;
             regAbsTol=1e-8;
@@ -71,7 +71,7 @@ classdef Suite113regBasic < mlunitext.test_case
                 yp=-1./y;
             end
         end
-        function self=testode113regPosSame(self)
+        function self=testPosSame(self)
             import modgen.common.throwerror;
             import gras.ode.ode45reg;
             import gras.ode.ode113reg;
@@ -216,7 +216,7 @@ classdef Suite113regBasic < mlunitext.test_case
                 yRegMat(indNonNegative,:)=max(yRegMat(indNonNegative,:),0);
             end
         end
-        function self=testode113reg(self)
+        function self=testReg(self)
             function f=fDeriv(t,y)
                 f=zeros(size(y));
             end
@@ -382,9 +382,9 @@ classdef Suite113regBasic < mlunitext.test_case
             initVal=ones(3,1);
             check();
             function check()
-                import gras.ode.test.mlunit.Suite113regBasic;
+                import gras.ode.test.mlunit.SuiteBasic;
                 solveObj=gras.ode.MatrixODESolver(sizeVec,odePropList{:});
-                [resTimeVec,resArray]=solveObj.solve(@Suite113regBasic.fDeriv,...
+                [resTimeVec,resArray]=solveObj.solve(@SuiteBasic.fDeriv,...
                     timeVec,initVal);
                 mlunit.assert_equals(true,...
                     isequal(size(resArray),[sizeVec,nTimePoints]));
