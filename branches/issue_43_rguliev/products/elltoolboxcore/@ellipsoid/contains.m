@@ -6,15 +6,15 @@ function resArr = contains(firstEllArr, secondEllArr)
 %
 % Input:
 %   regular:
-%       firstEllArr: ellipsoid [,] - first array
-%           of ellipsoids.
-%       secondEllArr: ellipsoid [,] - second array
-%           of ellipsoids.
+%       firstEllArr: ellipsoid [nDims1,nDims2,...,nDimsN]/[1,1] - first 
+%           array of ellipsoids.
+%       secondEllArr: ellipsoid [nDims1,nDims2,...,nDimsN]/[1,1] - second
+%           array of ellipsoids.
 %
 % Output:
-%   resArr: double[,],
-%       resArr(iCount) = 1 - firstEllMat(iCount)
-%       contains secondEllMat(iCount), 0 - otherwise.
+%   resArr: logical[nDims1,nDims2,...,nDimsN],
+%       resArr(iCount) = true - firstEllArr(iCount)
+%       contains secondEllArr(iCount), false - otherwise.
 %
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
@@ -29,18 +29,18 @@ ellipsoid.checkIsMe(secondEllArr,'second');
 
 nSizeFirst = numel(firstEllArr);
 nSizeSecond = numel(secondEllArr);
-isFirScal = nSizeFirst==1;
-isSecScal = nSizeSecond==1;
+isFirScal = isscalar(firstEllArr);
+isSecScal = isscalar(secondEllArr);
 
-checkmultvar('isscalar(x1)||isscalar(x2)|| all( size(x1)==size(x2) )',...
-    2,firstEllArr,secondEllArr,...
+checkmultvar('all( size(x1)==size(x2) )||x3||x4',...
+    2,firstEllArr,secondEllArr,isFirScal,isSecScal,...
     'errorTag','wrongInput',...
     'errorMessage','sizes of ellipsoidal arrays do not match.');
 
-dimFirMat = dimension(firstEllArr);
-dimSecMat = dimension(secondEllArr);
+dimFirArr = dimension(firstEllArr);
+dimSecArr = dimension(secondEllArr);
 
-checkmultvar('all(x1(:)==x1(1)) && all(x2(:)==x1(1))',2,dimFirMat,dimSecMat,...
+checkmultvar('all(x1(:)==x1(1)) && all(x2(:)==x1(1))',2,dimFirArr,dimSecArr,...
     'errorTag','wrongSizes',...
     'errorMessage','ellipsoids must be of the same dimension.');
 
@@ -78,7 +78,7 @@ function res = l_check_containment(firstEll, secondEll)
 %       secondEll: ellipsoid [1, nCols] - second ellipsoid.
 %
 % Output:
-%   res: double[1,1], 1 - secondEll is inside firstEll, 0 - otherwise.
+%   res: logical[1,1], true - secondEll is inside firstEll, false - otherwise.
 %
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
@@ -89,10 +89,10 @@ import modgen.common.throwerror;
 
 [fstEllCentVec, fstEllShMat] = double(firstEll);
 [secEllCentVec, secEllShMat] = double(secondEll);
-if size(fstEllShMat, 2) > rank(fstEllShMat)
+if isdegenerate(firstEll)
     fstEllShMat = ellipsoid.regularize(fstEllShMat,firstEll.absTol);
 end
-if size(secEllShMat, 2) > rank(secEllShMat)
+if isdegenerate(secondEll)
     secEllShMat = ellipsoid.regularize(secEllShMat,secondEll.absTol);
 end
 
@@ -122,8 +122,8 @@ if strcmp(cvx_status,'Failed')
 end;
 if strcmp(cvx_status,'Solved') ...
         || strcmp(cvx_status, 'Inaccurate/Solved')
-    res = 1;
+    res = true;
 else
-    res = 0;
+    res = false;
 end
 end

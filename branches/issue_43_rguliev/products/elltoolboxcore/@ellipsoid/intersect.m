@@ -61,9 +61,9 @@ function [resArr, statusArr] = intersect(myEllArr, objArr, mode)
 %
 % Input:
 %   regular:
-%       myEllArr: ellipsoid [] - array of ellipsoids.
-%       objArr: ellipsoid [] / hyperplane [] /
-%           / polytope []  - array of ellipsoids or
+%       myEllArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array of ellipsoids.
+%       objArr: ellipsoid / hyperplane /
+%           / polytope [nDims1,nDims2,...,nDimsN] - array of ellipsoids or
 %           hyperplanes or polytopes of the same sizes.
 %
 %   optional:
@@ -72,7 +72,7 @@ function [resArr, statusArr] = intersect(myEllArr, objArr, mode)
 %           note: If mode == 'u', then mRows, nCols should be equal to 1.
 %
 % Output:
-%   resArr: double[] - return:
+%   resArr: double[nDims1,nDims2,...,nDimsN] - return:
 %       resArr(iCount) = -1 in case parameter mode is set
 %           to 'i' and the intersection of ellipsoids in myEllArr
 %           is empty.
@@ -82,8 +82,8 @@ function [resArr, statusArr] = intersect(myEllArr, objArr, mode)
 %       resArr(iCount) = 1 if the union or intersection of
 %           ellipsoids in myEllArr and the object in objArr(iCount)
 %           have nonempty intersection.
-%   statusArr: double[0, 0]/double[] - status variable.
-%       statusMat is empty if mode = 'u'.
+%   statusArr: double[0, 0]/double[nDims1,nDims2,...,nDimsN] - status
+%       variable. statusArr is empty if mode = 'u'.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
@@ -101,11 +101,11 @@ modgen.common.checkvar(objArr,@(x) isa(x, 'ellipsoid') ||...
 if (nargin < 3) || ~(ischar(mode))
     mode = 'u';
 end
-absTolMat = getAbsTol(myEllArr);
+absTolArr = getAbsTol(myEllArr);
 resArr = [];
 statusArr = [];
 if mode == 'u'
-    auxArr = arrayfun(@(x,y) distance(x, objArr)<= y, myEllArr,absTolMat);
+    auxArr = arrayfun(@(x,y) distance(x, objArr)<= y, myEllArr,absTolArr);
     res = double(any(auxArr(:)));
     status = [];
 elseif isa(objArr, 'ellipsoid')
@@ -169,7 +169,7 @@ function [res, status] = qcqp(fstEllArr, secEll)
 %
 % Input:
 %   regular:
-%       fstEllArr: ellipsod [] - array of ellipsoids.
+%       fstEllArr: ellipsod [nDims1,nDims2,...,nDimsN] - array of ellipsoids.
 %       secEll: ellipsoid [1, 1] - ellipsoid.
 %
 % Output:
@@ -252,7 +252,7 @@ function [res, status] = lqcqp(myEllArr, hyp)
 %
 % Input:
 %   regular:
-%       fstEllArr: ellipsod [] - array of ellipsoids.
+%       fstEllArr: ellipsod [nDims1,nDims2,...,nDimsN] - array of ellipsoids.
 %       hyp: hyperplane [1, 1] - hyperplane.
 %
 % Output:
@@ -322,7 +322,7 @@ function [res, status] = lqcqp2(myEllArr, polyt)
 %
 % Input:
 %   regular:
-%       fstEllArr: ellipsod [] - array of ellipsoids.
+%       fstEllArr: ellipsod [nDims1,nDims2,...,nDimsN] - array of ellipsoids.
 %       polyt: polytope [1, 1] - polytope.
 %
 % Output:

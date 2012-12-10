@@ -4,14 +4,15 @@ function isPositiveArr = gt(firstEllArr, secondEllArr)
 %
 % Input:
 %   regular:
-%       firsrEllArr: ellipsoid [,] - array of ellipsoids.
-%       secondEllArr: ellipsoid [,] - array of ellipsoids
-%           of the corresponding dimensions.
+%       firsrEllArr: ellipsoid [nDims1,nDims2,...,nDimsN]/[1,1] - array
+%           of ellipsoids.
+%       secondEllArr: ellipsoid [nDims1,nDims2,...,nDimsN]/[1,1] - array
+%           of ellipsoids of the corresponding dimensions.
 %
 % Output:
-%   isPositiveArr: logical[,],
-%       resMat(iCount) = true - if firsrEllMat(iCount)
-%       contains secondEllMat(iCount)
+%   isPositiveArr: logical [nDims1,nDims2,...,nDimsN],
+%       isPositiveArr(iCount) = true - if firsrEllArr(iCount)
+%       contains secondEllArr(iCount)
 %       when both have same center, false - otherwise.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
@@ -22,17 +23,17 @@ import modgen.common.checkmultvar;
 ellipsoid.checkIsMe(firstEllArr,'first');
 ellipsoid.checkIsMe(secondEllArr,'second');
 
-nFstEllipsoids = numel(firstEllArr);
-nSecEllipsoids = numel(secondEllArr);
+isFstScal = isscalar(firstEllArr);
+isSecScal = isscalar(secondEllArr);
 
-checkmultvar('(x1==1)||(x2==1)||all(size(x3)==size(x4))',...
-    4,nFstEllipsoids,nSecEllipsoids,firstEllArr,secondEllArr,...
+checkmultvar('x1 || x2 ||all(size(x3)==size(x4))',...
+    4,isFstScal,isSecScal,firstEllArr,secondEllArr,...
     'errorTag','wrongSizes',...
     'errorMessage','sizes of ellipsoidal arrays do not match.');
 
-if (nFstEllipsoids > 1) && (nSecEllipsoids > 1)
+if ~(isFstScal || isSecScal)
     isPositiveArr = arrayfun(@(x,y) isbigger(x,y),firstEllArr,secondEllArr);
-elseif (nFstEllipsoids > 1)
+elseif isSecScal
     isPositiveArr = arrayfun(@(x) isbigger(x,secondEllArr),firstEllArr);
 else
     isPositiveArr = arrayfun(@(x) isbigger(firstEllArr,x),secondEllArr);

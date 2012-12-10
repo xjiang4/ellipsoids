@@ -5,15 +5,16 @@ function [intEllArr, isnIntersectedArr] = ...
 %
 % Input:
 %   regular:
-%       myEllArr: ellipsoid [,] - matrix of ellipsoids.
-%       myHypArr: hyperplane [,] - matrix of hyperplanes
-%           of the same size.
+%       myEllArr: ellipsoid [nDims1,nDims2,...,nDimsN]/[1,1] - array
+%           of ellipsoids.
+%       myHypArr: hyperplane [nDims1,nDims2,...,nDimsN]/[1,1] - array 
+%           of hyperplanes of the same size.
 %
 % Output:
-%   intEllArr: ellipsoid [,] - matrix of ellipsoids
+%   intEllArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array of ellipsoids
 %       resulting from intersections.
 %
-%   isnIntersectedMat: logical[,].
+%   isnIntersectedArr: logical [nDims1,nDims2,...,nDimsN].
 %       isnIntersectedArr(iCount) = true, if myEllArr(iCount)
 %       doesn't intersect myHipArr(iCount),
 %       isnIntersectedArr(iCount) = false, otherwise.
@@ -30,17 +31,8 @@ modgen.common.checkvar(myHypArr,@(x) isa(x,'hyperplane'),...
     'errorTag','wrongInput',...
     'errorMessage','second argument must be hyperplane.');
 
-if ndims(myEllArr) ~= 2
-    throwerror('wrongInput:wrongDim','The dimension of input must be 2');
-end;
-if ndims(myHypArr) ~= 2
-    throwerror('wrongInput:wrongDim','The dimension of input must be 2');
-end;
-
-[mEllRows, nEllCols] = size(myEllArr);
-[mHipRows, nHipCols] = size(myHypArr);
-nEllipsoids     = mEllRows * nEllCols;
-nHiperplanes     = mHipRows * nHipCols;
+nEllipsoids     = numel(myEllArr);
+nHiperplanes     = numel(myHypArr);
 
 checkmultvar('(x1==1)||(x2==1)||all(size(x3)==size(x4))',...
     4,nEllipsoids,nHiperplanes,myEllArr,myHypArr,...

@@ -4,10 +4,10 @@ function maxEigArr = maxeig(inpEllArr)
 %
 % Input:
 %   regular:
-%       inpEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
+%       inpEllArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array of ellipsoids.
 %
 % Output:
-%   maxEigMat: double[mRows, nCols] - matrix of maximal eigenvalues
+%   maxEigArr: double[nDims1,nDims2,...,nDimsN] - array of maximal eigenvalues
 %       of ellipsoids in the input matrix inpEllMat.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
@@ -15,9 +15,7 @@ function maxEigArr = maxeig(inpEllArr)
 
 import elltool.conf.Properties;
 
-ellipsoid.checkIsMe(inpEllArr,...
-    'errorTag','wrongInput',...
-    'errorMessage','second input argument must be ellipsoid.');
+ellipsoid.checkIsMe(inpEllArr);
 modgen.common.checkvar(inpEllArr,'~any(isempty(x(:)))',...
     'errorTag','wrongInput:emptyEllipsoid','errorMessage',...
     'input argument contains empty ellipsoid');

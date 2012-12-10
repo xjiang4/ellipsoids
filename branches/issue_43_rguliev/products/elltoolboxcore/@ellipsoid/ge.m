@@ -5,14 +5,15 @@ function isPositiveArr = ge(firsrEllArr, secondEllArr)
 %
 % Input:
 %   regular:
-%       firsrEllArr: ellipsoid [,] - array of ellipsoids.
-%       secondEllArr: ellipsoid [,] - array of ellipsoids
-%           of the corresponding dimensions.
+%       firsrEllArr: ellipsoid [nDims1,nDims2,...,nDimsN]/[1,1] - array 
+%           of ellipsoids.
+%       secondEllArr: ellipsoid [nDims1,nDims2,...,nDimsN]/[1,1] - array
+%           of ellipsoids of the corresponding dimensions.
 %
 % Output:
-%   isPositiveMat: logical[,],
-%       resMat(iCount) = true - if firsrEllMat(iCount)
-%       contains secondEllMat(iCount)
+%   isPositiveArr: logical [nDims1,nDims2,...,nDimsN],
+%       isPositiveArr(iCount) = true - if firsrEllArr(iCount)
+%       contains secondEllArr(iCount)
 %       when both have same center, false - otherwise.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>

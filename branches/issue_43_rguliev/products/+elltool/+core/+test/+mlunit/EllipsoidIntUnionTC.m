@@ -675,35 +675,7 @@ classdef EllipsoidIntUnionTC < mlunitext.test_case
             ansIsnIntersectedMat = [true, false; false, true];
             self.flexAssert([true, true; true, true], eq(resEllMat, ansEllMat));
             self.flexAssert(ansIsnIntersectedMat, isnIntersected);
-            
-            %wrong dimension
-            for iDim = 1:2
-                for jDim = 1:2
-                    for kDim = 1:2
-                        testEllArr(iDim, jDim, kDim) = ellipsoid(eye(3));
-                    end;
-                end;
-            end;
-            
-            testHp = hyperplane([0, 0, 1].', 2);
-            self.runAndCheckError ...
-                ('resEllVec = hpintersection(testEllArr, testHp)', ...
-                'wrongInput:wrongDim');
-            
-            for iDim = 1:2
-                for jDim = 1:2
-                    for kDim = 1:2
-                        testHpArr(iDim, jDim, kDim) = ...
-                            hyperplane([0, 0, 1].', 2);
-                    end;
-                end;
-            end;
-            
-            testEllVec = ellipsoid(eye(3));
-            self.runAndCheckError ...
-                ('resEllVec = hpintersection(testEllVec, testHpArr)', ...
-                'wrongInput:wrongDim');
-            
+                        
         end
         
         function self = testEllEnclose(self)

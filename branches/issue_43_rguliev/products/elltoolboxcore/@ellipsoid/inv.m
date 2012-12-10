@@ -8,17 +8,16 @@ function invEllArr = inv(myEllArr)
 %
 % Input:
 %   regular:
-%       myEllArr: ellipsoid [] - matrix of ellipsoids.
+%       myEllArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array of ellipsoids.
 %
 % Output:
-%    invEllArr: ellipsoid [] - matrix of ellipsoids with
-%       inverted shape matrices.
+%    invEllArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array of ellipsoids
+%       with inverted shape matrices.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-ellipsoid.checkIsMe(myEllArr,...
-    'errorMessage', 'input argument must be array of ellipsoids.');
+ellipsoid.checkIsMe(myEllArr);
 
 invEllCMat = arrayfun(@(x) fSingleInv(x),myEllArr,'UniformOutput',false);
 

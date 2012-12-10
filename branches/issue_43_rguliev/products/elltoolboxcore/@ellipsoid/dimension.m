@@ -5,15 +5,15 @@ function [dimArr, rankArr] = dimension(myEllArr)
 %
 % Input:
 %   regular:
-%       myEllArr: ellipsoid[,] - array of ellipsoids.
+%       myEllArr: ellipsoid[nDims1,nDims2,...,nDimsN] - array of ellipsoids.
 %
 % Output:
 %   regular:
-%       dimArr: double[,] - space dimensions.
+%       dimArr: double[nDims1,nDims2,...,nDimsN] - space dimensions.
 %
 %   optional:
-%       rankArr: double[,] - dimensions of the ellipsoids
-%           in myEllArr.
+%       rankArr: double[nDims1,nDims2,...,nDimsN] - dimensions of the
+%           ellipsoids in myEllArr.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $

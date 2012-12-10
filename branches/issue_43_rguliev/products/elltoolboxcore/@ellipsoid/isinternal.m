@@ -1,18 +1,18 @@
-function isPositiveVec = isinternal(myEllMat, matrixOfVecMat, mode)
+function isPositiveVec = isinternal(myEllArr, matrixOfVecMat, mode)
 %
 % ISINTERNAL - checks if given points belong to the union or intersection
 %              of ellipsoids in the given array.
 %
-%   isPositiveVec = ISINTERNAL(myEllMat,  matrixOfVecMat, mode) - Checks
+%   isPositiveVec = ISINTERNAL(myEllArr,  matrixOfVecMat, mode) - Checks
 %       if vectors specified as columns of matrix matrixOfVecMat
 %       belong to the union (mode = 'u'), or intersection (mode = 'i')
-%       of the ellipsoids in myEllMat. If myEllMat is a single
+%       of the ellipsoids in myEllArr. If myEllMat is a single
 %       ellipsoid, then this function checks if points in matrixOfVecMat
-%       belong to myEllMat or not. Ellipsoids in E must be
+%       belong to myEllArr or not. Ellipsoids in E must be
 %       of the same dimension. Column size of matrix  matrixOfVecMat
 %       should match the dimension of ellipsoids.
 %
-%    Let myEllMat(iEll) = E(q, Q) be an ellipsoid with center q and shape
+%    Let myEllArr(iEll) = E(q, Q) be an ellipsoid with center q and shape
 %    matrix Q. Checking if given vector matrixOfVecMat = x belongs
 %    to E(q, Q) is equivalent to checking if inequality
 %                    <(x - q), Q^(-1)(x - q)> <= 1
@@ -27,7 +27,7 @@ function isPositiveVec = isinternal(myEllMat, matrixOfVecMat, mode)
 %
 % Input:
 %   regular:
-%       myEllMat: ellipsoid [mRowsOfEllMat, nColsOfEllMat] - matrix
+%       myEllArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array
 %           of ellipsoids.
 %       matrixOfVecMat: double [mRows, nColsOfVec] - matrix which
 %           specifiy points.
@@ -47,9 +47,7 @@ import elltool.conf.Properties;
 import modgen.common.checkvar;
 import modgen.common.checkmultvar;
 
-ellipsoid.checkIsMe(myEllMat,...
-    'errorTag','wrongInput',...
-    'errorMessage', 'first input argument must be ellipsoid.');
+ellipsoid.checkIsMe(myEllArr,'first');
 checkvar(matrixOfVecMat,@(x) isa(matrixOfVecMat, 'double'),...
     'errorTag','wrongInput',...
     'errorMessage', 'first input argument must be ellipsoid.');
@@ -62,7 +60,7 @@ checkvar(mode,@(x) (x=='u')||(x=='i'),...
     'errorTag','wrongInput','errorMessage',...
     'third argument is expected to be either ''u'', or ''i''.');
 
-nDimsMat = dimension(myEllMat);
+nDimsMat = dimension(myEllArr);
 [mRows, nCols] = size(matrixOfVecMat);
 
 checkmultvar('all(x1(:)==x2)',2,nDimsMat,mRows,...
@@ -71,7 +69,7 @@ checkmultvar('all(x1(:)==x2)',2,nDimsMat,mRows,...
 
 lCVec = mat2cell(matrixOfVecMat,mRows,ones(1,nCols));
 
-isPositiveVec = cellfun(@(x) isinternal_sub(myEllMat,x, mode),lCVec);
+isPositiveVec = cellfun(@(x) isinternal_sub(myEllArr,x, mode),lCVec);
 
 end
 

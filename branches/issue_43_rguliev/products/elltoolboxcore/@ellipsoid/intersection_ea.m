@@ -32,13 +32,14 @@ function outEllArr = intersection_ea(myEllArr, objArr)
 %
 % Input:
 %   regular:
-%       myEllArr: ellipsoid [] - array of ellipsoids.
-%       objArr: ellipsoid [] / hyperplane [] /
-%           / polytope []  - array of ellipsoids or
-%           hyperplanes or polytopes of the same sizes.
+%       myEllArr: ellipsoid [nDims1,nDims2,...,nDimsN]/[1,1] - array 
+%           of ellipsoids.
+%       objArr: ellipsoid / hyperplane /
+%           / polytope [nDims1,nDims2,...,nDimsN]/[1,1]  - array of 
+%           ellipsoids or hyperplanes or polytopes of the same sizes.
 %
 % Output:
-%    outEllMat: ellipsoid [] - array of external
+%    outEllMat: ellipsoid [nDims1,nDims2,...,nDimsN] - array of external
 %       approximating ellipsoids; entries can be empty ellipsoids
 %       if the corresponding intersection is empty.
 %
@@ -63,8 +64,11 @@ else
     nObjDimsArr = dimension(objArr);
 end
 
-checkmultvar( '(numel(x1)==1)||(numel(x2)==1)&&all(size(x1)==size(x2) )',...
-	2,myEllArr,objArr,...
+isEllScal = isscalar(myEllArr);
+isObjScal = isscalar(objArr);
+
+checkmultvar( 'all(size(x1)==size(x2)|| x3 || x4 )',...
+	4,myEllArr,objArr,isEllScal,isObjScal,...
     'errorTag','wrongSizes',...
     'errorMessage','sizes of input arrays do not match.');
 
@@ -73,14 +77,11 @@ checkmultvar('(x1(1)==x2(1))&&all(x1(:)==x1(1))&&all(x2(:)==x2(1))',...
     'errorTag','wrongSizes',...
     'errorMessage','input arguments must be of the same dimension.');
 
-nEllipsoids = numel(myEllArr);
-nObjects = numel(objArr);
-
-if (nEllipsoids > 1) && (nObjects > 1)
+if ~(isEllScal || isObjScal)
     outEllCArr = arrayfun(@(x,y) fCoose(x, y),myEllArr,objArr,...
         'UniformOutput',false);
     outEllArr = reshape([outEllCArr{:}],size(myEllArr));
-elseif nEllipsoids > 1
+elseif isObjScal
     outEllCArr = arrayfun(@(x) fCoose(x, objArr),myEllArr,...
         'UniformOutput',false);
     outEllArr = reshape([outEllCArr{:}],size(myEllArr));

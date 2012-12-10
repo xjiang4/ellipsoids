@@ -1,32 +1,32 @@
-function [res, status] = isinside(fstEllMat, secObjMat, mode)
+function [res, status] = isinside(fstEllArr, secObjArr, mode)
 %
 % ISINSIDE - checks if the intersection of ellipsoids contains the
 %            union or intersection of given ellipsoids or polytopes.
 %
-%   res = ISINSIDE(fstEllMat, secEllMat, mode) Checks if the union
+%   res = ISINSIDE(fstEllArr, secEllArr, mode) Checks if the union
 %       (mode = 'u') or intersection (mode = 'i') of ellipsoids in
-%       secEllMat lies inside the intersection of ellipsoids in
-%       fstEllMat. Ellipsoids in fstEllMat and secEllMat must be
+%       secEllArr lies inside the intersection of ellipsoids in
+%       fstEllArr. Ellipsoids in fstEllArr and secEllArr must be
 %       of the same dimension. mode = 'u' (default) - union of
-%       ellipsoids in secEllMat. mode = 'i' - intersection.
-%   res = ISINSIDE(fstEllMat, secPolyMat, mode) Checks if the union
+%       ellipsoids in secEllArr. mode = 'i' - intersection.
+%   res = ISINSIDE(fstEllArr, secPolyArr, mode) Checks if the union
 %       (mode = 'u') or intersection (mode = 'i')  of polytopes in
-%       secPolyMat lies inside the intersection of ellipsoids in
-%       fstEllMat. Ellipsoids in fstEllMat and polytopes in secPolyMat
+%       secPolyArr lies inside the intersection of ellipsoids in
+%       fstEllArr. Ellipsoids in fstEllArr and polytopes in secPolyArr
 %       must be of the same dimension. mode = 'u' (default) - union of
 %       polytopes in secPolyMat. mode = 'i' - intersection.
 %
-%   To check if the union of ellipsoids secEllMat belongs to the
-%   intersection of ellipsoids fstEllMat, it is enough to check that
+%   To check if the union of ellipsoids secEllArr belongs to the
+%   intersection of ellipsoids fstEllArr, it is enough to check that
 %   every ellipsoid of secEllMat is contained in every
-%   ellipsoid of fstEllMat.
+%   ellipsoid of fstEllArr.
 %   Checking if the intersection of ellipsoids in secEllMat is inside
 %   intersection fstEllMat can be formulated as quadratically
 %   constrained quadratic programming (QCQP) problem.
 %
-%   Let fstEllMat(iEll) = E(q, Q) be an ellipsoid with center q and shape
+%   Let fstEllArr(iEll) = E(q, Q) be an ellipsoid with center q and shape
 %   matrix Q. To check if this ellipsoid contains the intersection of
-%   ellipsoids in secObjMat:
+%   ellipsoids in secObjArr:
 %   E(q1, Q1), E(q2, Q2), ..., E(qn, Qn), we define the QCQP problem:
 %                     J(x) = <(x - q), Q^(-1)(x - q)> --> max
 %   with constraints:
@@ -52,13 +52,13 @@ function [res, status] = isinside(fstEllMat, secObjMat, mode)
 %
 % Input:
 %   regular:
-%       fstEllMat: ellipsoid [mRows, mCols] - matrix of ellipsoids
+%       fstEllArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array of ellipsoids
 %           of the same size.
-%       secEllMat: ellipsoid [mSecRows, nSecCols] /
-%           polytope [mSecRows, nSecCols] - matrix of ellipsoids or
+%       secEllArr: ellipsoid /
+%           polytope [nDims1,nDims2,...,nDimsN] - array of ellipsoids or
 %           polytopes of the same sizes.
 %
-%           note: if mode == 'i', then fstEllMat, secEllVec should be
+%           note: if mode == 'i', then fstEllArr, secEllVec should be
 %               array.
 %
 %   optional:
@@ -85,10 +85,8 @@ import elltool.conf.Properties;
 import modgen.common.throwerror;
 import modgen.common.checkmultvar;
 
-ellipsoid.checkIsMe(fstEllMat,...
-    'errorTag','wrongInput',...
-    'errorMessage', 'first input argument must be ellipsoid.');
-modgen.common.checkvar(secObjMat,@(x) isa(x, 'ellipsoid') ||...
+ellipsoid.checkIsMe(fstEllArr,'first');
+modgen.common.checkvar(secObjArr,@(x) isa(x, 'ellipsoid') ||...
     isa(x, 'hyperplane') || isa(x, 'polytope'),...
     'errorTag','wrongInput', 'errorMessage',...
     'second input argument must be ellipsoid,hyperplane or polytope.');
@@ -99,16 +97,16 @@ end
 
 status = [];
 
-if isa(secObjMat, 'polytope')
+if isa(secObjArr, 'polytope')
     if mode == 'i'
-        xVec = extreme(and(secObjMat));
+        xVec = extreme(and(secObjArr));
     else
-        xVec = arrayfun(@(x) extreme(x), secObjMat);
+        xVec = arrayfun(@(x) extreme(x), secObjArr);
     end
     if isempty(xVec)
         res = -1;
     else
-        res = min(isinternal(fstEllMat, xVec', 'i'));
+        res = min(isinternal(fstEllArr, xVec', 'i'));
     end
     
     if nargout < 2
@@ -120,19 +118,19 @@ end
 
 if mode == 'u'
     res    = 1;
-    isContain = arrayfun(@(x) all(all(contains(x, secObjMat))), fstEllMat);
+    isContain = arrayfun(@(x) all(all(contains(x, secObjArr))), fstEllArr);
     if ~all( isContain(:) )
         res=0;
         return;
     end
-elseif isscalar(secObjMat)
+elseif isscalar(secObjArr)
     res = 1;
-    if ~all(all(contains(fstEllMat, secObjMat)))
+    if ~all(all(contains(fstEllArr, secObjArr)))
         res = 0;
     end
 else
-    nFstEllDimsMat = dimension(fstEllMat);
-    nSecEllDimsMat = dimension(secObjMat);
+    nFstEllDimsMat = dimension(fstEllArr);
+    nSecEllDimsMat = dimension(secObjArr);
     checkmultvar('(x1(1)==x2(1))&&all(x1(:)==x1(1))&&all(x2(:)==x2(1))',...
         2,nFstEllDimsMat,nSecEllDimsMat,...
         'errorTag','wrongSizes',...
@@ -141,7 +139,7 @@ else
         fprintf('Invoking CVX...\n');
     end
     res    = 1;
-    resMat  =arrayfun (@(x) qcqp(secObjMat,x), fstEllMat);
+    resMat  =arrayfun (@(x) qcqp(secObjArr,x), fstEllArr);
     if any(resMat(:)<1)
         res=0;
         if any(resMat(:)==-1)
@@ -159,14 +157,14 @@ end
 
 %%%%%%%%
 
-function res = qcqp(fstEllMat, secObj)
+function [res, status] = qcqp(fstEllArr, secObj)
 %
 % QCQP - formulate quadratically constrained quadratic programming
 %        problem and invoke external solver.
 %
 % Input:
 %   regular:
-%       fstEllMat: ellipsod [mEllRows, nEllCols] - matrix of ellipsoids.
+%       fstEllArr: ellipsod [nDims1,nDims2,...,nDimsN] - array of ellipsoids.
 %       secObj: ellipsoid [1, 1] - ellipsoid.
 %               or
 %               polytope [1, 1] - polytope.
@@ -181,27 +179,37 @@ function res = qcqp(fstEllMat, secObj)
 import modgen.common.throwerror;
 import elltool.conf.Properties;
 
-absTolSec = getAbsTol(secObj);
-[cSecVec, shSecMat] = double(secObj);
-if isdegenerate(secObj)
+absTolScal = getAbsTol(secObj);
+[qVec, paramMat] = parameters(secObj);
+if size(paramMat, 2) > rank(paramMat)
     if Properties.getIsVerbose()
         fprintf('QCQP: Warning! Degenerate ellipsoid.\n');
         fprintf('      Regularizing...\n');
     end
-    shSecMat = ellipsoid.regularize(shSecMat,absTolSec);
+    paramMat = ellipsoid.regularize(paramMat,absTolScal);
 end
-invQMat = ell_inv(shSecMat);
+invQMat = ell_inv(paramMat);
 invQMat = 0.5*(invQMat + invQMat');
+
+nNumel = numel(fstEllArr);
 
 cvx_begin sdp
 variable xVec(length(invQMat), 1)
 
-minimize(xVec'*invQMat*xVec + 2*(-invQMat*cSecVec)'*xVec + ...
-    (cSecVec'*invQMat*cSecVec - 1))
+minimize(xVec'*invQMat*xVec + 2*(-invQMat*qVec)'*xVec + ...
+    (qVec'*invQMat*qVec - 1))
 subject to
-
-arrayfun(@(x) fRepPart(x), fstEllMat);
-
+for iCount = 1:nNumel
+        [qVec, invQMat] = parameters(fstEllArr(iCount));
+        if isdegenerate(fstEllArr(iCount))
+            invQMat = ...
+                ellipsoid.regularize(invQMat,getAbsTol(fstEllArr(iCount)));
+        end
+        invQMat = ell_inv(invQMat);
+        invQMat = 0.5*(invQMat + invQMat');
+        xVec'*invQMat*xVec + 2*(-invQMat*qVec)'*xVec + ...
+            (qVec'*invQMat*qVec - 1) <= 0;
+end
 cvx_end
 
 
@@ -213,24 +221,15 @@ if strcmp(cvx_status,'Infeasible') ...
         || strcmp(cvx_status,'Inaccurate/Infeasible')
     % problem is infeasible, or global minimum cannot be found
     res = -1;
+    status = 0;
     return;
 end
 
-if (xVec'*invQMat*xVec + 2*(-invQMat*cSecVec)'*xVec + ...
-        (cSecVec'*invQMat*cSecVec - 1)) < min(getAbsTol(fstEllMat(:)))
+if (xVec'*invQMat*xVec + 2*(-invQMat*qVec)'*xVec + ...
+        (qVec'*invQMat*qVec - 1)) < min(getAbsTol(fstEllArr(:)))
     res = 1;
 else
     res = 0;
 end
-    function fRepPart(singEll)
-        [cVec, shMat] = parameters(singEll);
-        if isdegenerate(singEll)
-            shMat = ...
-                ellipsoid.regularize(shMat,getAbsTol(singEll));
-        end
-        invShMat = ell_inv(shMat);
-        invShMat = 0.5*(invShMat + invShMat');
-        xVec'*invShMat*xVec + 2*(-invShMat*cVec)'*xVec + ...
-            (cVec'*invShMat*cVec - 1) <= 0;
-    end
+
 end

@@ -4,10 +4,10 @@ function minEigArr = mineig(inpEllArr)
 %
 % Input:
 %   regular:
-%       inpEllMat: ellipsoid [mRows, nCols] - matrix of ellipsoids.
+%       inpEllArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array of ellipsoids.
 %
 % Output:
-%   minEigMat: double[mRows, nCols] - array of minimal eigenvalues
+%   minEigArr: double[nDims1,nDims2,...,nDimsN] - array of minimal eigenvalues
 %       of ellipsoids in the input array inpEllMat.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
@@ -15,9 +15,7 @@ function minEigArr = mineig(inpEllArr)
 
 import elltool.conf.Properties;
 
-ellipsoid.checkIsMe(inpEllArr,...
-    'errorTag','wrongInput',...
-    'errorMessage','second input argument must be ellipsoid.');
+ellipsoid.checkIsMe(inpEllArr);
 modgen.common.checkvar(inpEllArr,'~any(isempty(x(:)))',...
     'errorTag','wrongInput:emptyEllipsoid','errorMessage',...
     'input argument contains empty ellipsoid');
