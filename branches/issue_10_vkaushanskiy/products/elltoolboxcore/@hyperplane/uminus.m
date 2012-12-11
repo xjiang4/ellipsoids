@@ -1,29 +1,39 @@
-function H1 = uminus(H)
+function outHypArr = uminus(inpHypArr)
 %
-% Description:
-% ------------
+% UMINUS - switch signs of normal vector and the shift scalar
+%          to the opposite.
 %
-%    Switch signs of normal vector and the shift scalar to the opposite.
+% Input:
+%   regular:
+%       inpHypArr: hyperplane [nDims1, nDims2, ...] - array
+%           of hyperplanes.
 %
+% Output:
+%   outHypArr: hyperplane [nDims1, nDims2, ...] - array
+%       of the same hyperplanes as in inpHypArr whose
+%       normals and scalars are multiplied by -1.
+%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
+%
+% $Author: Aushkap Nikolay <n.aushkap@gmail.com> $  $Date: 30-11-2012$
+% $Copyright: Moscow State University,
+%   Faculty of Computational Mathematics and Computer Science,
+%   System Analysis Department 2012 $
 
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%
-  if ~(isa(H, 'hyperplane'))
-    error('UMINUS: input argument must be hyperplanes.');
-  end
+hyperplane.checkIsMe(inpHypArr);
 
-  H1     = H;
-  [m, n] = size(H1);
-  
-  for i = 1:m
-    for j = 1:n
-      H1(i, j).normal = - H1(i, j).normal;
-      H1(i, j).shift  = - H1(i, j).shift;
+sizeVec = size(inpHypArr);
+nElems = numel(inpHypArr);
+outHypArr(nElems)=hyperplane();
+outHypArr = reshape(outHypArr, sizeVec);
+indArr = reshape(1:nElems, sizeVec);
+arrayfun(@(x) setProp(x), indArr);
+
+    function setProp(iObj)
+        outHypArr(iObj).normal = -inpHypArr(iObj).normal;
+        outHypArr(iObj).shift = -inpHypArr(iObj).shift;
+        outHypArr(iObj).absTol = inpHypArr(iObj).absTol;
     end
-  end
-    
-  return;  
+
+end
