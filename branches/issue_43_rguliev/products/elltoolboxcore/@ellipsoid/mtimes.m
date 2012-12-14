@@ -43,17 +43,19 @@ modgen.common.checkmultvar...
 
 if isFstScal
     multMatSq = multMat*multMat;
-    outEllCVec = arrayfun(@(x) ellipsoid(multMat*x.center, multMatSq*x.shape ),...
-        inpEllVec, 'UniformOutput',false);
-else
-    outEllCVec = arrayfun(@(x) fSingleMtimes(x), inpEllVec,...
-        'UniformOutput',false);
 end
-outEllVec=reshape([outEllCVec{:}],size(inpEllVec));
-
-    function newEll = fSingleMtimes(singEll)
-        shMat = multMat*(singEll.shape)*multMat';
-        shMat = 0.5*(shMat + shMat');
-        newEll = ellipsoid(multMat *singEll.center, shMat);
+sizeCVec = num2cell(size(inpEllVec)); 
+outEllVec(sizeCVec{:}) = ellipsoid;
+arrayfun(@(x) fSingleMtimes(x), 1:numel(inpEllVec));
+    function fSingleMtimes(index)
+        singEll = inpEllVec(index);
+        if isFstScal
+            shMat = multMatSq*singEll.shape;
+        else
+            shMat = multMat*(singEll.shape)*multMat';
+            shMat = 0.5*(shMat + shMat');
+        end
+        outEllVec(index).center = multMat *singEll.center;
+        outEllVec(index).shape = shMat;
     end
 end

@@ -7,10 +7,11 @@ function outEllArr = move2origin(inpEllArr)
 %
 % Input:
 %   regular:
-%       inpEllArr: ellipsoid [] - array of ellipsoids.
+%       inpEllArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array of 
+%           ellipsoids.
 %
 % Output:
-%   outEllArr: ellipsoid [] - matrix of ellipsoids
+%   outEllArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array of ellipsoids
 %       with the same shapes as in inpEllArr centered at the origin.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
@@ -19,7 +20,12 @@ function outEllArr = move2origin(inpEllArr)
 ellipsoid.checkIsMe(inpEllArr,...
     'errorTag','wrongInput',...
     'errorMessage','argument must be array of ellipsoid.');
-
-outEllCArr = arrayfun(@(x) ellipsoid(x.shape), inpEllArr,...
-        'UniformOutput',false);
-outEllArr=reshape([outEllCArr{:}],size(inpEllArr));
+sizeCVec = num2cell(size(inpEllArr));
+outEllArr(sizeCVec{:}) = ellipsoid;
+arrayfun(@(x) fSingleMove(x), 1:numel(inpEllArr));
+    function fSingleMove(index)
+        nDim = dimension(inpEllArr(index));
+        outEllArr(index).center = zeros(nDim,1);
+        outEllArr(index).shape = inpEllArr(index).shape;
+    end
+end

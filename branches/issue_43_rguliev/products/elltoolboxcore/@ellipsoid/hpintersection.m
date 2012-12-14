@@ -7,7 +7,7 @@ function [intEllArr, isnIntersectedArr] = ...
 %   regular:
 %       myEllArr: ellipsoid [nDims1,nDims2,...,nDimsN]/[1,1] - array
 %           of ellipsoids.
-%       myHypArr: hyperplane [nDims1,nDims2,...,nDimsN]/[1,1] - array 
+%       myHypArr: hyperplane [nDims1,nDims2,...,nDimsN]/[1,1] - array
 %           of hyperplanes of the same size.
 %
 % Output:
@@ -31,65 +31,65 @@ modgen.common.checkvar(myHypArr,@(x) isa(x,'hyperplane'),...
     'errorTag','wrongInput',...
     'errorMessage','second argument must be hyperplane.');
 
-nEllipsoids     = numel(myEllArr);
-nHiperplanes     = numel(myHypArr);
+isEllScal = isscalar(myEllArr);
+isHypScal = isscalar(myHypArr);
+nEllDimsArr = dimension(myEllArr);
+maxEllDim   = max(nEllDimsArr(:));
 
-checkmultvar('(x1==1)||(x2==1)||all(size(x3)==size(x4))',...
-    4,nEllipsoids,nHiperplanes,myEllArr,myHypArr,...
-    'errorTag','wrongSizes',...
-    'errorMessage','sizes of ellipsoidal and hyperplane arrays do not match.');
+checkmultvar('x1 || x2 ||all(size(x3)==size(x4))',...
+    4,isEllScal,isHypScal,myEllArr,myHypArr,...
+    'errorTag','wrongSizes','errorMessage',...
+    'sizes of ellipsoidal and hyperplane arrays do not match.');
+checkmultvar('all(x1(:)==x1(1))&&all(x2(:)==x2(1))',...
+    2,nEllDimsArr,dimension(myHypArr),...
+    'errorTag','wrongSizes','errorMessage',...
+    'ellipsoids and hyperplanes must be of the same dimension.');
 
 isSecondOutput = nargout==2;
-
-nEllDimsMat = dimension(myEllArr);
-maxEllDim   = max(nEllDimsMat(:));
-
-checkmultvar('all(x1(:)==x1(1))&&all(x2(:)==x2(1))',...
-    2,nEllipsoids,nHiperplanes,myEllArr,myHypArr,...
-    'errorTag','wrongSizes',...
-    'errorMessage','ellipsoids and hyperplanes must be of the same dimension.');
+if isHypScal
+    nAmount = numel(myEllArr);
+    sizeCVec = num2cell(size(myEllArr));
+else
+    nAmount = numel(myHypArr);
+    sizeCVec = num2cell(size(myHypArr));
+end
+intEllArr(sizeCVec{:}) = ellipsoid;
+isnIntersectedArr = false(sizeCVec{:});
+indexVec = 1:nAmount;
 
 if Properties.getIsVerbose()
-    if (nEllipsoids > 1) || (nHiperplanes > 1)
+    if ~(isEllScal&&isHypScal)
         fprintf('Computing %d ellipsoid-hyperplane intersections...\n',...
-            max([nEllipsoids nHiperplanes]));
+            nAmount);
     else
         fprintf('Computing ellipsoid-hyperplane intersection...\n');
     end
 end
 
-if (nEllipsoids > 1) && (nHiperplanes > 1)
-    [intEllCMat isnInterCMat] = arrayfun(@(x,y) fSingleCase(x,y),...
-        myEllArr,myHypArr,'UniformOutput',false);
-    
-    intEllArr = reshape([intEllCMat{:}],size(myEllArr));
-    isnIntersectedArr = cell2mat(isnInterCMat);
-elseif (nEllipsoids > 1)
-    [intEllCMat isnInterCMat] = arrayfun(@(x) fSingleCase(x,myHypArr),...
-        myEllArr,'UniformOutput',false);
-    
-    intEllArr = reshape([intEllCMat{:}],size(myEllArr));
-    isnIntersectedArr = cell2mat(isnInterCMat);
+if ~(isEllScal || isHypScal)
+    arrayfun(@(x,y) fSingleCase(x,y), indexVec,indexVec);
+elseif isHypScal
+    arrayfun(@(x) fSingleCase(x,1), indexVec);
 else
-    [intEllCMat isnInterCMat] = arrayfun(@(x) fSingleCase(myEllArr,x),...
-        myHypArr,'UniformOutput',false);
-    
-    intEllArr = reshape([intEllCMat{:}],size(myHypArr));
-    isnIntersectedArr = cell2mat(isnInterCMat);
+    arrayfun(@(x) fSingleCase(1,x),indexVec);
 end
 
-    function [intEll isnInter] = fSingleCase(myEll, myHyp)
+    function fSingleCase(ellIndex, hypIndex)
+        myEll = myEllArr(ellIndex);
+        myHyp = myHypArr(hypIndex);
+        index = max(ellIndex,hypIndex);
         if distance(myEll, myHyp) > 0
             if (~isSecondOutput)
                 modgen.common.throwerror('degenerateEllipsoid',...
                     'Hypeplane doesn''t intersect ellipsoid');
             else
-                intEll = ellipsoid;
-                isnInter = true;
+                intEllArr(index) = ellipsoid;
+                isnIntersectedArr(index) = true;
             end
         else
-            intEll = l_compute1intersection(myEll,myHyp, maxEllDim);
-            isnInter = false;
+            intEllArr(index) = l_compute1intersection(myEll,myHyp,...
+                maxEllDim);
+            isnIntersectedArr(index) = false;
         end
     end
 end

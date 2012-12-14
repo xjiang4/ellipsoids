@@ -1,46 +1,29 @@
 function polEllArr = polar(ellArr)
-
 %
 % POLAR - computes the polar ellipsoids.
 %
+%   polEllArr = POLAR(ellArr)  Computes the polar ellipsoids for those
+%       ellipsoids in ellArr, for which the origin is an interior point.
+%       For those ellipsoids in E, for which this condition does not hold,
+%       an empty ellipsoid is returned.
 %
-% Description:
-% ------------
+%   Given ellipsoid E(q, Q) where q is its center, and Q - its shape matrix,
+%   the polar set to E(q, Q) is defined as follows:
+%   P = { l in R^n  | <l, q> + sqrt(<l, Q l>) <= 1 }
+%   If the origin is an interior point of ellipsoid E(q, Q),
+%   then its polar set P is an ellipsoid.
 %
-%    P = POLAR(E)  Computes the polar ellipsoids for those ellipsoids in E,
-%                  for which the origin is an interior point.
-%                  For those ellipsoids in E, for which this condition
-%                  does not hold, an empty ellipsoid is returned.
-%
-%
-%    Given ellipsoid E(q, Q) where q is its center, and Q - its shape matrix,
-%    the polar set to E(q, Q) is defined as follows:
-%
-%             P = { l in R^n  | <l, q> + sqrt(<l, Q l>) <= 1 }
-%
-%    If the origin is an interior point of ellipsoid E(q, Q),
-%    then its polar set P is an ellipsoid.
-%
+% Input:
+%   regular:
+%       ellArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array
+%           of ellipsoids.
 %
 % Output:
-% -------
+%   polEllArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array of
+%    	polar ellipsoids.
 %
-%    P - array of polar ellipsoids.
-%
-%
-% See also:
-% ---------
-%
-%    ELLIPSOID/ELLIPSOID.
-%
-
-%
-% Author:
-% -------
-%
-%    Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-%    Rustam Guliev <glvrst@gmail.com>
-%
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 2004-2008 $
 
 import modgen.common.throwerror
 
@@ -49,26 +32,26 @@ modgen.common.checkvar(ellArr,'~any(isdegenerate(x))',...
     'errorTag','degenerateEllipsoid',...
     'errorMessage','The resulting ellipsoid is not bounded');
 
-polEllCArr = arrayfun(@(x) fSinglePolar(x), ellArr,...
-    'UniformOutput',false);
+sizeCVec = num2cell(size(ellArr));
+polEllArr(sizeCVec{:}) = ellipsoid;
+arrayfun(@(x) fSinglePolar(x), 1:numel(ellArr));
 
-polEllArr = reshape([polEllCArr{:}],size(ellArr));
-
-end
-
-function ell = fSinglePolar(singEll)
-    q = singEll.center; 
-    Q = singEll.shape;
-    chk    = q' * ell_inv(Q) * q;
-    %chk checks if zero belongs to singEll ellipsoid
-    if chk < 1
-        M  = ell_inv(Q - q*q');
-        M  = 0.5*(M + M');
-        w  = -M * q;
-        W  = (1 + q'*M*q)*M;
-        ell = ellipsoid(w, W);
-    else
-        throwerror('degenerateEllipsoid',...
-            'The resulting ellipsoid is not bounded');    
+    function fSinglePolar(index)
+        singEll = ellArr(index);
+        qVec = singEll.center;
+        shMat = singEll.shape;
+        chk    = qVec' * ell_inv(shMat) * qVec;
+        %chk checks if zero belongs to singEll ellipsoid
+        if chk < 1
+            auxMat  = ell_inv(shMat - qVec*qVec');
+            auxMat  = 0.5*(auxMat + auxMat');
+            polCenVec  = -auxMat * qVec;
+            polShapeMat  = (1 + qVec'*auxMat*qVec)*auxMat;
+            polEllArr(index).center = polCenVec;
+            polEllArr(index).shape = polShapeMat;
+        else
+            throwerror('degenerateEllipsoid',...
+                'The resulting ellipsoid is not bounded');
+        end
     end
 end

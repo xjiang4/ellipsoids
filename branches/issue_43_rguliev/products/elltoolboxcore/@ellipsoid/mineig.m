@@ -3,11 +3,11 @@ function minEigArr = mineig(inpEllArr)
 % MINEIG - return the minimal eigenvalue of the ellipsoid.
 %
 % Input:
-%   regular:
+%	regular:
 %       inpEllArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array of ellipsoids.
 %
 % Output:
-%   minEigArr: double[nDims1,nDims2,...,nDimsN] - array of minimal eigenvalues
+%	minEigArr: double[nDims1,nDims2,...,nDimsN] - array of minimal eigenvalues
 %       of ellipsoids in the input array inpEllMat.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>

@@ -65,38 +65,43 @@ if isPoly
 else
     nObjDimsArr = dimension(objArr);
 end
-
 isEllScal = isscalar(myEllArr);
 isObjScal = isscalar(objArr);
 
-checkmultvar( 'all(size(x1)==size(x2) || x3 || x4',...
+checkmultvar( 'all(size(x1)==size(x2)) || x3 || x4',...
 	4,myEllArr,objArr,isEllScal,isObjScal,...
     'errorTag','wrongSizes',...
     'errorMessage','sizes of input arrays do not match.');
-
 checkmultvar('(x1(1)==x2(1))&&all(x1(:)==x1(1))&&all(x2(:)==x2(1))',...
 	2,nDimsArr,nObjDimsArr,...
     'errorTag','wrongSizes',...
     'errorMessage','input arguments must be of the same dimension.');
 
-if ~(isEllScal || isObjScal )
-    outEllCArr = arrayfun(@(x,y) fChoose(x, y),myEllArr,objArr,...
-        'UniformOutput',false);
-    outEllArr = reshape([outEllCArr{:}],size(myEllArr));
-elseif isObjScal
-    outEllCArr = arrayfun(@(x) fChoose(x, objArr),myEllArr,...
-        'UniformOutput',false);
-    outEllArr = reshape([outEllCArr{:}],size(myEllArr));
+if isObjScal
+    nAmount = numel(myEllArr);
+    sizeCVec = num2cell(size(myEllArr));
 else
-    outEllCArr = arrayfun(@(x) fChoose(myEllArr, x), objArr,...
-        'UniformOutput',false);
-    outEllArr = reshape([outEllCArr{:}],size(objArr));
+    nAmount = numel(objArr);
+    sizeCVec = num2cell(size(objArr));
 end
-    function eaEll = fChoose(singEll, obj)
+outEllArr(sizeCVec{:}) = ellipsoid;
+indexVec = 1:nAmount;
+
+if ~(isEllScal || isObjScal )
+    arrayfun(@(x,y) fChoose(x, y),indexVec,indexVec);
+elseif isObjScal
+    arrayfun(@(x) fChoose(x, 1),indexVec);
+else
+    arrayfun(@(x) fChoose(1, x),indexVec);
+end
+    function fChoose(ellIndex, objIndex)
+        singEll = myEllArr(ellIndex);
+        obj = objArr(objIndex);
+        index = max(ellIndex,objIndex);
         if isPoly
-            eaEll = l_polyintersect(singEll, obj);
+            outEllArr(index) = l_polyintersect(singEll, obj);
         else
-            eaEll = l_intersection_ia(singEll, obj);
+            outEllArr(index) = l_intersection_ia(singEll, obj);
         end
     end
 end
@@ -149,8 +154,9 @@ else
 end
 
 [normHypVec, hypScalar] = parameters(-secObj);
-hypScalar      = hypScalar/sqrt(normHypVec'*normHypVec);
-normHypVec      = normHypVec/sqrt(normHypVec'*normHypVec);
+hypNormInv = 1/sqrt(normHypVec'*normHypVec);
+hypScalar      = hypScalar*hypNormInv;
+normHypVec      = normHypVec*hypNormInv;
 if (normHypVec'*fstEllCentVec > hypScalar) ...
         && ~(intersect(fstEll, secObj))
     outEll = fstEll;
@@ -171,8 +177,9 @@ secMat     = (normHypVec*normHypVec')/(hEig^2);
 fstCoeff     = (fstEllCentVec - ...
     intEllCentVec)'*fstEllShMat*(fstEllCentVec - intEllCentVec);
 secCoeff = (secCentVec - boundVec)'*secMat*(secCentVec - boundVec);
-fstEllCoeff  = (1 - secCoeff)/(1 - fstCoeff*secCoeff);
-secEllCoeff = (1 - fstCoeff)/(1 - fstCoeff*secCoeff);
+coeffDenomin = 1/(1 - fstCoeff*secCoeff);
+fstEllCoeff  = (1 - secCoeff)*coeffDenomin;
+secEllCoeff = (1 - fstCoeff)*coeffDenomin;
 intEllShMat      = fstEllCoeff*fstEllShMat + secEllCoeff*secMat;
 intEllShMat      = 0.5*(intEllShMat + intEllShMat');
 intEllCentVec      = ell_inv(intEllShMat)*...

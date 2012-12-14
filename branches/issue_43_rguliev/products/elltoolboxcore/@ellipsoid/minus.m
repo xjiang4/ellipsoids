@@ -1,6 +1,11 @@
-function outEllVec = minus(inpEllVec, inpVec)
+function outEllArr = minus(varargin)
 %
 % MINUS - overloaded operator '-'
+%
+%   outEllArr = MINUS(inpEllArr, inpVec) implements E(q, Q) - b
+%       for each ellipsoid E(q, Q) in inpEllArr.
+%   outEllArr = MINUS(inpVec, inpEllArr) implements b - E(q, Q)
+%       for each ellipsoid E(q, Q) in inpEllArr.
 %
 %   Operation E - b where E = inpEll is an ellipsoid in R^n,
 %   and b = inpVec - vector in R^n. If E(q, Q) is an ellipsoid
@@ -9,33 +14,32 @@ function outEllVec = minus(inpEllVec, inpVec)
 %
 % Input:
 %   regular:
-%       inpEllVec: ellipsoid [1, nCols] - array of ellipsoids
-%           of the same dimentions nDims.
+%       inpEllArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array of 
+%           ellipsoids of the same dimentions nDims.
 %       inpVec: double[nDims, 1] - vector.
 %
 % Output:
-%   outEllVec: ellipsoid [1, nCols] - array of ellipsoids with
-%       same shapes as inpEllVec, but with centers
-%       shifted by vectors in -inpVec.
+%	outEllVec: ellipsoid [nDims1,nDims2,...,nDimsN] - array of ellipsoids 
+%       with same shapes as inpEllVec, but with centers shifted by vectors 
+%       in -inpVec.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
 import modgen.common.throwerror;
+import modgen.common.checkvar;
 
-ellipsoid.checkIsMe(inpEllVec,'first');
-modgen.common.checkvar(inpVec,@(x) isa(x, 'double'),...
-    'errorTag','wrongInput',...
-    'errorMessage','second argument must be vector in R^n.');
-
-nDimsVec = dimension(inpEllVec);
-[mRows, nColsInpVec] = size(inpVec);
-
-modgen.common.checkmultvar('all(x1(:)==x2)&&(x3==1)',...
-    3,nDimsVec,mRows,nColsInpVec,...
-    'errorTag','wrongSizes',...
-    'errorMessage','dimensions mismatch.');
-
-outEllCVec = arrayfun(@(x) ellipsoid(x.center-inpVec,x.shape), inpEllVec,...
-        'UniformOutput',false);
-outEllVec=reshape([outEllCVec{:}],size(inpEllVec));
+errMsg =...
+    'this operation is only permitted between ellipsoid and vector in R^n.';
+checkvar(nargin,'x==2','errorTag','wrongInput',...
+    'errorMessage',errMsg)
+if isa(varargin{1}, 'ellipsoid')&&isa(varargin{2}, 'double')
+    inpEllVec = varargin{1};
+    inpVec = varargin{2};
+elseif isa(varargin{2}, 'ellipsoid')&&isa(varargin{1}, 'double')
+    inpEllVec = varargin{2};
+    inpVec = varargin{1};
+else
+    throwerror('wrongInput',errMsg);
+end
+outEllArr = plus(inpEllVec, -inpVec);

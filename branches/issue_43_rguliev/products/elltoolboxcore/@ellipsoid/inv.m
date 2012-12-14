@@ -19,20 +19,21 @@ function invEllArr = inv(myEllArr)
 
 ellipsoid.checkIsMe(myEllArr);
 
-invEllCMat = arrayfun(@(x) fSingleInv(x),myEllArr,'UniformOutput',false);
+sizeCVec = num2cell(size(myEllArr));
+invEllArr(sizeCVec{:}) = ellipsoid;
+arrayfun(@(x) fSingleInv(x),1:numel(myEllArr));
 
-invEllArr = reshape([invEllCMat{:}],size(myEllArr));
-end
-
-function invEll = fSingleInv(singEll)
-
-if isdegenerate(singEll)
-    regShMat = ellipsoid.regularize(singEll.shape,...
-        absTolMat(singEll));
-else
-    regShMat = singEll.shape;
-end
-regShMat = ell_inv(regShMat);
-invEll = ellipsoid(singEll.center , 0.5*(regShMat + regShMat'));
-
+    function fSingleInv(index)
+        
+        singEll = myEllArr(index);
+        if isdegenerate(singEll)
+            regShMat = ellipsoid.regularize(singEll.shape,...
+                absTolMat(singEll));
+        else
+            regShMat = singEll.shape;
+        end
+        regShMat = ell_inv(regShMat);
+        invEllArr(index) = ellipsoid(singEll.center ,...
+            0.5*(regShMat + regShMat'));
+    end
 end
