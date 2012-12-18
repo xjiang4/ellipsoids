@@ -91,7 +91,7 @@ if nDirs < 1
     return;
 end
 
-intApprEllVec(1,nDirs) = ellipsoid;
+intApprEllVec = repmat(ellipsoid,1, nDirs);
 arrayfun(@(x) fSingleDir(x), 1:nDirs)
     function fSingleDir(index)
         dirVec  = directionsMat(:, index);

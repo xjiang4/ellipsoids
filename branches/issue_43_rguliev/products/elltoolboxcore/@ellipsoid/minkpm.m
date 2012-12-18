@@ -144,11 +144,12 @@ end
 
 clrVec  = Options.color;
 
-if nargout == 0
+nArgOut = nargout;
+if nArgOut == 0
     ih = ishold;
 end
 
-if (Options.show_all ~= 0) && (nargout == 0)
+if (Options.show_all ~= 0) && (nArgOut == 0)
     plot(inpEllArr, 'b', inpEll, 'k');
     hold on;
     if Options.newfigure ~= 0
@@ -159,7 +160,7 @@ if (Options.show_all ~= 0) && (nargout == 0)
 end
 
 if Properties.getIsVerbose()
-    if nargout == 0
+    if nArgOut == 0
         fprintf('Computing and plotting (sum(E_i) - E) ...\n');
     else
         fprintf('Computing (sum(E_i) - E) ...\n');
@@ -172,31 +173,13 @@ nCols = size(dirMat, 2);
 Properties.setIsVerbose(false);
 %
 switch nDims
-    case 2,
-        extApprEllVec(nCols) = ellipsoid();
-        directionMat = zeros(nDims, nCols);
-        for iCol = 1:nCols
-            dirVec = dirMat(:, iCol);
-            extApprEll = extApproxEllVec(iCol);
-            if ~isbaddirection(extApprEll, inpEll, dirVec)
-                extApprEllVec(iCol)=minkdiff_ea(extApprEll, ...
-                    inpEll, dirVec);
-                directionMat(:,iCol)=dirVec;
-            end
-        end
-        nExtApprEllVec = size(extApprEllVec, 2);
+    case 2
+        extApprEllVec(1,nCols) = ellipsoid();
+        arrayfun(@(x) fCase2extAppr(x),1:nCols);
+        
         mValVec=zeros(1, nCols);
-        for jExtApprEll = 1:nExtApprEllVec
-            extApprEllShMat = extApprEllVec(jExtApprEll).shape;
-            invShMat = ell_inv(extApprEllShMat);
-            for iCol = 1:nCols
-                dirVec = dirMat(:, iCol);
-                val = dirVec' * invShMat * dirVec;
-                if val > mValVec(iCol)
-                    mValVec(iCol) = val;
-                end
-            end
-        end
+        arrayfun(@(x) fCase2(x),find(~isempty(extApprEllVec)));
+        
         isPosVec=mValVec>0;
         nPos=sum(isPosVec);
         mValMultVec = 1./sqrt(mValVec(isPosVec));
@@ -206,7 +189,7 @@ switch nDims
             boundPointMat = centVec;
         end
         boundPointMat = [boundPointMat boundPointMat(:, 1)];
-        if nargout == 0
+        if nArgOut == 0
             if Options.fill ~= 0
                 fill(boundPointMat(1, :), boundPointMat(2, :), clrVec);
                 hold on;
@@ -219,25 +202,11 @@ switch nDims
         end
         
     case 3,
-        for iCol = 1:nCols
-            dirVec = dirMat(:, iCol);
-            extApprEll = extApproxEllVec(iCol);
-            if ~isbaddirection(extApprEll, inpEll, dirVec)
-                intApprEll = minksum_ia(inpEllArr, dirVec);
-                if isbigger(intApprEll, inpEll)
-                    if ~isbaddirection(intApprEll, inpEll, dirVec)
-                        [~, boundPointSubMat] = ...
-                            rho(minkdiff_ea(extApprEll, inpEll, ...
-                            dirVec), dirVec);
-                        boundPointMat = [boundPointMat boundPointSubMat];
-                    end
-                end
-            end
-        end
+        arrayfun(@(x)  fCase3(x), 1:nCols);
         if isempty(boundPointMat)
             boundPointMat = centVec;
         end
-        if nargout == 0
+        if nArgOut == 0
             nBoundPoints = size(boundPointMat, 2);
             if nBoundPoints > 1
                 chll = convhulln(boundPointMat');
@@ -264,7 +233,7 @@ switch nDims
         boundPointMat(1, 2) = extApproxEllVec(1).center - ...
             inpEll.center + sqrt(extApproxEllVec(1).shape) - ...
             sqrt(inpEll.shape);
-        if nargout == 0
+        if nArgOut == 0
             hPlot = ell_plot(boundPointMat);
             hold on;
             set(hPlot, 'Color', clrVec, 'LineWidth', 2);
@@ -276,15 +245,43 @@ end
 
 Properties.setIsVerbose(isVrb);
 
-if nargout == 0
+if nArgOut == 0
     if ih == 0
         hold off;
     end
 end
 
-if nargout == 1
+if nArgOut == 1
     centVec = boundPointMat;
 end
-if nargout == 0
+if nArgOut == 0
     clear centVec  boundPointMat;
+end
+    function fCase2extAppr(index)
+        isGoodDirVec =~isbaddirection(extApproxEll(index), inpEll, dirMat);
+        if any(isGoodDirVec)
+            extApprEllVec(index)=minkdiff_ea(extApproxEll(index), ...
+                inpEll, dirMat(:,isGoodDirVec));
+        end
+    end
+    function fCase2(index)
+        eaShMat = extApprEllVec(index).shape;
+        invShMat = ell_inv(eaShMat);
+        valVec = diag(dirMat' * invShMat * dirMat);
+        mValVec = max(valVec', mValVec);
+    end
+    function fCase3(index)
+        dirVec = dirMat(:, index);
+        if ~isbaddirection(extApproxEllVec(index), inpEll, dirVec)
+            intApprEll = minksum_ia(inpEllArr, dirVec);
+            if isbigger(intApprEll, inpEll)
+                if ~isbaddirection(intApprEll, inpEll, dirVec)
+                    [~, boundPointSubMat] = ...
+                    rho(minkdiff_ea(extApproxEllVec(index), inpEll, ...
+                    dirVec), dirVec);
+                    boundPointMat = [boundPointMat boundPointSubMat];
+                end
+            end
+        end
+    end
 end

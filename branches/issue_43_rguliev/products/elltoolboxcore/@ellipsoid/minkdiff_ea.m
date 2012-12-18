@@ -96,7 +96,7 @@ end
 fstEllShMat = sqrtm(fstEllShMat);
 secEllShMat = sqrtm(secEllShMat);
 
-extApprEllVec(1,nDirs) = ellipsoid;
+extApprEllVec = repmat(ellipsoid,1,nDirs);
 arrayfun(@(x) fSingleDir(x), 1:nDirs)
     function fSingleDir(index)
         dirVec  = directionsMat(:, index);
