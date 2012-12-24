@@ -21,6 +21,12 @@ function [intEllArr, isnIntersectedArr] = ...
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
+%
+% $Author: Guliev Rustam <glvrst@gmail.com> $   $Date: Dec-2012$
+% $Copyright: Moscow State University,
+%             Faculty of Computational Mathematics and Cybernetics,
+%             Science, System Analysis Department 2012 $
+%
 
 import elltool.conf.Properties;
 import modgen.common.throwerror;
@@ -146,10 +152,10 @@ invMyEllShMat   = ell_inv(invMyEllShMat(2:maxEllDim, 2:maxEllDim));
 invMyEllShMat   = 0.5*(invMyEllShMat + invMyEllShMat');
 hCoefficient   = (myEllCentVec(1, 1))^2 * (invShMatrixElem - ...
     invShMatrixVec'*invMyEllShMat*invShMatrixVec);
-intEllcentVec   = myEllCentVec + myEllCentVec(1, 1)*...
+intEllCentVec   = myEllCentVec + myEllCentVec(1, 1)*...
     [-1; invMyEllShMat*invShMatrixVec];
 intEllShMat   = (1 - hCoefficient) * [0 zeros(1, maxEllDim-1); ...
     zeros(maxEllDim-1, 1) invMyEllShMat];
-intEll   = ellipsoid(intEllcentVec, intEllShMat);
+intEll   = ellipsoid(intEllCentVec, intEllShMat);
 intEll   = ell_inv(tMat)*(intEll + rotVec);
 end

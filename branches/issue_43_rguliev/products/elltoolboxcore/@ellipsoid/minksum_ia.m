@@ -39,6 +39,12 @@ function intApprEllVec = minksum_ia(inpEllArr, dirMat)
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
+%
+% $Author: Guliev Rustam <glvrst@gmail.com> $   $Date: Dec-2012$
+% $Copyright: Moscow State University,
+%             Faculty of Computational Mathematics and Cybernetics,
+%             Science, System Analysis Department 2012 $
+%
 
 import elltool.conf.Properties;
 import modgen.common.throwerror;
@@ -46,6 +52,7 @@ import modgen.common.checkmultvar;
 
 ellipsoid.checkIsMe(inpEllArr,'first');
 
+nNumel = numel(inpEllArr);
 [nDims, nCols] = size(dirMat);
 nDimsInpEllArr = dimension(inpEllArr);
 checkmultvar('all(x2(:)==x1)',2,nDimsInpEllArr,nDims,...
@@ -58,37 +65,47 @@ end
 
 centVec =zeros(nDims,1);
 arrayfun(@(x) fAddCenter(x),inpEllArr);
-
 absTolArr = getAbsTol(inpEllArr);
+
+srcMat = inpEllArr(1).shape * dirMat;
+dstArr = zeros(nDims, nCols, nNumel);
+sqrtShArr = zeros(nDims, nDims, nNumel);
+arrayfun(@(x) fGetDstArr(x), 1:nNumel);
+rotArr = gras.la.mlorthtransl(srcMat,dstArr);
+
+
 intApprEllVec(1,nCols) = ellipsoid;
 arrayfun(@(x) fSingleDirection(x),1:nCols);
 
     function fAddCenter(singEll)
         centVec = centVec + singEll.center;
     end
-    function fSingleDirection(index)
-        dirVec = dirMat(:, index);
-        subVec = inpEllArr(1).shape * dirVec;
-        subShMat = zeros(nDims,nDims);
-        arrayfun(@(x,y) fAddSh(x,y), inpEllArr, absTolArr);
-        intApprEllVec(index).center = centVec;
-        intApprEllVec(index).shape = subShMat'*subShMat;
-        
-        function fAddSh(singEll,absTol)
-            shMat = singEll.shape;
-            if isdegenerate(singEll)
-                if Properties.getIsVerbose()
-                    fprintf('MINKSUM_IA: Warning!');
-                    fprintf(' Degenerate ellipsoid.\n');
-                    fprintf('            Regularizing...\n')
-                end
-                shMat = ellipsoid.regularize(shMat, absTol);
+    
+    function fGetDstArr(index)
+        shMat = inpEllArr(index).shape;
+        if isdegenerate(inpEllArr(index))
+            if Properties.getIsVerbose()
+                fprintf('MINKSUM_IA: Warning!');
+                fprintf(' Degenerate ellipsoid.\n');
+                fprintf('            Regularizing...\n')
             end
-            shMat = sqrtm(shMat);
-            rotMat = ell_valign(subVec, shMat*dirVec);
-            subShMat = subShMat + rotMat*shMat;
+            shMat = ellipsoid.regularize(shMat, absTolArr(index));
         end
+        shMat = sqrtm(shMat);
+        sqrtShArr(:,:,index) = shMat;
+        dstArr(:,:,index) = shMat*dirMat;
+    end
+
+    function fSingleDirection(dirIndex)
+        subShMat = zeros(nDims,nDims);
+        arrayfun(@(x) fAddSh(x), 1:nNumel);
+        intApprEllVec(dirIndex).center = centVec;
+        intApprEllVec(dirIndex).shape = subShMat'*subShMat;
         
+        function fAddSh(ellIndex)
+            subShMat = subShMat + ...
+                rotArr(:,:,ellIndex,dirIndex) * sqrtShArr(:,:,ellIndex);
+        end
     end
 end
 

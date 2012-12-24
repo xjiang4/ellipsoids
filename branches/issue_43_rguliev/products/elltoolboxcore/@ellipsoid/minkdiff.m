@@ -153,10 +153,10 @@ switch nDim
         lMat = ellipsoid.rm_bad_directions(fstEllShMat, ...
             secEllShMat, [cos(phiVec); sin(phiVec)]);
         if size(lMat, 2) > 0
-            [~, boundPointMat] = rho(fstEll, lMat);
+            [~, bpMat] = rho(fstEll, lMat);
             [~, subBoundPointMat] = rho(secEll, lMat);
-            boundPointMat = boundPointMat - subBoundPointMat;
-            boundPointMat = [boundPointMat boundPointMat(:, 1)];
+            bpMat = bpMat - subBoundPointMat;
+            boundPointMat = [bpMat bpMat(:, 1)];
         else
             boundPointMat = centVec;
         end

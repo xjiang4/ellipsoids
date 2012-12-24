@@ -50,6 +50,12 @@ function [centVec, boundPointMat] = minkpm(inpEllArr, inpEll, varargin)
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
+%
+% $Author: Guliev Rustam <glvrst@gmail.com> $   $Date: Dec-2012$
+% $Copyright: Moscow State University,
+%             Faculty of Computational Mathematics and Cybernetics,
+%             Science, System Analysis Department 2012 $
+%
 
 import elltool.conf.Properties;
 import modgen.common.throwerror;
@@ -183,12 +189,12 @@ switch nDims
         isPosVec=mValVec>0;
         nPos=sum(isPosVec);
         mValMultVec = 1./sqrt(mValVec(isPosVec));
-        boundPointMat=dirMat(:,isPosVec).* ...
+        bpMat=dirMat(:,isPosVec).* ...
             mValMultVec(ones(1,nDims),:)+centVec(:,ones(1,nPos));
-        if isempty(boundPointMat)
-            boundPointMat = centVec;
+        if isempty(bpMat)
+            bpMat = centVec;
         end
-        boundPointMat = [boundPointMat boundPointMat(:, 1)];
+        boundPointMat = [bpMat bpMat(:, 1)];
         if nArgOut == 0
             if Options.fill ~= 0
                 fill(boundPointMat(1, :), boundPointMat(2, :), clrVec);
@@ -201,9 +207,15 @@ switch nDims
             set(hPlot, 'Color', clrVec);
         end
         
-    case 3,
-        arrayfun(@(x)  fCase3(x), 1:nCols);
-        if isempty(boundPointMat)
+    case 3
+        isGoodDir = false(1,nCols);
+        arrayfun(@(x) fFindGoodDir(x), 1:nCols);
+        if any(isGoodDir)
+            nGoodDirs = sum(isGoodDir);
+            goodIndexVec = find(isGoodDir);
+            boundPointMat = zeros(nDims, nGoodDirs);
+            arrayfun(@(x)  fCase3(x), 1:nGoodDirs);
+        else
             boundPointMat = centVec;
         end
         if nArgOut == 0
@@ -267,21 +279,24 @@ end
     function fCase2(index)
         eaShMat = extApprEllVec(index).shape;
         invShMat = ell_inv(eaShMat);
-        valVec = diag(dirMat' * invShMat * dirMat);
+        valVec = sum((invShMat*dirMat).*dirMat,1);
         mValVec = max(valVec', mValVec);
     end
-    function fCase3(index)
+    function fFindGoodDir(index)
         dirVec = dirMat(:, index);
         if ~isbaddirection(extApproxEllVec(index), inpEll, dirVec)
             intApprEll = minksum_ia(inpEllArr, dirVec);
-            if isbigger(intApprEll, inpEll)
-                if ~isbaddirection(intApprEll, inpEll, dirVec)
-                    [~, boundPointSubMat] = ...
-                    rho(minkdiff_ea(extApproxEllVec(index), inpEll, ...
-                    dirVec), dirVec);
-                    boundPointMat = [boundPointMat boundPointSubMat];
-                end
+            if ~isbaddirection(intApprEll, inpEll, dirVec)
+                isGoodDir(index) = true;
             end
         end
+    end
+    function fCase3(iCount)
+        index = goodIndexVec(iCount);
+        dirVec = dirMat(:, index);
+        [~, boundPointSubVec] = ...
+            rho(minkdiff_ea(extApproxEllVec(index), inpEll, ...
+            dirVec), dirVec);
+        boundPointMat(:,iCount) = boundPointSubVec;
     end
 end

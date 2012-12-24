@@ -30,6 +30,12 @@ function extApprEllVec = minkmp_ea(fstEll, secEll, sumEllArr, dirMat)
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
+%
+% $Author: Guliev Rustam <glvrst@gmail.com> $   $Date: Dec-2012$
+% $Copyright: Moscow State University,
+%             Faculty of Computational Mathematics and Cybernetics,
+%             Science, System Analysis Department 2012 $
+%
 
 import elltool.conf.Properties;
 import modgen.common.throwerror;
@@ -62,7 +68,7 @@ Properties.setIsVerbose(false);
 
 nSumAmount  = numel(sumEllArr);
 sumEllVec = reshape(sumEllArr, 1, nSumAmount);
-extApprEllVec(1,nCols) =ellipsoid;
+extApprEllVec = repmat(ellipsoid,1,nCols);
 isBadDirVec = isbaddirection(fstEll, secEll, dirMat);
 arrayfun(@(x) fSingleMP(x),1:nCols)
 

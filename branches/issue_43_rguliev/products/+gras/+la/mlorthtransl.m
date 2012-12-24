@@ -1,4 +1,4 @@
-function oMat= mlorthtransl(srcMat,dstArray)
+function oArr= mlorthtransl(srcMat,dstArray)
 % MLORTHTRANSL generates a set of orthogonal matrices that translate each of
 % the given vectors into a corresponding another vector from another set
 %
@@ -8,17 +8,18 @@ function oMat= mlorthtransl(srcMat,dstArray)
 %       dstArray: double[nDims,nVecs,nElems]
 %
 % Output:
-%   oMat: double[nDims,nDims,nElems,nVecs]
+%   oArr: double[nDims,nDims,nElems,nVecs]
 %
 % $Author: Peter Gagarinov  <pgagarinov@gmail.com> $	$Date: 2011-05-01$
 % $Copyright: Moscow State University,
 %            Faculty of Computational Mathematics and Computer Science,
 %            System Analysis Department 2011 $
 %
+
 nElems=size(dstArray,3);
 nDims=size(dstArray,1);
 nVecs=size(srcMat,2);
-oMat=zeros([nDims,nDims,nElems,nVecs]);
+oArr=zeros([nDims,nDims,nElems,nVecs]);
 ABS_TOL=1e-7;
 for l=1:1:nVecs
     srcVec=srcMat(:,l);
@@ -38,6 +39,6 @@ for l=1:1:nVecs
         end;
         sMat = [scalProd-1 sVal; -sVal scalProd-1];
         %
-        oMat(:,:,t,l) = eye(nDims) + (qMat*sMat)*qMat';
+        oArr(:,:,t,l) = eye(nDims) + (qMat*sMat)*qMat';
     end
 end

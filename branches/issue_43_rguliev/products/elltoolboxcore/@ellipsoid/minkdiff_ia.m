@@ -45,6 +45,12 @@ function intApprEllVec = minkdiff_ia(fstEll, secEll, directionsMat)
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
+%
+% $Author: Guliev Rustam <glvrst@gmail.com> $   $Date: Dec-2012$
+% $Copyright: Moscow State University,
+%             Faculty of Computational Mathematics and Cybernetics,
+%             Science, System Analysis Department 2012 $
+%
 
 import modgen.common.throwerror;
 import modgen.common.checkmultvar;
@@ -91,12 +97,14 @@ if nDirs < 1
     return;
 end
 
+numVec=sum((fstEllShMat*directionsMat).*directionsMat,1);
+denomVec=sum((secEllShMat*directionsMat).*directionsMat,1);
+coefVec=numVec./denomVec;
+
 intApprEllVec = repmat(ellipsoid,1, nDirs);
 arrayfun(@(x) fSingleDir(x), 1:nDirs)
     function fSingleDir(index)
-        dirVec  = directionsMat(:, index);
-        coef = (sqrt(dirVec'*fstEllShMat*dirVec))/...
-            (sqrt(dirVec'*secEllShMat*dirVec));
+        coef = sqrt(coefVec(index));
         shMat = (1 - (1/coef))*fstEllShMat + (1 - coef)*secEllShMat;
         intApprEllVec(index).center = centVec;
         intApprEllVec(index).shape = shMat;

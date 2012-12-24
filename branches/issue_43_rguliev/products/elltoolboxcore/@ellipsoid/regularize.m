@@ -17,14 +17,16 @@ function regQMat = regularize(qMat,absTol)
 modgen.common.checkvar(qMat,'gras.la.ismatsymm(x)',...
     'errorMessage','matrix must be symmetric.');
 
-[~, n] = size(qMat);
-r      = rank(qMat);
+nDim = size(qMat,2);
+nRank = rank(qMat);
 
-if r < n
-    [U, ~, ~] = svd(qMat);
-    E       = absTol * eye(n - r);
-    regQMat       = qMat + (U * [zeros(r, r) zeros(r, (n-r)); zeros((n-r), r) E] * U');
-    regQMat       = 0.5*(regQMat + regQMat');
+if nRank < nDim
+    [uMat, ~, ~] = svd(qMat);
+    eMat = absTol * eye(nDim - nRank);
+    regQMat = qMat + (uMat *...
+        [zeros(nRank, nRank), zeros(nRank, (nDim-nRank));...
+         zeros((nDim-nRank), nRank), eMat]* uMat');
+    regQMat = 0.5*(regQMat + regQMat');
 else
     regQMat = qMat;
 end
