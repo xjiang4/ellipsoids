@@ -12,6 +12,15 @@ classdef GenEllipsoidTestCase < mlunitext.test_case
                 filesep,shortClassName];
             import elltool.core.GenEllipsoid;
         end
+        %
+        function testDisplaySimple(~)
+            ell1=elltool.core.GenEllipsoid([1;1],eye(2));
+            ell2=elltool.core.GenEllipsoid([1;0],eye(2));
+            ell3=elltool.core.GenEllipsoid([0;1],eye(2));
+            ellMat=[ell1,ell2,ell3;ell1,ell2,ell3];
+            evalc('display(ellMat)');
+        end
+        %
         function self = testConstructor(self)
             import elltool.core.GenEllipsoid;
             %
@@ -623,7 +632,7 @@ classdef GenEllipsoidTestCase < mlunitext.test_case
             %
             %Difference between sphere and  ellipse.
             q1Mat=2*eye(2);
-            q2Mat=rotateM([1 0; 0 0.1],testOrth2Mat);
+            q2Mat=rotateM([1 0; 0 0.1],testOrth2Mat)
             cen1Vec=[0;0];
             cen2Vec=[0;0];
             phi=pi/6;
