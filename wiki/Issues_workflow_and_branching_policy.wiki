@@ -8,7 +8,14 @@ Here and below we use a term "ticket" as a synonym of any type of issue includin
   # Once developer starts working on an issue he/she 
      # changes the status to "Started". 
      # creates a branch using the following name patter *issue_33_bgates* or *issue_33_bill_gates*. *DO NOT USE YOUR LOGINS, USE REAL NAMES*. So *issue_16_klivenn* is not ok, one should use *issue_16_dkovalev*
-     # starts making the changes withi his/her branch
+     # starts making the changes withi his/her branch. Every commit message should have the following format
+{{{
+Issue #
+BugFix: <description>
+BugFix: <description>
+Enhancement: <description>
+Enhancement: <description>
+}}}
   # Once the source code is written, the latest changes from trunk are integrated into the branch a developer should run ALL unit tests by calling 
 {{{
 elltool.test.run_tests()
