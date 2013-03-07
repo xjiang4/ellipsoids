@@ -1,20 +1,21 @@
-function relTolArr = getRelTol(ellArr)
-% GETRELTOL - gives array the same size as ellArr with values of relTol
-%             properties for each ellipsoid in ellArr
+function relTol = getRelTol(ellArr)
+% GETRELTOL - gives the smalles relTol between relTol for each ellipsoid
+%   in ellArr
 %
 % Input:
 %   regular:
-%       ellArr: ellipsoid[nDim1, nDim2,...] - multidimension array
+%       ellArr: ellipsoid[nDim1, nDim2, ...] - multidimension array
 %           of ellipsoids
 %
 % Output:
 %   relTolArr: double[nDim1, nDim2,...] - multidimension array of relTol
 %       properties for ellipsoids in ellArr
 %
-% $Author: Zakharov Eugene <justenterrr@gmail.com> $
-%   $Date: 17-november-2012$
+% $Author: Grachev Artem <grachev.art@gmail.com> $
+%   $Date: 7-march-2013$
 % $Copyright: Moscow State University,
 %            Faculty of Computational Arrhematics and Computer Science,
-%            System Analysis Department 2012 $
+%            System Analysis Department 2013 $
 %
-relTolArr = getProperty(ellArr,'relTol');
+relTolArr = getRelTolArr(ellArr);
+relTol = min(relTolArr);

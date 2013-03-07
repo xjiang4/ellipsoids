@@ -1,6 +1,6 @@
-function absTolArr = getAbsTol(ellArr)
-% GETABSTOL - gives array the same size as ellArr with values of absTol
-%   properties for each ellipsoid in ellArr
+function absTol = getAbsTol(ellArr)
+% GETABSTOL - gives the smalles absTol between absTol for each ellipsoid
+%   in ellArr
 %
 % Input:
 %   regular:
@@ -8,13 +8,13 @@ function absTolArr = getAbsTol(ellArr)
 %           of ellipsoids
 %
 % Output:
-%   absTolArr: double[nDim1, nDim2,...] - multidimension array of absTol
-%       properties for ellipsoids in ellArr
+%   absTol: double - returns the smallest absTol of the ellArr
 %
-% $Author: Zakharov Eugene  <justenterrr@gmail.com> $
-%   $Date: 17-november-2012$
+% $Author: Grachev Artem  <grachev.art@gmail.com> $
+%   $Date: 7-march-2013$
 % $Copyright: Moscow State University,
 %            Faculty of Computational Arrhematics and Computer Science,
-%            System Analysis Department 2012 $
+%            System Analysis Department 2013 $
 %
-absTolArr = getProperty(ellArr,'absTol');
+absTolArr = getAbsTolArr(ellArr);
+absTol = min(absTolArr);
