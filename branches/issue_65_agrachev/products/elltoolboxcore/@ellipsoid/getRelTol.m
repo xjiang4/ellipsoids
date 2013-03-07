@@ -1,4 +1,4 @@
-function relTol = getRelTol(ellArr)
+function relTol = getRelTol(ellArr, varargin)
 % GETRELTOL - gives the smalles relTol between relTol for each ellipsoid
 %   in ellArr
 %
@@ -17,5 +17,13 @@ function relTol = getRelTol(ellArr)
 %            Faculty of Computational Arrhematics and Computer Science,
 %            System Analysis Department 2013 $
 %
+if nargin == 1 
+    relTolFun = @min;
+elseif nargin == 2 
+    relTolFun = varargin{1};
+else
+    error('Too many input arguments');
+end
+
 relTolArr = getRelTolArr(ellArr);
-relTol = min(relTolArr);
+relTol = relTolFun(relTolArr);

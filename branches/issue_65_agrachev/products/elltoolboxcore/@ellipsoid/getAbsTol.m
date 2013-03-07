@@ -1,4 +1,4 @@
-function absTol = getAbsTol(ellArr)
+function absTol = getAbsTol(ellArr, varargin)
 % GETABSTOL - gives the smalles absTol between absTol for each ellipsoid
 %   in ellArr
 %
@@ -16,5 +16,14 @@ function absTol = getAbsTol(ellArr)
 %            Faculty of Computational Arrhematics and Computer Science,
 %            System Analysis Department 2013 $
 %
+
+if nargin == 1 
+    absTolFun = @min;
+elseif nargin == 2 
+    absTolFun = varargin{1};
+else
+    error('Too many input arguments');
+end
+
 absTolArr = getAbsTolArr(ellArr);
-absTol = min(absTolArr);
+absTol = absTolFun(absTolArr);
