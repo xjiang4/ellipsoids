@@ -16,20 +16,15 @@ classdef DiscreteReachTestCase < mlunitext.test_case
         l0Mat
         fundCMat
     end
-<<<<<<< .mine
     methods (Static)
         function fundCMat = calculateFundamentalMatrix(self)            
             k0 = self.tIntervalVec(1);
             k1 = self.tIntervalVec(2);
             
             xDim = size(self.aCMat, 1);
-%             nDirections = size(initialDirectionsMat, 2);
             
             syms k;
             fAMatCalc = @(t)subs(self.aCMat, k, t);
-%             fBMatCalc = @(t)subs(self.bCMat, k, t);
-%             fControlBoundsCenterVecCalc = @(t)subs(self.pCVec, k, t);
-%             fControlBoundsMatCalc = @(t)subs(self.pCMat, k, t);
             
             nTimeStep = abs(k1 - k0) + 1;
             
@@ -71,13 +66,11 @@ classdef DiscreteReachTestCase < mlunitext.test_case
             k1 = self.tIntervalVec(2);
             
             xDim = size(self.aCMat, 1);
-%             nDirections = size(initialDirectionsMat, 2);
             
             syms k;
             fAMatCalc = @(t)subs(self.aCMat, k, t);
             fBMatCalc = @(t)subs(self.bCMat, k, t);
             fControlBoundsCenterVecCalc = @(t)subs(self.pCVec, k, t);
-%             fControlBoundsMatCalc = @(t)subs(self.pCMat, k, t);
             
             nTimeStep = abs(k1 - k0) + 1;
             
@@ -204,8 +197,6 @@ classdef DiscreteReachTestCase < mlunitext.test_case
             end  
         end
     end
-=======
->>>>>>> .r926
     methods
         function self = DiscreteReachTestCase(varargin)
             self = self@mlunitext.test_case(varargin{:});
@@ -215,11 +206,7 @@ classdef DiscreteReachTestCase < mlunitext.test_case
                 filesep, 'TestData', filesep, shortClassName];
         end
         %
-<<<<<<< .mine
         function self = set_up_param(self, testFileNameStr)
-=======
-        function self = testFirstBasicTest(self)
->>>>>>> .r926
             loadFileStr = strcat(self.testDataRootDir,...
                 filesep, testFileNameStr, '.mat');
             load(loadFileStr,...
@@ -263,7 +250,6 @@ classdef DiscreteReachTestCase < mlunitext.test_case
             
             self.fundCMat = self.calculateFundamentalMatrix(self);
         end
-<<<<<<< .mine
         
         function self = testGetSystem(self)
             isEqual = self.linSys == self.reachObj.get_system;
@@ -272,45 +258,7 @@ classdef DiscreteReachTestCase < mlunitext.test_case
                 eye(self.reachObj.dimension, 2));
             isEqual = self.linSys == projReachObj.get_system;
             mlunit.assert_equals(true, isEqual);
-=======
-        %
-        function self = testSecondBasicTest(self)
-            loadFileStr = strcat(self.testDataRootDir,...
-                '/distorbDiscreteTest.mat');
-            load(loadFileStr, 'aMat', 'bMat', 'ControlBounds',...
-                'gMat', 'DistorbBounds', 'x0Ell', 'l0Mat', 'timeVec');
-            linSysObj = elltool.linsys.LinSys(aMat, bMat,...
-                ControlBounds, gMat, DistorbBounds, [], [], 'd');
-            reachSetObj = elltool.reach.ReachDiscrete(linSysObj,...
-                x0Ell, l0Mat, timeVec);
-            reachSetObj.display();
-            firstCutReachObj =...
-                reachSetObj.cut([timeVec(1)+1 timeVec(end)-1]);
-            secondCutReachObj = reachSetObj.cut(timeVec(1)+2);
-            [rSdim sSdim] = reachSetObj.dimension();
-            [trCenterMat tVec] = reachSetObj.get_center();
-            [directionsCVec tVec] = reachSetObj.get_directions();
-            [eaEllMat tVec] = reachSetObj.get_ea();
-            [iaEllMat tVec] = reachSetObj.get_ia();
-            [goodCurvesCVec tVec] = reachSetObj.get_goodcurves();
-            [muMat tVec] = reachSetObj.get_mu();
-            linSys = reachSetObj.get_system();
-            projBasMat = [1 0 0; 0 0 1]';
-            projReachSetObj = reachSetObj.projection(projBasMat);
-            fig = figure();
-            hold on;
-            projReachSetObj.plot_ea();
-            projReachSetObj.plot_ia();
-            hold off;
-            close(fig);
-            newReachObj = reachSetObj.evolve(2 * timeVec(2));
-            projReachSetObj.isprojection();
-            firstCutReachObj.iscut();
-            newReachObj.isempty();
-            mlunit.assert_equals(true, true);
->>>>>>> .r926
         end
-<<<<<<< .mine
         
         function self = testGetCenter(self)
             [trCenterMat ~] = self.reachObj.get_center();
@@ -425,8 +373,5 @@ classdef DiscreteReachTestCase < mlunitext.test_case
                     
             mlunit.assert_equals(true, isEqual);
         end
-=======
-        %
->>>>>>> .r926
     end
 end
