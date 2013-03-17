@@ -397,8 +397,8 @@ function [distArray, timeArray] = computePointsEllDist(ellObjArray, vecArray, fl
 %  
     N_MAX_ITER=50;  
     dimSpace=maxDim;
-    absTolArray = getAbsTol(ellObjArray);
-    relTolArray = getRelTol(ellObjArray);
+    absTolArray = getAbsTolArr(ellObjArray);
+    relTolArray = getRelTolArr(ellObjArray);
     if (nEllObj > 1) && (nEllObj == nVec)
         vecCArray=mat2cell(vecArray,dimSpace,ones(1,nVec));
         fComposite=@(ellObj,xVec,absTol,relTol)computeEllVecDistance(ellObj,xVec{1},N_MAX_ITER,absTol,relTol,flag);
@@ -437,7 +437,7 @@ function [distEllEllArray, timeOfCalculationArray] = l_elldist(ellObj1Array, ell
         end
     end
     N_MAX_ITER=10000;
-    absTolArray = getAbsTol(ellObj1Array);
+    absTolArray = getAbsTolArr(ellObj1Array);
     if (nEllObj1 > 1) && (nEllObj2 > 1)
        fCompositeFlagOn=@(ellObj1,ellObj2,absTol)findEllMetDistance(ellObj1,ellObj2,N_MAX_ITER,absTol);
        fCompositeFlagOff=@(ellObj1,ellObj2,absTol)computeEllEllDistance(ellObj1,ellObj2,N_MAX_ITER,absTol);
@@ -634,7 +634,7 @@ function [d, status] = l_polydist(E, X)
     fprintf('Invoking CVX...\n');
   end
   
-  absTolMat = getAbsTol(E);
+  absTolMat = getAbsTolArr(E);
   d      = [];
   status = [];
   if (t1 > 1) && (t2 > 1)

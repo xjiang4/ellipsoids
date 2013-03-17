@@ -227,7 +227,7 @@ if strcmp(cvx_status,'Infeasible') ...
 end
 
 if (xVec'*invQMat*xVec + 2*(-invQMat*qVec)'*xVec + ...
-        (qVec'*invQMat*qVec - 1)) < min(getAbsTol(fstEllArr(:)))
+        (qVec'*invQMat*qVec - 1)) < getAbsTol(fstEllArr(:))
     res = 1;
 else
     res = 0;

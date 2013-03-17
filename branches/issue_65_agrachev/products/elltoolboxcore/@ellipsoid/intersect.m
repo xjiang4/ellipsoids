@@ -107,7 +107,7 @@ modgen.common.checkvar(objArr,@(x) isa(x, 'ellipsoid') ||...
 if (nargin < 3) || ~(ischar(mode))
     mode = 'u';
 end
-absTolArr = getAbsTol(myEllArr);
+absTolArr = getAbsTolArr(myEllArr);
 resArr = [];
 statusArr = [];
 if mode == 'u'
@@ -196,7 +196,7 @@ if isdegenerate(secEll)
         fprintf('      Regularizing...\n');
     end
     secEllShMat = ...
-        ellipsoid.regularize(secEllShMat,getAbsTol(secEll));
+        ellipsoid.regularize(secEllShMat,getAbsTolArr(secEll));
 end
 secEllShMat = ell_inv(secEllShMat);
 secEllShMat = 0.5*(secEllShMat + secEllShMat');
@@ -206,7 +206,7 @@ secEllCentDublVec = secEllCentVec;
 nNumel = numel(fstEllArr);
 
 
-absTolArr = getAbsTol(fstEllArr);
+absTolArr = getAbsTolArr(fstEllArr);
 cvx_begin sdp
 variable cvxExprVec(length(secEllShMat), 1)
 minimize(cvxExprVec'*secEllShMat*cvxExprVec + ...
@@ -236,7 +236,7 @@ end;
 if cvxExprVec'*secEllShDublMat*cvxExprVec + ...
         2*(-secEllShDublMat*secEllCentDublVec)'*cvxExprVec + ...
         (secEllCentDublVec'*secEllShDublMat*secEllCentDublVec - 1) ...
-        <= min(getAbsTol(fstEllArr(:)))
+        <= getAbsTol(fstEllArr(:))
     res = 1;
 else
     res = 0;
@@ -281,7 +281,7 @@ end
 nNumel = numel(myEllArr);
 
 
-absTolArr = getAbsTol(myEllArr);
+absTolArr = getAbsTolArr(myEllArr);
 cvx_begin sdp
 variable cvxExprVec(size(normHypVec, 1), 1)
 minimize(abs(normHypVec'*cvxExprVec - hypScalar))
@@ -307,7 +307,7 @@ end;
 
 
 if abs(normHypVec'*cvxExprVec - hypScalar) <= ...
-        min(getAbsTol(myEllArr(:)))
+        getAbsTol(myEllArr(:))
     res = 1;
 else
     res = 0;
@@ -344,7 +344,7 @@ status = 1;
 [aMat, bVec] = double(polyt);
 nNumel = numel(myEllArr);
 
-absTolArr = getAbsTol(myEllArr);
+absTolArr = getAbsTolArr(myEllArr);
 cvx_begin sdp
 variable cvxExprVec(size(aMat, 2), 1)
 minimize(aMat(1, :)*cvxExprVec)
@@ -372,7 +372,7 @@ if strcmp(cvx_status,'Infeasible') || ...
     res = -1;
     return;
 end;
-if aMat(1, :)*cvxExprVec <= min(getAbsTol(myEllArr(:)))
+if aMat(1, :)*cvxExprVec <= getAbsTol(myEllArr(:))
     res = 1;
 else
     res = 0;

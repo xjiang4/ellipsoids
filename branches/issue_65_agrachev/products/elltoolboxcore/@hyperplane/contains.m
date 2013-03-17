@@ -145,7 +145,7 @@ function isPos = isSingContains(myHyp, xVec)
 %   System Analysis Department 2012 $
 
 [hypNormVec,hypConst] = parameters(myHyp);
-absTol = getAbsTol(myHyp);
+absTol = getAbsTolArr(myHyp);
 isPos = false;
 isFinVec = isfinite(xVec);
 if all(hypNormVec(~isFinVec) == 0)

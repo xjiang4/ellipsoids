@@ -65,7 +65,7 @@ end
 isVerbose=Properties.getIsVerbose();
 centVec =zeros(nDims,1);
 arrayfun(@(x) fAddCenter(x),inpEllArr);
-absTolArr = getAbsTol(inpEllArr);
+absTolArr = getAbsTolArr(inpEllArr);
 
 srcMat = sqrtm(inpEllArr(1).shape) * dirMat;
 %dstArr = zeros(nDims, nCols, nNumel);

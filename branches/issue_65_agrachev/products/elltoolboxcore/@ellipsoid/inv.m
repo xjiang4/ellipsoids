@@ -34,7 +34,7 @@ arrayfun(@(x) fSingleInv(x),1:numel(myEllArr));
         singEll = myEllArr(index);
         if isdegenerate(singEll)
             regShMat = ellipsoid.regularize(singEll.shape,...
-                getAbsTol(singEll));
+                getAbsTolArr(singEll));
         else
             regShMat = singEll.shape;
         end

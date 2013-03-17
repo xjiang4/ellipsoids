@@ -72,7 +72,7 @@ if ~isOneEll % multiple ellipsoids, one direction
 else % one ellipsoid, multiple directions
     qVec = ellArr.center;
     shMat = ellArr.shape;
-    absTol = getAbsTol(ellArr);
+    absTol = getAbsTolArr(ellArr);
     dirsCVec = mat2cell(dirsMat,nDim,ones(1,nDirs));
     
     [resCArr xCArr] =cellfun(@(x) fSingleRhoForOneEll(x),dirsCVec,...
