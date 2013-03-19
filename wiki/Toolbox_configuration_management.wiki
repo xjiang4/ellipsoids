@@ -1,3 +1,5 @@
+#summary Describes the tools and classes for the toolbox configuration
+
 Previously the system parameters were specified via ellOptions structure. Now this structure is no longer used and the system is configured via xml files available via a set of command-line utilities:
 
 {{{
