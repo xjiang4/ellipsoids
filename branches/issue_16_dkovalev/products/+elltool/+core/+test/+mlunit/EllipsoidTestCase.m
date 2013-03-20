@@ -1144,6 +1144,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             [isEq, reportStr] = eq(resEll, ansEll);
             mlunit.assert_equals(true, isEq, reportStr);
         end
+        
         function self = testUminus(self)
             testEllCenterVec = [5; 10];
             testEllMat = [2 3; 4 5];
@@ -1327,6 +1328,52 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testCheckVec(100) = -5;
             testCheckVec = testCheckVec';
             testIsRight = min(testResEllCenter == testCheckVec);
+            mlunit.assert_equals(testIsRight, 1);
+        end
+        
+        function self = testInv(self)
+            testEllCenterVec = 1;
+            testEllMat = 4;
+            testEll = ellipsoid(testEllCenterVec, testEllMat);
+            testResEll = inv(testEll);
+            [~, testEllResMat] = double(testResEll);
+            testIsRight = (testEllResMat == 0.2500);
+            mlunit.assert_equals(min(min(testIsRight)), 1);
+            
+            testEllCenterVec = [-5; 1];
+            testEllMat = eye(2);
+            testEll = ellipsoid(testEllCenterVec, testEllMat);
+            testResEll = inv(testEll);
+            [~, testEllResMat] = double(testResEll);
+            testIsRight = (testEllResMat == eye(2));
+            mlunit.assert_equals(min(min(testIsRight)), 1);
+            
+            test1EllCenterVec = [1; 0; 1];
+            test2EllCenterVec = [1; 2];
+            test1EllMat = eye(3);
+            test2EllMat = [2 2; 2 3];
+            test1Ell = ellipsoid(test1EllCenterVec, test1EllMat);
+            test2Ell = ellipsoid(test2EllCenterVec, test2EllMat);
+            testEllArr = [test1Ell test2Ell];
+            testEllResArr = inv(testEllArr);
+            [~, test1EllResMat] = double(testEllResArr(1));
+            [~, test2EllResMat] = double(testEllResArr(2));
+            testIsRight = (min(min(test1EllResMat == eye(3))) && min(min(test2EllResMat == [1.5 -1; -1 1])));
+            mlunit.assert_equals(testIsRight, 1);
+            
+            testEllCenterVec = zeros(1, 20);
+            testEllMat = eye(20);
+            testResMat = eye(20);
+            for testCounter = 1:1:size(testEllMat,2)
+                testEllMat(testCounter,testCounter) = testCounter;
+            end
+            testEll = ellipsoid(testEllCenterVec',testEllMat);
+            for testCounter = 1:1:size(testEllMat,2)
+                testResMat(testCounter,testCounter) = 1./testCounter;
+            end
+            testEll = inv(testEll);
+            [~, testEllMat] = double(testEll);
+            testIsRight = min(min(testEllMat == testResMat));
             mlunit.assert_equals(testIsRight, 1);
         end
      end
