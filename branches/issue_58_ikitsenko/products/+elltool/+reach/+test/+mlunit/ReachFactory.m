@@ -9,16 +9,23 @@ classdef ReachFactory
         tVec
         isBack
         isEvolve
+        isDiscr
         dim
     end
     methods
         function self =...
-                ReachFactory(confName, crm, crmSys, isBack, isEvolve)
+                ReachFactory(confName, crm, crmSys, isBack, isEvolve, ...
+                isDiscr)
+            if nargin < 6
+                isDiscr = false;
+            end
+  
             self.confName = confName;
             self.crm = crm;
             self.crmSys = crmSys;
             self.isBack = isBack;
             self.isEvolve = isEvolve;
+            self.isDiscr = isDiscr;
             %
             crm.deployConfTemplate(confName);
             crm.selectConf(confName);
@@ -55,20 +62,30 @@ classdef ReachFactory
             DistBounds.center = qtDefCVec;
             DistBounds.shape = qtDefCMat;
             %
-            self.linSys = elltool.linsys.LinSys(atDefCMat, btDefCMat,...
-                ControlBounds, ctDefCMat, DistBounds);
+            if isDiscr
+                self.linSys = elltool.linsys.LinSys(atDefCMat, btDefCMat,...
+                    ControlBounds, ctDefCMat, DistBounds, [], [], 'd');
+            else                
+                self.linSys = elltool.linsys.LinSys(atDefCMat, btDefCMat,...
+                    ControlBounds, ctDefCMat, DistBounds);
+            end
         end
         function reachObj = createInstence(self)
-            if self.isBack
-                reachObj = elltool.reach.ReachContinuous(self.linSys,...
-                    self.x0Ell, self.l0Mat, self.tVec);
-            elseif self.isEvolve
-                halfReachObj = elltool.reach.ReachContinuous(self.linSys,...
-                    self.x0Ell, self.l0Mat, [self.tVec(1) sum(self.tVec)/2]);
-                reachObj = halfReachObj.evolve(self.tVec(2));
+            if self.isDiscr
+                reachObj = elltool.reach.ReachDiscrete(self.linSys,...
+                        self.x0Ell, self.l0Mat, self.tVec);
             else
-                reachObj = elltool.reach.ReachContinuous(self.linSys,...
-                    self.x0Ell, self.l0Mat, self.tVec);
+                if self.isBack
+                    reachObj = elltool.reach.ReachContinuous(self.linSys,...
+                        self.x0Ell, self.l0Mat, self.tVec);
+                elseif self.isEvolve
+                    halfReachObj = elltool.reach.ReachContinuous(self.linSys,...
+                        self.x0Ell, self.l0Mat, [self.tVec(1) sum(self.tVec)/2]);
+                    reachObj = halfReachObj.evolve(self.tVec(2));
+                else
+                    reachObj = elltool.reach.ReachContinuous(self.linSys,...
+                        self.x0Ell, self.l0Mat, self.tVec);
+                end
             end
         end
         function linSys = getLinSys(self)
