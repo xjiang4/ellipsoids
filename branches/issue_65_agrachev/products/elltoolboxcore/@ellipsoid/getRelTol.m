@@ -17,13 +17,16 @@ function relTol = getRelTol(ellArr, varargin)
 %            Faculty of Computational Arrhematics and Computer Science,
 %            System Analysis Department 2013 $
 %
+
+import modgen.common.throwerror;
+
 if nargin == 1 
-    relTolFun = @min;
+    fRelTolFun = @min;
 elseif nargin == 2 
-    relTolFun = varargin{1};
+    fRelTolFun = varargin{1};
 else
-    error('Too many input arguments');
+    throwerror('wrongInput', 'Too many input arguments');
 end
 
 relTolArr = getRelTolArr(ellArr);
-relTol = relTolFun(relTolArr);
+relTol = fRelTolFun(relTolArr);

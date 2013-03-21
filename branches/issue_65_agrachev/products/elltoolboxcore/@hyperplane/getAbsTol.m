@@ -17,13 +17,15 @@ function absTol = getAbsTol(hplaneArr, varargin)
 %            System Analysis Department 2013 $
 %
 
+import modgen.common.throwerror;
+
 if nargin == 1 
-    absTolFun = @min;
+    fAbsTolFun = @min;
 elseif nargin == 2 
-    absTolFun = varargin{1};
+    fAbsTolFun = varargin{1};
 else
-    error('Too many input arguments');
+    throwerror('wrongInput', 'Too many input arguments');
 end
 
 absTolArr = getAbsTolArr(hplaneArr);
-absTol = absTolFun(absTolArr);
+absTol = fAbsTolFun(absTolArr);

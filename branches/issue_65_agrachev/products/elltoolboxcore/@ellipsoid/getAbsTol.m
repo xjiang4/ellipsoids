@@ -17,13 +17,14 @@ function absTol = getAbsTol(ellArr, varargin)
 %            System Analysis Department 2013 $
 %
 
-if nargin == 1 
-    absTolFun = @min;
-elseif nargin == 2 
-    absTolFun = varargin{1};
-else
-    error('Too many input arguments');
-end
+import modgen.common.throwerror;
 
-absTolArr = getAbsTolArr(ellArr);
-absTol = absTolFun(absTolArr);
+if nargin == 1 
+    fAbsTolFun = @min;
+elseif nargin == 2 
+    fAbsTolFun = varargin{1};
+else
+    throwerror('wrongInput', 'Too many input arguments');
+end
+    
+[absTolArr, absTol] = getAbsTolArr(ellArr, fAbsTolFun);
