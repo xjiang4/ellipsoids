@@ -17,15 +17,4 @@ function absTol = getAbsTol(hplaneArr, varargin)
 %            System Analysis Department 2013 $
 %
 
-import modgen.common.throwerror;
-
-if nargin == 1 
-    fAbsTolFun = @min;
-elseif nargin == 2 
-    fAbsTolFun = varargin{1};
-else
-    throwerror('wrongInput', 'Too many input arguments');
-end
-
-absTolArr = getAbsTolArr(hplaneArr);
-absTol = fAbsTolFun(absTolArr);
+[absTolArr, absTol] = getAbsTolArr(hplaneArr, varargin{:});

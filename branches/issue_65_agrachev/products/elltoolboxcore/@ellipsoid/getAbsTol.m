@@ -16,15 +16,5 @@ function absTol = getAbsTol(ellArr, varargin)
 %            Faculty of Computational Arrhematics and Computer Science,
 %            System Analysis Department 2013 $
 %
-
-import modgen.common.throwerror;
-
-if nargin == 1 
-    fAbsTolFun = @min;
-elseif nargin == 2 
-    fAbsTolFun = varargin{1};
-else
-    throwerror('wrongInput', 'Too many input arguments');
-end
     
-[absTolArr, absTol] = getAbsTolArr(ellArr, fAbsTolFun);
+[absTolArr, absTol] = getAbsTolArr(ellArr, varargin{:});

@@ -1,4 +1,4 @@
-function relTolArr = getRelTolArr(ellArr)
+function [relTolArr, varargout] = getRelTolArr(ellArr, varargin)
 % GETRELTOLARR - gives array the same size as ellArr with values of relTol
 %             properties for each ellipsoid in ellArr
 %
@@ -17,4 +17,21 @@ function relTolArr = getRelTolArr(ellArr)
 %            Faculty of Computational Arrhematics and Computer Science,
 %            System Analysis Department 2012 $
 %
+
+import modgen.common.throwerror;
+
+if nargin == 1
+    fRelTolFun = @min;
+elseif nargin == 2
+    fRelTolFun = varargin{1};
+else
+    throwerror('wrongInput', 'Too many input arguments');
+end
+
 relTolArr = getProperty(ellArr,'relTol');
+if nargout == 2    
+    varargout{1} = fRelTolFun(relTolArr);
+elseif (nargout ~= 1) && (nargout ~= 0)
+    throwerror('wrongOutput', 'Too many output arguments');
+end
+    
