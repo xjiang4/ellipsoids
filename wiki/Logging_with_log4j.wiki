@@ -7,6 +7,7 @@ Ellipsoidal toolbox allows developers to use powerful java logging library calle
 To use logging in the code, developer must at first get an object of class "Logger". Code below demonstates getting the object:
 {{{
 import elltool.logging.Log4jConfigurator;
+% if writing tests: import elltool.test.logging.Log4jConfigurator;
 logger = Log4jConfigurator.getLogger();
 }}}
 Such object, when instantiated, will contain information about class it was called from. It is called category. 
