@@ -25,6 +25,8 @@
 					<set1 type="cell" >
 						<item type="double" >1 0</item>
 						<item type="double" >0 1</item>
+                        <item type="double" >0.7 0.3</item>
+                        <item type="double" >0.3 0.7</item>
 					</set1>
 				</lsGoodDirSets>
 			</manual>
