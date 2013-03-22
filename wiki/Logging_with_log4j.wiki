@@ -30,7 +30,12 @@ logger.debug(sprintf('Value of variable is %d', var))
 logger.error('Got negative definite ellipsoid?!')
 throwerror(...)
 }}} 
-Corresponding methods are used to log other types of messages: `trace`, `debug`, etc.
+Corresponding methods are used to log other types of messages: `trace`, `debug`, etc. To check if logger is configured to print informational, debug or trace messages, use isInfoEnabled, isDebugEnabled and isTraceEnabled methods, like that
+{{{
+if (logger.isInfoEnabled)
+  logger.info(sprintf('Method was called %d times', nTimes))
+end
+}}}
 
 = Faster logging =
 Though log4j is one of the fastest java logging engines, it significantly slows down the program within some circumstances nevertheless. So there are some tips:
@@ -47,6 +52,16 @@ if isempty(logger)
   logger = Log4jConfigurator.getLogger();
 end
 logger.info("Information")
+}}}
+  * Use output formatting with care. For example, in this code
+{{{
+logger.debug(sprintf('Value of variable is %d', var))
+}}}
+  the sprintf function will be run and even if logger will never print this message. So this will slow down actively used methods regardless of logger configuration. The solution is to use isInfoEnabled, isDebugEnabled methods before logging with sprintf or other formatting function:
+{{{
+if (logger.isDebugEnabled)
+  logger.debug(sprintf('Value of variable is %d', var))
+end
 }}}
   * File output is slower than console output, so do not use it in release versions of actively used methods. 
   * If a debug is needed, do not create a lot of temporary code for debugging. Instead create permament debug code and use debug messages in it. By default logger will accept only info and more important log messages levels and will not do extra job. But you can change logging settings in your copy of ET to accept debug messages and write it to file or console.
