@@ -18,11 +18,19 @@ logger = Log4jConfigurator.getLogger('elltool.logging');
 }}}
 will instantiate a Logger object configured to log for `elltool.logging` class.
 
-There are plenty of methods to write log messages of different importance. The types of messages are (in ascending order of priority): trace, debug, info, warn, error, fatal. For example 
+There are plenty of methods to write log messages of different importance. The types of messages are (in ascending order of priority): trace->debug->info->warn->error->fatal. For example: 
 {{{ 
+% informational message
 logger.info('Making some calculations...')
+
+% debug message
+logger.debug(sprintf('Value of variable is %d', var))
+
+% error message. only if neccessary
+logger.error('Got negative definite ellipsoid?!')
+throwerror(...)
 }}} 
-will add an informational message to the log. Corresponding methods are used to log other types of messages: `trace`, `debug`, etc.
+Corresponding methods are used to log other types of messages: `trace`, `debug`, etc.
 
 = Faster logging =
 Though log4j is one of the fastest java logging engines, it significantly slows down the program within some circumstances nevertheless. So there are some tips:
@@ -40,10 +48,11 @@ if isempty(logger)
 end
 logger.info("Information")
 }}}
-  * File output is slower than console output, so do not use it in release versions of actively used methods.
+  * File output is slower than console output, so do not use it in release versions of actively used methods. 
+  * If a debug is needed, do not create a lot of temporary code for debugging. Instead create permament debug code and use debug messages in it. By default logger will accept only info and more important log messages levels and will not do extra job. But you can change logging settings in your copy of ET to accept debug messages and write it to file or console.
 
 = Configuration =
-Briefly speaking the log4j configuration consists of defining loggers and appenders with layouts. For full information see the manual at [http://logging.apache.org].
+Briefly speaking the log4j configuration consists of defining loggers and appenders with layouts. For full information see the [http://logging.apache.org/log4j/1.2/manual.html log4j manual].
 
 == Appenders ==
 Appenders are mechanisms for writing logs to one or another location. Mostly used appenders are: `ConsoleAppender` and `FileAppender`
@@ -61,13 +70,15 @@ log4j.appender.Appender1.File=${elltool.log4j.logfile.dirwithsep}${elltool.log4j
 
 Loggers have hierarchical structure. The top logger is called `rootLogger`, and is configured by `log4j.rootLogger` configuration variable. Other logger names should be preceded by `log4j.logger`. 
 
-The value of logger parameter consists of lowest message priority to print and a list of appenders, comma separated. For example:
+The value of logger parameter consists of lowest message priority to print and a list of appenders, comma separated. All loggers follow the basic selection rule: *a log request of level p in a logger with level q, is enabled (i.e. shown) if p is of less or equal importance as q*. For example:
 {{{
-log4j.rootLogger=INFO, stdoutAppender, fileAppender1
+log4j.rootLogger=ERROR, stdoutAppender, fileAppender1
 log4j.logger.reach = INFO, fileAppender2
 }}}
+here `reach` logger will show informational messages, warnings, errors and fatals, and `rootLogger` will accept only error and fatal messages.
 
-Categories of loggers should be used as logger name. For example, if a developer writes such code:
+
+Categories of loggers could be used as logger name. For example, if a developer writes such code:
 {{{
 logger = Log4jConfigurator.getLogger('reach');
 logger.info('Information')
