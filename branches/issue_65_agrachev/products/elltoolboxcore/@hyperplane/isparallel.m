@@ -44,7 +44,7 @@ elseif (isscalar(secHypArr))
     secHypArr = repmat(secHypArr, size(fstHypArr));
 end
 
-fstHypAbsTolArr = getAbsTolArr(fstHypArr);
+fstHypAbsTolArr = getAbsTol(fstHypArr);
 isPosArr = arrayfun(@(x, y, z) isSingParallel(x, y, z), ...
     fstHypArr, secHypArr, fstHypAbsTolArr, 'UniformOutput', true);
 

@@ -1,4 +1,4 @@
-function absTol = getAbsTol(hplaneArr, varargin)
+function [absTolArr, varargout] = getAbsTol(hplaneArr, varargin)
 % GETABSTOL - gives the smalles absTol between absTol for each ellipsoid
 %   in ellArr
 %
@@ -17,4 +17,20 @@ function absTol = getAbsTol(hplaneArr, varargin)
 %            System Analysis Department 2013 $
 %
 
-[absTolArr, absTol] = getAbsTolArr(hplaneArr, varargin{:});
+import modgen.common.throwerror;
+
+if nargin == 1
+    fAbsTolFun = @min;
+elseif nargin == 2
+    fAbsTolFun = varargin{1};
+else
+    throwerror('wrongInput', 'Too many input arguments');
+end
+
+absTolArr = arrayfun(@(x)x.absTol,hplaneArr);
+if nargout == 2    
+    varargout{1} = fAbsTolFun(absTolArr);
+elseif (nargout ~= 1) && (nargout ~= 0)
+    throwerror('wrongOutput', 'Too many output arguments');
+end
+    

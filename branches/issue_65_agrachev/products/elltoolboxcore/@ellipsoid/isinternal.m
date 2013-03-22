@@ -102,7 +102,7 @@ function isPositive = isinternal_sub(myEllMat, xVec, mode)
 
 import elltool.conf.Properties;
 
-absTolMat = getAbsTolArr(myEllMat);
+absTolMat = getAbsTol(myEllMat);
 
 isPosMat = arrayfun(@(x,y) fSingleCase(x,y),myEllMat,absTolMat);
 

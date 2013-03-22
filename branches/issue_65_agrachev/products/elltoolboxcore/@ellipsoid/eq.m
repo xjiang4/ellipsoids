@@ -38,7 +38,7 @@ firstSizeVec = size(ellFirstArr);
 secSizeVec = size(ellSecArr);
 isnFirstScalar=nFirstElems > 1;
 isnSecScalar=nSecElems > 1;
-relTol = ellFirstArr.getRelTol;
+relTol = ellFirst.getRelTol;
 %
 SEll1Array=arrayfun(@formCompStruct,ellFirstArr);
 SEll2Array=arrayfun(@formCompStruct,ellSecArr);

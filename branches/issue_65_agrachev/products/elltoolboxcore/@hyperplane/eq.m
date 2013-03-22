@@ -44,7 +44,7 @@ firstSizeVec = size(fstHypArr);
 secSizeVec = size(secHypArr);
 isnFirstScalar=nFirstElems > 1;
 isnSecScalar=nSecElems > 1;
-relTol=getAbsTol(fstHypArr);
+[~, relTol] = getAbsTol(fstHypArr);
 %
 SEll1Array=arrayfun(@formCompStruct,fstHypArr);
 SEll2Array=arrayfun(@formCompStruct,secHypArr);

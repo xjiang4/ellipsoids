@@ -107,7 +107,7 @@ modgen.common.checkvar(objArr,@(x) isa(x, 'ellipsoid') ||...
 if (nargin < 3) || ~(ischar(mode))
     mode = 'u';
 end
-absTolArr = getAbsTolArr(myEllArr);
+absTolArr = getAbsTol(myEllArr);
 resArr = [];
 statusArr = [];
 if mode == 'u'
@@ -196,7 +196,7 @@ if isdegenerate(secEll)
         fprintf('      Regularizing...\n');
     end
     secEllShMat = ...
-        ellipsoid.regularize(secEllShMat,getAbsTolArr(secEll));
+        ellipsoid.regularize(secEllShMat,getAbsTol(secEll));
 end
 secEllShMat = ell_inv(secEllShMat);
 secEllShMat = 0.5*(secEllShMat + secEllShMat');
@@ -206,7 +206,7 @@ secEllCentDublVec = secEllCentVec;
 nNumel = numel(fstEllArr);
 
 
-absTolArr = getAbsTolArr(fstEllArr);
+absTolArr = getAbsTol(fstEllArr);
 cvx_begin sdp
 variable cvxExprVec(length(secEllShMat), 1)
 minimize(cvxExprVec'*secEllShMat*cvxExprVec + ...
@@ -232,11 +232,12 @@ if strcmp(cvx_status,'Infeasible') ||...
         strcmp(cvx_status,'Inaccurate/Infeasible')
     res = -1;
     return;
-end;
+end
+[~, fstAbsTol] = fstEllArr.getAbsTol();
 if cvxExprVec'*secEllShDublMat*cvxExprVec + ...
         2*(-secEllShDublMat*secEllCentDublVec)'*cvxExprVec + ...
         (secEllCentDublVec'*secEllShDublMat*secEllCentDublVec - 1) ...
-        <= getAbsTol(fstEllArr(:))
+        <= fstAbsTol
     res = 1;
 else
     res = 0;
@@ -281,7 +282,7 @@ end
 nNumel = numel(myEllArr);
 
 
-absTolArr = getAbsTolArr(myEllArr);
+absTolArr = getAbsTol(myEllArr);
 cvx_begin sdp
 variable cvxExprVec(size(normHypVec, 1), 1)
 minimize(abs(normHypVec'*cvxExprVec - hypScalar))
@@ -305,9 +306,8 @@ if strcmp(cvx_status,'Infeasible') || ...
     return;
 end;
 
-
-if abs(normHypVec'*cvxExprVec - hypScalar) <= ...
-        getAbsTol(myEllArr(:))
+[~, myAbsTol] = myEllArr.getAbsTol(); 
+if abs(normHypVec'*cvxExprVec - hypScalar) <= myAbsTol
     res = 1;
 else
     res = 0;
@@ -344,7 +344,7 @@ status = 1;
 [aMat, bVec] = double(polyt);
 nNumel = numel(myEllArr);
 
-absTolArr = getAbsTolArr(myEllArr);
+absTolArr = getAbsTol(myEllArr);
 cvx_begin sdp
 variable cvxExprVec(size(aMat, 2), 1)
 minimize(aMat(1, :)*cvxExprVec)
@@ -372,7 +372,8 @@ if strcmp(cvx_status,'Infeasible') || ...
     res = -1;
     return;
 end;
-if aMat(1, :)*cvxExprVec <= getAbsTol(myEllArr(:))
+[~, myAbsTol] = myEllArr.getAbsTol();
+if aMat(1, :)*cvxExprVec <= myAbsTol
     res = 1;
 else
     res = 0;

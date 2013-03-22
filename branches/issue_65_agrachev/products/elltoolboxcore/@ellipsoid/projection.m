@@ -41,7 +41,7 @@ modgen.common.checkmultvar('(x2<=x1) && all(x3(:)==x1)',...
 scalProdMat = basisMat' * basisMat;
 normSqVec = diag(scalProdMat);
 
-absTol = ellArr.getAbsTol(@max);
+[~, absTol] = ellArr.getAbsTol(@max);
 isOrtogonalMat =(scalProdMat - diag(normSqVec))> absTol;
 if any(isOrtogonalMat(:))
     error('basis vectors must be orthogonal.');

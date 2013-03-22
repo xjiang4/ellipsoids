@@ -38,7 +38,7 @@ inpEllVec = reshape(inpEllArr, 1, nEllipsoids);
 if Properties.getIsVerbose()
     fprintf('Invoking CVX...\n');
 end
-[absTolVec, absTol] = getAbsTolArr(inpEllVec);
+[absTolVec, absTol] = getAbsTol(inpEllVec);
 cvx_begin sdp
 variable cvxEllMat(minEllDim, minEllDim) symmetric
 variable cvxEllCenterVec(minEllDim)
