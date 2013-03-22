@@ -32,7 +32,7 @@ throwerror(...)
 }}} 
 Corresponding methods are used to log other types of messages: `trace`, `debug`, etc. To check if logger is configured to print informational, debug or trace messages, use isInfoEnabled, isDebugEnabled and isTraceEnabled methods, like that
 {{{
-if (logger.isInfoEnabled)
+if (logger.isInfoEnabled())
   logger.info(sprintf('Method was called %d times', nTimes))
 end
 }}}
@@ -59,7 +59,7 @@ logger.debug(sprintf('Value of variable is %d', var))
 }}}
   the sprintf function will be run and even if logger will never print this message. So this will slow down actively used methods regardless of logger configuration. The solution is to use isInfoEnabled, isDebugEnabled methods before logging with sprintf or other formatting function:
 {{{
-if (logger.isDebugEnabled)
+if (logger.isDebugEnabled())
   logger.debug(sprintf('Value of variable is %d', var))
 end
 }}}
