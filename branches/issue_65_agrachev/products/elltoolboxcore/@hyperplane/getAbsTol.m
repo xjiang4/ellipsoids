@@ -1,17 +1,32 @@
 function [absTolArr, varargout] = getAbsTol(hplaneArr, varargin)
-% GETABSTOL - gives the smalles absTol between absTol for each ellipsoid
-%   in ellArr
+% GETABSTOL - gives the array of absTol for all elements in hplaneArr
 %
 % Input:
 %   regular:
-%       ellArr: ellipsoid[nDim1, nDim2, ...] - multidimension array
-%           of ellipsoids
-%
+%       ellArr: hyperplane[nDim1, nDim2, ...] - multidimension array
+%           of hyperplane
+%   optional 
+%       fAbsTolFun: - function handle, that apply to the absTolArr
+%           The default is @min.
+% 
 % Output:
-%   absTol: double - returns the smallest absTol of the ellArr
+%   regular:
+%       absTolArr: double [absTol1, absTol2, ...] - return absTol for 
+%           each element in hplaneArr
+%   optional:
+%       absTol: double - return result of work fAbsTolFun with 
+%           the absTolArr
 %
+% Tips:
+%   use [~,absTol] = hplaneArr.getAbsTol() if you want get only
+%       absTol,
+%   use [absTolArr,absTol] = hplaneArr.getAbsTol() if you want get 
+%       absTolArr and absTol,
+%   use absTolArr = hplaneArr.getAbsTol() if you want get only absTolArr
+% 
+%$Author: Zakharov Eugene  <justenterrr@gmail.com> $ 
 % $Author: Grachev Artem  <grachev.art@gmail.com> $
-%   $Date: 7-march-2013$
+%   $Date: March-2013$
 % $Copyright: Moscow State University,
 %            Faculty of Computational Arrhematics and Computer Science,
 %            System Analysis Department 2013 $

@@ -1,23 +1,35 @@
 function [relTolArr, varargout] = getRelTol(ellArr, varargin)
-% GETRELTOL - gives the smalles relTol between relTol for each ellipsoid
-%   in ellArr
+% GETRELTOL - gives the array of relTol for all elements in ellArr
 %
 % Input:
 %   regular:
 %       ellArr: ellipsoid[nDim1, nDim2, ...] - multidimension array
 %           of ellipsoids
-%
+%   optional 
+%       fRelTolFun: - function handle, that apply to the relTolArr
+%           The default is @min.
 % Output:
-%   relTolArr: double[nDim1, nDim2,...] - multidimension array of relTol
-%       properties for ellipsoids in ellArr
+%   regular:
+%       relTolArr: double [relTol1, relTol2, ...] - return relTol for 
+%           each element in ellArr
+%   optional:
+%       relTol: double - return result of work fRelTolFun with 
+%           the relTolArr
 %
-% $Author: Grachev Artem <grachev.art@gmail.com> $
-%   $Date: 7-march-2013$
+% Tips:
+%   use [~,relTol] = ellArr.getRelTol() if you want get only
+%       relTol,
+%   use [relTolArr,relTol] = ellArr.getRelTol() if you want get 
+%       relTolArr and relTol,
+%   use relTolArr = ellArr.getRelTol() if you want get only relTolArr
+% 
+%$Author: Zakharov Eugene  <justenterrr@gmail.com> $ 
+% $Author: Grachev Artem  <grachev.art@gmail.com> $
+%   $Date: March-2013$
 % $Copyright: Moscow State University,
 %            Faculty of Computational Arrhematics and Computer Science,
 %            System Analysis Department 2013 $
 %
-
 import modgen.common.throwerror;
 
 if nargin == 1
