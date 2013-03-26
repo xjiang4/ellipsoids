@@ -17,7 +17,7 @@ nElem = numel(centVecCVec);
 
 
 cvx_begin sdp
-cvx_solver sdpt3
+% cvx_solver sdpt3
 variable cvxWorkMat(minDim, minDim) symmetric
 variable cvxCentVec(minDim)
 variable cvxDirVec(nElem)
