@@ -1,4 +1,4 @@
-function [absTolArr, varargout] = getAbsTol(hplaneArr, varargin)
+function [absTolArr, absTolVal] = getAbsTol(hplaneArr, fAbsTolFun)
 % GETABSTOL - gives the array of absTol for all elements in hplaneArr
 %
 % Input:
@@ -6,8 +6,8 @@ function [absTolArr, varargout] = getAbsTol(hplaneArr, varargin)
 %       ellArr: hyperplane[nDim1, nDim2, ...] - multidimension array
 %           of hyperplane
 %   optional 
-%       fAbsTolFun: - function handle, that apply to the absTolArr
-%           The default is @min.
+%       fAbsTolFun: function_handle[1,1] - function that apply 
+%           to the absTolArr. The default is @min.
 % 
 % Output:
 %   regular:
@@ -17,7 +17,7 @@ function [absTolArr, varargout] = getAbsTol(hplaneArr, varargin)
 %       absTol: double - return result of work fAbsTolFun with 
 %           the absTolArr
 %
-% Tips:
+% Usage:
 %   use [~,absTol] = hplaneArr.getAbsTol() if you want get only
 %       absTol,
 %   use [absTolArr,absTol] = hplaneArr.getAbsTol() if you want get 
@@ -32,20 +32,13 @@ function [absTolArr, varargout] = getAbsTol(hplaneArr, varargin)
 %            System Analysis Department 2013 $
 %
 
-import modgen.common.throwerror;
-
 if nargin == 1
     fAbsTolFun = @min;
-elseif nargin == 2
-    fAbsTolFun = varargin{1};
-else
-    throwerror('wrongInput', 'Too many input arguments');
 end
 
 absTolArr = arrayfun(@(x)x.absTol,hplaneArr);
+
 if nargout == 2    
-    varargout{1} = fAbsTolFun(absTolArr);
-elseif (nargout ~= 1) && (nargout ~= 0)
-    throwerror('wrongOutput', 'Too many output arguments');
+    absTolVal = fAbsTolFun(absTolArr);
 end
     

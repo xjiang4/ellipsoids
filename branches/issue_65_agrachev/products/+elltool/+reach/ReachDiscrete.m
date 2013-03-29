@@ -500,55 +500,50 @@ classdef ReachDiscrete < elltool.reach.AReach
             [r, x] = rho(ell, l);
         end
         %
-        function [absTolArr, varargout] = getAbsTol(rsArr, varargin)
+        function [absTolArr, absTolVal] = getAbsTol(rsArr, fAbsTolFun)
         % GETABSTOL - gives the array of absTol for all elements in rsArr
         %
         % Input:
         %   regular:
-        %       rsArr: reach[nDim1, nDim2, ...] - multidimension array
-        %           of reach sets 
-        %   optional: 
-        %       fAbsTolFun: - function handle, that apply to the absTolArr
-        %           The default is @min.
+        %       rsArr: elltool.reach.ReachDiscrete[nDim1, nDim2, ...] - 
+        %           multidimension array of reach sets 
+        %   optional 
+        %       fAbsTolFun: function_handle[1,1] - function that apply 
+        %           to the absTolArr. The default is @min.
         %         
         % Output:
         %   regular:
-        %       absTolArr: double [absTol1, absTol2, ...] - return absTol for 
-        %           each element in rsArr
+        %       absTolArr: double [absTol1, absTol2, ...] - return absTol
+        %           for each element in rsArr
         %   optional:
         %       absTol: double - return result of work fAbsTolFun with 
         %           the absTolArr
         %
-        % Tips:
+        % Usage:
         %   use [~,absTol] = rsArr.getAbsTol() if you want get only
         %       absTol,
         %   use [absTolArr,absTol] = rsArr.getAbsTol() if you want get 
         %       absTolArr and absTol,
-        %   use absTolArr = rsArr.getAbsTol() if you want get only absTolArr
+        %   use absTolArr = rsArr.getAbsTol() if you want get only 
+        %       absTolArr
         % 
         %$Author: Zakharov Eugene  <justenterrr@gmail.com> $ 
         % $Author: Grachev Artem  <grachev.art@gmail.com> $
         %   $Date: March-2013$
         % $Copyright: Moscow State University,
-        %            Faculty of Computational Arrhematics and Computer Science,
+        %            Faculty of Computational Arrhematics 
+        %            and Computer Science,
         %            System Analysis Department 2013 $
         % 
-            import modgen.common.throwerror;
-            
+          
             if nargin == 1
                 fAbsTolFun = @min;
-            elseif nargin == 2
-                fAbsTolFun = varargin{1};
-            else
-                throwerror('wrongInput', 'Too many input arguments');
             end
 
             absTolArr =...
                 elltool.reach.ReachDiscrete.getProperty(rsArr,'absTol');
             if nargout == 2    
-                varargout{1} = fAbsTolFun(absTolArr);
-            elseif (nargout ~= 1) && (nargout ~= 0)
-                throwerror('wrongOutput', 'Too many output arguments');
+                absTolVal = fAbsTolFun(absTolArr);
             end
         end
         %
@@ -618,55 +613,51 @@ classdef ReachDiscrete < elltool.reach.AReach
                 elltool.reach.ReachDiscrete.getProperty(rsArr,'nTimeGridPoints');
         end
         %
-        function [relTolArr, varargout] = getRelTol(rsArr, varargin)
+        function [relTolArr, relTolVal] = getRelTol(rsArr, fRelTolFun)
         % GETRELTOL - gives the array of relTol for all elements in ellArr
         %
         % Input:
         %   regular:
-        %       rsArr: reach[nDim1, nDim2, ...] - multidimension array
-        %           of reach sets 
+        %       rsArr: elltool.reach.ReachDiscrete[nDim1, nDim2, ...] - 
+        %           multidimension array of reach sets. 
         %   optional 
-        %       fRelTolFun: - function handle, that apply to the relTolArr.
-        %           The default is @min.
+        %       fRelTolFun: function_handle[1,1] - function that apply 
+        %           to the relTolArr. The default is @min.
         %
         % Output:
         %   regular:
-        %       relTolArr: double [relTol1, relTol2, ...] - return relTol for 
-        %           each element in rsArr
+        %       relTolArr: double [relTol1, relTol2, ...] - return relTol 
+        %           for each element in rsArr
         %   optional:
         %       relTol: double - return result of work fRelTolFun with 
         %           the relTolArr
         %
-        % Tips:
+        % Usage:
         %   use [~,relTol] = rsArr.getRelTol() if you want get only
         %       relTol,
         %   use [relTolArr,relTol] = rsArr.getRelTol() if you want get 
         %       relTolArr and relTol,
-        %   use relTolArr = rsArr.getRelTol() if you want get only relTolArr
+        %   use relTolArr = rsArr.getRelTol() if you want get only 
+        %        relTolArr
         %
         %$Author: Zakharov Eugene  <justenterrr@gmail.com> $ 
         % $Author: Grachev Artem  <grachev.art@gmail.com> $
         %   $Date: March-2013$
         % $Copyright: Moscow State University,
-        %            Faculty of Computational Arrhematics and Computer Science,
+        %            Faculty of Computational Arrhematics 
+        %            and Computer Science,
         %            System Analysis Department 2013 $
         %
-            import modgen.common.throwerror;
             
             if nargin == 1
                 fRelTolFun = @min;
-            elseif nargin == 2
-                fRelTolFun = varargin{1};
-            else
-                throwerror('wrongInput', 'Too many input arguments');
             end
             
             relTolArr =...
                 elltool.reach.ReachDiscrete.getProperty(rsArr,'relTol');
+            
             if nargout == 2    
-                varargout{1} = fRelTolFun(relTolArr);
-            elseif (nargout ~= 1) && (nargout ~= 0)
-                throwerror('wrongOutput', 'Too many output arguments');
+                relTolVal = fRelTolFun(relTolArr);
             end
         end
     end
