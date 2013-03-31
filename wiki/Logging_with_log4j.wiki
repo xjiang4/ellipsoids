@@ -79,7 +79,7 @@ All appenders' configuration variables are preceded by `log4j.appender`, then af
 log4j.appender.Appender1.File=${elltool.log4j.logfile.dirwithsep}${elltool.log4j.logfile.main.name}
 }}}
   * `layout`: Message formatter. Used to render the contents of log message. Use "`org.apache.log4j.PatternLayout`" value for sprintf-like renderer.
-  * `layout.ConversionPattern`: when using PatternLayout, defines the sprintf-like log template. For example: "`%d %5p %c - %m%n`" defines such template: "DATE PRIORITY". See [http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html Conversion characters] for information on ConversionPattern syntax.
+  * `layout.ConversionPattern`: when using PatternLayout, defines the sprintf-like log template. For example: "`%d %5p %c - %m%n`" defines such template: "DATE PRIORITY CATEGORY - MESSAGE LINEBREAK". See [http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html Conversion characters] for information on ConversionPattern syntax.
 
 == Loggers ==
 
