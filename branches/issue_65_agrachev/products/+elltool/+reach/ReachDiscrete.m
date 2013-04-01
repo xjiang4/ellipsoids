@@ -443,37 +443,60 @@ classdef ReachDiscrete < elltool.reach.AReach
             end
         end
         %
-        function propValArr = getProperty(rsArray, propName)
-        % GETPROPERTY gives array the same size as rsArray with values of propName properties
-        % for each reach set in rsArr. Private method, used in every public
-        % property getter.
-        % 
+        function [propArr, propVal] = getProperty(rsArr,propName,fPropFun)
+        % GETPROPERTY gives array the same size as rsArray with values 
+        % of propName properties for each reach set in rsArr. 
+        % Private method, used in every public property getter.
+        %
         % Input:
         %   regular:
-        %       rsArray:reach[nDims1, nDims2,...] - multidimension array of reach sets
-        % 
+        %       rsArray:reach[nDims1, nDims2,...] - multidimension array 
+        %           of reach sets propName: char[1,N] - name property
+        %   optional:
+        %       fPropFun: function_handle[1,1] - function that apply
+        %           to the propArr. The default is @min.
+        %
         % Output:
-        %   propValArr:double[nDims1, nDims2,...]- multidimension array of propName properties for
-        %                                   reach sets in rsArray
-        % 
-        % $Author: Zakharov Eugene  <justenterrr@gmail.com> $    $Date: 17-november-2012 $
+        %   regular:
+        %       propArr: double[nDim1, nDim2,...] - multidimension array of
+        %           propName properties for ellipsoids in rsArr
+        %   optional:
+        %       propVal: double[1, 1] - return result of work fPropFun with
+        %           the propArr
+        %
+        % $Author: Zakharov Eugene  <justenterrr@gmail.com> $
+        %   $Date: 17-november-2012$
+        % $Author: Grachev Artem  <grachev.art@gmail.com> $
+        %   $Date: March-2013$
         % $Copyright: Moscow State University,
-        %            Faculty of Computational Arrhematics and Computer Science,
+        %            Faculty of Computational Arrhematics 
+        %               and Computer Science,
         %            System Analysis Department 2012 $
-        % 
+        %
             import modgen.common.throwerror;
             propNameList = {'absTol','relTol','nPlot2dPoints',...
                 'nPlot3dPoints','nTimeGridPoints'};
-            if ~any(strcmp(propName, propNameList))
-                    throwerror('wrongInput',[propName,':no such property']);
+            if ~any(strcmp(propName,propNameList))
+                throwerror('wrongInput',[propName,':no such property']);
             end
-            propValArr=arrayfun(@(x)x.(propName),rsArray);
+            %
+            if nargin == 2
+                fPropFun = @min;
+            end
+            
+            propArr= arrayfun(@(x)x.(propName),rsArr);
+            
+            if nargout == 2
+                propVal = fPropFun(propArr);
+            end
+            
         end
+        
         %
         function x = ellbndr_2d(ell, num)
-        %
-        % ELLBNDR_2D - compute the boundary of 2D ellipsoid.
-        %
+            %
+            % ELLBNDR_2D - compute the boundary of 2D ellipsoid.
+            %
             import elltool.conf.Properties;
             if nargin < 2
                 num = elltool.reach.ReachDiscrete.getNPlot2dPoints(ell);
@@ -498,21 +521,6 @@ classdef ReachDiscrete < elltool.reach.AReach
                 l = [l [cos(phi)*sin(psy(i)); sin(phi)*sin(psy(i)); arr]];
             end
             [r, x] = rho(ell, l);
-        end
-        %
-        function [propArr, propVal] = getArrProp(rsArr,propName,fPropFun)
-
-            if nargin == 2
-                fPropFun = @min;
-            end
-
-            propArr = ...
-                elltool.reach.ReachDiscrete.getProperty(rsArr,propName);
-
-            if nargout == 2
-                propVal = fPropFun(propArr);
-            end
-            
         end
         %
         function [absTolArr, absTolVal] = getAbsTol(rsArr, varargin)
@@ -551,7 +559,7 @@ classdef ReachDiscrete < elltool.reach.AReach
         %            System Analysis Department 2013 $
         % 
         
-            [absTolArr,absTolVal]=rsArr.getArrProp('absTol',varargin{:});
+            [absTolArr,absTolVal]=rsArr.getProperty('absTol',varargin{:});
         
         end
         %
@@ -657,7 +665,7 @@ classdef ReachDiscrete < elltool.reach.AReach
         %            System Analysis Department 2013 $
         %
             
-            [relTolArr,relTolVal]=rsArr.getArrProp('relTol',varargin{:});
+            [relTolArr,relTolVal]=rsArr.Property('relTol',varargin{:});
         end
     end
     %

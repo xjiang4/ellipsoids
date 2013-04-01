@@ -32,4 +32,4 @@ function [absTolArr, absTolVal] = getAbsTol(ellArr, varargin)
 %            System Analysis Department 2013 $
 %
 
-[absTolArr, absTolVal] = ellArr.getArrProp('absTol',varargin{:});
+[absTolArr, absTolVal] = ellArr.getProperty('absTol',varargin{:});

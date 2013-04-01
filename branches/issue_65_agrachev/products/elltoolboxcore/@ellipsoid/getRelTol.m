@@ -5,7 +5,7 @@ function [relTolArr, relTolVal] = getRelTol(ellArr, varargin)
 %   regular:
 %       ellArr: ellipsoid[nDim1, nDim2, ...] - multidimension array
 %           of ellipsoids
-%   optional 
+%   optional: 
 %       fRelTolFun: function_handle[1,1] - function that apply 
 %           to the relTolArr. The default is @min.
 % Output:
@@ -31,4 +31,4 @@ function [relTolArr, relTolVal] = getRelTol(ellArr, varargin)
 %            System Analysis Department 2013 $
 %
 
-[relTolArr, relTolVal] = ellArr.getArrProp('relTol',varargin{:});
+[relTolArr, relTolVal] = ellArr.getProperty('relTol',varargin{:});
