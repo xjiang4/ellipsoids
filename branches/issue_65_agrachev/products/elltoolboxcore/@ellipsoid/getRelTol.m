@@ -1,4 +1,4 @@
-function [relTolArr, relTolVal] = getRelTol(ellArr, fRelTolFun)
+function [relTolArr, relTolVal] = getRelTol(ellArr, varargin)
 % GETRELTOL - gives the array of relTol for all elements in ellArr
 %
 % Input:
@@ -13,7 +13,7 @@ function [relTolArr, relTolVal] = getRelTol(ellArr, fRelTolFun)
 %       relTolArr: double [relTol1, relTol2, ...] - return relTol for 
 %           each element in ellArr
 %   optional:
-%       relTol: double - return result of work fRelTolFun with 
+%       relTol: double[1,1] - return result of work fRelTolFun with 
 %           the relTolArr
 %
 % Usage:
@@ -31,12 +31,4 @@ function [relTolArr, relTolVal] = getRelTol(ellArr, fRelTolFun)
 %            System Analysis Department 2013 $
 %
 
-if nargin == 1
-    fRelTolFun = @min;
-end
-
-relTolArr = getProperty(ellArr,'relTol');
-
-if nargout == 2    
-    relTolVal = fRelTolFun(relTolArr);
-end
+[relTolArr, relTolVal] = ellArr.getArrProp('relTol',varargin{:});

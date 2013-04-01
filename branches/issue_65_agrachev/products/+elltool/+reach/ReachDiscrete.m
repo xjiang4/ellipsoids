@@ -500,7 +500,22 @@ classdef ReachDiscrete < elltool.reach.AReach
             [r, x] = rho(ell, l);
         end
         %
-        function [absTolArr, absTolVal] = getAbsTol(rsArr, fAbsTolFun)
+        function [propArr, propVal] = getArrProp(rsArr,propName,fPropFun)
+
+            if nargin == 2
+                fPropFun = @min;
+            end
+
+            propArr = ...
+                elltool.reach.ReachDiscrete.getProperty(rsArr,propName);
+
+            if nargout == 2
+                propVal = fPropFun(propArr);
+            end
+            
+        end
+        %
+        function [absTolArr, absTolVal] = getAbsTol(rsArr, varargin)
         % GETABSTOL - gives the array of absTol for all elements in rsArr
         %
         % Input:
@@ -516,8 +531,8 @@ classdef ReachDiscrete < elltool.reach.AReach
         %       absTolArr: double [absTol1, absTol2, ...] - return absTol
         %           for each element in rsArr
         %   optional:
-        %       absTol: double - return result of work fAbsTolFun with 
-        %           the absTolArr
+        %       absTol: double[1,1] - return result of work fAbsTolFun 
+        %           with the absTolArr
         %
         % Usage:
         %   use [~,absTol] = rsArr.getAbsTol() if you want get only
@@ -535,16 +550,9 @@ classdef ReachDiscrete < elltool.reach.AReach
         %            and Computer Science,
         %            System Analysis Department 2013 $
         % 
-          
-            if nargin == 1
-                fAbsTolFun = @min;
-            end
-
-            absTolArr =...
-                elltool.reach.ReachDiscrete.getProperty(rsArr,'absTol');
-            if nargout == 2    
-                absTolVal = fAbsTolFun(absTolArr);
-            end
+        
+            [absTolArr,absTolVal]=rsArr.getArrProp('absTol',varargin{:});
+        
         end
         %
         function nPlot2dPointsArr = getNPlot2dPoints(rsArr)
@@ -613,7 +621,7 @@ classdef ReachDiscrete < elltool.reach.AReach
                 elltool.reach.ReachDiscrete.getProperty(rsArr,'nTimeGridPoints');
         end
         %
-        function [relTolArr, relTolVal] = getRelTol(rsArr, fRelTolFun)
+        function [relTolArr, relTolVal] = getRelTol(rsArr, varargin)
         % GETRELTOL - gives the array of relTol for all elements in ellArr
         %
         % Input:
@@ -629,8 +637,8 @@ classdef ReachDiscrete < elltool.reach.AReach
         %       relTolArr: double [relTol1, relTol2, ...] - return relTol 
         %           for each element in rsArr
         %   optional:
-        %       relTol: double - return result of work fRelTolFun with 
-        %           the relTolArr
+        %       relTol: double[1,1] - return result of work fRelTolFun 
+        %           with the relTolArr
         %
         % Usage:
         %   use [~,relTol] = rsArr.getRelTol() if you want get only
@@ -649,16 +657,7 @@ classdef ReachDiscrete < elltool.reach.AReach
         %            System Analysis Department 2013 $
         %
             
-            if nargin == 1
-                fRelTolFun = @min;
-            end
-            
-            relTolArr =...
-                elltool.reach.ReachDiscrete.getProperty(rsArr,'relTol');
-            
-            if nargout == 2    
-                relTolVal = fRelTolFun(relTolArr);
-            end
+            [relTolArr,relTolVal]=rsArr.getArrProp('relTol',varargin{:});
         end
     end
     %

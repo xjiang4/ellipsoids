@@ -14,7 +14,7 @@ function [absTolArr, absTolVal] = getAbsTol(hplaneArr, fAbsTolFun)
 %       absTolArr: double [absTol1, absTol2, ...] - return absTol for 
 %           each element in hplaneArr
 %   optional:
-%       absTol: double - return result of work fAbsTolFun with 
+%       absTol: double[1, 1] - return result of work fAbsTolFun with 
 %           the absTolArr
 %
 % Usage:
