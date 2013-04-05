@@ -42,6 +42,10 @@ For a quick reference, here is a short list of correct variable names
 
 = Help headers =
 Use the format from the following example to the letter (mind the blank spaces, the case, the structure) when writing the help headers for the functions/class methods
+
+*Help header width should be under 60 symbols so that the automatic help
+collector can fit it properly into the toolbox manual.*
+
 {{{
 % PARSEPAREXT behaves in the same way as modgen.common.parseparams but
 % returns property values in a more convenient form
