@@ -78,7 +78,7 @@ classdef BasicTestCase < mlunitext.test_case
             %
             testMat = [1, 0; 0, -1];
             self.runAndCheckError('gras.la.sqrtmpos(testMat)',...
-                'wrongInput');            
+                'wrongInput');
         end
         
         function self = testIsMatSymm(self)
@@ -122,9 +122,9 @@ classdef BasicTestCase < mlunitext.test_case
             mlunit.assert(fIsMatPosSemDef(testMat.'*testMat,absTol));
             %
             testMat=[1 5; 5 25];
-            mlunit.assert(~ismatposdef(testMat,absTol));
+            mlunit.assert(~ismatposdef(testMat));
             mlunit.assert(fIsMatPosSemDef(testMat,absTol));
-            mlunit.assert(~fIsMatPosDef(testMat,absTol));
+            mlunit.assert(~fIsMatPosDef(testMat,0));
             %
             testMat=rand(10,10);
             testMat=-testMat.'*testMat;
@@ -136,6 +136,25 @@ classdef BasicTestCase < mlunitext.test_case
                 'wrongInput:nonSquareMat');
             self.runAndCheckError('gras.la.ismatposdef([1 -1; 1 1])',...
                 'wrongInput:nonSymmMat');
+            %
+            %
+            nTimes=50;
+            for iInd=1:nTimes
+                checkMultTimes();
+            end
+            function checkMultTimes()
+                import gras.la.ismatposdef;
+                testMat=rand(5,5);
+                testMat=-testMat.'*testMat;
+                isFalse=ismatposdef(testMat,absTol,true);
+                % Check that ismatposdef return false with
+                % isSemDefFlagOn=true and at the same time sqrtmpos throws
+                % notPosDef error:
+                mlunit.assert_equals(false,isFalse);
+                self.runAndCheckError('gras.la.sqrtmpos(testMat,absTol)',...
+                    'wrongInput:notPosDef');
+            end
+            
             %
             function check(fHandle)
                 import gras.la.ismatposdef;
