@@ -154,7 +154,39 @@ classdef BasicTestCase < mlunitext.test_case
                 self.runAndCheckError('gras.la.sqrtmpos(testMat,absTol)',...
                     'wrongInput:notPosDef');
             end
-            
+            %
+            load(strcat(self.testDataRootDir,...
+                strcat(filesep, 'orth3Mat.mat')), 'orth3Mat');
+            %
+            isPosOrSemDef=true;
+            %
+            diagVec=[1; 2; 3];
+            checkDeterm(isPosOrSemDef);
+            %
+            diagVec=[1; -1; 3];
+            checkDeterm(~isPosOrSemDef);
+            %
+            diagVec=[0; 1; 2];
+            checkDeterm(isPosOrSemDef,true);
+            %
+            diagVec=[0; -1; 2];
+            checkDeterm(~isPosOrSemDef,true);
+            %
+            diagVec=[-1; 1; -2];
+            checkDeterm(~isPosOrSemDef,false);
+            checkDeterm(~isPosOrSemDef,true);
+            %
+            function checkDeterm(isTrue,isSemPosDef)
+                import gras.la.ismatposdef;
+                testMat=orth3Mat.'*diag(diagVec)*orth3Mat;
+                testMat=0.5*(testMat+testMat.');
+                if nargin<2
+                    isOk=ismatposdef(testMat,absTol);
+                else
+                    isOk=ismatposdef(testMat,absTol,isSemPosDef);
+                end
+                mlunit.assert_equals(isTrue,isOk);
+            end
             %
             function check(fHandle)
                 import gras.la.ismatposdef;
