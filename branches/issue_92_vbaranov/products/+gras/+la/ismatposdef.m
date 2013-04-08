@@ -42,7 +42,7 @@ if isFlagSemDefOn
         isPosDef=false;
     end
 else
-    if minEig<=-absTol
+    if minEig<=absTol
         isPosDef=false;
     end
 end
