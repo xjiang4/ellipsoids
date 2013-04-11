@@ -5,8 +5,10 @@
 
 Add your content here.
 
-  * *Matlab 2012a 32-bit or higher*. Please note that a requirement to have 32-bit version comes from a need to be able to write the reliable tests that verify the calculation results with a certain precision. This precision depends on the architecture so that a test written for 32-bit Matlab may fail in 64-bit version and vice-versa.
-  * *Matlab Parallel Computing Toolbox*. This toolbox will be used for running the test pack in parallel on different CPU cores which gives a significant bool on multi-core hardware. 
+  * *Matlab 2012a 32-bit or higher*. Please note that a requirement to have 32-bit version comes from a need to be able to write the reliable tests that verify the calculation results with a certain precision. This precision depends on the architecture so that a test written for 32-bit Matlab may fail in 64-bit version and vice-versa. Also the following toolboxes are required:
+      * *Matlab Parallel Computing Toolbox*. This toolbox will be used for running the test pack in parallel on different CPU cores which gives a significant boost on multi-core hardware. 
+      * *Optimization Toolbox*. This toolbox is used by MPT (see below) for solving the quadratic programming problems.
+
   * *CVX 2.0* from [http://ellipsoids.googlecode.com/files/cvx_2_0_build890.zip]
   * *MPT 2.6.3* from [http://ellipsoids.googlecode.com/files/mpt_ver263.zip]
 
