@@ -19,18 +19,31 @@ function [intEllArr, isnIntersectedArr] = ...
 %       doesn't intersect myHipArr(iCount),
 %       isnIntersectedArr(iCount) = false, otherwise.
 %
+% Example:
+%   ellObj = ellipsoid([-2; -1], [4 -1; -1 1]);
+%   hypMat = [hyperplane([0 -1; -1 0]', 1); hyperplane([0 -2; -1 0]', 1)];
+%   ellMat = ellObj.hpintersection(hypMat)
+% 
+%   ellMat =
+%   2x2 array of ellipsoids.
+% 
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+% $Copyright:  The Regents of the University of California 
+%              2004-2008 $
 %
-% $Author: Guliev Rustam <glvrst@gmail.com> $   $Date: Dec-2012$
+% $Author: Guliev Rustam <glvrst@gmail.com> $   
+% $Date: Dec-2012$
 % $Copyright: Moscow State University,
-%             Faculty of Computational Mathematics and Cybernetics,
-%             Science, System Analysis Department 2012 $
+%            Faculty of Computational Mathematics and Computer Science,
+%            System Analysis Department 2012 $
 %
 
 import elltool.conf.Properties;
 import modgen.common.throwerror;
 import modgen.common.checkmultvar;
+import elltool.logging.Log4jConfigurator;
+  
+persistent logger;
 
 ellipsoid.checkIsMe(myEllArr,'first');
 modgen.common.checkvar(myHypArr,@(x) isa(x,'hyperplane'),...
@@ -42,16 +55,33 @@ isHypScal = isscalar(myHypArr);
 nEllDimsArr = dimension(myEllArr);
 maxEllDim   = max(nEllDimsArr(:));
 
+modgen.common.checkvar( myEllArr , 'numel(x) > 0', 'errorTag', ...
+    'wrongInput:emptyArray', 'errorMessage', ...
+    'Each array must be not empty.');
+
+modgen.common.checkvar( myEllArr,'all(~isempty(x(:)))','errorTag', ...
+    'wrongInput:emptyEllipsoid', 'errorMessage', ...
+    'Array should not have empty ellipsoid.');
+
+modgen.common.checkvar( myHypArr , 'numel(x) > 0', 'errorTag', ...
+    'wrongInput:emptyArray', 'errorMessage', ...
+    'Each array must be not empty.');
+
+modgen.common.checkvar( myHypArr,'all(~isempty(x(:)))','errorTag', ...
+    'wrongInput:emptyHyperplane', 'errorMessage', ...
+    'Array should not have empty hyperplane.');
+
 checkmultvar('x1 || x2 ||all(size(x3)==size(x4))',...
     4,isEllScal,isHypScal,myEllArr,myHypArr,...
     'errorTag','wrongSizes','errorMessage',...
     'sizes of ellipsoidal and hyperplane arrays do not match.');
+
 checkmultvar('all(x1(:)==x1(1))&&all(x2(:)==x2(1))',...
     2,nEllDimsArr,dimension(myHypArr),...
     'errorTag','wrongSizes','errorMessage',...
     'ellipsoids and hyperplanes must be of the same dimension.');
 
-isSecondOutput = nargout==2;
+
 if isHypScal
     nAmount = numel(myEllArr);
     sizeCVec = num2cell(size(myEllArr));
@@ -64,11 +94,14 @@ isnIntersectedArr = false(sizeCVec{:});
 indexVec = 1:nAmount;
 
 if Properties.getIsVerbose()
+    if isempty(logger)
+        logger=Log4jConfigurator.getLogger();
+    end
     if ~(isEllScal&&isHypScal)
-        fprintf('Computing %d ellipsoid-hyperplane intersections...\n',...
-            nAmount);
+        logger.info(sprintf('Computing %d ellipsoid-hyperplane intersections...',...
+            nAmount));
     else
-        fprintf('Computing ellipsoid-hyperplane intersection...\n');
+        logger.info('Computing ellipsoid-hyperplane intersection...');
     end
 end
 
@@ -85,13 +118,8 @@ end
         myHyp = myHypArr(hypIndex);
         index = max(ellIndex,hypIndex);
         if distance(myEll, myHyp) > 0
-            if (~isSecondOutput)
-                modgen.common.throwerror('degenerateEllipsoid',...
-                    'Hypeplane doesn''t intersect ellipsoid');
-            else
-                intEllArr(index) = ellipsoid;
-                isnIntersectedArr(index) = true;
-            end
+           intEllArr(index) = ellipsoid;
+           isnIntersectedArr(index) = true;
         else
             intEllArr(index) = l_compute1intersection(myEll,myHyp,...
                 maxEllDim);
@@ -124,6 +152,9 @@ function intEll = l_compute1intersection(myEll, myHyp, maxEllDim)
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
 import elltool.conf.Properties;
+import elltool.logging.Log4jConfigurator;
+  
+persistent logger;
 
 [normHypVec, hypScalar] = parameters(myHyp);
 if hypScalar < 0
@@ -133,13 +164,16 @@ end
 tMat = ell_valign([1; zeros(maxEllDim-1, 1)], normHypVec);
 rotVec = (hypScalar*tMat*normHypVec)/(normHypVec'*normHypVec);
 myEll = tMat*myEll - rotVec;
-myEllCentVec = myEll.center;
-myEllShMat = myEll.shape;
+myEllCentVec = myEll.centerVec;
+myEllShMat = myEll.shapeMat;
 
 if rank(myEllShMat) < maxEllDim
     if Properties.getIsVerbose()
-        fprintf('HPINTERSECTION: Warning! Degenerate ellipsoid.\n');
-        fprintf('                Regularizing...\n');
+            if isempty(logger)
+                logger=Log4jConfigurator.getLogger();
+            end
+        logger.info('HPINTERSECTION: Warning! Degenerate ellipsoid.');
+        logger.info('                Regularizing...');
     end
     myEllShMat = ellipsoid.regularize(myEllShMat,myEll.absTol);
 end

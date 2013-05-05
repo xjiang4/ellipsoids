@@ -24,7 +24,7 @@ function [centVec, boundPntMat] = minkmp(fstEll, secEll, sumEllArr,varargin)
 %       (firstEll - secondEll) +
 %       +(geometric sum of ellipsoids in sumEllArr)
 %       in default (red) color.
-%   MINKMP(firstEll, secondEll, sumEllMat, Options) - plots
+%   MINKMP(firstEll, secondEll, sumEllArr, Options) - plots
 %       (firstEll - secondEll) +
 %       +(geometric sum of ellipsoids in sumEllArr)
 %       using options given in the Options structure.
@@ -52,23 +52,34 @@ function [centVec, boundPntMat] = minkmp(fstEll, secEll, sumEllArr,varargin)
 %               (0 - transparent, 1 - opaque).
 %
 % Output:
-%   centerVec: double[nDim, 1] - center of the resulting set.
+%   centerVecVec: double[nDim, 1] - centerVec of the resulting set.
 %   boundarPointsMat: double[nDim, nBoundPoints] - set of boundary
 %       points (vertices) of resulting set.
 %
+% Example:
+%   firstEllObj = ellipsoid([-2; -1], [2 -1; -1 1]);
+%   secEllObj = ell_unitball(2);
+%   ellVec = [firstEllObj secEllObj ellipsoid([-3; 1], eye(2))];
+%   minkmp(firstEllObj, secEllObj, ellVec);
+% 
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+% $Copyright:  The Regents of the University of California 
+%              2004-2008 $
 %
-% $Author: Guliev Rustam <glvrst@gmail.com> $   $Date: Nov-2012$
+% $Author: Guliev Rustam <glvrst@gmail.com> $  
+% $Date: Nov-2012$
 % $Copyright: Moscow State University,
-%             Faculty of Computational Mathematics and Cybernetics,
-%             Science, System Analysis Department 2012 $
+%            Faculty of Computational Mathematics and Computer Science,
+%            System Analysis Department 2012 $
 %
 
 import modgen.common.throwerror;
 import modgen.common.checkmultvar;
 import modgen.common.checkvar;
 import elltool.conf.Properties;
+import elltool.logging.Log4jConfigurator;
+
+persistent logger;
 
 ellipsoid.checkIsMe(fstEll,'first');
 ellipsoid.checkIsMe(secEll,'second');
@@ -91,7 +102,10 @@ if ~isbigger(fstEll, secEll)
     %minkmp is empty
     switch nArgOut
         case 0,
-            fprintf('The resulting set is empty.');
+            if isempty(logger)
+                logger=Log4jConfigurator.getLogger();
+            end
+            logger.info('The resulting set is empty.');
         case 1,
             centVec = [];
         otherwise,
@@ -101,10 +115,13 @@ if ~isbigger(fstEll, secEll)
 else
     isVerb = Properties.getIsVerbose();
     if isVerb
+        if isempty(logger)
+            logger=Log4jConfigurator.getLogger();
+        end
         if nArgOut == 0
-            fprintf('Computing and plotting (E0 - E) + sum(E_i) ...\n');
+            logger.info('Computing and plotting (E0 - E) + sum(E_i) ...');
         else
-            fprintf('Computing (E0 - E) + sum(E_i) ...\n');
+            logger.info('Computing (E0 - E) + sum(E_i) ...');
         end
     end
     
@@ -115,10 +132,10 @@ else
         case 1
             [sumCentVec, sumBoundMat]=minksum(sumEllArr);
             boundPntMat=NaN(1,2);
-            centVec=fstEll.center-secEll.center;
-            boundPntMat(1)=-sqrt(fstEll.shape)+sqrt(secEll.shape)+...
+            centVec=fstEll.centerVec-secEll.centerVec;
+            boundPntMat(1)=-realsqrt(fstEll.shapeMat)+realsqrt(secEll.shapeMat)+...
                 centVec+min(sumBoundMat);
-            boundPntMat(2)=sqrt(fstEll.shape)-sqrt(secEll.shape)+...
+            boundPntMat(2)=realsqrt(fstEll.shapeMat)-realsqrt(secEll.shapeMat)+...
                 centVec+max(sumBoundMat);
             centVec=centVec+sumCentVec;
         case 2
@@ -139,21 +156,22 @@ else
     end
     
     if nDim>1
-        if rank(secEll.shape)==0
-            tmpEll=ellipsoid(fstEll.center-secEll.center,...
-                fstEll.shape);
+        if rank(secEll.shapeMat)==0
+            tmpEll=ellipsoid(fstEll.centerVec-secEll.centerVec,...
+                fstEll.shapeMat);
             [centVec, boundPntMat] = ...
                 minksum([tmpEll; sumEllArr(:)]);
         else
             if isdegenerate(secEll)
-                secEll.shape = regularize(secEll.shape);
+                secEll.shapeMat = regularize(secEll.shapeMat);
             end
-            q1Mat=fstEll.shape;
-            q2Mat=secEll.shape;
+            q1Mat=fstEll.shapeMat;
+            q2Mat=secEll.shapeMat;
+            absTol=elltool.conf.Properties.getAbsTol();
             isGoodDirVec = ~ellipsoid.isbaddirectionmat(q1Mat, q2Mat, ...
-                lDirsMat);
+                lDirsMat,absTol);
             if  ~any(isGoodDirVec)
-                tmpEll=ellipsoid(fstEll.center-secEll.center, ...
+                tmpEll=ellipsoid(fstEll.centerVec-secEll.centerVec, ...
                     zeros(nDim,nDim));
                 [centVec, boundPntMat]=minksum([tmpEll; ...
                     sumEllArr(:)]);
@@ -164,8 +182,8 @@ else
                 [~, subEllPtsMat] = rho(secEll, ...
                     lDirsMat(:,isGoodDirVec));
                 diffBoundMat =  minEllPtsMat - subEllPtsMat;
-                centVec = fstEll.center-...
-                    secEll.center+sumCentVec;
+                centVec = fstEll.centerVec-...
+                    secEll.centerVec+sumCentVec;
                 boundPntMat = diffBoundMat + ...
                     sumBoundMat(:,isGoodDirVec);
             end

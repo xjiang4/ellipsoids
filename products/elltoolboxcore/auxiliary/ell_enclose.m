@@ -1,13 +1,15 @@
 function E = ell_enclose(V)
 %
-% ELL_ENCLOSE - computes minimum volume ellipsoid that contains given vectors.
+% ELL_ENCLOSE - computes minimum volume ellipsoid that
+%               contains given vectors.
 %
 %
 % Description:
 % ------------
 %
-%    E = ELL_ENCLOSE(V)  Given vectors specified as columns of matrix V,
-%                        compute minimum volume ellipsoid E that contains them.
+%    E = ELL_ENCLOSE(V)  Given vectors specified as columns
+%                 of matrix V, compute minimum  volume 
+%                 ellipsoid E that contains them.
 %
 %
 % Output:
@@ -32,6 +34,9 @@ function E = ell_enclose(V)
 
 import modgen.common.throwerror
 import elltool.conf.Properties;
+import elltool.logging.Log4jConfigurator;
+
+persistent logger;
 
 if nargin < 1
   E = ellipsoid;
@@ -41,7 +46,10 @@ end
 [m, n] = size(V);
 
 if Properties.getIsVerbose()
-  fprintf('Invoking CVX...\n');
+  if isempty(logger)
+    logger=Log4jConfigurator.getLogger();
+  end
+  logger.info('Invoking CVX...');
 end
 
 

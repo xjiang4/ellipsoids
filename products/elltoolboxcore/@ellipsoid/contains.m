@@ -16,19 +16,33 @@ function resArr = contains(firstEllArr, secondEllArr)
 %       resArr(iCount) = true - firstEllArr(iCount)
 %       contains secondEllArr(iCount), false - otherwise.
 %
-%
+% Example:
+%   firstEllObj = ellipsoid([-2; -1], [2 -1; -1 1]);
+%   secEllObj = ellipsoid([-1;0], eye(2));
+%   contains(firstEllObj,secEllObj)
+% 
+%   ans =
+% 
+%        0
+% 
+% 
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+% $Copyright:  The Regents of the University of California 
+%              2004-2008 $
 %
-% $Author: Guliev Rustam <glvrst@gmail.com> $   $Date: Dec-2012$
+% $Author: Guliev Rustam <glvrst@gmail.com> $   
+% $Date: Dec-2012 $
 % $Copyright: Moscow State University,
-%             Faculty of Computational Mathematics and Cybernetics,
-%             Science, System Analysis Department 2012 $
+%            Faculty of Computational Mathematics and Computer Science,
+%            System Analysis Department 2012 $
 %
 
 import elltool.conf.Properties;
+import elltool.logging.Log4jConfigurator;
 import modgen.common.throwerror;
 import modgen.common.checkmultvar;
+
+persistent logger;
 
 ellipsoid.checkIsMe(firstEllArr,'first');
 ellipsoid.checkIsMe(secondEllArr,'second');
@@ -37,6 +51,22 @@ nSizeFirst = numel(firstEllArr);
 nSizeSecond = numel(secondEllArr);
 isFirScal = isscalar(firstEllArr);
 isSecScal = isscalar(secondEllArr);
+
+modgen.common.checkvar( firstEllArr , 'numel(x) > 0', 'errorTag', ...
+    'wrongInput:emptyArray', 'errorMessage', ...
+    'Each array must be not empty.');
+
+modgen.common.checkvar( firstEllArr,'all(~isempty(x(:)))','errorTag', ...
+    'wrongInput:emptyEllipsoid', 'errorMessage', ...
+    'Array should not have empty ellipsoid.');
+
+modgen.common.checkvar( secondEllArr , 'numel(x) > 0', 'errorTag', ...
+    'wrongInput:emptyArray', 'errorMessage', ...
+    'Each array must be not empty.');
+
+modgen.common.checkvar( secondEllArr,'all(~isempty(x(:)))','errorTag', ...
+    'wrongInput:emptyEllipsoid', 'errorMessage', ...
+    'Array should not have empty ellipsoid.');
 
 checkmultvar('all( size(x1)==size(x2) )||x3||x4',...
     4,firstEllArr,secondEllArr,isFirScal,isSecScal,...
@@ -51,11 +81,14 @@ checkmultvar('all(x1(:)==x1(1)) && all(x2(:)==x1(1))',2,dimFirArr,dimSecArr,...
     'errorMessage','ellipsoids must be of the same dimension.');
 
 if Properties.getIsVerbose()
+    if isempty(logger)
+        logger=Log4jConfigurator.getLogger();
+    end
     if isFirScal && isSecScal
-        fprintf('Checking ellipsoid-in-ellipsoid containment...\n');
+        logger.info('Checking ellipsoid-in-ellipsoid containment...');
     else
-        fprintf('Checking %d ellipsoid-in-ellipsoid containments...\n',...
-            max([nSizeFirst nSizeSecond]));
+        logger.info(sprintf('Checking %d ellipsoid-in-ellipsoid containments...',...
+            max([nSizeFirst nSizeSecond])));
     end
 end
 
@@ -91,7 +124,10 @@ function res = l_check_containment(firstEll, secondEll)
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
 import elltool.conf.Properties;
+import elltool.logging.Log4jConfigurator;
 import modgen.common.throwerror;
+
+persistent logger;
 
 [fstEllCentVec, fstEllShMat] = double(firstEll);
 [secEllCentVec, secEllShMat] = double(secondEll);
@@ -115,7 +151,10 @@ BMat = [invSecEllShMat -invSecEllShMat*secEllCentVec;...
 AMat = 0.5*(AMat + AMat');
 BMat = 0.5*(BMat + BMat');
 if Properties.getIsVerbose()
-    fprintf('Invoking CVX...\n');
+    if isempty(logger)
+        logger=Log4jConfigurator.getLogger();
+    end
+    logger.info('Invoking CVX...');
 end
 cvx_begin sdp
 variable cvxxVec(1, 1)

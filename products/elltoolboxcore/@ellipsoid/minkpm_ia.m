@@ -8,7 +8,7 @@ function intApprEllVec = minkpm_ia(inpEllArr, inpEll, dirMat)
 %   intApprEllVec = MINKPM_IA(inpEllArr, inpEll, dirMat) - Computes
 %       internal approximating ellipsoids of
 %       (E1 + E2 + ... + En) - E, where E1, E2, ..., En are ellipsoids
-%       in array inpEllMat, E = inpEll,
+%       in array inpEllArr, E = inpEll,
 %       along directions specified by columns of matrix dirArr.
 %
 % Input:
@@ -25,22 +25,40 @@ function intApprEllVec = minkpm_ia(inpEllArr, inpEll, dirMat)
 %       approximating ellipsoids. Empty, if for all specified
 %       directions approximations cannot be computed.
 %
-% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+% Example:
+%   firstEllObj = ellipsoid([2; -1], [9 -5; -5 4]);
+%   secEllObj = ellipsoid([-2; -1], [4 -1; -1 1]);
+%   thirdEllObj = ell_unitball(2);
+%   ellVec = [thirdEllObj firstEllObj];
+%   dirsMat = [1 0; 1 1; 0 1; -1 1]';
+%   internalEllVec = ellVec.minkpm_ia(secEllObj, dirsMat)
+% 
+%   internalEllVec =
+%   1x3 array of ellipsoids.
 %
-% $Author: Guliev Rustam <glvrst@gmail.com> $   $Date: Dec-2012$
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 
+%              2004-2008 $
+%
+% $Author: Guliev Rustam <glvrst@gmail.com> $   
+% $Date: Dec-2012$
 % $Copyright: Moscow State University,
-%             Faculty of Computational Mathematics and Cybernetics,
-%             Science, System Analysis Department 2012 $
+%            Faculty of Computational Mathematics and Computer Science,
+%            System Analysis Department 2012 $
 %
 
 import modgen.common.throwerror;
 import modgen.common.checkvar;
 import modgen.common.checkmultvar;
 import elltool.conf.Properties;
+import elltool.logging.Log4jConfigurator;
+
+persistent logger;
 
 ellipsoid.checkIsMe(inpEllArr,'first');
 ellipsoid.checkIsMe(inpEll,'second');
+
+absTol=inpEll.getAbsTol();
 
 checkvar(inpEll,@(x) isscalar(inpEll),'errorTag','wrongInput',...
     'errorMessage','second argument must be single ellipsoid.');
@@ -51,12 +69,11 @@ checkmultvar('(x2==x3) && all(x1(:)==x3)',...
     'errorTag','wrongSizes','errorMessage',...
     'all ellipsoids and direction vectors must be of the same dimension');
 
-intApprEllVec = [];
-fstIntApprEllMat = minksum_ia(inpEllArr, dirMat);
+fstIntApprEllVec = minksum_ia(inpEllArr, dirMat);
 isVrb = Properties.getIsVerbose();
 Properties.setIsVerbose(false);
 
-intApprEllVec = repmat(ellipsoid,1,nCols);
+intApprEllVec(nCols) = ellipsoid();
 arrayfun(@(x) fSetIntApprVec(x),1:nCols);
 intApprEllVec = intApprEllVec(~isempty(intApprEllVec));
 
@@ -64,16 +81,19 @@ Properties.setIsVerbose(isVrb);
 
 if isempty(intApprEllVec)
     if Properties.getIsVerbose()
-        fprintf('MINKPM_IA: cannot compute internal ');
-        fprintf('approximation for any\n           ');
-        fprintf('of the specified directions.\n')
+        if isempty(logger)
+            logger=Log4jConfigurator.getLogger();
+        end
+        logger.info('MINKPM_IA: cannot compute internal ');
+        logger.info('approximation for any');
+        logger.info(' of the specified directions.')
     end
 end
     function fSetIntApprVec(index)
-    	fstIntApprEll = fstIntApprEllMat(index);
+    	fstIntApprEll = fstIntApprEllVec(index);
         dirVec = dirMat(:, index);
         if isbigger(fstIntApprEll, inpEll)
-            if ~isbaddirection(fstIntApprEll, inpEll, dirVec)
+            if ~isbaddirection(fstIntApprEll, inpEll, dirVec,absTol)
                 intApprEllVec(index) = ...
                     minkdiff_ia(fstIntApprEll, inpEll, dirVec);
             end
