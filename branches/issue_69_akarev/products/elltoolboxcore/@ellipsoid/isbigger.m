@@ -17,12 +17,25 @@ function isPositive = isbigger(fstEll, secEll)
 % Output:
 %   isPositive: logical[1, 1], true - if ellipsoid fstEll
 %       would contain secEll inside, false - otherwise.
+% 
+% Example:
+%   firstEllObj = ellipsoid([1; 1], eye(2));
+%   secEllObj = ellipsoid([1; 1], [4 -1; -1 5]);
+%   isbigger(firstEllObj, secEllObj)
+% 
+%   ans =
+% 
+%        0
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+% $Copyright:  The Regents of the University of California 
+%              2004-2008 $
 
 import elltool.conf.Properties;
 import modgen.common.checkmultvar;
+import elltool.logging.Log4jConfigurator;
+
+persistent logger;
 
 ellipsoid.checkIsMe(fstEll,'first');
 ellipsoid.checkIsMe(secEll,'second');
@@ -40,17 +53,21 @@ if nFstRank < nSecRank
     return;
 end
 
-fstEllShMat = fstEll.shape;
-secEllShMat = secEll.shape;
+fstEllShMat = fstEll.shapeMat;
+secEllShMat = secEll.shapeMat;
 if isdegenerate(fstEll)
+    if isempty(logger)
+        logger=Log4jConfigurator.getLogger();
+    end
     if Properties.getIsVerbose()
-        fprintf('ISBIGGER: Warning! First ellipsoid is degenerate.');
-        fprintf('          Regularizing...');
+        logger.info('ISBIGGER: Warning! First ellipsoid is degenerate.');
+        logger.info('          Regularizing...');
     end
     fstEllShMat = ellipsoid.regularize(fstEllShMat,fstEll.absTol);
 end
 
-tMat = ell_simdiag(fstEllShMat, secEllShMat);
+absTolVal=min(fstEll.absTol, secEll.absTol);
+tMat = ell_simdiag(fstEllShMat, secEllShMat,absTolVal);
 if max(abs(diag(tMat*secEllShMat*tMat'))) < (1 + fstEll.absTol)
     isPositive = true;
 else

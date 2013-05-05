@@ -43,18 +43,32 @@ function intApprEllVec = minkdiff_ia(fstEll, secEll, directionsMat)
 %       approximating ellipsoids (empty, if for all specified directions
 %       approximations cannot be computed).
 %
-% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+% Example:
+%   firstEllObj = ellipsoid([-2; -1], [4 -1; -1 1]);
+%   secEllObj = 3*ell_unitball(2);
+%   dirsMat = [1 0; 1 1; 0 1; -1 1]';
+%   internalEllVec = secEllObj.minkdiff_ia(firstEllObj, dirsMat)
+% 
+%   internalEllVec =
+%   1x2 array of ellipsoids.
 %
-% $Author: Guliev Rustam <glvrst@gmail.com> $   $Date: Dec-2012$
+% $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
+% $Copyright:  The Regents of the University of California 
+%              2004-2008 $
+%
+% $Author: Guliev Rustam <glvrst@gmail.com> $   
+% $Date: Dec-2012$
 % $Copyright: Moscow State University,
-%             Faculty of Computational Mathematics and Cybernetics,
-%             Science, System Analysis Department 2012 $
+%            Faculty of Computational Mathematics and Computer Science,
+%            System Analysis Department 2012 $
 %
 
 import modgen.common.throwerror;
 import modgen.common.checkmultvar;
 import elltool.conf.Properties;
+import elltool.logging.Log4jConfigurator;
+
+persistent logger;
 
 ellipsoid.checkIsMe(fstEll,'first');
 ellipsoid.checkIsMe(secEll,'second');
@@ -62,13 +76,16 @@ checkmultvar('isscalar(x1)&&isscalar(x2)',2,fstEll,secEll,...
     'errorTag','wrongInput','errorMessage',...
     'first and second arguments must be single ellipsoids.')
 
-intApprEllVec = [];
 
 if ~isbigger(fstEll, secEll)
+    intApprEllVec = [];
     if Properties.getIsVerbose()
+        if isempty(logger)
+            logger=Log4jConfigurator.getLogger();
+        end
         fstStr = 'MINKDIFF_IA: geometric difference of these two ';
-        secStr = 'ellipsoids is empty set.\n';
-        fprintf([fstStr secStr]);
+        secStr = 'ellipsoids is empty set.';
+        logger.info([fstStr secStr]);
     end
     return;
 end
@@ -77,22 +94,27 @@ checkmultvar('(x1==x2)',2,dimension(fstEll),size(directionsMat, 1),...
     'errorTag','wrongSizes','errorMessage',...
     'direction vectors ans ellipsoids dimensions mismatch.');
 
-centVec = fstEll.center - secEll.center;
-fstEllShMat = fstEll.shape;
+centVec = fstEll.centerVec - secEll.centerVec;
+fstEllShMat = fstEll.shapeMat;
 if isdegenerate(fstEll)
     fstEllShMat = ellipsoid.regularize(fstEllShMat,fstEll.absTol);
 end
-secEllShMat = secEll.shape;
+secEllShMat = secEll.shapeMat;
 if isdegenerate(secEll)
     secEllShMat = ellipsoid.regularize(secEllShMat,secEll.absTol);
 end
+absTolVal=min(fstEll.absTol, secEll.absTol);
 directionsMat  = ellipsoid.rm_bad_directions(fstEllShMat, ...
-    secEllShMat, directionsMat);
+    secEllShMat, directionsMat,absTolVal);
 nDirs  = size(directionsMat, 2);
 if nDirs < 1
+    intApprEllVec = [];
     if Properties.getIsVerbose()
-        fprintf('MINKDIFF_IA: cannot compute internal approximation');
-        fprintf(' for any\n             of the specified directions.\n');
+        if isempty(logger)
+            logger=Log4jConfigurator.getLogger();
+        end
+        logger.info('MINKDIFF_IA: cannot compute internal approximation');
+        logger.info(' for any of the specified directions.');
     end
     return;
 end
@@ -101,12 +123,12 @@ numVec=sum((fstEllShMat*directionsMat).*directionsMat,1);
 denomVec=sum((secEllShMat*directionsMat).*directionsMat,1);
 coefVec=numVec./denomVec;
 
-intApprEllVec = repmat(ellipsoid,1, nDirs);
+intApprEllVec(nDirs) = ellipsoid();
 arrayfun(@(x) fSingleDir(x), 1:nDirs)
     function fSingleDir(index)
-        coef = sqrt(coefVec(index));
+        coef = realsqrt(coefVec(index));
         shMat = (1 - (1/coef))*fstEllShMat + (1 - coef)*secEllShMat;
-        intApprEllVec(index).center = centVec;
-        intApprEllVec(index).shape = shMat;
+        intApprEllVec(index).centerVec = centVec;
+        intApprEllVec(index).shapeMat = shMat;
     end
 end

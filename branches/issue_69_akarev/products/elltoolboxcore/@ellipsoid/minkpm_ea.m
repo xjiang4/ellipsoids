@@ -24,20 +24,36 @@ function extApprEllVec = minkpm_ea(inpEllArr, inpEll, dirMat)
 %   extApprEllVec: ellipsoid [1, nCols]/[0, 0] - array of external
 %       approximating ellipsoids. Empty, if for all specified
 %       directions approximations cannot be computed.
+% 
+% Example:
+%   firstEllObj = ellipsoid([2; -1], [9 -5; -5 4]);
+%   secEllObj = ellipsoid([-2; -1], [4 -1; -1 1]);
+%   thirdEllObj = ell_unitball(2);
+%   dirsMat = [1 0; 1 1; 0 1; -1 1]';
+%   ellVec = [thirdEllObj firstEllObj];
+%   externalEllVec = ellVec.minkpm_ea(secEllObj, dirsMat)
+% 
+%   externalEllVec =
+%   1x4 array of ellipsoids.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+% $Copyright:  The Regents of the University of California 
+%              2004-2008 $
 %
-% $Author: Guliev Rustam <glvrst@gmail.com> $   $Date: Dec-2012$
+% $Author: Guliev Rustam <glvrst@gmail.com> $   
+% $Date: Dec-2012$
 % $Copyright: Moscow State University,
-%             Faculty of Computational Mathematics and Cybernetics,
-%             Science, System Analysis Department 2012 $
+%            Faculty of Computational Mathematics and Computer Science,
+%            System Analysis Department 2012 $
 %
 
 import modgen.common.throwerror;
 import modgen.common.checkvar;
 import modgen.common.checkmultvar;
 import elltool.conf.Properties;
+import elltool.logging.Log4jConfigurator;
+
+persistent logger;
 
 ellipsoid.checkIsMe(inpEllArr,'first');
 ellipsoid.checkIsMe(inpEll,'second');
@@ -51,7 +67,6 @@ checkmultvar('(x2==x3) && all(x1(:)==x3)',...
     'errorTag','wrongSizes','errorMessage',...
     'all ellipsoids and direction vectors must be of the same dimension');
 
-extApprEllVec =[];
 isVrb = Properties.getIsVerbose();
 Properties.setIsVerbose(false);
 
@@ -59,14 +74,19 @@ Properties.setIsVerbose(false);
 isCheckVec = false(1,nCols);
 arrayfun (@(x) fSanityCheck(x), 1:nCols);
 if any(isCheckVec)
+    extApprEllVec =[];
     if isVrb > 0
-        fprintf('MINKPM_EA: the resulting set is empty.\n');
+        if isempty(logger)
+            logger=Log4jConfigurator.getLogger();
+        end
+        logger.info('MINKPM_EA: the resulting set is empty.');
     end
     Properties.setIsVerbose(isVrb);
 else
     
     secExtApprEllVec = minksum_ea(inpEllArr, dirMat);
-    extApprEllVec = repmat(ellipsoid,1,nCols);
+    absTol=min(min(secExtApprEllVec.getAbsTol()),inpEll.absTol);
+    extApprEllVec(nCols) = ellipsoid();
     arrayfun(@(x) fSetExtApprEllVec(x), 1:nCols)
     extApprEllVec = extApprEllVec(~isempty(extApprEllVec));
     
@@ -74,9 +94,12 @@ else
     
     if isempty(extApprEllVec)
         if Properties.getIsVerbose()
-            fprintf('MINKPM_EA: cannot compute external ');
-            fprintf('approximation for any\n           ');
-            fprintf('of the specified directions.\n');
+            if isempty(logger)
+                logger=Log4jConfigurator.getLogger();
+            end
+            logger.info('MINKPM_EA: cannot compute external ');
+            logger.info('approximation for any');
+            logger.info(' of the specified directions.');
         end
     end
 end
@@ -87,7 +110,7 @@ end
     end
     function fSetExtApprEllVec(index)
         dirVec = dirMat(:, index);
-        if ~isbaddirection(secExtApprEllVec(index), inpEll, dirVec)
+        if ~isbaddirection(secExtApprEllVec(index), inpEll, dirVec,absTol)
             extApprEllVec(index) = ...
                 minkdiff_ea(secExtApprEllVec(index), inpEll, dirVec);
         end

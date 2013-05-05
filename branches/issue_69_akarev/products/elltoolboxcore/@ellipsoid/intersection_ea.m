@@ -29,27 +29,38 @@ function outEllArr = intersection_ea(myEllArr, objArr)
 %   Federico Thomas; IEEE Transactions on Systems, Man and Cybernetics,
 %   Vol.32, No.4, pp.430-442, 2002. For more information, visit
 %   http://www-iri.upc.es/people/ros/ellipsoids.html
+%   
+%   For polytopes this method won't give the minimal volume 
+%   overapproximating ellipsoid, but just some overapproximating ellipsoid.
 %
 % Input:
 %   regular:
-%       myEllArr: ellipsoid [nDims1,nDims2,...,nDimsN]/[1,1] - array 
+%       myEllArr: ellipsoid [nDims1,nDims2,...,nDimsN]/[1,1] - array
 %           of ellipsoids.
 %       objArr: ellipsoid / hyperplane /
-%           / polytope [nDims1,nDims2,...,nDimsN]/[1,1]  - array of 
+%           / polytope [nDims1,nDims2,...,nDimsN]/[1,1]  - array of
 %           ellipsoids or hyperplanes or polytopes of the same sizes.
 %
-% Output:
-%    outEllArr: ellipsoid [nDims1,nDims2,...,nDimsN] - array of external
-%       approximating ellipsoids; entries can be empty ellipsoids
-%       if the corresponding intersection is empty.
+% Example:
+%   firstEllObj = ellipsoid([-2; -1], [4 -1; -1 1]);
+%   secEllObj = firstEllObj + [5; 5];
+%   ellVec = [firstEllObj secEllObj];
+%   thirdEllObj  = ell_unitball(2);
+%   externalEllVec = ellVec.intersection_ea(thirdEllObj)
+% 
+%   externalEllVec =
+%   1x2 array of ellipsoids.
+% 
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+% $Copyright:  The Regents of the University of California
+%              2004-2008 $
 %
-% $Author: Guliev Rustam <glvrst@gmail.com> $   $Date: Dec-2012$
+% $Author: Guliev Rustam <glvrst@gmail.com> $   
+% $Date: Dec-2012$
 % $Copyright: Moscow State University,
-%             Faculty of Computational Mathematics and Cybernetics,
-%             Science, System Analysis Department 2012 $
+%            Faculty of Computational Mathematics and Computer Science,
+%            System Analysis Department 2012 $
 %
 
 import modgen.common.throwerror;
@@ -65,7 +76,11 @@ isPoly = isa(objArr, 'polytope');
 
 nDimsArr  = dimension(myEllArr);
 if isPoly
-    nObjDimsArr = arrayfun(@(x) dimension(x),objArr);
+    [nRows nCols] = size(objArr);
+    nObjDimsArr = zeros(nRows,nCols);
+    for iCols = 1:nCols
+        nObjDimsArr(iCols) = dimension(objArr(iCols));
+    end
 else
     nObjDimsArr = dimension(objArr);
 end
@@ -73,11 +88,11 @@ isEllScal = isscalar(myEllArr);
 isObjScal = isscalar(objArr);
 
 checkmultvar( 'all(size(x1)==size(x2))|| x3 || x4 ',...
-	4,myEllArr,objArr,isEllScal,isObjScal,...
+        4,myEllArr,objArr,isEllScal,isObjScal,...
     'errorTag','wrongSizes',...
     'errorMessage','sizes of input arrays do not match.');
 checkmultvar('(x1(1)==x2(1))&&all(x1(:)==x1(1))&&all(x2(:)==x2(1))',...
-	2,nDimsArr,nObjDimsArr,...
+        2,nDimsArr,nObjDimsArr,...
     'errorTag','wrongSizes',...
     'errorMessage','input arguments must be of the same dimension.');
 
@@ -118,7 +133,7 @@ end
 
 function outEll = l_intersection_ea(fstEll, secObj)
 %
-% L_INTERSECTION_EA - computes external ellipsoidal approximation of 
+% L_INTERSECTION_EA - computes external ellipsoidal approximation of
 %                     intersection of single ellipsoid with single
 %                     ellipsoid or halfspace.
 %
@@ -134,8 +149,8 @@ function outEll = l_intersection_ea(fstEll, secObj)
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-fstEllCentVec = fstEll.center;
-fstEllShMat = fstEll.shape;
+fstEllCentVec = fstEll.centerVec;
+fstEllShMat = fstEll.shapeMat;
 if rank(fstEllShMat) < size(fstEllShMat, 1)
     fstEllShMat = ...
         ell_inv(ellipsoid.regularize(fstEllShMat,fstEll.absTol));
@@ -145,7 +160,7 @@ end
 
 if isa(secObj, 'hyperplane')
     [normHypVec, hypScalar] = parameters(-secObj);
-    hypNormInv = 1/sqrt(normHypVec'*normHypVec);
+    hypNormInv = 1/realsqrt(normHypVec'*normHypVec);
     hypScalar = hypScalar*hypNormInv;
     normHypVec = normHypVec*hypNormInv;
     if (normHypVec'*fstEllCentVec > hypScalar) ...
@@ -158,10 +173,10 @@ if isa(secObj, 'hyperplane')
         outEll = ellipsoid;
         return;
     end
-    hEig  = 2*sqrt(maxeig(fstEll));
+    hEig  = 2*realsqrt(maxeig(fstEll));
     qSecVec = hypScalar*normHypVec + hEig*normHypVec;
     seqQMat = (normHypVec*normHypVec')/(hEig^2);
-    
+   
     [qCenterVec, shQMat] = parameters(hpintersection(fstEll, secObj));
     qSecVec     = qCenterVec + hEig*normHypVec;
 else
@@ -173,8 +188,8 @@ else
         outEll = ellipsoid;
         return;
     end
-    qSecVec = secObj.center;
-    seqQMat = secObj.shape;
+    qSecVec = secObj.centerVec;
+    seqQMat = secObj.shapeMat;
     if rank(seqQMat) < size(seqQMat, 1)
         seqQMat = ell_inv(ellipsoid.regularize(seqQMat,secObj.absTol));
     else
@@ -241,7 +256,7 @@ end
 
 function outEll = l_polyintersect(myEll, polyt)
 %
-% L_POLYINTERSECT - computes external ellipsoidal approximation of 
+% L_POLYINTERSECT - computes external ellipsoidal approximation of
 %                   intersection of single ellipsoid with single polytope.
 %
 % Input:
@@ -265,7 +280,12 @@ if isinside(myEll, polyt)
 end
 
 for iElem = 1:nDimsHyp
-    outEll = intersection_ea(outEll, hyp(iElem));
+    if(isempty(outEll))
+        return;
+    else
+        outEll = intersection_ea(outEll, hyp(iElem));
+    end
 end
 
 end
+

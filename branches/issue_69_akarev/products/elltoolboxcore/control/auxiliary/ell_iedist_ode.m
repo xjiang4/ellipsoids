@@ -1,7 +1,7 @@
-function dXdt = ell_iedist_ode(t, X, l0, mydata, n, back,absTol)
+function dXdt = ell_iedist_ode(t, X, l0, mydata, n, back, absTol)
 %
-% ELL_IEDIST_ODE - ODE for the shape matrix of the internal ellipsoid
-%                  for system with disturbance.
+% ELL_IEDIST_ODE - ODE for the shape matrix of the internal 
+%                  ellipsoid for system with disturbance.
 %
 import elltool.conf.Properties;
 if nargin<7
@@ -22,7 +22,7 @@ BPBsr = ell_value_extract(mydata.BPBsr, t, [n n]);
 GQG   = ell_value_extract(mydata.GQG, t, [n n]);
 %GQGsr = ell_value_extract(mydata.GQGsr, t, [n n]);
 X     = reshape(X, n, n);
-Y     = sqrtm(X);
+Y     = gras.la.sqrtmpos(X, absTol);
 Y     = 0.5*(Y + Y);
 %mu    = 0;
 p1    = sqrt(l0' * F * GQG * F' * l0);

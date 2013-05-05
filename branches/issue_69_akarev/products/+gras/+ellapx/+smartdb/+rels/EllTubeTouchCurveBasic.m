@@ -74,14 +74,17 @@ classdef EllTubeTouchCurveBasic<handle
             import modgen.common.throwerror;
             import gras.gen.SquareMatVector;
             import modgen.common.num2cell;
+            TS_CHECK_TOL=1e-14;            
             %% Check for a consistency between lsGoodDirVec and lsGoodDirNorm
-            lsGoodDirNormExpVec=cellfun(@norm,self.lsGoodDirVec);
-            if ~isequal(self.lsGoodDirNorm,lsGoodDirNormExpVec)
+            lsGoodDirNormExpVec=cellfun(@(x)realsqrt(sum(x.*x)),self.lsGoodDirVec);
+            isOk=max(abs(self.lsGoodDirNorm-lsGoodDirNormExpVec))<=...
+                TS_CHECK_TOL;
+            if ~isOk
                 throwerror('wrongInput',...
                     'failed check for lsGoodDirVec and lsGoodDirNorm');
             end
             %% Check for consistency between ltGoodDirMat and lsGoodDirNormVec
-            ltGoodDirNormVecExpCVec=cellfun(@(x)sqrt(sum(x.*x,1)),...
+            ltGoodDirNormVecExpCVec=cellfun(@(x)realsqrt(sum(x.*x,1)),...
                 self.ltGoodDirMat,'UniformOutput',false);
             if ~isequal(self.ltGoodDirNormVec,...
                     ltGoodDirNormVecExpCVec)
@@ -90,7 +93,6 @@ classdef EllTubeTouchCurveBasic<handle
             end
             %% Check for consistency between ls and lt fields
             %
-            TS_CHECK_TOL=1e-14;
             fCheck=@(x,y,z)max(abs(x-y(:,z)))<=TS_CHECK_TOL;
             indSTimeList=num2cell(self.indSTime);
             self.checkSVsTConsistency(self.lsGoodDirVec,...
