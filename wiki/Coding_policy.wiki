@@ -38,6 +38,7 @@ For a quick reference, here is a short list of correct variable names
 || fCalcSomething  || scalar function handle|| calcSomething || 
 || nElems, mElems  || number of elements (numeric scalar)|| nelems, NElems || 
 || iElem,jElem,kElem  || current element counter in a loop|| ielem, i,j,k || 
+|| ABS_TOL, MAX_TOLERANCE  || abstolute precison, maximum tolernace defined as constants|| absTol,maxTolerance || 
 
 
 = Help headers =
