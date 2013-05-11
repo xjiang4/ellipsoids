@@ -73,12 +73,14 @@ result=runner.run(suite);
    Now you can just type `mymainpackage.mychildpackage.test.run_tests` to run the tests from both use cases. 
 
 = Writing negative tests =
-A test that causes an exception in the called function/class is also a test aka negative test. `mlunitext.test_case` class has a method  `runAndCheckError` designed for negative testing. Let's consider an example where a call to class method `doSomethingBad` causes an exception with 'wrongInput' identifier. The test for this case can be written in the following way.
+A test that causes an exception in the called function/class is also a test aka negative test. `mlunitext.test_case` class has a method  `runAndCheckError` designed for negative testing. Let's consider an example where a call to class method `doSomethingBad1` causes an exception with 'wrongInput' identifier and to method `doSomethingBad1` causes exception 'wrongInput' or 'complexResult'. The test for this case can be written in the following way.
 {{{
 function testNegative(self)
 obj=...
 inpParamList={1,2};
-self.runAndCheckError('obj.doSomethingBad(inpParamList{:})','wrongInput');
+self.runAndCheckError('obj.doSomethingBad1(inpParamList{:})','wrongInput');
+errList = {'wrongInput','complexResult'};
+self.runAndCheckError('obj.doSomethingBad2(inpParamList{:})',errList);
 end
 }}}
 The same test can be written in a slightly different manner:
