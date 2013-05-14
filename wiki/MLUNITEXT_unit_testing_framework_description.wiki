@@ -15,14 +15,14 @@ MLUNITEXT is a custom-made unit testing framework developed by Peter Gagarinov. 
 
   # Inherit from mlunitext.test_case and write you tests in the methods that start with *test*. Using *test* in front of your test methods is obligatory as *test* prefix tells MLUNITEXT that the method in question is a test method.
 {{{
-classdef BasicTestCase < mlunit.test_case
+classdef BasicTestCase < mlunitext.test_case
     %
     properties (Access=private)
         someProperty
     end
     methods
         function self = BasicTestCase(varargin)
-            self = self@mlunit.test_case(varargin{:});
+            self = self@mlunitext.test_case(varargin{:});
         end
         %
         function set_up(self)
@@ -34,7 +34,7 @@ classdef BasicTestCase < mlunit.test_case
         end
         %
         function testAlwaysPass(self)
-            mlunit.assert_equals(self.someProperty,1);
+            mlunitext.assert_equals(self.someProperty,1);
         end
         %
         function testNull(self)
