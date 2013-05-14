@@ -5,10 +5,9 @@
 MLUNITEXT is a custom-made unit testing framework developed by Peter Gagarinov. At the moment in r25 of trunk the framework is located in
 [https://ellipsoids.googlecode.com/svn/trunk/lib/mlunitext]. It consists of the following packages.
 
-  # *mlunitext* - contains the classes designed for a direct use by a developers. When writing your tests you should inherit from `mlunitext.test_case` class.
+  # *mlunit* - contains the classes designed for a direct use by a developers. When writing your tests you should inherit from `mlunitext.test_case` class.
   # *mlunit_samples* - contain a sample test case for demo purposes. This should be the first place to look for a developer without any experience with MLUNITEXT.
   # *mlunit_test* - contains the tests for MLUNITEXT itself (yes, the testing framework also needs to be tested!!!). This is the second place where developer should look for the test case examples. To run all the tests type `mlunitext.test.run_tests()` from Matlab command line.
-  # *mlunit* - provides some basic functionality. Classes from this package should not be used directly.
 
 
 = Typical use case for MLUNITEXT =
