@@ -43,13 +43,15 @@
      * dimension - returns dimensionality of input ellipsoid
  # Improved matrix S calculation algorithm introduced by A.N. Daryain and A.B. Kurzhansky in "Method of invariant sets for linear systems of high dimensionality under uncertain disturbances", "Doklady Akademii Nauk", 2012 for internal ellipsoidal approximations of E_1+E_2. This results into less calculation-expensive and more robust ellipsoidal approximations for both ellipsoidal sums and reachability domains of linear systems.
  # Implemented the functions for 
-      # checking for positive (non-negative) definiteness, 
-      # checking forsymmetry;
-      # matrix square root extraction for non-negative matrices these functions are used everywhere in the toolbox (in ReachContinuous,ReachDiscrete, ellipsoid and GenEllipsoid classes). This results into more robust calculation logic and user-friendly problem reporting.
+      * checking for positive (non-negative) definiteness, 
+      * checking forsymmetry;
+      * matrix square root extraction for non-negative matrices these functions are used everywhere in the toolbox (in ReachContinuous,ReachDiscrete, ellipsoid and GenEllipsoid classes). This results into more robust calculation logic and user-friendly problem reporting.
  # *(In Progress)* Integration between Ellipsoidal Toolbox and Multi-Parametric Toolbox has been improoved, particularly new
-      # isinside was renamed into isContainedInIntersection
-	  # new isInside method that is opposite to "contains" method
-	  # contains method for ellipsoid and polytop has been significantly speed up for high-dimensional inputs
+      * contains method for ellipsoid and polytop has been significantly speed up for high-dimensional inputs
+      * Fixed a problem in intersection_ea for ellipsoid E and polytope P. In intersection_ea each facet F(i) of polytope P with number i is transformed into a half-space defined by hyperplane H(i). Then, starting with E_0=E, E_i was build as minimum-volume external appproximation of intersection between E(i-1) and H(i). Before the fix E_i on each step was multiplied by sqrt(1+absTol) which resulted into accumulated calculated error equal to absTol (number of constraints in polytope). The fix has removed that multiplication.
+      * Fixed a problem in hpintersection for intersecting ellipsoid E and hyperplane H. Prior the fix the method checked if distance (H,E) > 0 which lead to not-robust results. As part of the fix this check was replaced with distance(E,H)>absTol
+      * isinside was renamed into isContainedInIntersection
+      * new isInside method that is opposite to "contains" method
  # Many methods of ellipsoid class now support for multi-dimensional inputs	  
  # Incorporated log4j framework for logging which made debugging of Ellipsoidal Toolbox classes easier. 
  # All classes of the toolbox has been re-written using the modern implemenentaiton of object oriented programming in recent Matlab versions. Now the toolbox requires Matlab 2012a or later.
