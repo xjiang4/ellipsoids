@@ -1,13 +1,13 @@
 #summary Release Notes Preview for ver 1.4
 
- # (In Progress, Kirill Mayantsev and Igor Kitsenko) Old "reach" class responsible for calculating reach sets for both discrete and continous systems is replaced with new elltool.reach.ReachContinuous and elltool.reach.ReachDiscrete classes. These new classes feature
+ # *(In Progress)* Old "reach" class responsible for calculating reach sets for both discrete and continous systems is replaced with new elltool.reach.ReachContinuous and elltool.reach.ReachDiscrete classes. These new classes feature
      # all new solvers performing the internal consistency checks for ellipsoidal approximations to make sure that ellipsoidal tubes are calculated with the desired precision
      # all new visualization engine with improved visual effects and capable of displaying the touch curves and good curves l(t) for the tight approximations.
      # ability to recognize LTI systems (with constant A) to use a more precise algorithm of ellipsoidal approximation calculation.
      # built-in quadratic regularization for linear systems with uncertainty
  # New command-line tool gras.ellapx.uncertcalc.run for calculating the tight ellipsoidal approximations for the linear systems defined via user-friendly configuration files. The tool features the same plotting features and is based on the same solver as elltool.reach.ReachContinuous used
  # (In Progress) Regularization for degenerate ellipsoidal constraints for control, initial state and disturbance in ReachContinuous and ReachDiscrete classes.
- # (In progress) New command-line tool gras.ellapx.uncertmixcalc.run for calculating the non-tight approximations by algorithm developed by A.B. Kurzhansky and A.N. Daryin. In features the same user-friendly command-line interface.
+ # *(In progress)* New command-line tool gras.ellapx.uncertmixcalc.run for calculating the non-tight approximations by algorithm developed by A.B. Kurzhansky and A.N. Daryin. In features the same user-friendly command-line interface.
  # New methods of ellipsoid class:
    * fromRepMat - creates an array of equal ellipsoids of specified size
    * getCenterVec - returns center of ellipsoid
@@ -46,12 +46,12 @@
       # checking for positive (non-negative) definiteness, 
       # checking forsymmetry;
       # matrix square root extraction for non-negative matrices these functions are used everywhere in the toolbox (in ReachContinuous,ReachDiscrete, ellipsoid and GenEllipsoid classes). This results into more robust calculation logic and user-friendly problem reporting.
- # (In Progress) Integration between Ellipsoidal Toolbox and Multi-Parametric Toolbox has been improoved, particularly new
+ # *(In Progress)* Integration between Ellipsoidal Toolbox and Multi-Parametric Toolbox has been improoved, particularly new
       # isinside was renamed into isContainedInIntersection
 	  # new isInside method that is opposite to "contains" method
 	  # contains method for ellipsoid and polytop has been significantly speed up for high-dimensional inputs
  # Many methods of ellipsoid class now support for multi-dimensional inputs	  
  # Incorporated log4j framework for logging which made debugging of Ellipsoidal Toolbox classes easier. 
  # All classes of the toolbox has been re-written using the modern implemenentaiton of object oriented programming in recent Matlab versions. Now the toolbox requires Matlab 2012a or later.
- # (In Progress) All classes and functions of the toolbox has been convered with the unit tests which resulted in a lot of bug fixes. All tests are run on a daily basis on a dedicated hardware, the tests results are automatically set to the subscribers of the following Google Group: http://groups.google.com/group ellipsoids-tests-notification The link to this group has been publishes on the project web site. The unit tests has been implemented using MLUNITEXT framework (see http://code.google.com/p/ellipsoids/wiki/MLUNITEXT_unit_testing_framework_description)
- # (In Progress) The user manual (tech report) for the toolbox has been updated. 
+ # *(In Progress)* All classes and functions of the toolbox has been convered with the unit tests which resulted in a lot of bug fixes. All tests are run on a daily basis on a dedicated hardware, the tests results are automatically set to the subscribers of the following Google Group: http://groups.google.com/group ellipsoids-tests-notification The link to this group has been publishes on the project web site. The unit tests has been implemented using MLUNITEXT framework (see http://code.google.com/p/ellipsoids/wiki/MLUNITEXT_unit_testing_framework_description)
+ # *(In Progress)* The user manual (tech report) for the toolbox has been updated. 
