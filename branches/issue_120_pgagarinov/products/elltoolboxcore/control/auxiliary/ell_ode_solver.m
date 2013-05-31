@@ -11,10 +11,9 @@ if Properties.getIsODENormControl()
 else
     normControl = 'off';
 end
-absTol = varargin{end};
 opt = odeset('NormControl', normControl, ...
     'RelTol', Properties.getRelTol(), ...
-    'AbsTol', absTol);
+    'AbsTol', Properties.getAbsTol());
 
 solverName = Properties.getODESolverName();
 
