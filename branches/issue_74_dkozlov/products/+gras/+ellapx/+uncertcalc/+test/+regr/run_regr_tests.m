@@ -1,5 +1,5 @@
 function results=run_regr_tests(confNameList)
-runner = mlunit.text_test_runner(1, 1);
+runner = mlunitext.text_test_runner(1, 1);
 loader = mlunitext.test_loader;
 crm=gras.ellapx.uncertcalc.test.regr.conf.ConfRepoMgr();
 if nargin>0
@@ -12,6 +12,15 @@ if nargin==0
     confNameList=crm.deployConfTemplate('*');
 end
 %confNameList = {'advanced'};
+%
+notToTestConfNameList = {'discrSecondTest'};
+testConfIndArray = ones(1, length(confNameList));
+for confName = notToTestConfNameList{:}
+    testConfIndArray = testConfIndArray & ...
+        ~ismember(confNameList, 'discrSecondTest');
+end
+confNameList = confNameList(testConfIndArray);
+%
 crmSys=gras.ellapx.uncertcalc.test.regr.conf.sysdef.ConfRepoMgr();
 crmSys.deployConfTemplate('*');
 nConfs=length(confNameList);

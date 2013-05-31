@@ -18,6 +18,12 @@ classdef CompositeMatrixOperations<gras.mat.AMatrixOperations
                 obj= gras.mat.fcnlib.MatrixPInvFunc(mMatFunc);
             end
         end
+        function obj=uminus(self,mMatFunc)
+            obj=uminus@gras.mat.AMatrixOperations(self,mMatFunc);
+            if isempty(obj)
+                obj=gras.mat.fcnlib.MatrixUMinusFunc(mMatFunc);
+            end
+        end        
         function obj=transpose(self,mMatFunc)
             obj=transpose@gras.mat.AMatrixOperations(self,mMatFunc);
             if isempty(obj)
@@ -30,8 +36,8 @@ classdef CompositeMatrixOperations<gras.mat.AMatrixOperations
                 obj=gras.mat.fcnlib.MatrixInvFunc(mMatFunc);
             end
         end
-        function obj=sqrtm(self,mMatFunc)
-            obj=sqrtm@gras.mat.AMatrixOperations(self,mMatFunc);
+        function obj=sqrtmpos(self,mMatFunc)
+            obj=sqrtmpos@gras.mat.AMatrixOperations(self,mMatFunc);
             if isempty(obj)
                 obj=gras.mat.fcnlib.MatrixSqrtFunc(mMatFunc);
             end

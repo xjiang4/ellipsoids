@@ -39,12 +39,12 @@ classdef SuiteRegression < mlunitext.test_case
         function testRegression(self)
             NOT_COMPARED_FIELD_LIST={'resDir','plotterObj'};
             MAX_TOL=1e-6;
-            SSORT_KEYS.ellTubeProjRel={'projSpecDimVec','projType',...
+            SSORT_KEYS.ellTubeProjRel={'projSTimeMat','projType',...
                 'sTime','lsGoodDirOrigVec'};
             SSORT_KEYS.ellTubeRel={'sTime','lsGoodDirVec'};
             SSORT_KEYS.ellUnionTubeRel={'sTime','lsGoodDirVec'};
             SSORT_KEYS.ellUnionTubeStaticProjRel=...
-                {'projSpecDimVec','projType','sTime','lsGoodDirOrigVec'};
+                {'projSTimeMat','projType','sTime','lsGoodDirOrigVec'};
             %
             ROUND_FIELD_LIST={'lsGoodDirOrigVec','lsGoodDirVec'};
             %
@@ -77,7 +77,7 @@ classdef SuiteRegression < mlunitext.test_case
                 calcPrecision=crm.getParam('genericProps.calcPrecision');                
                 isOk=all(SRunProp.ellTubeProjRel.calcPrecision<=...
                     calcPrecision);
-                mlunit.assert_equals(true,isOk);
+                mlunitext.assert_equals(true,isOk);
                 %
                 compFieldNameList=setdiff(fieldnames(SRunProp),...
                     NOT_COMPARED_FIELD_LIST);
@@ -118,7 +118,7 @@ classdef SuiteRegression < mlunitext.test_case
                     %
                     reportStr=sprintf('confName=%s\n %s',confName,...
                         reportStr);
-                    mlunit.assert_equals(true,isOk,reportStr);
+                    mlunitext.assert_equals(true,isOk,reportStr);
                 end
             end
             

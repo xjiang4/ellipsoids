@@ -24,14 +24,27 @@ function extApprEllVec = minkpm_ea(inpEllArr, inpEll, dirMat)
 %   extApprEllVec: ellipsoid [1, nCols]/[0, 0] - array of external
 %       approximating ellipsoids. Empty, if for all specified
 %       directions approximations cannot be computed.
+% 
+% Example:
+%   firstEllObj = ellipsoid([2; -1], [9 -5; -5 4]);
+%   secEllObj = ellipsoid([-2; -1], [4 -1; -1 1]);
+%   thirdEllObj = ell_unitball(2);
+%   dirsMat = [1 0; 1 1; 0 1; -1 1]';
+%   ellVec = [thirdEllObj firstEllObj];
+%   externalEllVec = ellVec.minkpm_ea(secEllObj, dirsMat)
+% 
+%   externalEllVec =
+%   1x4 array of ellipsoids.
 %
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
-% $Copyright:  The Regents of the University of California 2004-2008 $
+% $Copyright:  The Regents of the University of California 
+%              2004-2008 $
 %
-% $Author: Guliev Rustam <glvrst@gmail.com> $   $Date: Dec-2012$
+% $Author: Guliev Rustam <glvrst@gmail.com> $   
+% $Date: Dec-2012$
 % $Copyright: Moscow State University,
-%             Faculty of Computational Mathematics and Cybernetics,
-%             Science, System Analysis Department 2012 $
+%            Faculty of Computational Mathematics and Computer Science,
+%            System Analysis Department 2012 $
 %
 
 import modgen.common.throwerror;
@@ -54,7 +67,6 @@ checkmultvar('(x2==x3) && all(x1(:)==x3)',...
     'errorTag','wrongSizes','errorMessage',...
     'all ellipsoids and direction vectors must be of the same dimension');
 
-extApprEllVec =[];
 isVrb = Properties.getIsVerbose();
 Properties.setIsVerbose(false);
 
@@ -62,6 +74,7 @@ Properties.setIsVerbose(false);
 isCheckVec = false(1,nCols);
 arrayfun (@(x) fSanityCheck(x), 1:nCols);
 if any(isCheckVec)
+    extApprEllVec =[];
     if isVrb > 0
         if isempty(logger)
             logger=Log4jConfigurator.getLogger();
@@ -73,13 +86,13 @@ else
     
     secExtApprEllVec = minksum_ea(inpEllArr, dirMat);
     absTol=min(min(secExtApprEllVec.getAbsTol()),inpEll.absTol);
-    extApprEllVec = repmat(ellipsoid,1,nCols);
+    extApprEllVec(nCols) = ellipsoid();
     arrayfun(@(x) fSetExtApprEllVec(x), 1:nCols)
-    extApprEllVec = extApprEllVec(~isempty(extApprEllVec));
+    extApprEllVec = extApprEllVec(~extApprEllVec.isEmpty());
     
     Properties.setIsVerbose(isVrb);
     
-    if isempty(extApprEllVec)
+    if extApprEllVec.isEmpty()
         if Properties.getIsVerbose()
             if isempty(logger)
                 logger=Log4jConfigurator.getLogger();

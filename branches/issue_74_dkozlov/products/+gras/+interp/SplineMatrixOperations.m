@@ -60,6 +60,12 @@ classdef SplineMatrixOperations<gras.mat.AMatrixOperations
                     mMatFunc);
             end
         end
+        function obj=uminus(self,mMatFunc)
+            obj=uminus@gras.mat.AMatrixOperations(self,mMatFunc);
+            if isempty(obj)
+                obj = self.interpolateUnary(@uminus,mMatFunc);
+            end
+        end        
         function obj=transpose(self,mMatFunc)
             obj=transpose@gras.mat.AMatrixOperations(self,mMatFunc);
             if isempty(obj)
@@ -76,11 +82,11 @@ classdef SplineMatrixOperations<gras.mat.AMatrixOperations
                     mMatFunc); 
             end
         end
-        function obj=sqrtm(self,mMatFunc)
-            obj=sqrtm@gras.mat.AMatrixOperations(self,mMatFunc);
+        function obj=sqrtmpos(self,mMatFunc)
+            obj=sqrtmpos@gras.mat.AMatrixOperations(self,mMatFunc);
             if isempty(obj)
                 obj = self.interpolateUnary(...
-                    @gras.gen.SquareMatVector.sqrtm,...
+                    @gras.gen.SquareMatVector.sqrtmpos,...
                     mMatFunc);
             end
         end
@@ -176,7 +182,7 @@ classdef SplineMatrixOperations<gras.mat.AMatrixOperations
                     tmpArray(:,:,iTimePoint) = ...
                         mArray(:,:,iTimePoint)*xArray(:,:,iTimePoint);
                 end
-                resVec = shiftdim(sqrt(sum(tmpArray.*xArray,1)),1);
+                resVec = shiftdim(realsqrt(sum(tmpArray.*xArray,1)),1);
                 obj = gras.interp.MatrixInterpolantFactory.createInstance(...
                     'column',resVec,self.timeVec);
             end
