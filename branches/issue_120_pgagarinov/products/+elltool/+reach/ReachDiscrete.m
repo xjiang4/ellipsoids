@@ -11,9 +11,18 @@ classdef ReachDiscrete < elltool.reach.AReach
     %             and Computer Science,
     %             System Analysis Department 2013 $
     %
-    properties (Constant, GetAccess = ?elltool.reach.AReach)
+    properties (Constant,GetAccess=protected)
         DISPLAY_PARAMETER_STRINGS = {'discrete-time', 'k0 = ', 'k1 = '}
         LINSYS_CLASS_STRING = 'elltool.linsys.LinSysDiscrete'
+    end
+    %
+    properties (Constant, GetAccess = private)
+        ETAG_SH_MAT_CALC_FAILURE = ':ShapeMatCalcFailure';
+        EMSG_APPROX_SHAPE_MAT_CALC_PROB = ['There is a problem with ',...
+            'calculation of approximation''s shape matrix. '];
+        %
+        ETAG_DEGRADE=':degradedEstimate';
+        EMSG_DEGRADE='Ellipsoidal estimate is degenerate';
     end
     %
     properties (Access = private)
@@ -86,16 +95,12 @@ classdef ReachDiscrete < elltool.reach.AReach
                 end
             end
         end
-        %
-        function newEllTubeRel = transformEllTube(ellTubeRel)
-            newEllTubeRel = ellTubeRel;
-        end
     end
     %
     methods (Static, Access = private)
         function [qArrayList ltGoodDirArray] = ...
                 calculateApproxShape(probDynObj, l0Mat, ...
-                regTol, approxType, isDisturb, isMinMax)
+                approxType, isDisturb, isMinMax)
             import elltool.conf.Properties;
             import gras.ellapx.enums.EApproxType;
             import gras.la.regposdefmat;
@@ -128,16 +133,14 @@ classdef ReachDiscrete < elltool.reach.AReach
             for iTube = 1:nTubes
                 qMat = probDynObj.getX0Mat;
                 qMat = 0.5 * (qMat + qMat');
-                qMat = regposdefmat(qMat, regTol);
-                qMat = 0.5 * (qMat + qMat');
+                %
                 qArrayList{iTube}(:, :, 1) = qMat;
                 lVec = l0Mat(:, iTube);
                 lMat(:, 1) = lVec;
                 for iTime = 1:(length(timeVec) - 1)
                     aMat = probDynObj.getAtDynamics(). ...
                         evaluate(timeVec(iTime + isBack));
-                    aInvMat = probDynObj.getAtInvDynamics(). ...
-                        evaluate(timeVec(iTime + isBack));
+                    aInvMat = inv(aMat);
                     bpbMat = probDynObj.getBPBTransDynamics(). ...
                         evaluate(timeVec(iTime + isBack));
                     bpbMat = 0.5 * (bpbMat + bpbMat');
@@ -147,8 +150,8 @@ classdef ReachDiscrete < elltool.reach.AReach
                     end
                     qMat = aMat * qMat * aMat';
                     qMat = 0.5 * (qMat + qMat');
-                    qMat = regposdefmat(qMat, regTol);
                     lVec = aInvMat' * lVec;
+                    lVec = lVec / norm(lVec);
                     if isDisturb
                         if isMinMax
                             eEll = fMinkmp(ellipsoid(0.5 * (qMat + qMat')),...
@@ -171,18 +174,16 @@ classdef ReachDiscrete < elltool.reach.AReach
                         qMat = zeros(xDim, xDim);
                     end
                     qMat = 0.5 * (qMat + qMat');
-                    qMat = regposdefmat(qMat, regTol);
-                    qMat = 0.5 * (qMat + qMat');
                     qArrayList{iTube}(:, :, iTime + 1) = qMat;
-                    lMat(:, iTime + 1) = lVec;
+                    lMat(:, iTime + 1) = aInvMat' * lMat(:, iTime);
                 end
                 ltGoodDirArray(:, iTube, :) = lMat;
             end
         end
     end
     %
-    methods (Access = protected)
-        function ellTubeRel = internalMakeEllTubeRel(self, probDynObj, ...
+    methods (Access = private)
+        function ellTubeRel = auxMakeEllTubeRel(self, probDynObj, ...
                 l0Mat, timeLimsVec, isDisturb, calcPrecision, ...
                 approxTypeVec)
             import gras.ellapx.enums.EApproxType;
@@ -196,8 +197,8 @@ classdef ReachDiscrete < elltool.reach.AReach
             %
             approxSchemaDescr = char.empty(1,0);
             approxSchemaName = char.empty(1,0);
-            sTime = min(timeLimsVec);
             timeVec = probDynObj.getTimeVec();
+            sTime=timeVec(1);
             if self.isBackward
                 timeVec = fliplr(timeVec);
             end
@@ -211,7 +212,7 @@ classdef ReachDiscrete < elltool.reach.AReach
             %
             fCalcApproxShape = @(approxType) ...
                 elltool.reach.ReachDiscrete.calculateApproxShape(...
-                probDynObj, l0Mat, self.regTol, approxType, ...
+                probDynObj, l0Mat,  approxType, ...
                 isDisturb, self.isMinMax);
             %
             if isExtApprox
@@ -238,17 +239,63 @@ classdef ReachDiscrete < elltool.reach.AReach
                         'UniformOutput', false);
                     ltGoodDirArray = flipdim(ltGoodDirArray, 3);
                 end
+                %
                 rel = gras.ellapx.smartdb.rels.EllTube.fromQArrays(...
                     qArrayList, aMat, timeVec, ltGoodDirArray, ...
                     sTime, approxType, approxSchemaName, ...
-                    approxSchemaDescr, self.relTol / 10);
+                    approxSchemaDescr,calcPrecision);
+            end
+        end
+    end
+    methods (Access=protected)
+        function ellTubeRel = internalMakeEllTubeRel(self, probDynObj, l0Mat,...
+                timeVec, isDisturb, calcPrecision, approxTypeVec)
+            import gras.ellapx.enums.EApproxType;
+            import gras.ellapx.gen.RegProblemDynamicsFactory;
+            import gras.ellapx.lreachplain.GoodDirsContinuousFactory;
+            import modgen.common.throwerror;
+            import modgen.string.catwithsep;
+            %
+            try
+                ellTubeRel = self.auxMakeEllTubeRel(...
+                    probDynObj,  l0Mat, timeVec, isDisturb, ...
+                    calcPrecision, approxTypeVec);
+            catch meObj
+                errorStr = '';
+                errorTag = '';
+                %
+                if isMatch('wrongInput:shapeMat')
+                    errorStr = catwithsep(...
+                        {self.EMSG_APPROX_SHAPE_MAT_CALC_PROB, ...
+                        self.EMSG_BAD_TIME_VEC, self.EMSG_BAD_CONTROL, ...
+                        self.EMSG_BAD_DIST, self.EMSG_BAD_INIT_SET},...
+                        sprintf('\n'));
+                    errorTag = [self.ETAG_WR_INP, ...
+                        self.ETAG_SH_MAT_CALC_FAILURE];
+                elseif isMatch('CHECKDATACONSISTENCY:wrongInput:QArrayNotPos')
+                    errorTag = [self.ETAG_WR_INP,self.ETAG_DEGRADE];
+                    errorStr = catwithsep(...
+                        {self.EMSG_DEGRADE,...
+                        self.EMSG_BAD_TIME_VEC,  ...
+                        self.EMSG_BAD_DIST, self.EMSG_BAD_INIT_SET},...
+                        sprintf('\n'));
+                end
+                if isempty(errorStr)
+                    rethrow(meObj);
+                else
+                    friendlyMeObj = throwerror(errorTag, errorStr);
+                    friendlyMeObj = addCause(friendlyMeObj, meObj);
+                    throw(friendlyMeObj);
+                end
+            end
+            function isPos=isMatch(patternStr)
+                isPos=~isempty(strfind(meObj.identifier,patternStr));
             end
         end
     end
     %
     methods
-        function self = ReachDiscrete(linSys, x0Ell, l0Mat,...
-                timeVec, varargin)
+        function self = ReachDiscrete(varargin)
             %
             % ReachDiscrete - computes reach set approximation of the discrete linear
             %                 system for the given time interval.
@@ -295,42 +342,22 @@ classdef ReachDiscrete < elltool.reach.AReach
             %             Mathematics and Computer Science,
             %             System Analysis Department 2013 $
             %
-            import elltool.conf.Properties;
-            import gras.ellapx.enums.EApproxType;
+            import modgen.common.checkvar;
             %
-            if (nargin == 0) || isempty(linSys)
-                return;
+            if nargin>0
+                timeVec=varargin{4};
+                checkvar(timeVec,'all(fix(x)==x)',...
+                    'errorTag','wrongInput:notIntegerTimeVec',...
+                    'errorMessage',...
+                    'timeVec is expected to contain integer values');
+                %
+                [varargin, ~, isMinMax] =...
+                    modgen.common.parseparext(varargin, {'isMinMax'; false});
             end
-            %
-            k0 = round(timeVec(1));
-            k1 = round(timeVec(2));
-            timeVec = [k0 k1];
-            %
-            [varargin, ~, self.isMinMax] =...
-                modgen.common.parseparext(varargin, {'isMinMax'; false});
-            self.parse(linSys, x0Ell, l0Mat, timeVec, varargin);
-            %
-            % create gras LinSys object
-            %
-            [x0Vec, x0Mat] = double(x0Ell);
-            [atStrCMat, btStrCMat, gtStrCMat, ptStrCMat, ptStrCVec,...
-                qtStrCMat, qtStrCVec] =...
-                self.prepareSysParam(linSys, timeVec);
-            isDisturbance = self.isDisturbance(gtStrCMat, qtStrCMat);
-            %
-            % normalize good directions
-            %
-            sysDim = size(atStrCMat, 1);
-            l0Mat = self.getNormMat(l0Mat, sysDim);
-            %
-            % create approximation tube
-            %
-            probDynObj = self.getProbDynamics(atStrCMat, btStrCMat, ...
-                ptStrCMat, ptStrCVec, gtStrCMat, qtStrCMat, qtStrCVec, ...
-                x0Mat, x0Vec, timeVec, self.relTol, isDisturbance);
-            approxTypeVec = [EApproxType.External EApproxType.Internal];
-            self.ellTubeRel = self.makeEllTubeRel(probDynObj, l0Mat, ...
-                timeVec, isDisturbance, self.relTol, approxTypeVec);
+            self=self@elltool.reach.AReach(varargin{:});
+            if nargin>0
+                self.isMinMax=isMinMax;
+            end
         end
     end
 end

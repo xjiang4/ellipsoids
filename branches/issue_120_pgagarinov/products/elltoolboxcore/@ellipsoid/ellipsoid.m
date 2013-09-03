@@ -1,4 +1,4 @@
-classdef ellipsoid < handle
+classdef ellipsoid < elltool.core.AGenEllipsoid
     %ELLIPSOID class of ellipsoids
     properties (Access=private,Hidden)
         centerVec
@@ -52,7 +52,7 @@ classdef ellipsoid < handle
             %
             sizeVec=horzcat(varargin{:});
             resArr=repmat(self,sizeVec);
-            resArr=resArr.getCopy();    
+            resArr=resArr.getCopy();
         end
         %
         function shMat=getShapeMat(self)
@@ -70,9 +70,9 @@ classdef ellipsoid < handle
             %   getShapeMat(ellObj)
             %
             %   ans =
-            % 
+            %
             %        1     0
-            %        0     1  
+            %        0     1
             %
             % $Author: Peter Gagarinov <pgagarinov@gmail.com> $   $Date: 24-04-2013$
             % $Copyright: Moscow State University,
@@ -97,9 +97,9 @@ classdef ellipsoid < handle
             %   getCenterVec(ellObj)
             %
             %   ans =
-            % 
-            %        1     
-            %        2       
+            %
+            %        1
+            %        2
             %
             % $Author: Peter Gagarinov <pgagarinov@gmail.com> $   $Date: 24-04-2013$
             % $Copyright: Moscow State University,
@@ -114,16 +114,16 @@ classdef ellipsoid < handle
             %
             % ELLIPSOID - constructor of the ellipsoid object.
             %
-            %   Ellipsoid E = { x in R^n : <(x - q), Q^(-1)(x - q)> <= 1 }, with current 
-            %       "Properties". Here q is a vector in R^n, and Q in R^(nxn) is positive 
+            %   Ellipsoid E = { x in R^n : <(x - q), Q^(-1)(x - q)> <= 1 }, with current
+            %       "Properties". Here q is a vector in R^n, and Q in R^(nxn) is positive
             %       semi-definite matrix
-            %       
+            %
             %   ell = ELLIPSOID - Creates an empty ellipsoid
             %
             %   ell = ELLIPSOID(shMat) - creates an ellipsoid with shape matrix shMat,
             %       centered at 0
             %
-            %	ell = ELLIPSOID(centVec, shMat) - creates an ellipsoid with shape matrix 
+            %	ell = ELLIPSOID(centVec, shMat) - creates an ellipsoid with shape matrix
             %       shMat and center centVec
             %
             %   ell = ELLIPSOID(centVec, shMat, 'propName1', propVal1,...,
@@ -161,21 +161,21 @@ classdef ellipsoid < handle
             %       shMatArray: double [nDim, nDim] /
             %           double [nDim, nDim, nDim1,...,nDimn] -
             %           shape matrices array
-            %           
+            %
             %
             %   properties:
             %       absTol: double [1,1] - absolute tolerance with default value 10^(-7)
             %       relTol: double [1,1] - relative tolerance with default value 10^(-5)
-            %       nPlot2dPoints: double [1,1] - number of points for 2D plot with  
+            %       nPlot2dPoints: double [1,1] - number of points for 2D plot with
             %           default value 200
-            %       nPlot3dPoints: double [1,1] - number of points for 3D plot with  
+            %       nPlot3dPoints: double [1,1] - number of points for 3D plot with
             %            default value 200.
             %
             % Output:
             %   ellMat: ellipsoid [1,1] / ellipsoid [nDim1,...nDimn] -
             %       ellipsoid with specified properties
             %       or multidimensional array of ellipsoids.
-            % 
+            %
             % Example:
             %   ellObj = ellipsoid([1 0 -1 6]', 9*eye(4));
             %
@@ -183,7 +183,7 @@ classdef ellipsoid < handle
             % $Copyright: The Regents of the University
             %   of California 2004-2008 $
             %
-            % $Author: Guliev Rustam <glvrst@gmail.com> $   
+            % $Author: Guliev Rustam <glvrst@gmail.com> $
             % $Date: Dec-2012$
             % $Author: Daniil Stepenskiy <reinkarn@gmail.com> $   $Date: Apr-2013$
             % $Copyright: Moscow State University,
@@ -279,7 +279,7 @@ classdef ellipsoid < handle
                 checkmultvar(@(aMat, aAbsTolVal)gras.la.ismatsymm(aMat)...
                     &&gras.la.ismatposdef(aMat,aAbsTolVal,1), 2,...
                     shMatArray(:,:,iEll), absTolVal,...
-                    'errorTag','wrongInput',...
+                    'errorTag','wrongInput:shapeMat',...
                     'errorMessage', ['shapeMat matrices must be symmetric',...
                     ' and positive semi-definite']);
                 ellMat(iEll).centerVec = centVecArray(:,iEll);
@@ -295,6 +295,7 @@ classdef ellipsoid < handle
     methods(Static)
         ellArr = fromRepMat(varargin)
         [vGridMat, fGridMat] = getGrid(nDim,nPoints)
+        ellArr = fromStruct(SEllArr)
     end
     methods(Static,Access = private)
         res = my_color_table(ch)
@@ -307,10 +308,62 @@ classdef ellipsoid < handle
     methods(Access = private)
         [propMat, propVal] = getProperty(hplaneMat,propName, fPropFun)
         [bpMat, fVec] = getGridByFactor(ellObj,factorVec)
-         checkDoesContainArgs(ell,poly)
-         doesContain = doesContainPoly(ellArr,polytope,varagin)
+        checkDoesContainArgs(ell,poly)
+        doesContain = doesContainPoly(ellArr,polytope,varagin)
     end
     methods (Static)
         checkIsMe(someObj,varargin)
     end
+    
+    methods (Access=private)
+        function isArrEq = isMatEqualInternal(self,aArr,bArr)
+            % ISMATEQUALINTERNAL - returns isArrEq - logical 1(true) if
+            %           multidimensional arrays aArr and bArr are equal,
+            %           and logical 0(false) otherwise, comparing them
+            %           using absTol and relTol fields of the object self
+            %
+            % Input:
+            %   regular:
+            %      self: ellipsoid[1,1]
+            %      aArr: double[nDim1,nDim2,...,nDimk]
+            %      bArr: double[nDim1,nDim2,...,nDimk]
+            %
+            % Output:
+            %   isArrEq: logical[1,1]
+            %
+            %
+            %
+            % $Author: Victor Gribov <illuminati1606@gmail.com> $   $Date: 28-05-2013$
+            % $Copyright: Moscow State University,
+            %             Faculty of Computational Mathematics and Cybernetics,
+            %             Science, System Analysis Department 2012-2013 $
+            self.checkIfScalar();
+            absTol = self.absTol;
+            if any(abs(aArr(:))>absTol) || any(abs(bArr(:))>absTol)
+                isArrEq = abs(2*(aArr-bArr)./(aArr+bArr));
+                isArrEq = all(isArrEq(:)<=self.relTol);
+            else
+                isArrEq = true;
+            end
+        end
+    end
+    
+    methods (Access = protected, Static)
+        function SComp = formCompStruct(SEll, SFieldNiceNames, absTol, isPropIncluded)
+            if (~isempty(SEll.shapeMat))
+                SComp.(SFieldNiceNames.shapeMat) = gras.la.sqrtmpos(SEll.shapeMat, absTol);
+            else
+                SComp.(SFieldNiceNames.shapeMat) = [];
+            end
+            SComp.(SFieldNiceNames.centerVec) = SEll.centerVec;
+            if (isPropIncluded)
+                SComp.(SFieldNiceNames.absTol) = SEll.absTol;
+                SComp.(SFieldNiceNames.relTol) = SEll.relTol;
+                SComp.(SFieldNiceNames.nPlot2dPoints) = SEll.nPlot2dPoints;
+                SComp.(SFieldNiceNames.nPlot3dPoints) = SEll.nPlot3dPoints;
+            end
+        end
+    end
+    
+    
 end

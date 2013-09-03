@@ -25,6 +25,17 @@ classdef SplineMatrixOperations<gras.mat.AMatrixOperations
             obj = gras.interp.MatrixInterpolantFactory.createInstance(...
                 'column',resDataArray,self.timeVec);
         end
+        function obj = interpolateBinaryScalar(self, fHandle, lMatFunc,...
+                rScalFunc, varargin)
+            lDataArray = lMatFunc.evaluate(self.timeVec);
+            lsizeVec = size(lDataArray);
+            rDataVec = zeros(1,1,numel(self.timeVec));
+            rDataVec(1,1,:) = rScalFunc.evaluate(self.timeVec);
+            rDataArray = repmat(rDataVec, [lsizeVec(1:2), 1]);
+            resDataArray = fHandle(lDataArray, rDataArray, varargin{:});
+            obj = gras.interp.MatrixInterpolantFactory.createInstance(...
+                'column',resDataArray,self.timeVec);
+        end
         function obj = interpolateTernary(self, fHandle, lMatFunc,...
                 mMatFunc, rMatFunc)
             lDataArray = lMatFunc.evaluate(self.timeVec);
@@ -65,7 +76,13 @@ classdef SplineMatrixOperations<gras.mat.AMatrixOperations
             if isempty(obj)
                 obj = self.interpolateUnary(@uminus,mMatFunc);
             end
-        end        
+        end
+        function obj=realsqrt(self,mMatFunc)
+            obj=realsqrt@gras.mat.AMatrixOperations(self,mMatFunc);
+            if isempty(obj)
+                obj = self.interpolateUnary(@realsqrt,mMatFunc);
+            end
+        end
         function obj=transpose(self,mMatFunc)
             obj=transpose@gras.mat.AMatrixOperations(self,mMatFunc);
             if isempty(obj)
@@ -113,6 +130,31 @@ classdef SplineMatrixOperations<gras.mat.AMatrixOperations
                 end
                 obj = gras.interp.MatrixInterpolantFactory.createInstance(...
                     'column',mArray,self.timeVec);
+            end
+        end
+        function obj=matdot(self,lMatFunc,rMatFunc)
+            import gras.gen.matdot;
+            %
+            obj=matdot@gras.mat.AMatrixOperations(...
+                self,lMatFunc,rMatFunc);
+            if isempty(obj)
+                obj = self.interpolateBinary(@matdot,lMatFunc,rMatFunc);
+            end
+        end
+        function obj=rMultiplyByScalar(self,lMatFunc,rScalFunc)
+            obj=rMultiplyByScalar@gras.mat.AMatrixOperations(...
+                self,lMatFunc,rScalFunc);
+            if isempty(obj)
+                obj = self.interpolateBinaryScalar(@times,lMatFunc, ...
+                    rScalFunc);
+            end
+        end
+        function obj=rDivideByScalar(self,lMatFunc,rScalFunc)
+            obj=rDivideByScalar@gras.mat.AMatrixOperations(...
+                self,lMatFunc,rScalFunc);
+            if isempty(obj)
+                obj = self.interpolateBinaryScalar(@rdivide,lMatFunc, ...
+                    rScalFunc);
             end
         end
         function obj=rMultiplyByVec(self,lMatFunc,rColFunc)

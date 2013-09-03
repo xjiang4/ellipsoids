@@ -13,8 +13,8 @@ classdef AMatrixCubicSpline<gras.mat.IMatrixFunction
         nRows
         nCols
     end
-    methods (Access=protected,Abstract)
-        resArray=evaluateInternal(self,timeVec)
+    methods (Access=public,Abstract)
+        resArray=evaluate(self,timeVec)
     end
     methods (Access=protected,Static)
         ppFormList=buildSplineCoeffs(dataArray,timeVec)
@@ -57,8 +57,8 @@ classdef AMatrixCubicSpline<gras.mat.IMatrixFunction
             %       no arguments
             %
             import modgen.common.throwerror;
-            import modgen.common.type.simple.checkgen;
-            import modgen.common.type.simple.checkgenext;
+            import modgen.common.checkvar;
+            import modgen.common.checkmultvar;
             %
             if nargin==0
                 %do nothing
@@ -72,11 +72,11 @@ classdef AMatrixCubicSpline<gras.mat.IMatrixFunction
             elseif nargin==2
                 [mSizeVec,nDims]=self.getSizeProps(dataArray);
                 %
-                checkgen(nDims,'x==1||x==2');
-                checkgen(timeVec,'isrow(x)');
+                checkvar(nDims,'x==1||x==2');
+                checkvar(timeVec,'isrow(x)');
                 nTimePoints=length(timeVec);
                 dSizeVec=size(dataArray);
-                checkgenext('x1(end)==x2',2,dSizeVec(end),nTimePoints);
+                checkmultvar('x1(end)==x2',2,dSizeVec(end),nTimePoints);
                 %
                 ppFormList=self.buildSplineCoeffs(dataArray,timeVec);
                 self.initialize(ppFormList,mSizeVec,timeVec);
@@ -85,33 +85,34 @@ classdef AMatrixCubicSpline<gras.mat.IMatrixFunction
                     'number of input arguments can be either 0 or 2');
             end
         end
-        function resArray=evaluate(self,timeVec)
-            resArray=self.evaluateInternal(timeVec);
-        end
     end
     methods (Access=protected, Static)
         function [mSizeVec,nDims,nRows,nCols]=getSizeProps(dataArray)
             dSizeVec=size(dataArray);
             mSizeVec=dSizeVec(1:end-1);
-            nDims=length(mSizeVec);
+            mSizeLen=length(mSizeVec);
+            nDims=2-(any(mSizeVec == 1) || (mSizeLen < 2));
             nRows=mSizeVec(1);
-            if nDims==2
+            if mSizeLen == 2
                 nCols=mSizeVec(2);
             else
                 nCols=1;
+                mSizeVec = cat(2, mSizeVec, 1);
             end
         end
     end
     methods (Access=protected)
         function initialize(self,ppFormList,mSizeVec,timeVec)
-            nDims=length(mSizeVec);
+            mSizeLen=length(mSizeVec);
+            nDims=2-(any(mSizeVec == 1) || (mSizeLen < 2));
             nRows=mSizeVec(1);
             nTimePoints=length(timeVec);
             %
-            if nDims==2
+            if mSizeLen == 2
                 nCols=mSizeVec(2);
             else
                 nCols=1;
+                mSizeVec = cat(2, mSizeVec, 1);
             end
             self.nRows=nRows;
             self.nCols=nCols;

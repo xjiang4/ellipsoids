@@ -1,20 +1,42 @@
 classdef ATightEllApxBuilder<gras.ellapx.gen.IEllApxBuilder
     properties (Access=private)
-        goodDirSetObj        
+        goodDirSetObj
         pDefObj
         timeVec
         timeLimsVec
         nGoodDirs
         odeAbsCalcPrecision
-        odeRelCalcPrecision        
+        odeRelCalcPrecision
+    end
+    properties (Access=protected)
+        sMethodName
     end
     properties (SetAccess=private,GetAccess=protected)
         calcPrecision
+        absTol
     end
     properties (Constant,GetAccess=private)
         MAX_PRECISION_FACTOR=0.003;
     end
     methods (Access=protected)
+        function sMat=getOrthTranslMatrix(self,QMat,RSqrtMat,bVec,aVec)
+            import gras.la.*;
+            switch self.sMethodName
+                case 'hausholder'
+                    sMat=orthtranslhaus(bVec,aVec);
+                case 'gram',
+                    sMat=orthtransl(bVec,aVec);
+                case 'trace',
+                    sMat=orthtranslmaxtr(bVec,aVec,RSqrtMat*QMat);
+                case 'volume',
+                    sMat=orthtranslmaxtr(bVec,aVec,RSqrtMat/(QMat.'));
+                case 'qr',
+                    sMat=orthtranslqr(bVec,aVec);
+                otherwise,
+                    modgen.common.throwerror('wrongInput',...
+                        'method %s is not supported',self.sMethodName);
+            end
+        end
         function res=getAbsODECalcPrecision(self)
             res=self.odeAbsCalcPrecision;
         end
@@ -48,6 +70,9 @@ classdef ATightEllApxBuilder<gras.ellapx.gen.IEllApxBuilder
                 timeLimsVec,nTimePoints,calcPrecision)
             import gras.ellapx.gen.ATightEllApxBuilder;
             import modgen.common.throwerror;
+            import gras.la.ismatposdef;            
+            ABS_TOL_FACTOR=1e-2;%this is a temporary measure until 
+            %we specify absTol and relTol separately
             if ~isa(pDefObj,...
                     'gras.ellapx.lreachplain.probdyn.IReachProblemDynamics')
                 throwerror('wrongInput','incorrect type of pDefObj');
@@ -64,18 +89,25 @@ classdef ATightEllApxBuilder<gras.ellapx.gen.IEllApxBuilder
                 throwerror('wrongInput',...
                     'timeLimsVec should be within pDefTimeLimsVec');
             end
-            nDims=pDefObj.getDimensionality;            
+            nDims=pDefObj.getDimensionality;
             precisionFactor=min(2./(nDims*nDims),...
-                ATightEllApxBuilder.MAX_PRECISION_FACTOR);            
+                ATightEllApxBuilder.MAX_PRECISION_FACTOR);
             self.odeAbsCalcPrecision=calcPrecision*precisionFactor;
-            self.odeRelCalcPrecision=calcPrecision*precisionFactor;               
+            self.odeRelCalcPrecision=calcPrecision*precisionFactor;
             self.calcPrecision=calcPrecision;
+            self.absTol=calcPrecision*ABS_TOL_FACTOR;
+            %
+            x0Mat = pDefObj.getX0Mat();            
+            if ~ismatposdef(x0Mat, self.absTol)
+                throwerror('wrongInput',...
+                    'Initial set is not positive definite.');
+            end            
             %% check that there is no disturbance
-            self.pDefObj=pDefObj;   
+            self.pDefObj=pDefObj;
             self.goodDirSetObj=goodDirSetObj;
-            self.nGoodDirs=goodDirSetObj.getNGoodDirs();            
+            self.nGoodDirs=goodDirSetObj.getNGoodDirs();
             timeVec=union(linspace(timeLimsVec(1),timeLimsVec(2),...
-                nTimePoints),goodDirSetObj.getsTime());            
+                nTimePoints),goodDirSetObj.getsTime());
             self.timeVec=timeVec;
             self.timeLimsVec=timeLimsVec;
         end

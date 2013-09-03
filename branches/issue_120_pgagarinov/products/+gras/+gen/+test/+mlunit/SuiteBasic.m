@@ -74,6 +74,45 @@ classdef SuiteBasic < mlunitext.test_case
             mlunitext.assert_equals(true,maxTol<=MAX_TOL)
         end
         %
+        function testRMultiply(self)
+            import gras.gen.MatVector;
+            %
+            CALC_PRECISION = 1e-5;
+            SData = load([mfilename('fullpath') filesep '..' filesep...
+                'TestData', filesep, 'matvector_data.mat']);
+            aArray = SData.aArray;
+            bMat = aArray(:,:,1);
+            bArray = aArray(:,:,2:end);
+            %
+            % 10x10x100 by 10x10x100
+            %
+            cArray = MatVector.rMultiply(aArray,aArray);
+            dArray = zeros(size(aArray));
+            for iPoint = 1:size(aArray,3)
+                dArray(:,:,iPoint) = aArray(:,:,iPoint)*aArray(:,:,iPoint);
+            end
+            check(cArray, dArray);
+            %
+            % 10x10x100 by 10x10x1
+            %
+            cArray = MatVector.rMultiply(aArray,bMat);
+            dArray = zeros(size(aArray));
+            for iPoint = 1:size(aArray,3)
+                dArray(:,:,iPoint) = aArray(:,:,iPoint)*bMat;
+            end
+            check(cArray, dArray);
+            %
+            % 10x10x100 by 10x10x99
+            %
+            self.runAndCheckError('gras.gen.MatVector.rMultiply(aArray,bArray)',...
+                'wrongInput');
+            %
+            function check(aArray, bArray)
+                rArray = aArray - bArray;
+                mlunitext.assert(max(abs(rArray(:))) < CALC_PRECISION);
+            end
+        end
+        %
         function testSortrowstol(self)
             inpMat=[1 2;1+1e-14 1];
             check([1;2],1e-16);
@@ -125,6 +164,189 @@ classdef SuiteBasic < mlunitext.test_case
                     indExpMinSide));
             end
             
+        end
+        %
+        function testCompareMatVectorMultiply(self)
+            import gras.gen.MatVector;
+            %
+            CALC_PRECISION = 1e-5;
+            SData = load([mfilename('fullpath') filesep '..' filesep...
+                'TestData', filesep, 'matvector_data.mat']);
+            aArray = SData.aArray;
+            bMat = squeeze(aArray(1,:,:));
+            %
+            cArray = MatVector.rMultiply(aArray,aArray,false);
+            dArray = MatVector.rMultiply(aArray,aArray,true);
+            check(cArray, dArray);
+            %
+            cArray = MatVector.rMultiply(aArray(1:5,1:6,:),...
+                aArray(1:6,1:7,:),aArray(1:7,1:8,:),false);
+            dArray = MatVector.rMultiply(aArray(1:5,1:6,:),...
+                aArray(1:6,1:7,:),aArray(1:7,1:8,:),true);
+            check(cArray, dArray);
+            %
+            cMat = MatVector.rMultiplyByVec(aArray,bMat,false);
+            dMat = MatVector.rMultiplyByVec(aArray,bMat,true);
+            check(cMat, dMat);
+            %
+            cMat = MatVector.rMultiplyByVec(aArray(1:7,1:10,1:100),...
+                bMat(1:10,1:100),false);
+            dMat = MatVector.rMultiplyByVec(aArray(1:7,1:10,1:100),...
+                bMat(1:10,1:100),true);
+            check(cMat, dMat);
+            %
+            function check(aArray, bArray)
+                rArray = aArray - bArray;
+                mlunitext.assert(max(abs(rArray(:))) < CALC_PRECISION);
+            end
+        end
+        function testMatDot(self)
+            import gras.gen.matdot;
+            Amat = magic(4);
+            Bmat = eye(4);
+            Cmat = ones(4);
+            % commutative
+            check(matdot(Amat, Bmat), matdot(Bmat, Amat));
+            % bilinear
+            check(matdot(Amat, 2 * Bmat - 4 * Cmat), 2 * ...
+                matdot(Amat, Bmat) - 4 * matdot(Amat, Cmat));
+            check(matdot(Amat + 3 * Bmat, Cmat), matdot(Amat, Cmat) + ...
+                3 * matdot(Bmat, Cmat));
+            % scalar multiplication
+            check(matdot(3 * Amat, -5 * Bmat), -15 * matdot(Amat, Bmat));
+            %
+            function check(leftArray,rightArray)
+                mlunitext.assert_equals(true,isequal(leftArray,...
+                    rightArray));
+            end
+        end
+        function testAbsRelCompare(self)
+            import gras.gen.absrelcompare;
+            % size error
+            self.runAndCheckError(...
+                'gras.gen.absrelcompare([1 1], [1; 1], 0.1, [], @abs)', ...
+                'wrongInput:wrongArgs');
+            % absTol error #1
+            self.runAndCheckError(...
+                'gras.gen.absrelcompare([1 1], [1 1], -0.1, [], @abs)', ...
+                'wrongInput:wrongAbsTol');
+            % absTol error #2
+            self.runAndCheckError([...
+                'gras.gen.absrelcompare([1 1], [1 1], [0.1, 0.1], [],', ...
+                ' @abs)'], 'wrongInput:wrongAbsTol');
+            % absTol error #3
+            self.runAndCheckError([...
+                'gras.gen.absrelcompare([1 1], [1 1], [], [],', ...
+                ' @abs)'], 'wrongInput:wrongAbsTol');
+            % relTol error #1
+            self.runAndCheckError(...
+                'gras.gen.absrelcompare([1 1], [1 1], 0.1, -0.1, @abs)',...
+                'wrongInput:wrongRelTol');
+            % relTol error #2
+            self.runAndCheckError([...
+                'gras.gen.absrelcompare([1 1], [1 1], 0.1, [0.1, 0.1],',...
+                ' @abs)'], 'wrongInput:wrongRelTol');
+            % fNormOp error
+            self.runAndCheckError(...
+                'gras.gen.absrelcompare([1 1], [1 1], 0.1, [], 100)', ...
+                'wrongInput:wrongNormOp');
+            % result tests
+            SRes = calc([], [], 0.5, [], @abs);
+            SExpRes = struct('isEqual', true, 'absDiff', [], 'isRel', ...
+                false, 'relDiff', [], 'relMDiff', []);
+            check(SExpRes, SRes);
+            %
+            xVec = [1 2]; yVec = [2 4];
+            SRes = calc(xVec, yVec, 2, [], @abs);
+            SExpRes.isEqual = true;
+            SExpRes.absDiff = 2;
+            check(SExpRes, SRes);
+            %
+            SRes = calc(xVec, yVec, 1, [], @abs);
+            SExpRes.isEqual = false;
+            check(SExpRes, SRes);
+            %
+            SRes = calc(xVec, yVec, 2, 2/3, @abs);
+            SExpRes.isEqual = true;
+            check(SExpRes, SRes);
+            %
+            SRes = calc(xVec, yVec, 1, 2/3, @abs);
+            SExpRes.isRel = true;
+            SExpRes.relDiff = 2/3;
+            SExpRes.relMDiff = 2;
+            check(SExpRes, SRes);
+            %
+            SRes = calc(xVec, yVec, 1, 0.5, @abs);
+            SExpRes.isEqual = false;
+            check(SExpRes, SRes);
+            %
+            SRes = calc(xVec, yVec, 0.5, 0.5, @abs);
+            check(SExpRes, SRes);
+            function SRes = calc(varargin)
+                [SRes.isEqual, SRes.absDiff, SRes.isRel, SRes.relDiff, ...
+                SRes.relMDiff] = gras.gen.absrelcompare(varargin{:}); 
+            end
+            function check(leftArray,rightArray)
+                mlunitext.assert_equals(true,isequal(leftArray,...
+                    rightArray));
+            end
+        end
+        function testSymmetricOp(self)
+            import gras.gen.SymmetricMatVector;
+            %
+            MAX_TOL=1e-10;
+            aArray = zeros(2, 2, 2);
+            bArray = zeros(2, 3, 2);
+            aArray(:,:,1) = [0 1; 1 0];
+            aArray(:,:,2) = [5 2; 2 1];
+            bArray(:,:,1) = [4 6 1; -6 2 4];
+            bArray(:,:,2) = [8 3 8; 4 3 7];
+            %
+            resArray = SymmetricMatVector.lrSvdMultiply(aArray, bArray);
+            check(@(x)x, aArray, bArray, resArray, true, false);
+            %
+            cMat = repmat([1; 0], [1 2]);
+            resArray = SymmetricMatVector.rSvdMultiplyByVec(aArray, ...
+                cMat);
+            check(@(x)x, aArray, cMat, resArray, false, true);
+            %
+            resArray = SymmetricMatVector.lrSvdMultiplyByVec(aArray, ...
+                cMat);
+            check(@(x)x, aArray, cMat, resArray, true, true);
+            %
+            resArray = SymmetricMatVector.lrSvdDivideVec(aArray, ...
+                cMat);
+            check(@inv, aArray, cMat, resArray, true, true);
+            %
+            function check(fOpFunc, inp1Array, inp2Array, resArray, ...
+                    isLrOp, isVec)
+                sizeVec = size(resArray);
+                nPoints = sizeVec(end);
+                expArray = zeros(size(resArray));
+                for i = 1:nPoints
+                    [uMat, sMat] = eig(inp1Array(:,:,i));
+                    if isVec
+                        arg2Mat = inp2Array(:,i);
+                    else
+                        arg2Mat = inp2Array(:,:,i);
+                    end
+                    %
+                    if isLrOp
+                        tempMat = uMat * arg2Mat;
+                        resMat = tempMat' * fOpFunc(sMat) * tempMat;
+                    else
+                        resMat = uMat' * fOpFunc(sMat) * uMat * arg2Mat;
+                    end
+                    %
+                    if isVec
+                        expArray(:,i) = resMat;
+                    else
+                        expArray(:,:,i) = resMat;
+                    end
+                end
+                maxTol = max(abs(expArray(:) - resArray(:)));
+                mlunitext.assert_equals(true, maxTol<=MAX_TOL)
+            end
         end
     end
 end

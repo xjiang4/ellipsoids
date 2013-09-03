@@ -8,17 +8,24 @@ classdef SuiteSupportFunction < mlunitext.test_case
         confNameList
         crm
         crmSys
+        resTmpDir
     end
     properties (Constant, GetAccess = private)
         REL_TOL_FACTOR = 1e-3;
         ABS_TOL_FACTOR = 1e-3;
     end
     methods (Static)
-        function dSFunc = derivativeSupportFunction(t, ~, fxVec, fAMat,...
-                fBMat, fPVec, fPMat)
-            cacheVec = (fxVec(t)') * fBMat(t);
-            dSFunc = cacheVec * fPVec(t) + ...
-                realsqrt(cacheVec * fPMat(t) * (cacheVec'));
+        function dSFunc = derSolFunction(t, x, fGetGoodDirVec,...
+                fTransRstMat, fAtMat, fPtVec, fPtMat)
+            import gras.gen.matdot;
+            %
+            lVec=fGetGoodDirVec(t);
+            % derivative Rtt0 function
+            transMat = fTransRstMat(t)';
+            cacheAMat = transMat * fAtMat(t);
+            dSFunc = lVec.' * fPtVec(t) + ...
+                realsqrt(lVec.' * fPtMat(t) * lVec) + ...
+                x * matdot(transMat, cacheAMat);
         end
     end
     methods
@@ -30,6 +37,12 @@ classdef SuiteSupportFunction < mlunitext.test_case
                 filesep, 'TestData', filesep, shortClassName];
         end
         %
+        function self = set_up(self)
+            self.resTmpDir = elltool.test.TmpDataManager.getDirByCallerKey;
+        end
+        function self = tear_down(self)
+            rmdir(self.resTmpDir,'s');
+        end
         function self = set_up_param(self, varargin)
             if nargin > 2
                 self.crm = varargin{2};
@@ -55,6 +68,8 @@ classdef SuiteSupportFunction < mlunitext.test_case
         end
         %
         function testSupportCompare(self)
+            import modgen.common.throwerror;
+            %
             crm = self.crm;
             crmSys = self.crmSys;
             confNameList = self.confNameList;
@@ -68,6 +83,10 @@ classdef SuiteSupportFunction < mlunitext.test_case
             for iConf = 1 : nConfs
                 confName = confNameList{iConf};
                 crm.selectConf(confName);
+                crm.setParam('customResultDir.dirName',self.resTmpDir,...
+                    'writeDepth','cache');
+                crm.setParam('customResultDir.isEnabled',true,...
+                    'writeDepth','cache');
                 crm.setParam('plottingProps.isEnabled',false,...
                     'writeDepth','cache');
                 %
@@ -84,24 +103,24 @@ classdef SuiteSupportFunction < mlunitext.test_case
                     calcPrecision);
                 mlunitext.assert_equals(true,isOk);
                 %
-                AtCMat = self.crmSys.getParam('At');
-                fAtMatCalc = @(t) ...
-                    matOpObj.fromSymbMatrix(AtCMat).evaluate(t);
-                BtCMat = self.crmSys.getParam('Bt');
-                fBtMatCalc = @(t) ...
-                    matOpObj.fromSymbMatrix(BtCMat).evaluate(t);
-                PtCVec = self.crmSys.getParam('control_restriction.a');
-                fPtVecCalc = @(t) ...
-                    matOpObj.fromSymbMatrix(PtCVec).evaluate(t);
-                PtCMat = self.crmSys.getParam('control_restriction.Q');
-                fPtMatCalc = @(t) ...
-                    matOpObj.fromSymbMatrix(PtCMat).evaluate(t);
-                x0Vec = self.crmSys.getParam('initial_set.a');
+                pDynObj=SRunAuxProp.pDynObj;
+                %
+                atMatDynObj=pDynObj.getAtDynamics();
+                %
+                fAtMatCalc = @(t)atMatDynObj.evaluate(t);
+                %
+                ptVecDynObj = pDynObj.getBptDynamics();
+                fPtVecCalc = @(t)ptVecDynObj.evaluate(t);
+                %
+                ptMatDynObj=pDynObj.getBPBTransDynamics();
+                fPtMatCalc = @(t)ptMatDynObj.evaluate(t);
+                %
+                x0Vec = pDynObj.getx0Vec;
+                x0Mat=pDynObj.getX0Mat;
                 %
                 timeCVec = SRunProp.ellTubeRel.timeVec;
                 nTuples = SRunProp.ellTubeRel.getNTuples;
                 %
-                goodDirCMat = SRunProp.ellTubeRel.ltGoodDirMat;
                 ellMatCArray = SRunProp.ellTubeRel.QArray;
                 ellCenterCMat = SRunProp.ellTubeRel.aMat;
                 %
@@ -115,9 +134,11 @@ classdef SuiteSupportFunction < mlunitext.test_case
                         norm(lsGoodDirMat(:, iGoodDir));
                 end
                 lsGoodDirCMat = SRunProp.ellTubeRel.lsGoodDirVec();
+                curGoodDirObj = SRunAuxProp.goodDirSetObj;
+                curGoodDirTransMatObj = curGoodDirObj.getRstTransDynamics;
+                fCalcTransMat = @(t) curGoodDirTransMatObj.evaluate(t);
                 for iTuple = 1 : nTuples
                     curTimeVec = timeCVec{iTuple};
-                    curGoodDirMat = goodDirCMat{iTuple};
                     curEllMatArray = ellMatCArray{iTuple};
                     curEllCenterMat = ellCenterCMat{iTuple};
                     %
@@ -136,36 +157,39 @@ classdef SuiteSupportFunction < mlunitext.test_case
                     mlunitext.assert_equals(true, isFound,...
                         'Vector mapping - good dir vector not found');
                     %
-                    curGoodDirDynamicsObj = ...
-                        SRunAuxProp.goodDirSetObj.getGoodDirOneCurveSpline(...
-                        iGoodDir);
-                    fCalclVec = @(t) curGoodDirDynamicsObj.evaluate(t);
+                    curGoodDirVecDynamicsObj = ...
+                        curGoodDirObj.getRGoodDirOneCurveSpline(iGoodDir);
+                    fCalclVec = @(t) curGoodDirVecDynamicsObj.evaluate(t);
                     %
+                    currGoodDirVec = curGoodDirVecDynamicsObj.evaluate(...
+                        curTimeVec(1));
                     supFun0 =...
-                        curGoodDirMat(:, 1).' * curEllCenterMat(:, 1) +...
-                        realsqrt(curGoodDirMat(:, 1).' *...
-                        curEllMatArray(:, :, 1) * curGoodDirMat(:, 1));
+                        currGoodDirVec.' * x0Vec +...
+                        realsqrt(currGoodDirVec.' *...
+                        x0Mat * currGoodDirVec);
                     %
                     [~, expResultMat] =...
-                        ode45(@(t, x) self.derivativeSupportFunction(t,...
-                        x, fCalclVec, fAtMatCalc, fBtMatCalc, ...
+                        ode45(@(t, x) self.derSolFunction(t,...
+                        x, fCalclVec, fCalcTransMat, fAtMatCalc, ...
                         fPtVecCalc, fPtMatCalc), curTimeVec,...
                         supFun0, OdeOptionsStruct);
                     %
+                    currGoodDirMat = squeeze(...
+                        curGoodDirVecDynamicsObj.evaluate(curTimeVec));
                     supFunVec =...
                         realsqrt(gras.gen.SquareMatVector.lrMultiplyByVec(...
-                        curEllMatArray,curGoodDirMat)) +...
-                        sum(curEllCenterMat .* curGoodDirMat, 1);
-                    expNormResVec = expResultMat(:, end) ./...
-                        norm(expResultMat(:, end));
-                    normSupFunVec = supFunVec.' ./ norm(supFunVec);
-                    errorSupFunMat =...
-                        abs(expNormResVec - normSupFunVec);                    
-                    errTol = max(errorSupFunMat(:));
-                    isOk = errTol <= calcPrecision;
-                    mlunitext.assert_equals(true, isOk,...
-                        sprintf('errTol=%g>calcPrecision=%g', errTol,...
-                        calcPrecision));
+                        curEllMatArray,currGoodDirMat)) +...
+                        sum(curEllCenterMat .* currGoodDirMat, 1);
+                    %
+                    [isOk, ~, ~, ~, ~, reportStr] = ...
+                        gras.gen.absrelcompare(supFunVec(:), ...
+                        expResultMat(:), calcPrecision, calcPrecision, ...
+                        @abs);
+                    if ~isOk
+                        reportResStr = horzcat('Support function values ',...
+                            reportStr);
+                        throwerror('tol', reportResStr);
+                    end
                 end
             end
         end

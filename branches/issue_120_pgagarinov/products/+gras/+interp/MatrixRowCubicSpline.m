@@ -21,10 +21,11 @@ classdef MatrixRowCubicSpline<gras.interp.AMatrixCubicSpline
             end
         end
     end
-    methods (Access=protected)
-        function resArray=evaluateInternal(self,timeVec)
+    methods (Access=public)
+        function resArray=evaluate(self,timeVec)
             mSizeVec=self.mSizeVec;
-            nDims=length(mSizeVec);
+            mSizeLen=length(mSizeVec);
+            nDims=2-(any(mSizeVec == 1) || (mSizeLen < 2));
             nRows=self.nRows;
             nCols=self.nCols;
             nTimePoints=length(timeVec);

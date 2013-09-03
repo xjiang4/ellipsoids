@@ -11,9 +11,14 @@ classdef ReachContinuous < elltool.reach.AReach
     %             Faculty of Computational Mathematics
     %             and Computer Science,
     %             System Analysis Department 2013$
-    properties (Constant, GetAccess = ?elltool.reach.AReach)
+    properties (Constant,GetAccess=protected)
         DISPLAY_PARAMETER_STRINGS = {'continuous-time', 'k0 = ', 'k1 = '}
         LINSYS_CLASS_STRING = 'elltool.linsys.LinSysContinuous'
+    end
+    %
+    properties (Constant, GetAccess = private)
+        ETAG_ODE_45_REG_TOL = ':Ode45Failed';
+        ETAG_BAD_INIT_SET = ':BadInitSet';
     end
     %
     methods (Static, Access = protected)
@@ -52,12 +57,12 @@ classdef ReachContinuous < elltool.reach.AReach
         end
         %
         function linSys = getProbDynamics(atStrCMat, btStrCMat,...
-                ptStrCMat, ptStrCVec, gtStrCMat, qtStrCMat, qtStrCVec,...
+                ptStrCMat, ptStrCVec, ctStrCMat, qtStrCMat, qtStrCVec,...
                 x0Mat, x0Vec, timeVec, calcPrecision, isDisturb)
             timeVec = [min(timeVec) max(timeVec)];
             if isDisturb
                 linSys = getSysWithDisturb(atStrCMat, btStrCMat,...
-                    ptStrCMat, ptStrCVec, gtStrCMat, qtStrCMat,...
+                    ptStrCMat, ptStrCVec, ctStrCMat, qtStrCMat,...
                     qtStrCVec, x0Mat, x0Vec, timeVec, calcPrecision);
             else
                 linSys = getSysWithoutDisturb(atStrCMat, btStrCMat,...
@@ -94,8 +99,8 @@ classdef ReachContinuous < elltool.reach.AReach
         end
     end
     %
-    methods (Access = protected)
-        function ellTubeRel = internalMakeEllTubeRel(self, probDynObj, ...
+    methods (Access = private)
+        function ellTubeRel = auxMakeEllTubeRel(self, probDynObj, ...
                 l0Mat, timeVec, isDisturb, calcPrecision, approxTypeVec)
             import gras.ellapx.enums.EApproxType;
             import gras.ellapx.gen.RegProblemDynamicsFactory;
@@ -110,7 +115,9 @@ classdef ReachContinuous < elltool.reach.AReach
                     gras.ellapx.lreachuncert.ExtIntEllApxBuilder(...
                     probDynObj, goodDirSetObj, timeVec,...
                     self.relTol,...
+                    'selectionMethodForSMatrix',...
                     self.DEFAULT_INTAPX_S_SELECTION_MODE,...
+                    'minQSqrtMatEig',...
                     self.MIN_EIG_Q_REG_UNCERT);
                 ellTubeBuilder =...
                     gras.ellapx.gen.EllApxCollectionBuilder(...
@@ -139,6 +146,7 @@ classdef ReachContinuous < elltool.reach.AReach
                         gras.ellapx.lreachplain.IntEllApxBuilder(...
                         probDynObj, goodDirSetObj, timeVec,...
                         self.relTol,...
+                        'selectionMethodForSMatrix',...
                         self.DEFAULT_INTAPX_S_SELECTION_MODE);
                     intellTubeBuilder =...
                         gras.ellapx.gen.EllApxCollectionBuilder(...
@@ -149,6 +157,62 @@ classdef ReachContinuous < elltool.reach.AReach
                     end
                     ellTubeRel = intEllTubeRel;
                 end
+            end
+        end
+        %
+    end
+    methods (Access=protected)
+        function ellTubeRel = internalMakeEllTubeRel(self, probDynObj, l0Mat,...
+                timeVec, isDisturb, calcPrecision, approxTypeVec)
+            import gras.ellapx.enums.EApproxType;
+            import gras.ellapx.gen.RegProblemDynamicsFactory;
+            import gras.ellapx.lreachplain.GoodDirsContinuousFactory;
+            import modgen.common.throwerror;
+            %
+            try
+                ellTubeRel = self.auxMakeEllTubeRel(...
+                    probDynObj,  l0Mat, timeVec, isDisturb, ...
+                    calcPrecision, approxTypeVec);
+                if self.isbackward()
+                    ellTubeRel=self.rotateEllTubeRel(ellTubeRel);
+                end
+            catch meObj
+                errorStr = '';
+                errorTag = '';
+                %
+                if isMatch('GRAS:ODE:ODE45REG:wrongState')||...
+                        isMatch('MATLAB:ode45:IntegrationTolNotMet')
+                    errorStr = [self.EMSG_R_PROB, self.EMSG_LOW_REG_TOL];
+                    errorTag = [self.ETAG_WR_INP, self.ETAG_R_PROB,...
+                        self.ETAG_LOW_REG_TOL, self.ETAG_ODE_45_REG_TOL];
+                elseif isMatch('ELLAPXBUILDER:wrongInput')
+                    errorStr = [self.EMSG_INIT_SET_PROB, ...
+                        self.EMSG_SMALL_INIT_SET];
+                    errorTag = [self.ETAG_WR_INP, self.ETAG_BAD_INIT_SET];
+                elseif isMatch(['EXTINTELLAPXBUILDER:',...
+                        'CALCELLAPXMATRIXDERIV:wrongInput'])
+                    errorStr = [self.EMSG_R_PROB, self.EMSG_USE_REG];
+                    errorTag = [self.ETAG_WR_INP, self.ETAG_R_PROB, ...
+                        self.ETAG_R_DISABLED];
+                elseif isMatch(['EXTELLAPXBUILDER:CALCELLAPXMATRIXDERIV:',...
+                        'wrongInput:degenerateControlBounds'])
+                    errorStr=[...
+                        'Degenerate control bounds are not supported. ',...
+                        self.EMSG_USE_REG];
+                    errorTag = [self.ETAG_WR_INP, self.ETAG_R_PROB, ...
+                        self.ETAG_R_DISABLED,':degenerateControlBounds'];
+                end
+                if isempty(errorStr)
+                    rethrow(meObj);
+                else
+                    friendlyMeObj = throwerror(errorTag, errorStr);
+                    friendlyMeObj = addCause(friendlyMeObj, meObj);
+                    throw(friendlyMeObj);
+                end
+            end
+           
+            function isPos=isMatch(patternStr)
+                isPos=~isempty(strfind(meObj.identifier,patternStr));
             end
         end
     end
@@ -168,24 +232,18 @@ classdef ReachContinuous < elltool.reach.AReach
                 backwardStrCMat = strcat('-(', backwardStrCMat, ')');
             end
         end
+        %
         function rotatedEllTubeRel = rotateEllTubeRel(oldEllTubeRel)
             import gras.ellapx.smartdb.F;
-            FIELD_NAME_LIST_TO = {F.LS_GOOD_DIR_VEC;F.LS_GOOD_DIR_NORM;...
-                F.XS_TOUCH_VEC;F.XS_TOUCH_OP_VEC};
-            FIELD_NAME_LIST_FROM = {F.LT_GOOD_DIR_MAT;...
-                F.LT_GOOD_DIR_NORM_VEC;F.X_TOUCH_CURVE_MAT;...
-                F.X_TOUCH_OP_CURVE_MAT};
             FIELDS_TO_FLIP = {F.Q_ARRAY;F.A_MAT;F.LT_GOOD_DIR_MAT;...
                 F.X_TOUCH_CURVE_MAT;F.X_TOUCH_OP_CURVE_MAT;...
                 F.LT_GOOD_DIR_NORM_VEC;F.M_ARRAY};
             SData = oldEllTubeRel.getData();
-            indSTime = 1;
-            SData.indSTime(:) = indSTime;
+            SData.indSTime=cellfun(@numel,SData.timeVec)+1-SData.indSTime;
+            SData.sTime=cellfun(@(x,y)x(y),SData.timeVec,...
+                num2cell(SData.indSTime));
             cellfun(@flipField, FIELDS_TO_FLIP);
-            cellfun(@cutStructSTimeField,...
-                FIELD_NAME_LIST_TO, FIELD_NAME_LIST_FROM);
-            SData.lsGoodDirNorm =...
-                cell2mat(SData.lsGoodDirNorm);
+            %
             rotatedEllTubeRel = oldEllTubeRel.createInstance(SData);
             %
             function flipField(fieldName)
@@ -194,16 +252,11 @@ classdef ReachContinuous < elltool.reach.AReach
                 SData.(fieldName) = cellfun(@(field)flipdim(field, dim),...
                     SData.(fieldName), 'UniformOutput', false);
             end
-            function cutStructSTimeField(fieldNameTo, fieldNameFrom)
-                SData.(fieldNameTo) =...
-                    cellfun(@(field) field(:, 1),...
-                    SData.(fieldNameFrom), 'UniformOutput', false);
-            end
         end
     end
     methods
         function self =...
-                ReachContinuous(linSys, x0Ell, l0Mat, timeVec, varargin)
+                ReachContinuous(varargin)
             % ReachContinuous - computes reach set approximation of the continuous
             %     linear system for the given time interval.
             % Input:
@@ -227,14 +280,15 @@ classdef ReachContinuous < elltool.reach.AReach
             % Output:
             %   regular:
             %     self - reach set object.
+            %
             % Example:
             %   aMat = [0 1; 0 0]; bMat = eye(2);
             %   SUBounds = struct();
-            %   SUBounds.center = {'sin(t)'; 'cos(t)'};  
+            %   SUBounds.center = {'sin(t)'; 'cos(t)'};
             %   SUBounds.shape = [9 0; 0 2];
-            %   sys = elltool.linsys.LinSysContinuous(aMat, bMat, SUBounds); 
-            %   x0EllObj = ell_unitball(2);  
-            %   timeVec = [0 10];  
+            %   sys = elltool.linsys.LinSysContinuous(aMat, bMat, SUBounds);
+            %   x0EllObj = ell_unitball(2);
+            %   timeVec = [0 10];
             %   dirsMat = [1 0; 0 1]';
             %   rsObj = elltool.reach.ReachContinuous(sys, x0EllObj, dirsMat, timeVec);
             %
@@ -246,40 +300,7 @@ classdef ReachContinuous < elltool.reach.AReach
             %             and Computer Science,
             %             System Analysis Department 2013$
             %
-            import modgen.common.type.simple.checkgenext;
-            import modgen.common.throwerror;
-            import gras.ellapx.uncertcalc.EllApxBuilder;
-            import gras.ellapx.enums.EApproxType;
-            import elltool.logging.Log4jConfigurator;
-            %
-            if (nargin == 0) || isempty(linSys)
-                return;
-            end
-            %
-            self.parse(linSys, x0Ell, l0Mat, timeVec, varargin);
-            %
-            % create gras LinSys object
-            %
-            [x0Vec, x0Mat] = double(x0Ell);
-            [atStrCMat, btStrCMat, gtStrCMat, ptStrCMat, ptStrCVec,...
-                qtStrCMat, qtStrCVec] =...
-                self.prepareSysParam(linSys, timeVec);
-            isDisturbance = self.isDisturbance(gtStrCMat, qtStrCMat);
-            %
-            % Normalize good directions
-            %
-            sysDim = size(atStrCMat, 1);
-            l0Mat = self.getNormMat(l0Mat, sysDim);
-            %
-            probDynObj = self.getProbDynamics(atStrCMat, btStrCMat,...
-                ptStrCMat, ptStrCVec, gtStrCMat, qtStrCMat, qtStrCVec,...
-                x0Mat, x0Vec, timeVec, self.relTol, isDisturbance);
-            approxTypeVec = [EApproxType.External, EApproxType.Internal];
-            self.ellTubeRel = self.makeEllTubeRel(probDynObj, l0Mat,...
-                timeVec, isDisturbance, self.relTol, approxTypeVec);
-            if self.isBackward
-                self.ellTubeRel = self.rotateEllTubeRel(self.ellTubeRel);
-            end
+            self=self@elltool.reach.AReach(varargin{:});
         end
     end
 end

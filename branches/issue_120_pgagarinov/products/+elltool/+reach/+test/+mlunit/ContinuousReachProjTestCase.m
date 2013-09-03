@@ -1,5 +1,9 @@
 classdef ContinuousReachProjTestCase < ...
         elltool.reach.test.mlunit.AReachProjTestCase
+    properties (Access=protected)
+        etalonDataRootDir
+        etalonDataBranchKey        
+    end
     methods (Access = private)
         function isEqual = isEqualApprox(self, expRel, approxType)
             import modgen.common.throwerror;
@@ -46,6 +50,13 @@ classdef ContinuousReachProjTestCase < ...
                 elltool.linsys.LinSysContinuousFactory(), ...
                 elltool.reach.ReachContinuousFactory(), ...
                 varargin{:});
+            %
+            regrClassName =...
+                'gras.ellapx.uncertcalc.test.regr.mlunit.SuiteRegression';
+            shortRegrClassName = 'SuiteRegression';
+            self.etalonDataRootDir = [fileparts(which(regrClassName)),...
+                filesep, 'TestData', filesep, shortRegrClassName];
+            self.etalonDataBranchKey = 'testRegression_out';            
         end
         function self = testGetEllTubeRel(self)
             mlunitext.assert(all(self.reachObj.get_ia() == ...
@@ -54,15 +65,33 @@ classdef ContinuousReachProjTestCase < ...
             mlunitext.assert(all(self.reachObj.get_ea() == ...
                 self.reachObj.getEllTubeRel().getEllArray(...
                 gras.ellapx.enums.EApproxType.External))); 
+            l0CMat = self.crm.getParam(...
+                'goodDirSelection.methodProps.manual.lsGoodDirSets.set1');
+            l0Mat = cell2mat(l0CMat.').';
+            projMat = l0Mat(:,1);
+            projReachObj = self.reachObj.projection(projMat);
+            projReachObj.getEllTubeRel();
+
         end
         function self = testGetEllTubeUnionRel(self)
+            NOT_COMPARE_FIELD_LIST={'isLsTouch','isLtTouchVec'...
+                'xTouchCurveMat','xTouchOpCurveMat','xsTouchOpVec',...
+                'xsTouchVec'};
             ellTubeRel = self.reachObj.getEllTubeRel();
             ellTubeUnionRel = self.reachObj.getEllTubeUnionRel();
-            compFieldList = fieldnames(ellTubeRel());
+            compFieldList = setdiff(fieldnames(ellTubeRel()),...
+                NOT_COMPARE_FIELD_LIST);
+            %
             [isOk, reportStr] = ...
                 ellTubeUnionRel.getFieldProjection(compFieldList). ...
                 isEqual(ellTubeRel.getFieldProjection(compFieldList));
             mlunitext.assert(isOk,reportStr);
+            l0CMat = self.crm.getParam(...
+                'goodDirSelection.methodProps.manual.lsGoodDirSets.set1');
+            l0Mat = cell2mat(l0CMat.').';
+            projMat = l0Mat(:,1);
+            projReachObj = self.reachObj.projection(projMat);
+            projReachObj.getEllTubeUnionRel();
         end
         function self = testSystem(self)
             import modgen.common.throwerror;
