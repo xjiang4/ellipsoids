@@ -1,9 +1,7 @@
 #summary Describes a sequence of steps that a developer should follow to configure a development environment
 #labels Phase-Deploy
 
-= Software requirements =
-
-Add your content here.
+= Prerequisites =
 
   * *Matlab 2012a 32-bit or higher*. Please note that a requirement to have 32-bit version comes from a need to be able to write the reliable tests that verify the calculation results with a certain precision. This precision depends on the architecture so that a test written for 32-bit Matlab may fail in 64-bit version and vice-versa. Also the following toolboxes are required:
       * *Matlab Parallel Computing Toolbox*. This toolbox will be used for running the test pack in parallel on different CPU cores which gives a significant boost on multi-core hardware. 
