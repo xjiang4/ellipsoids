@@ -15,9 +15,10 @@ Add your content here.
 
 = How to install =
 
-  * checkout the latest source
-  * unzip CVX into *cvx* folder next to *products* folder
-  * unzip MPT into *mpt* folder next to *products* folder
+  * checkout the latest source from [http://ellipsoids.googlecode.com/svn/trunk/] or download the latest package from [http://code.google.com/p/ellipsoids/downloads/list]
+
+  * unzip CVX into *cvx* folder next to *products* folder(optional)
+  * unzip MPT into *mpt* folder next to *products* folder(optional)
   * navigate to *install* subfolder
   * run `s_install` script
   * run `elltool.test.run_tests` to make sure that everything works
