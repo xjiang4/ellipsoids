@@ -1,6 +1,6 @@
 #summary Release Notes Preview for ver 1.4
 
- # *(Almost done, waiting for reintegration of branches/ issue_121_illyubich branch by Ilya Lubich)* Old "reach" class responsible for calculating reach sets for both discrete and continous systems is replaced with new elltool.reach.ReachContinuous and elltool.reach.ReachDiscrete classes. These new classes feature
+ # Old "reach" class responsible for calculating reach sets for both discrete and continous systems is replaced with new elltool.reach.ReachContinuous and elltool.reach.ReachDiscrete classes. These new classes feature
      # all new solvers performing the internal consistency checks for ellipsoidal approximations to make sure that ellipsoidal tubes are calculated with the desired precision
      # all new visualization engine with improved visual effects and capable of displaying the touch curves and good curves l(t) for the tight approximations.
      # ability to recognize LTI systems (with constant A) to use a more precise algorithm of ellipsoidal approximation calculation.
