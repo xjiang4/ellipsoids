@@ -8,7 +8,7 @@
       * *Optimization Toolbox*. This toolbox is used by MPT (see below) for solving the quadratic programming problems.
       *  *Curve Fitting Toolbox*
 
-  * *CVX 2.0* from [http://ellipsoids.googlecode.com/files/cvx_2_0_build890.zip]
+  * *CVX 2.0 build 1010 or higher* from [http://ellipsoids.googlecode.com/files/cvx_2_0_b1010_win32.zip]
   * *MPT 2.6.3* from [http://ellipsoids.googlecode.com/files/mpt_ver263.zip]
 
 = How to install =
