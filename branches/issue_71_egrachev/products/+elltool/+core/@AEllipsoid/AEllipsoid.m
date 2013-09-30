@@ -5,8 +5,8 @@ classdef AEllipsoid < handle
         
     end
         
-    methods (Abstract)
-        shapeMat=get.shapeMat(self,shMat)
+    methods
+        shapeMat
     end
     
     methods (Access = protected)

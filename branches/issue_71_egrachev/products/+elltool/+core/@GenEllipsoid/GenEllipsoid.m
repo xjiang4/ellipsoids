@@ -40,18 +40,19 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
         diagMat
         eigvMat
     end
+    properties (Dependent)
+        shapeMat
+    end
 
     properties (Constant,GetAccess = private)
         CHECK_TOL=1e-09;
     end
     
-    %MAGIC!
     methods
-        function shapeMat=get.shapeMat(self,shMat)
+        function shapeMat=get.shapeMat(self)
               shapeMat=self.eigvMat*self.diagMat*transpose(self.eigvMat);
         end
     end
-    %end_MAGIC!
     
     methods (Static,Access=private)
         function checkIsMe(objArr)
@@ -404,7 +405,6 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
         end
     end
     methods (Static,Access = private)
-        resVec = getColorTable(ch);
         [isOk, pPar] = getIsGoodDirForMat(ellQ1Mat,ellQ2Mat,dirVec,absTol)
         sqMat = findSqrtOfMatrix(qMat,absTol)
         isBigger=checkBigger(ellObj1,ellObj2,nDimSpace,absTol)
