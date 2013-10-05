@@ -6,6 +6,9 @@ classdef ADispStructTC < mlunitext.test_case
     %            Faculty of Computational Mathematics
     %            and Computer Science,
     %            System Analysis Department 2013 $
+    properties
+        EllFactoryObj
+    end
     methods (Abstract, Static, Access = protected)
         getToStructObj()
         getToStructStruct()
@@ -24,6 +27,7 @@ classdef ADispStructTC < mlunitext.test_case
         getEqSndObj()
         getEqResult()
         getEqTestNumber()
+        
     end
     methods (Access = public)
         function self = ADispStructTC(varargin)
@@ -101,6 +105,11 @@ classdef ADispStructTC < mlunitext.test_case
                     sndObjArrCVec{iTest},...
                     isResultCVec{iTest});
             end
+        end
+    end
+    methods
+        function self = set_up_param(self, EllFactoryObj)
+            self.EllFactoryObj = EllFactoryObj;
         end
     end
 end

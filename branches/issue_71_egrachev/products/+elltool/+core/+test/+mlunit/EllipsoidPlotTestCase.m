@@ -8,21 +8,21 @@ classdef EllipsoidPlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
     
     properties (Access=private)
         testDataRootDir
-        
+        EllFactoryObj
     end
     %
     methods(Access=protected)
-        function [plObj,numObj] = getInstance(varargin)
-            if numel(varargin)==2
-                plObj = ellipsoid(varargin{2});
-                if size(varargin{2},1) == 2
+        function [plObj,numObj] = getInstance(self, varargin)
+            if numel(varargin)==1
+                plObj = self.EllFactoryObj.create(varargin{1});
+                if size(varargin{1},1) == 2
                     numObj = 2;
                 else
                     numObj = 4;
                 end
             else
-                plObj = ellipsoid(varargin{2},varargin{3});
-                if size(varargin{3},1) == 2
+                plObj = self.EllFactoryObj.create(varargin{1},varargin{2});
+                if size(varargin{2},1) == 2
                     numObj = 2;
                 else
                     numObj = 4;
@@ -33,7 +33,7 @@ classdef EllipsoidPlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
     methods
         function self = EllipsoidPlotTestCase(varargin)
             self = self@elltool.core.test.mlunit.BGeomBodyTC(varargin{:});
-            self.fTest = @ellipsoid;
+            self.fTest = @(varargin)self.EllFactoryObj.create(varargin{:});
             self.fCheckBoundary = @checkBoundary;
             [~,className]=modgen.common.getcallernameext(1);
             shortClassName=mfilename('classname');
@@ -134,6 +134,9 @@ classdef EllipsoidPlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
                     <= qMat*(1 + absTol), ...
                     cellPoints);
             end
+        end
+        function self = set_up_param(self, EllFactoryObj)
+            self.EllFactoryObj = EllFactoryObj;
         end
         function self = tear_down(self,varargin)
             close all;

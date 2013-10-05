@@ -8,6 +8,7 @@ classdef ElliIntUnionTCMultiDim < mlunitext.test_case
 
     properties (Access=private)
         testDataRootDir
+        EllFactoryObj
     end 
     methods
         function self = ElliIntUnionTCMultiDim(varargin)
@@ -18,38 +19,41 @@ classdef ElliIntUnionTCMultiDim < mlunitext.test_case
                 'TestData',...
                 filesep,shortClassName];
         end
+        function self = set_up_param(self, EllFactoryObj)
+            self.EllFactoryObj = EllFactoryObj;
+        end
         function self = testEllunionEa(self)
-            checkEllunionEaAndEllintersectionIa(self, true);
+            self.checkEllunionEaAndEllintersectionIa(true);
         end
         function self = testEllintersectionIa(self)
-            checkEllunionEaAndEllintersectionIa(self, false);
+            self.checkEllunionEaAndEllintersectionIa(false);
         end
         function self = testDoesContain(self)    
             arraySizeVec = [2, 1, 1, 1, 3, 1, 1];
-            test1EllArray = createObjectArray(arraySizeVec, @ell_unitball, ...
+            test1EllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ...
                 3, 1, 1);
-            test2EllArray = createObjectArray(arraySizeVec, @ell_unitball, ...
+            test2EllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ...
                 3, 1, 1);
             testResVec = doesContain(test1EllArray, test2EllArray);
                 mlunitext.assert_equals(true, all(testResVec(:)));
             arraySizeVec = [1, 2, 3, 1, 2, 1];
-            test1EllArray = createObjectArray(arraySizeVec, @ell_unitball, ... 
+            test1EllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ... 
                 2, 1, 1);
-            test2EllArray = createObjectArray(arraySizeVec, @ellipsoid, ...
+            test2EllArray = self.createObjectArray(arraySizeVec, @(varargin)self.EllFactoryObj.create(varargin{:}), ...
                 zeros(2, 1), diag( 1.1 * ones(1, 2)), 2);
             testCorrect(false);
             testCorrect(true);
             arraySizeVec = [1, 2, 3, 1, 2, 1];
-            test1EllArray = createObjectArray(arraySizeVec, @ell_unitball, ... 
+            test1EllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ... 
                 2, 1, 1);
-            test2EllArray = createObjectArray(arraySizeVec, @ellipsoid, ...
+            test2EllArray = self.createObjectArray(arraySizeVec, @(varargin)self.EllFactoryObj.create(varargin{:}), ...
                 zeros(2, 1), diag( 1.1 * ones(1, 2)), 2);
             testCorrect(false);
             testCorrect(true);
             arraySizeVec = [2, 1, 1, 1, 1, 3, 1];
-            test1EllArray = createObjectArray(arraySizeVec, @ell_unitball, ... 
+            test1EllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ... 
                 4, 1, 1);
-            test2EllArray = createObjectArray(arraySizeVec, @ellipsoid, ...
+            test2EllArray = self.createObjectArray(arraySizeVec, @(varargin)self.EllFactoryObj.create(varargin{:}), ...
                 5 * ones(4, 1), diag( 2 * ones(1, 4)), 2);
             testCorrect(false);
             testResVec = doesContain(test2EllArray, test1EllArray);
@@ -69,7 +73,7 @@ classdef ElliIntUnionTCMultiDim < mlunitext.test_case
             end
             function testError(flag)
                 [test1EllArray, test2EllArray, errorStr] = ...
-                    createTypicalArray(flag);
+                    self.createTypicalArray(flag);
                 self.runAndCheckError...
                    ('test1EllArray.doesContain(test2EllArray)', errorStr);
                 self.runAndCheckError...
@@ -81,28 +85,28 @@ classdef ElliIntUnionTCMultiDim < mlunitext.test_case
 
         function self = testIsInternal(self)
             arraySizeVec = [2, 3, 2, 1, 1, 1, 4];
-            testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ... 
+            testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ... 
                 3, 1, 1);
             testPointVec = 0.9 * eye(3);
             testCorrect(true, [1, 1, 1]);
             arraySizeVec = [1, 2, 2, 3, 1, 4];
-            testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ... 
+            testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ... 
                 2, 1, 1);
             testPointVec = 1.1 * eye(2);
             testCorrect(true, [0, 0]);
             arraySizeVec = [1, 1, 1, 1, 1, 7, 1, 1, 7];
-            testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ... 
+            testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ... 
                 5, 1, 1);
             testPointVec = 0.9 * eye(5);
             testCorrect(true, [1, 1, 1, 1, 1]);
             arraySizeVec = [2, 1, 2, 1, 3, 3];
-            testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ... 
+            testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ... 
                 4, 1, 1);
             testMat = 0.9 * eye(4);
             testMat = [testMat, 1.1 * eye(4)];
             testPointVec = testMat;
             testCorrect(false, [1, 1, 1, 1, 0, 0, 0, 0]);
-            [testEllArray, ~] = createTypicalArray(8);
+            [testEllArray, ~] = self.createTypicalArray(8);
             testMat = [0.9 * eye(4), 1.9 * eye(4), zeros(4, 1)];
             testPointVec = testMat;
             testCorrect(false, [0, 0, 0, 0, 0, 0, 0, 0, 1]);
@@ -121,34 +125,34 @@ classdef ElliIntUnionTCMultiDim < mlunitext.test_case
                 end
             end
             function testError(flag)
-                [testEllArray, ~, errorStr] = createTypicalArray(flag);
+                [testEllArray, ~, errorStr] = self.createTypicalArray(flag);
                 self.runAndCheckError...
                    ('testEllArray.isinternal(testPointVec)', errorStr);
             end
         end  
         function self = testHpIntersection(self)
             arraySizeVec = [2, 2, 3, 1, 1, 1, 4];
-            testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ... 
+            testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ... 
                 3, 1, 1);
-            testHpArray = createObjectArray(arraySizeVec, ...
+            testHpArray = self.createObjectArray(arraySizeVec, ...
                 @(varargin)hyperplane(varargin{:}), [0, 0, 1].', 0, 2);
-            ansEllArray = createObjectArray(arraySizeVec, @ellipsoid, ... 
+            ansEllArray = self.createObjectArray(arraySizeVec, @(varargin)self.EllFactoryObj.create(varargin{:}), ... 
                 [1, 0, 0; 0, 1, 0; 0, 0, 0], 1, 1);
             testCorrect();
             arraySizeVec = [1, 2, 2, 3, 1, 4];
-            testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ... 
+            testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ... 
                 2, 1, 1);
-            testHpArray = createObjectArray(arraySizeVec, ...
+            testHpArray = self.createObjectArray(arraySizeVec, ...
                 @(varargin)hyperplane(varargin{:}), [0, 1].', 0, 2);
-            ansEllArray = createObjectArray(arraySizeVec, @ellipsoid, ... 
+            ansEllArray = self.createObjectArray(arraySizeVec, @(varargin)self.EllFactoryObj.create(varargin{:}), ... 
                 [1, 0; 0, 0], 1, 1);
             testCorrect();
             arraySizeVec = [1, 1, 1, 1, 1, 7, 1, 1, 7];
-            testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ... 
+            testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ... 
                 4, 1, 1);
-            testHpArray = createObjectArray(arraySizeVec, ...
+            testHpArray = self.createObjectArray(arraySizeVec, ...
                 @(varargin)hyperplane(varargin{:}), [0, 0, 0, 1].', 0, 2);
-            ansEllArray = createObjectArray(arraySizeVec, @ellipsoid, ... 
+            ansEllArray = self.createObjectArray(arraySizeVec, @(varargin)self.EllFactoryObj.create(varargin{:}), ... 
                 [1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 1, 0; 0, 0, 0, 0], 1, 1);
             isnAnsIntersectedArray = false(1, 1, 1, 1, 1, 7, 1, 1, 7);
             [resEllArray, isnIntersectedArray] = ...
@@ -159,45 +163,45 @@ classdef ElliIntUnionTCMultiDim < mlunitext.test_case
             testResArray = eq(isnIntersectedArray, isnAnsIntersectedArray);
             self.flexAssert(true, all(testResArray(:)));
             
-            [testEllArray, arraySizeVec] = createTypicalArray(8);
-            testHpArray = createObjectArray(arraySizeVec,  ...
+            [testEllArray, arraySizeVec] = self.createTypicalArray(8);
+            testHpArray = self.createObjectArray(arraySizeVec,  ...
                 @(varargin)hyperplane(varargin{:}), [0, 0, 1, 0].', 0, 2);
             testMat = [1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 0, 0; 0, 0, 0, 1];
-            ansEllArray = createObjectArray(arraySizeVec, @ellipsoid, ... 
+            ansEllArray = self.createObjectArray(arraySizeVec, @(varargin)self.EllFactoryObj.create(varargin{:}), ... 
                 testMat, 1, 1);
-            ansEllArray(1, 1, 1, 1, 1, 1) = ellipsoid([0 0 0 1].', testMat);
-            ansEllArray(1, 1, 1, 1, 1, 2) = ellipsoid([0 0 0 -1].', testMat);
-            ansEllArray(1, 1, 1, 1, 1, 3) = ellipsoid([0 0 0 0].', ...
+            ansEllArray(1, 1, 1, 1, 1, 1) = self.EllFactoryObj.create([0 0 0 1].', testMat);
+            ansEllArray(1, 1, 1, 1, 1, 2) = self.EllFactoryObj.create([0 0 0 -1].', testMat);
+            ansEllArray(1, 1, 1, 1, 1, 3) = self.EllFactoryObj.create([0 0 0 0].', ...
                 diag( zeros(1, 4)));
-            ansEllArray(1, 1, 1, 1, 2, 1) = ellipsoid([0 0 0 0].', zeros(4));
-            ansEllArray(1, 1, 1, 1, 2, 2) = ellipsoid([0 1 0 0].', testMat);
-            ansEllArray(1, 1, 1, 1, 2, 3) = ellipsoid([0 -1 0 0].', testMat);
-            ansEllArray(1, 1, 1, 1, 3, 1) = ellipsoid([1 0 0 0].', testMat);
-            ansEllArray(1, 1, 1, 1, 3, 2) = ellipsoid([-1 0 0 0].', testMat);
+            ansEllArray(1, 1, 1, 1, 2, 1) = self.EllFactoryObj.create([0 0 0 0].', zeros(4));
+            ansEllArray(1, 1, 1, 1, 2, 2) = self.EllFactoryObj.create([0 1 0 0].', testMat);
+            ansEllArray(1, 1, 1, 1, 2, 3) = self.EllFactoryObj.create([0 -1 0 0].', testMat);
+            ansEllArray(1, 1, 1, 1, 3, 1) = self.EllFactoryObj.create([1 0 0 0].', testMat);
+            ansEllArray(1, 1, 1, 1, 3, 2) = self.EllFactoryObj.create([-1 0 0 0].', testMat);
             testCorrect()
             arraySizeVec = [2, 2, 3, 1, 1, 1, 4];
-            testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ... 
+            testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ... 
                  3, 1, 1);
-            testHpArray = createObjectArray(arraySizeVec,  ...
+            testHpArray = self.createObjectArray(arraySizeVec,  ...
                 @(varargin)hyperplane(varargin{:}), [0, 0, 1].', -2, 2);   
-            ansEllArray = ellipsoid();
+            ansEllArray = self.EllFactoryObj.create();
             testCorrect();
             testHpArray = hyperplane.empty(1, 0, 0, 2, 5);
             [~, testEllArray, errorStr, arraySizeVec] = ...
-                createTypicalArray(4);
+                self.createTypicalArray(4);
             testError(0);
-            testHpArray = createObjectArray(arraySizeVec, ...
+            testHpArray = self.createObjectArray(arraySizeVec, ...
                 @(varargin)hyperplane(varargin{:}),  [0, 0, 1].', -2, 2);
             testHpArray(1, 1, 1, 2, 1, 1, 1) = hyperplane();
             errorStr = 'wrongInput:emptyHyperplane';
             testError(0);
-          	testHpArray = createObjectArray(arraySizeVec, @(x)hyperplane(), ...
+          	testHpArray = self.createObjectArray(arraySizeVec, @(x)hyperplane(), ...
                 3, 1, 1); 
             testError(0);
-            testHpArray = createObjectArray(arraySizeVec, ...
+            testHpArray = self.createObjectArray(arraySizeVec, ...
                 @(varargin)hyperplane(varargin{:}), [0, 0, 1].', 1, 2);
             testHpArray(1, 1, 1, 2, 1, 1, 1) = hyperplane([0, 1].', 1);
-            [~, ~, errorStr] = createTypicalArray(7);
+            [~, ~, errorStr] = self.createTypicalArray(7);
            testError(0);
              testHpArray(1, 1, 1, 2, 1, 1, 1) = hyperplane([0, 0, 1].', 1);
              testError(4);
@@ -211,7 +215,7 @@ classdef ElliIntUnionTCMultiDim < mlunitext.test_case
             end
             function testError(flag)
                 if (flag > 0)
-                    [testEllArray, ~, errorStr] = createTypicalArray(flag);
+                    [testEllArray, ~, errorStr] = self.createTypicalArray(flag);
                 end
                 self.runAndCheckError...
                     ('testEllArray.hpintersection(testHpArray)', errorStr);
@@ -224,32 +228,31 @@ classdef ElliIntUnionTCMultiDim < mlunitext.test_case
                 mlunitext.assert_equals(varargin{2:end});
             end;
         end
-    end    
-end
-function [varargout] = createTypicalArray(flag)
+        
+function [varargout] = createTypicalArray(self,flag)
     arraySizeVec = [2, 1, 1, 2, 1, 3, 1];
     switch flag
         case 1
             arraySizeVec = [2, 1, 3, 2, 1, 1, 4];
-            testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ...
+            testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ...
                 3, 1, 1);
             varargout{1} = testEllArray;
             varargout{2} = ell_unitball(3);
         case 2
             arraySizeVec = [1, 2, 4, 3, 2];
-            testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ...
+            testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ...
                 2, 1, 1);
             varargout{1} = testEllArray;
             varargout{2} = ell_unitball(2);
         case 3
             arraySizeVec = [1, 1, 1, 1, 1, 7, 1, 1, 7];
-            testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ...
+            testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ...
                 4, 1, 1);
             varargout{1} = testEllArray;
             varargout{2} = ell_unitball(4);
         case 4
-            testEllArray = ellipsoid.empty(1, 0, 0, 1, 5);
-            test2EllArray = createObjectArray(arraySizeVec, @ell_unitball, ...
+            testEllArray = self.EllFactoryObj.create.empty(1, 0, 0, 1, 5);
+            test2EllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ...
                 3, 1, 1);
             errorStr = 'wrongInput:emptyArray';
             varargout{1} = testEllArray;
@@ -257,29 +260,29 @@ function [varargout] = createTypicalArray(flag)
             varargout{3} = errorStr;
             varargout{4} = arraySizeVec;
         case 5
-            testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ...
+            testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ...
                 3, 1, 1);
-            testEllArray(2, 1, 1, 2, 1, 3, 1) = ellipsoid;
-            test2EllArray = createObjectArray(arraySizeVec, @ell_unitball, ...
+            testEllArray(2, 1, 1, 2, 1, 3, 1) = self.EllFactoryObj.create;
+            test2EllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ...
                 3, 1, 1);
             errorStr = 'wrongInput:emptyEllipsoid';
             varargout{1} = testEllArray;
             varargout{2} = test2EllArray;
             varargout{3} = errorStr;
         case 6
-            testEllArray = createObjectArray(arraySizeVec, @(x)ellipsoid(), ...
+            testEllArray = self.createObjectArray(arraySizeVec, @(x)self.EllFactoryObj.create(), ...
                 3, 1, 1);
-            test2EllArray = createObjectArray(arraySizeVec, @ell_unitball, ...
+            test2EllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ...
                 3, 1, 1);
             errorStr = 'wrongInput:emptyEllipsoid';
             varargout{1} = testEllArray;
             varargout{2} = test2EllArray;
             varargout{3} = errorStr;
         case 7
-            testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ...
+            testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ...
                 3, 1, 1);
             testEllArray(2, 1, 1, 1, 1, 1, 1) = ell_unitball(7);
-            test2EllArray = createObjectArray(arraySizeVec, @ell_unitball, ...
+            test2EllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ...
                 3, 1, 1);
             errorStr = 'wrongSizes';
             varargout{1} = testEllArray;
@@ -288,22 +291,22 @@ function [varargout] = createTypicalArray(flag)
         case 8
             testMat = eye(4);
             arraySizeVec = [2, 1, 1, 2, 3, 3];
-            testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ... 
+            testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ... 
                 4, 1, 1);
-            testEllArray(1, 1, 1, 1, 1, 1) = ellipsoid([0 0 0 1].', testMat);
-            testEllArray(1, 1, 1, 1, 1, 2) = ellipsoid([0 0 0 -1].', testMat);
-            testEllArray(1, 1, 1, 1, 1, 3) = ellipsoid([0 0 1 0].', testMat);
-            testEllArray(1, 1, 1, 1, 2, 1) = ellipsoid([0 0 -1 0].', testMat);
-            testEllArray(1, 1, 1, 1, 2, 2) = ellipsoid([0 1 0 0].', testMat);
-            testEllArray(1, 1, 1, 1, 2, 3) = ellipsoid([0 -1 0 0].', testMat);
-            testEllArray(1, 1, 1, 1, 3, 1) = ellipsoid([1 0 0 0].', testMat);
-            testEllArray(1, 1, 1, 1, 3, 2) = ellipsoid([-1 0 0 0].', testMat);
+            testEllArray(1, 1, 1, 1, 1, 1) = self.EllFactoryObj.create([0 0 0 1].', testMat);
+            testEllArray(1, 1, 1, 1, 1, 2) = self.EllFactoryObj.create([0 0 0 -1].', testMat);
+            testEllArray(1, 1, 1, 1, 1, 3) = self.EllFactoryObj.create([0 0 1 0].', testMat);
+            testEllArray(1, 1, 1, 1, 2, 1) = self.EllFactoryObj.create([0 0 -1 0].', testMat);
+            testEllArray(1, 1, 1, 1, 2, 2) = self.EllFactoryObj.create([0 1 0 0].', testMat);
+            testEllArray(1, 1, 1, 1, 2, 3) = self.EllFactoryObj.create([0 -1 0 0].', testMat);
+            testEllArray(1, 1, 1, 1, 3, 1) = self.EllFactoryObj.create([1 0 0 0].', testMat);
+            testEllArray(1, 1, 1, 1, 3, 2) = self.EllFactoryObj.create([-1 0 0 0].', testMat);
             varargout{1} = testEllArray;
             varargout{2} = arraySizeVec;
         otherwise
     end
 end
-function objectArray = createObjectArray(arraySizeVec, func, firstArg, ...
+function objectArray = createObjectArray(self,arraySizeVec, func, firstArg, ...
     secondArg, nArg)
     nElems = prod(arraySizeVec, 2);
     firstArgCArray = repmat({firstArg}, 1, nElems);
@@ -321,20 +324,20 @@ function checkEllunionEaAndEllintersectionIa(self, isEllunionEa)
     testCorrect(1);
     testCorrect(2);
     testCorrect(3);
-    [testEllArray, ~] = createTypicalArray(8);
+    [testEllArray, ~] = self.createTypicalArray(8);
     if isEllunionEa
-        resultEll = ellipsoid([0; 0; 0; 0], diag(4 * ones(1, 4)));
+        resultEll = self.EllFactoryObj.create([0; 0; 0; 0], diag(4 * ones(1, 4)));
     else
-        resultEll = ellipsoid([0; 0; 0; 0], diag(zeros(1, 4)));
+        resultEll = self.EllFactoryObj.create([0; 0; 0; 0], diag(zeros(1, 4)));
     end
     testCorrect(0);
     if ~isEllunionEa
         testMat = eye(4);
         arraySizeVec = [1, 2, 1, 3, 1, 3];
-        testEllArray = createObjectArray(arraySizeVec, @ell_unitball, ...
+        testEllArray = self.createObjectArray(arraySizeVec, @ell_unitball, ...
             4, 1, 1);
-        testEllArray(1, 1, 1, 1, 1, 1) = ellipsoid([0 0 0 10].', testMat);
-        testEllArray(1, 1, 1, 1, 1, 2) = ellipsoid([0 0 0 -10].', testMat);
+        testEllArray(1, 1, 1, 1, 1, 1) = self.EllFactoryObj.create([0 0 0 10].', testMat);
+        testEllArray(1, 1, 1, 1, 1, 2) = self.EllFactoryObj.create([0 0 0 -10].', testMat);
         errorStr = 'cvxError';
         testError(0);
     end
@@ -344,7 +347,7 @@ function checkEllunionEaAndEllintersectionIa(self, isEllunionEa)
     testError(7);
     function testCorrect(flag)
         if (flag > 0)
-            [testEllArray, resultEll] = createTypicalArray(flag);
+            [testEllArray, resultEll] = self.createTypicalArray(flag);
         end
         if isEllunionEa
             resEllVec = ellunion_ea(testEllArray);
@@ -356,7 +359,7 @@ function checkEllunionEaAndEllintersectionIa(self, isEllunionEa)
     end
     function testError(flag)
         if (flag > 0)
-            [testEllArray, ~, errorStr] = createTypicalArray(flag);
+            [testEllArray, ~, errorStr] = self.createTypicalArray(flag);
         end
         if isEllunionEa
             self.runAndCheckError...
@@ -366,4 +369,6 @@ function checkEllunionEaAndEllintersectionIa(self, isEllunionEa)
                 ('testEllArray.ellintersection_ia()', errorStr);
         end 
     end
+end
+    end    
 end

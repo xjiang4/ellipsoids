@@ -52,14 +52,30 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
         function shapeMat=get.shapeMat(self)
               shapeMat=self.eigvMat*self.diagMat*transpose(self.eigvMat);
         end
-    end
-    
-    methods (Static,Access=private)
-        function checkIsMe(objArr)
-            import modgen.common.checkvar;
-            checkvar(objArr,@(x)isa(x,'elltool.core.GenEllipsoid'));
+        
+        function obj=set.shapeMat(obj, value)
         end
     end
+    
+    methods (Static)
+        function checkIsMe(ellArr, varargin)
+            %import modgen.common.checkvar;
+            %checkvar(objArr,@(x)isa(x,'elltool.core.GenEllipsoid'));
+            nArgIn = nargin;
+            if nArgIn == 1
+                modgen.common.checkvar(ellArr,@(x) isa(x,'elltool.core.GenEllipsoid'),...
+                    'errorTag','wrongInput',...
+                    'errorMessage','input argument must be elltool.core.GenEllipsoid.');
+            elseif nArgIn==2
+                modgen.common.checkvar(ellArr,@(x) isa(x,'elltool.core.GenEllipsoid'),...
+                    'errorTag','wrongInput','errorMessage',...
+                    [varargin{1}, ' input argument must be elltool.core.GenEllipsoid.']);
+            else
+                modgen.common.checkvar(ellArr,@(x) isa(x,'elltool.core.GenEllipsoid'),varargin{:});
+            end
+        end
+    end
+%     
     methods
         function isOk=getIsGoodDir(ellObj1,ellObj2,curDirVec)
         % Example:

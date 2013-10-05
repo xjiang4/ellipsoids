@@ -8,7 +8,7 @@ classdef HyperplanePlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
     %            System Analysis Department 2013 $
     properties (Access=private)
         testDataRootDir
-        
+        EllFactoryObj
     end
     %
     methods(Access=protected)
@@ -60,6 +60,9 @@ classdef HyperplanePlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
                 end
             end
         end
+        function self = set_up_param(self, EllFactoryObj)
+            self.EllFactoryObj = EllFactoryObj;
+        end
         function self = tear_down(self,varargin)
             close all;
         end
@@ -88,7 +91,6 @@ classdef HyperplanePlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
             plot(testFirstHyp,'center',[1 3]);
             plot(testFirstHyp,testSecondHyp,'size',100);
             plot(testFirstHyp,testSecondHyp,'size',[100;2]);
-        end
-        
+        end      
     end
 end
