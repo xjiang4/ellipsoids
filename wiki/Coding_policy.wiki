@@ -14,8 +14,8 @@ Use English as the only language of communication. Source code comments, documen
 
 = Naming and style convention =
 
-Every developer should follow the following naming and style convention:
-[http://ellipsoids.googlecode.com/svn/wiki/attachments/matlabstylereq/matlabstylereq.pdf *DOWNLOAD Matlab naming convention*]
+*Every developer should follow the following:
+[http://ellipsoids.googlecode.com/svn/wiki/attachments/matlabstylereq/matlabstylereq.pdf Matlab naming and style convention]
 
 For a quick reference, here is a short list of correct variable names
 
