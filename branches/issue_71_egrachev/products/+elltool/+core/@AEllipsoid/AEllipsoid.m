@@ -10,7 +10,7 @@ classdef AEllipsoid < handle
     
     methods (Abstract)
         getCopy(ellArr)
-        checkIsMe(~, ellArr, varargin)        
+        checkIsMe(ellArr, varargin)        
         isEmpty(myEllArr)
     end
     methods (Abstract, Access = protected)
@@ -99,6 +99,7 @@ classdef AEllipsoid < handle
     end
     methods (Access = private)
         %doesContain = doesContainPoly(ellArr,polytope,varagin)
+        %[propMat, propVal] = getProperty(hplaneMat,propName, fPropFun)
     end
     methods (Access = protected)
         function [isEqualArr, reportStr] = isEqualInternal(ellFirstArr,...
@@ -158,6 +159,6 @@ classdef AEllipsoid < handle
                     modgen.struct.structcomparevec(SEll1Array,...
                     SEll2Array, tolerance);
             end
-        end
+        end        
     end
 end

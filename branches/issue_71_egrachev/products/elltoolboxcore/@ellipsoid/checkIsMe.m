@@ -18,11 +18,11 @@ function checkIsMe(~, ellArr,varargin)
 %            Faculty of Applied Mathematics and Computer Science,
 %            System Analysis Department 2012 $
 nArgIn = nargin;
-if nArgIn == 1
+if nArgIn == 2
     modgen.common.checkvar(ellArr,@(x) isa(x,'ellipsoid'),...
         'errorTag','wrongInput',...
         'errorMessage','input argument must be ellipsoid.');
-elseif nArgIn==2
+elseif nArgIn==3
     modgen.common.checkvar(ellArr,@(x) isa(x,'ellipsoid'),...
         'errorTag','wrongInput','errorMessage',...
         [varargin{1}, ' input argument must be ellipsoid.']);

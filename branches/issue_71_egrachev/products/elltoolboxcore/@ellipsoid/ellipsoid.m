@@ -327,7 +327,7 @@ classdef ellipsoid < elltool.core.AEllipsoid
             end
         end
         
-        %[propMat, propVal] = getProperty(hplaneMat,propName, fPropFun)
+        [propMat, propVal] = getProperty(hplaneMat,propName, fPropFun)
         %[bpMat, fVec] = getGridByFactor(ellObj,factorVec)       
         %doesContain = doesContainPoly(ellArr,polytope,varagin)
     end

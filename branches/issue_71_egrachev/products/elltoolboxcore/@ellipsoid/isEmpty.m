@@ -33,6 +33,4 @@ function isPositiveArr = isEmpty(myEllArr)
 
 import elltool.conf.Properties;
 
-ellipsoid.checkIsMe(myEllArr);
-
 isPositiveArr = ~dimension(myEllArr);

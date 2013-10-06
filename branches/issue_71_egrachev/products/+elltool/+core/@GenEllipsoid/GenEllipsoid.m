@@ -39,9 +39,12 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
         centerVec
         diagMat
         eigvMat
+        absTol
+        relTol
     end
     properties (Access = protected, Dependent)
         shapeMat
+        
     end
 
     properties (Constant,GetAccess = private)
@@ -152,6 +155,8 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
             %
             absTol=ellObj.CHECK_TOL;
             %
+            ellObj.absTol = absTol;
+            ellObj.relTol = absTol;
             nInput=nargin;
             if  nInput>3
                 throwerror('wrongParameters',...
@@ -383,6 +388,14 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
                 end
                 SComp=struct('Q',qMat,'q',centerVec.','QInf',qInfMat);
             end
+        end
+        
+        function checkIfScalar(self,errMsg)
+            if nargin<2
+                errMsg='input argument must be single ellipsoid.';
+            end
+            modgen.common.checkvar(self,'isscalar(x)',...
+                'errorMessage',errMsg);
         end
     end
     
