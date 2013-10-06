@@ -67,7 +67,7 @@ import gras.la.sqrtmpos;
 
 persistent logger;
 
-ellipsoid.checkIsMe(inpEllArr,'first');
+inpEllArr.checkIsMe(inpEllArr,'first');
 
 modgen.common.checkvar( inpEllArr , 'numel(x) > 0', 'errorTag', ...
     'wrongInput:emptyArray', 'errorMessage', ...

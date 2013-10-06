@@ -47,7 +47,7 @@ function ellArr = projection(ellArr, basisMat)
 %            System Analysis Department 2012 $
 %
 
-ellipsoid.checkIsMe(ellArr,'first');
+ellArr.checkIsMe(ellArr,'first');
 modgen.common.checkvar(basisMat, @(x)isa(x,'double'),'errorMessage',...
     'second input argument must be matrix with orthogonal columns.');
 if ~isempty(ellArr)   

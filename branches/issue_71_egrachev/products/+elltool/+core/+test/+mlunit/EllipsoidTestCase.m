@@ -1,7 +1,7 @@
 classdef EllipsoidTestCase < mlunitext.test_case
     properties (Access=private)
         testDataRootDir
-        EllFactoryObj
+        ellFactoryObj
     end
     methods
         function self=EllipsoidTestCase(varargin)
@@ -13,13 +13,13 @@ classdef EllipsoidTestCase < mlunitext.test_case
         end
         %
         
-        function self = set_up_param(self, EllFactoryObj)
-            self.EllFactoryObj = EllFactoryObj;
+        function self = set_up_param(self, ellFactoryObj)
+            self.ellFactoryObj = ellFactoryObj;
         end
         
         function testRepMat(self)
             shMat=eye(2);
-            ell = self.EllFactoryObj.create(shMat);
+            ell = self.ellFactoryObj.create(shMat);
             ellVec=ell.repMat(2,4);
             ellVec(1).shape(2);
             mlunitext.assert(isequal(ellVec(2).getShapeMat,shMat));
@@ -55,7 +55,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
                     shCArr=arrayfun(@(x)genPosMat(nDims),...
                         ones(sizeList{:}),'UniformOutput',false);
                     shArr=cell2mat(shiftdim(shCArr,-2));
-                    ellArr=self.EllFactoryObj.create(shArr,propNameValCMat{:});
+                    ellArr=self.ellFactoryObj.create(shArr,propNameValCMat{:});
                     checkShape();
                     checkProp();
                     ellArr=ellArr.getCopy();
@@ -66,7 +66,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
                     end
                     centArr=rand([nDims ellArrSizeVec]);
                     centCArr=shiftdim(num2cell(centArr,1),1);
-                    ellArr=self.EllFactoryObj.create(centArr,shArr,propNameValCMat{:});
+                    ellArr=self.ellFactoryObj.create(centArr,shArr,propNameValCMat{:});
                     checkCenter();
                     checkShape();
                     checkProp();
@@ -115,7 +115,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             %
             %distance between ellipsoid and two vectors
             absTol = Properties.getAbsTol();
-            testEllipsoid = self.EllFactoryObj.create([1,0,0;0,5,0;0,0,10]);
+            testEllipsoid = self.ellFactoryObj.create([1,0,0;0,5,0;0,0,10]);
             testPointMat = [3,0,0; 5,0,0].';
             testResVec = distance(testEllipsoid, testPointMat);
             mlunitext.assert_equals(true, (abs(testResVec(1)-2)<absTol) &&...
@@ -123,22 +123,22 @@ classdef EllipsoidTestCase < mlunitext.test_case
             %
             %distance between ellipsoid and point in the ellipsoid
             %and point on the boader of the ellipsoid
-            testEllipsoid = self.EllFactoryObj.create([1,2,3].',4*eye(3,3));
+            testEllipsoid = self.ellFactoryObj.create([1,2,3].',4*eye(3,3));
             testPointMat = [2,3,2; 1,2,5].';
             testResVec = distance(testEllipsoid, testPointMat);
             mlunitext.assert_equals(true, testResVec(1)==-1 && testResVec(2)==0);
             %
             %distance between two ellipsoids and two vectors
-            testEllipsoidVec = [self.EllFactoryObj.create([5,2,0;2,5,0;0,0,1]),...
-                self.EllFactoryObj.create([0,0,5].',[4, 0, 0; 0, 9 , 0; 0,0, 25])];
+            testEllipsoidVec = [self.ellFactoryObj.create([5,2,0;2,5,0;0,0,1]),...
+                self.ellFactoryObj.create([0,0,5].',[4, 0, 0; 0, 9 , 0; 0,0, 25])];
             testPointMat = [0,0,5; 0,5,5].';
             testResVec = distance(testEllipsoidVec, testPointMat);
             mlunitext.assert_equals(true, (abs(testResVec(1)-4)<absTol) &&...
                 (abs(testResVec(2)-2)<absTol));
             %
             %distance between two ellipsoids and a vector
-            testEllipsoidVec = [self.EllFactoryObj.create([5,5,0].',[1,0,0;0,5,0;0,0,10]),...
-                self.EllFactoryObj.create([0,10,0].',[10, 0, 0; 0, 16 , 0; 0,0, 5])];
+            testEllipsoidVec = [self.ellFactoryObj.create([5,5,0].',[1,0,0;0,5,0;0,0,10]),...
+                self.ellFactoryObj.create([0,10,0].',[10, 0, 0; 0, 16 , 0; 0,0, 5])];
             testPointVec = [0,5,0].';
             testResVec = distance(testEllipsoidVec, testPointVec);
             mlunitext.assert_equals(true, (abs(testResVec(1)-4)<absTol) &&...
@@ -146,7 +146,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             %
             %negative test: matrix shapeMat of ellipsoid has very large
             %eigenvalues.
-            testEllipsoid = self.EllFactoryObj.create([1e+15,0;0,1e+15]);
+            testEllipsoid = self.ellFactoryObj.create([1e+15,0;0,1e+15]);
             testPointVec = [3e+15,0].';
             self.runAndCheckError('distance(testEllipsoid, testPointVec)',...
                 'notSecant');
@@ -156,7 +156,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllMat=diag(1:2);
             testEllMat=testOrth2Mat*testEllMat*testOrth2Mat.';
             testEllMat=0.5*(testEllMat+testEllMat.');
-            testEllipsoid=self.EllFactoryObj.create(testEllMat);
+            testEllipsoid=self.ellFactoryObj.create(testEllMat);
             testPoint=testOrth2Mat*[10;zeros(nDim-1,1)];
             testRes=distance(testEllipsoid, testPoint);
             mlunitext.assert_equals(true,abs(testRes-9)<absTol);
@@ -166,7 +166,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllMat=diag(nDim:-1:1);
             testEllMat=testOrth50Mat*testEllMat*testOrth50Mat.';
             testEllMat=0.5*(testEllMat+testEllMat.');
-            testEllipsoid=self.EllFactoryObj.create(testEllMat);
+            testEllipsoid=self.ellFactoryObj.create(testEllMat);
             testPoint=testOrth50Mat*[zeros(nDim-1,1);10];
             testRes=distance(testEllipsoid, testPoint);
             mlunitext.assert_equals(true,abs(testRes-9)<absTol);
@@ -179,8 +179,8 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEll2Mat=testOrth3Mat*testEll2Mat*testOrth3Mat.';
             testEll2Mat=0.5*(testEll2Mat+testEll2Mat.');
             testEll2CenterVec=testOrth3Mat*[0;0;5];
-            testEllipsoidVec = [self.EllFactoryObj.create(testEll1Mat),...
-                self.EllFactoryObj.create(testEll2CenterVec,testEll2Mat)];
+            testEllipsoidVec = [self.ellFactoryObj.create(testEll1Mat),...
+                self.ellFactoryObj.create(testEll2CenterVec,testEll2Mat)];
             testPointMat = testOrth3Mat*([0,0,5; 0,5,5].');
             testResVec = distance(testEllipsoidVec, testPointMat);
             mlunitext.assert_equals(true, (abs(testResVec(1)-4)<absTol) &&...
@@ -192,43 +192,43 @@ classdef EllipsoidTestCase < mlunitext.test_case
             %Testing ellipsoid-ellipsoid distance
             %
             %distance between two ellipsoids
-            testEllipsoid1 = self.EllFactoryObj.create([25,0;0,9]);
-            testEllipsoid2 = self.EllFactoryObj.create([10;0],[4,0;0,9]);
+            testEllipsoid1 = self.ellFactoryObj.create([25,0;0,9]);
+            testEllipsoid2 = self.ellFactoryObj.create([10;0],[4,0;0,9]);
             testRes=distance(testEllipsoid1,testEllipsoid2);
             mlunitext.assert_equals(true, (abs(testRes-3)<absTol));
             %
-            testEllipsoid1 = self.EllFactoryObj.create([0,-15,0].',[25,0,0;0,100,0;0,0,9]);
-            testEllipsoid2 = self.EllFactoryObj.create([0,7,0].',[9,0,0;0,25,0;0,0,100]);
+            testEllipsoid1 = self.ellFactoryObj.create([0,-15,0].',[25,0,0;0,100,0;0,0,9]);
+            testEllipsoid2 = self.ellFactoryObj.create([0,7,0].',[9,0,0;0,25,0;0,0,100]);
             testRes=distance(testEllipsoid1,testEllipsoid2);
             mlunitext.assert_equals(true, (abs(testRes-7)<absTol));
             %
             % case of ellipses with common center
-            testEllipsoid1 = self.EllFactoryObj.create([1 2 3].',[1,2,5;2,5,3;5,3,100]);
-            testEllipsoid2 = self.EllFactoryObj.create([1,2,3].',[1,2,7;2,10,5;7,5,100]);
+            testEllipsoid1 = self.ellFactoryObj.create([1 2 3].',[1,2,5;2,5,3;5,3,100]);
+            testEllipsoid2 = self.ellFactoryObj.create([1,2,3].',[1,2,7;2,10,5;7,5,100]);
             testRes=distance(testEllipsoid1,testEllipsoid2);
             mlunitext.assert_equals(true, (abs(testRes)<absTol));
             %
             % distance between two pairs of ellipsoids
-            testEllipsoid1Vec=[self.EllFactoryObj.create([0, -6, 0].',[100,0,0; 0,4,0; 0,0, 25]),...
-                self.EllFactoryObj.create([0,0,-4.5].',[100,0,0; 0, 25,0; 0,0,4])];
-            testEllipsoid2Vec=[self.EllFactoryObj.create([0, 6, 0].',[100,0,0; 0,4,0; 0,0, 25]),...
-                self.EllFactoryObj.create([0,0,4.5].',[100,0,0; 0, 25,0; 0,0,4])];
+            testEllipsoid1Vec=[self.ellFactoryObj.create([0, -6, 0].',[100,0,0; 0,4,0; 0,0, 25]),...
+                self.ellFactoryObj.create([0,0,-4.5].',[100,0,0; 0, 25,0; 0,0,4])];
+            testEllipsoid2Vec=[self.ellFactoryObj.create([0, 6, 0].',[100,0,0; 0,4,0; 0,0, 25]),...
+                self.ellFactoryObj.create([0,0,4.5].',[100,0,0; 0, 25,0; 0,0,4])];
             testResVec=distance(testEllipsoid1Vec,testEllipsoid2Vec);
             mlunitext.assert_equals(true, (abs(testResVec(1)-8)<absTol) &&...
                 (abs(testResVec(2)-5)<absTol));
             %
             % distance between two ellipsoids and an ellipsoid
-            testEllipsoidVec=[self.EllFactoryObj.create([0, 0, 0].',[9,0,0; 0,25,0; 0,0, 1]),...
-                self.EllFactoryObj.create([-5,0,0].',[9,0,0; 0, 25,0; 0,0,1])];
-            testEllipsoid=self.EllFactoryObj.create([5, 0, 0].',[25,0,0; 0,100,0; 0,0, 1]);
+            testEllipsoidVec=[self.ellFactoryObj.create([0, 0, 0].',[9,0,0; 0,25,0; 0,0, 1]),...
+                self.ellFactoryObj.create([-5,0,0].',[9,0,0; 0, 25,0; 0,0,1])];
+            testEllipsoid=self.ellFactoryObj.create([5, 0, 0].',[25,0,0; 0,100,0; 0,0, 1]);
             testResVec=distance(testEllipsoidVec,testEllipsoid);
             mlunitext.assert_equals(true, (abs(testResVec(1))<absTol) &&...
                 (abs(testResVec(2)-2)<absTol));
             %
             %distance between two ellipsoids of high dimensions
             nDim=100;
-            testEllipsoid1=self.EllFactoryObj.create(diag(1:2:2*nDim));
-            testEllipsoid2=self.EllFactoryObj.create([5;zeros(nDim-1,1)],diag(1:nDim));
+            testEllipsoid1=self.ellFactoryObj.create(diag(1:2:2*nDim));
+            testEllipsoid2=self.ellFactoryObj.create([5;zeros(nDim-1,1)],diag(1:nDim));
             testRes=distance(testEllipsoid1,testEllipsoid2);
             mlunitext.assert_equals(true,abs(testRes-3)<absTol);
             %
@@ -254,9 +254,9 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEll3Mat=testOrth3Mat*testEll3Mat*testOrth3Mat.';
             testEll3Mat=0.5*(testEll3Mat+testEll3Mat.');
             testEll3CenterVec=testOrth3Mat*[5;0;0];
-            testEllipsoidVec=[self.EllFactoryObj.create(testEll1Mat),...
-                self.EllFactoryObj.create(testEll2CenterVec,testEll2Mat)];
-            testEllipsoid=self.EllFactoryObj.create(testEll3CenterVec,testEll3Mat);
+            testEllipsoidVec=[self.ellFactoryObj.create(testEll1Mat),...
+                self.ellFactoryObj.create(testEll2CenterVec,testEll2Mat)];
+            testEllipsoid=self.ellFactoryObj.create(testEll3CenterVec,testEll3Mat);
             testResVec=distance(testEllipsoidVec,testEllipsoid);
             mlunitext.assert_equals(true, (abs(testResVec(1))<absTol) &&...
                 (abs(testResVec(2)-2)<absTol));
@@ -271,8 +271,8 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEll2Mat=testOrth100Mat*testEll2Mat*testOrth100Mat.';
             testEll2Mat=0.5*(testEll2Mat+testEll2Mat.');
             testEll2CenterVec=testOrth100Mat*[9;zeros(nDim-1,1)];
-            testEllipsoid1=self.EllFactoryObj.create(testEll1Mat);
-            testEllipsoid2=self.EllFactoryObj.create(testEll2CenterVec,testEll2Mat);
+            testEllipsoid1=self.ellFactoryObj.create(testEll1Mat);
+            testEllipsoid2=self.ellFactoryObj.create(testEll2CenterVec,testEll2Mat);
             testRes=distance(testEllipsoid1,testEllipsoid2);
             mlunitext.assert_equals(true,abs(testRes-3)<absTol);
             %
@@ -282,7 +282,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             % distance between single ellipsoid and array of ellipsoids
             load(strcat(self.testDataRootDir,filesep,'testEllEllDist.mat'),...
                 'testEllArr','testDistResArr');
-            testEll = self.EllFactoryObj.create(eye(2));
+            testEll = self.ellFactoryObj.create(eye(2));
             resArr = distance(testEll, testEllArr);
             isOkArr = abs(resArr - testDistResArr) <= elltool.conf.Properties.getAbsTol();
             mlunitext.assert(all(isOkArr(:)));
@@ -294,7 +294,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllCenterVec=testOrth2Mat*[0;5];
             testHypVVec=testOrth2Mat*[0;1];
             testHypC=0;
-            testEllipsoid=self.EllFactoryObj.create(testEllCenterVec,testEllMat);
+            testEllipsoid=self.ellFactoryObj.create(testEllCenterVec,testEllMat);
             testHyp=hyperplane(testHypVVec,testHypC);
             testRes=distance(testEllipsoid,testHyp);
             mlunitext.assert_equals(true,abs(testRes-3)<absTol);
@@ -306,7 +306,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllMat=0.5*(testEllMat+testEllMat.');
             testHypVVec=testOrth3Mat*[0;1;0];
             testHypC=10;
-            testEllipsoid=self.EllFactoryObj.create(testEllMat);
+            testEllipsoid=self.ellFactoryObj.create(testEllMat);
             testHyp=hyperplane(testHypVVec,testHypC);
             testRes=distance(testEllipsoid,testHyp);
             mlunitext.assert_equals(true,abs(testRes-5)<absTol);
@@ -324,20 +324,20 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEll2CenterVec=testOrth100Mat*[10;zeros(nDim-1,1)];
             testHypVVec=testOrth100Mat*[1;zeros(nDim-1,1)];
             testHypC=0;
-            testEllipsoid=[self.EllFactoryObj.create(testEll1CenterVec,testEll1Mat),...
-                self.EllFactoryObj.create(testEll2CenterVec,testEll2Mat)];
+            testEllipsoid=[self.ellFactoryObj.create(testEll1CenterVec,testEll1Mat),...
+                self.ellFactoryObj.create(testEll2CenterVec,testEll2Mat)];
             testHyp=hyperplane(testHypVVec,testHypC);
             testRes=distance(testEllipsoid,testHyp);
             mlunitext.assert_equals(true,abs(testRes(1)-7)<absTol&&...
                 abs(testRes(2)-5)<absTol);
             %distance where two ellipsoids have one common point
             % according to existing precision policy elltool.conf.Properties.getAbsTol()
-            testEll1=self.EllFactoryObj.create([1+1e-20 0].',[1 0; 0 1]);
-            testEll2=self.EllFactoryObj.create([-1 0].',[1 0;0 1]);
+            testEll1=self.ellFactoryObj.create([1+1e-20 0].',[1 0; 0 1]);
+            testEll2=self.ellFactoryObj.create([-1 0].',[1 0;0 1]);
             testRes=distance(testEll1,testEll2);
             mlunitext.assert_equals(true,abs(testRes)<elltool.conf.Properties.getAbsTol());
             %negative test: ellipsoid and hyperplane have different dimensions
-            testEll = self.EllFactoryObj.create(eye(2));
+            testEll = self.ellFactoryObj.create(eye(2));
             testHyp = hyperplane(eye(3));
             self.runAndCheckError('distance(testEll, testHyp)',...
                 'wrongInput');
@@ -347,7 +347,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             %IN ELLIPSOID METRIC
             %
             % Test#1. Distance between an ellipsoid and a vector.
-            testEllipsoid = self.EllFactoryObj.create([1,0,0;0,5,0;0,0,10]);
+            testEllipsoid = self.ellFactoryObj.create([1,0,0;0,5,0;0,0,10]);
             testPointVec = [3,0,0].';
             %
             testRes = distance(testEllipsoid, testPointVec,true);
@@ -355,7 +355,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             mlunitext.assert_equals(true, (abs(testRes-ansRes)<elltool.conf.Properties.getAbsTol()));
             %
             % Test#2. Distance between an ellipsoid and a vector.
-            testEllipsoid = self.EllFactoryObj.create([2,0,0;0,5,0;0,0,10]);
+            testEllipsoid = self.ellFactoryObj.create([2,0,0;0,5,0;0,0,10]);
             testPointVec = [3,0,0].';
             %
             testRes = distance(testEllipsoid, testPointVec,true);
@@ -364,8 +364,8 @@ classdef EllipsoidTestCase < mlunitext.test_case
             %
             %Test#3
             % Distance between two ellipsoids and a vector
-            testEllipsoidVec = [self.EllFactoryObj.create([5,5,0].',[1,0,0;0,5,0;0,0,10]),...
-                self.EllFactoryObj.create([0,10,0].',[10, 0, 0; 0, 16 , 0; 0,0, 5])];
+            testEllipsoidVec = [self.ellFactoryObj.create([5,5,0].',[1,0,0;0,5,0;0,0,10]),...
+                self.ellFactoryObj.create([0,10,0].',[10, 0, 0; 0, 16 , 0; 0,0, 5])];
             testPointVec = [0,5,0].';
             %
             testResVec = distance(testEllipsoidVec, testPointVec,true);
@@ -380,7 +380,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEllMat=diag(1:2);
             testEllMat=testOrth2Mat*testEllMat*testOrth2Mat.';
             testEllMat=0.5*(testEllMat+testEllMat.');
-            testEllipsoid=self.EllFactoryObj.create(testEllMat);
+            testEllipsoid=self.ellFactoryObj.create(testEllMat);
             testPointVec=testOrth2Mat*[10;zeros(nDim-1,1)];
             %
             testRes=distance(testEllipsoid, testPointVec,true);
@@ -396,8 +396,8 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEll2Mat=testOrth3Mat*testEll2Mat*testOrth3Mat.';
             testEll2Mat=0.5*(testEll2Mat+testEll2Mat.');
             testEll2CenterVec=testOrth3Mat*[0;0;5];
-            testEllipsoid1=self.EllFactoryObj.create(testEll1Mat);
-            testEllipsoid2=self.EllFactoryObj.create(testEll2CenterVec,testEll2Mat);
+            testEllipsoid1=self.ellFactoryObj.create(testEll1Mat);
+            testEllipsoid2=self.ellFactoryObj.create(testEll2CenterVec,testEll2Mat);
             testEllipsoidVec = [testEllipsoid1,testEllipsoid2];
             testPointMat = testOrth3Mat*([0,0,5; 0,5,5].');
             %
@@ -412,8 +412,8 @@ classdef EllipsoidTestCase < mlunitext.test_case
             %
             % Test#1.
             % Distance between two ellipsoids
-            testEllipsoid1 = self.EllFactoryObj.create([25,0;0,9]);
-            testEllipsoid2 = self.EllFactoryObj.create([10;0],[4,0;0,9]);
+            testEllipsoid1 = self.ellFactoryObj.create([25,0;0,9]);
+            testEllipsoid2 = self.ellFactoryObj.create([10;0],[4,0;0,9]);
             testRes=distance(testEllipsoid1,testEllipsoid2,true);
             ansRes=self.ellEllDistanceCVX(testEllipsoid1,testEllipsoid2,true);
             mlunitext.assert_equals(true, (abs(testRes-ansRes)<elltool.conf.Properties.getAbsTol()));
@@ -429,8 +429,8 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEll2Mat=testOrth100Mat*testEll2Mat*testOrth100Mat.';
             testEll2Mat=0.5*(testEll2Mat+testEll2Mat.');
             testEll2CenterVec=testOrth100Mat*[9;zeros(nDim-1,1)];
-            testEllipsoid1=self.EllFactoryObj.create(testEll1Mat);
-            testEllipsoid2=self.EllFactoryObj.create(testEll2CenterVec,testEll2Mat);
+            testEllipsoid1=self.ellFactoryObj.create(testEll1Mat);
+            testEllipsoid2=self.ellFactoryObj.create(testEll2CenterVec,testEll2Mat);
             %
             testRes=distance(testEllipsoid1,testEllipsoid2,true);
             ansRes=self.ellEllDistanceCVX(testEllipsoid1,testEllipsoid2,true);
@@ -450,9 +450,9 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testEll3Mat=testOrth3Mat*testEll3Mat*testOrth3Mat.';
             testEll3Mat=0.5*(testEll3Mat+testEll3Mat.');
             testEll3CenterVec=testOrth3Mat*[5;0;0];
-            testEllipsoidVec=[self.EllFactoryObj.create(testEll1Mat),...
-                self.EllFactoryObj.create(testEll2CenterVec,testEll2Mat)];
-            testEllipsoid=self.EllFactoryObj.create(testEll3CenterVec,testEll3Mat);
+            testEllipsoidVec=[self.ellFactoryObj.create(testEll1Mat),...
+                self.ellFactoryObj.create(testEll2CenterVec,testEll2Mat)];
+            testEllipsoid=self.ellFactoryObj.create(testEll3CenterVec,testEll3Mat);
             %
             testResVec=distance(testEllipsoidVec,testEllipsoid,true);
             ansResVec(1)=distance(testEllipsoidVec(1),testEllipsoid,true);
@@ -462,10 +462,10 @@ classdef EllipsoidTestCase < mlunitext.test_case
             %
             % Test #4.
             % distance between two pairs of ellipsoids
-            testEllipsoid1Vec=[self.EllFactoryObj.create([0, -6, 0].',[100,0,0; 0,4,0; 0,0, 25]),...
-                self.EllFactoryObj.create([0,0,-4.5].',[100,0,0; 0, 25,0; 0,0,4])];
-            testEllipsoid2Vec=[self.EllFactoryObj.create([0, 6, 0].',[100,0,0; 0,4,0; 0,0, 25]),...
-                self.EllFactoryObj.create([0,0,4.5].',[100,0,0; 0, 25,0; 0,0,4])];
+            testEllipsoid1Vec=[self.ellFactoryObj.create([0, -6, 0].',[100,0,0; 0,4,0; 0,0, 25]),...
+                self.ellFactoryObj.create([0,0,-4.5].',[100,0,0; 0, 25,0; 0,0,4])];
+            testEllipsoid2Vec=[self.ellFactoryObj.create([0, 6, 0].',[100,0,0; 0,4,0; 0,0, 25]),...
+                self.ellFactoryObj.create([0,0,4.5].',[100,0,0; 0, 25,0; 0,0,4])];
             %
             testResVec=distance(testEllipsoid1Vec,testEllipsoid2Vec,true);
             ansResVec(1)=distance(testEllipsoid1Vec(1),testEllipsoid2Vec(1),true);
@@ -485,10 +485,10 @@ classdef EllipsoidTestCase < mlunitext.test_case
                 'nPlot2dPoints',testNPlot2dPoints,...
                 'nPlot3dPoints',testNPlot3dPoints};
             %%
-            ellArr = [self.EllFactoryObj.create(args{:}),self.EllFactoryObj.create(args{:});...
-                self.EllFactoryObj.create(args{:}),self.EllFactoryObj.create(args{:})];
-            ellArr(:,:,2) = [self.EllFactoryObj.create(args{:}),self.EllFactoryObj.create(args{:});...
-                self.EllFactoryObj.create(args{:}),self.EllFactoryObj.create(args{:})];
+            ellArr = [self.ellFactoryObj.create(args{:}),self.ellFactoryObj.create(args{:});...
+                self.ellFactoryObj.create(args{:}),self.ellFactoryObj.create(args{:})];
+            ellArr(:,:,2) = [self.ellFactoryObj.create(args{:}),self.ellFactoryObj.create(args{:});...
+                self.ellFactoryObj.create(args{:}),self.ellFactoryObj.create(args{:})];
             sizeArr = size(ellArr);
             testAbsTolArr = repmat(testAbsTol,sizeArr);
             testRelTolArr = repmat(testRelTol,sizeArr);
@@ -504,13 +504,13 @@ classdef EllipsoidTestCase < mlunitext.test_case
         %
         function self = testEllipsoid(self)
             %Empty ellipsoid
-            testEllipsoid=self.EllFactoryObj.create;
+            testEllipsoid=self.ellFactoryObj.create;
             [testCenterVec, testShapeMat]=double(testEllipsoid);
             isTestRes=isempty(testCenterVec)&&isempty(testShapeMat);
             mlunitext.assert_equals(true, isTestRes);
             
             %One argument
-            testEllipsoid=self.EllFactoryObj.create(diag([1 4 9 16]));
+            testEllipsoid=self.ellFactoryObj.create(diag([1 4 9 16]));
             [testCenterVec, testShapeMat]=double(testEllipsoid);
             isTestDiagMat=testShapeMat==diag([1 4  9 16]);
             isTestRes=(numel(testCenterVec)==4) && all(testCenterVec(:)==0)&& all(isTestDiagMat(:));
@@ -538,13 +538,13 @@ classdef EllipsoidTestCase < mlunitext.test_case
         %
         function self = testDouble(self)
             %Empty ellipsoid
-            testEllipsoid=self.EllFactoryObj.create;
+            testEllipsoid=self.ellFactoryObj.create;
             [testCenterVec, testShapeMat]=double(testEllipsoid);
             isTestRes=isempty(testCenterVec)&&isempty(testShapeMat);
             mlunitext.assert_equals(true, isTestRes);
             
             %Chek for one output argument
-            testEllipsoid=self.EllFactoryObj.create(-ones(5,1),eye(5,5));
+            testEllipsoid=self.ellFactoryObj.create(-ones(5,1),eye(5,5));
             testShapeMat=double(testEllipsoid);
             isTestEyeMat=testShapeMat==eye(5,5);
             isTestRes=all(isTestEyeMat(:));
@@ -561,13 +561,13 @@ classdef EllipsoidTestCase < mlunitext.test_case
         %
         function self = testParameters(self)
             %Empty ellipsoid
-            testEllipsoid=self.EllFactoryObj.create;
+            testEllipsoid=self.ellFactoryObj.create;
             [testCenterVec, testShapeMat]=parameters(testEllipsoid);
             isTestRes=isempty(testCenterVec)&&isempty(testShapeMat);
             mlunitext.assert_equals(true, isTestRes);
             
             %Chek for one output argument
-            testEllipsoid=self.EllFactoryObj.create(-ones(5,1),eye(5,5));
+            testEllipsoid=self.ellFactoryObj.create(-ones(5,1),eye(5,5));
             testShapeMat=parameters(testEllipsoid);
             isTestEyeMat=testShapeMat==eye(5,5);
             isTestRes=all(isTestEyeMat(:));
@@ -585,46 +585,46 @@ classdef EllipsoidTestCase < mlunitext.test_case
         function self = testDimension(self)
             %Chek for one output argument
             %Case 1: Empty ellipsoid
-            testEllipsoid=self.EllFactoryObj.create;
+            testEllipsoid=self.ellFactoryObj.create;
             testRes = dimension(testEllipsoid);
             mlunitext.assert_equals(false, testRes);
             %Case 2: Not empty ellipsoid
-            testEllipsoid=self.EllFactoryObj.create(0);
+            testEllipsoid=self.ellFactoryObj.create(0);
             testRes = dimension(testEllipsoid);
             mlunitext.assert_equals(true, testRes);
             
-            testEllipsoid=self.EllFactoryObj.create(eye(5,5));
+            testEllipsoid=self.ellFactoryObj.create(eye(5,5));
             testRes = dimension(testEllipsoid);
             mlunitext.assert_equals(5, testRes);
             
             %Chek for two output arguments
             %Case 1: Empty ellipsoid
-            testEllipsoid=self.EllFactoryObj.create;
+            testEllipsoid=self.ellFactoryObj.create;
             [testDim, testRank]= dimension(testEllipsoid);
             isTestRes=(testDim==0)&&(testRank==0);
             mlunitext.assert_equals(true, isTestRes);
             
             %Case 2: Not empty ellipsoid
-            testEllipsoid=self.EllFactoryObj.create(ones(4,1), eye(4,4));
+            testEllipsoid=self.ellFactoryObj.create(ones(4,1), eye(4,4));
             [testDim, testRank]= dimension(testEllipsoid);
             isTestRes=(testDim==4)&&(testRank==4);
             mlunitext.assert_equals(true, isTestRes);
             
             testAMat=[ 3 1;0 1; -2 1];
-            testEllipsoid=self.EllFactoryObj.create(testAMat*(testAMat'));
+            testEllipsoid=self.ellFactoryObj.create(testAMat*(testAMat'));
             [testDim, testRank]= dimension(testEllipsoid);
             isTestRes=(testDim==3)&&(testRank==2);
             mlunitext.assert_equals(true, isTestRes);
             
             %High-dimensional ellipsoids
-            testEllVec = [self.EllFactoryObj.create(diag(1:12)), self.EllFactoryObj.create((0:0.1:1.4).',diag(1:15)), ...
-                self.EllFactoryObj.create(rand(20,1),diag(1:20))];
+            testEllVec = [self.ellFactoryObj.create(diag(1:12)), self.ellFactoryObj.create((0:0.1:1.4).',diag(1:15)), ...
+                self.ellFactoryObj.create(rand(20,1),diag(1:20))];
             testDimsVec = dimension(testEllVec);
             isTestRes = all( testDimsVec == [12 15 20] );
             mlunitext.assert_equals(true, isTestRes);
             
-            testEllMat= [self.EllFactoryObj.create((0:0.1:2).',diag(0:0.01:0.2)), self.EllFactoryObj.create, self.EllFactoryObj.create(rand(50,1),9*eye(50,50));
-                self.EllFactoryObj.create, self.EllFactoryObj.create(repmat([diag(0:0.1:5) diag(0:0.1:5)],2,1)), self.EllFactoryObj.create(zeros(30,30))];
+            testEllMat= [self.ellFactoryObj.create((0:0.1:2).',diag(0:0.01:0.2)), self.ellFactoryObj.create, self.ellFactoryObj.create(rand(50,1),9*eye(50,50));
+                self.ellFactoryObj.create, self.ellFactoryObj.create(repmat([diag(0:0.1:5) diag(0:0.1:5)],2,1)), self.ellFactoryObj.create(zeros(30,30))];
             [testDimMat, testRankMat] = dimension(testEllMat);
             isTestDimMat = (testDimMat == [21 0 50; 0 102 30]);
             isTestRankMat = (testRankMat == [20 0 50; 0 50 0]);
@@ -637,29 +637,29 @@ classdef EllipsoidTestCase < mlunitext.test_case
             self.runAndCheckError('isdegenerate(ellipsoid)','wrongInput:emptyEllipsoid');
             
             %Not degerate ellipsoid
-            testEllipsoid=self.EllFactoryObj.create(ones(6,1),eye(6,6));
+            testEllipsoid=self.ellFactoryObj.create(ones(6,1),eye(6,6));
             isTestRes = isdegenerate(testEllipsoid);
             mlunitext.assert_equals(false, isTestRes);
             
             %Degenerate ellipsoids
-            testEllipsoid=self.EllFactoryObj.create(ones(6,1),zeros(6,6));
+            testEllipsoid=self.ellFactoryObj.create(ones(6,1),zeros(6,6));
             isTestRes = isdegenerate(testEllipsoid);
             mlunitext.assert_equals(true, isTestRes);
             
             testAMat=[ 3 1;0 1; -2 1];
-            testEllipsoid=self.EllFactoryObj.create(testAMat*(testAMat.'));
+            testEllipsoid=self.ellFactoryObj.create(testAMat*(testAMat.'));
             isTestRes=isdegenerate(testEllipsoid);
             mlunitext.assert_equals(true, isTestRes);
             
             %High-dimensional ellipsoids
-            testEllVec = [self.EllFactoryObj.create(diag(1:22)), self.EllFactoryObj.create((0:0.1:1.4).',diag(1:15)), ...
-                self.EllFactoryObj.create(rand(21,1),diag(0:20))];
+            testEllVec = [self.ellFactoryObj.create(diag(1:22)), self.ellFactoryObj.create((0:0.1:1.4).',diag(1:15)), ...
+                self.ellFactoryObj.create(rand(21,1),diag(0:20))];
             isTestDegVec = isdegenerate(testEllVec);
             isTestRes = all( isTestDegVec == [false false true] );
             mlunitext.assert_equals(true, isTestRes);
             
-            testEllMat= [self.EllFactoryObj.create((0:0.1:2).',diag(0:0.01:0.2)), self.EllFactoryObj.create(eye(40,40)), self.EllFactoryObj.create(rand(50,1),9*eye(50,50));
-                self.EllFactoryObj.create(diag(10:2:40)), self.EllFactoryObj.create(repmat([diag(0:0.1:5) diag(0:0.1:5)],2,1)), self.EllFactoryObj.create(zeros(30,30))];
+            testEllMat= [self.ellFactoryObj.create((0:0.1:2).',diag(0:0.01:0.2)), self.ellFactoryObj.create(eye(40,40)), self.ellFactoryObj.create(rand(50,1),9*eye(50,50));
+                self.ellFactoryObj.create(diag(10:2:40)), self.ellFactoryObj.create(repmat([diag(0:0.1:5) diag(0:0.1:5)],2,1)), self.ellFactoryObj.create(zeros(30,30))];
             isTestDegMat = isdegenerate(testEllMat);
             isTestMat = ( isTestDegMat == [true false false; false true true] );
             isTestRes = all( isTestMat(:));
@@ -668,24 +668,24 @@ classdef EllipsoidTestCase < mlunitext.test_case
         %
         function self = testIsEmpty(self)
             %Chek realy empty ellipsoid
-            testEllipsoid=self.EllFactoryObj.create;
+            testEllipsoid=self.ellFactoryObj.create;
             isTestRes = testEllipsoid.isEmpty();
             mlunitext.assert_equals(true, isTestRes);
             
             %Chek not empty ellipsoid
-            testEllipsoid=self.EllFactoryObj.create(eye(10,1),eye(10,10));
+            testEllipsoid=self.ellFactoryObj.create(eye(10,1),eye(10,10));
             isTestRes =testEllipsoid.isEmpty();
             mlunitext.assert_equals(false, isTestRes);
             
             %High-dimensional ellipsoids
-            testEllVec = [self.EllFactoryObj.create(diag(1:22)), self.EllFactoryObj.create((0:0.1:1.4).',diag(1:15)), ...
-                self.EllFactoryObj.create(rand(21,1),diag(0:20)), self.EllFactoryObj.create, self.EllFactoryObj.create, self.EllFactoryObj.create(zeros(40,40))];
+            testEllVec = [self.ellFactoryObj.create(diag(1:22)), self.ellFactoryObj.create((0:0.1:1.4).',diag(1:15)), ...
+                self.ellFactoryObj.create(rand(21,1),diag(0:20)), self.ellFactoryObj.create, self.ellFactoryObj.create, self.ellFactoryObj.create(zeros(40,40))];
             isTestEmpVec = testEllVec.isEmpty();
             isTestRes = all( isTestEmpVec == [false false false true true false] );
             mlunitext.assert_equals(true, isTestRes);
             
-            testEllMat= [self.EllFactoryObj.create((0:0.1:2).',diag(0:0.01:0.2)), self.EllFactoryObj.create(eye(40,40)), self.EllFactoryObj.create;
-                self.EllFactoryObj.create, self.EllFactoryObj.create(repmat([diag(0:0.1:5) diag(0:0.1:5)],2,1)), self.EllFactoryObj.create(zeros(30,30))];
+            testEllMat= [self.ellFactoryObj.create((0:0.1:2).',diag(0:0.01:0.2)), self.ellFactoryObj.create(eye(40,40)), self.ellFactoryObj.create;
+                self.ellFactoryObj.create, self.ellFactoryObj.create(repmat([diag(0:0.1:5) diag(0:0.1:5)],2,1)), self.ellFactoryObj.create(zeros(30,30))];
             isTestEmpMat = testEllMat.isEmpty();
             isTestMat = ( isTestEmpMat == [false false true;true false false] );
             isTestRes = all( isTestMat(:));
@@ -697,30 +697,30 @@ classdef EllipsoidTestCase < mlunitext.test_case
             self.runAndCheckError('maxeig(ellipsoid)','wrongInput:emptyEllipsoid');
             
             %Check degenerate matrix
-            testEllipsoid1=self.EllFactoryObj.create([1; 1], zeros(2,2));
-            testEllipsoid2=self.EllFactoryObj.create(zeros(2,2));
+            testEllipsoid1=self.ellFactoryObj.create([1; 1], zeros(2,2));
+            testEllipsoid2=self.ellFactoryObj.create(zeros(2,2));
             isTestRes=(maxeig(testEllipsoid1)==0)&&(maxeig(testEllipsoid2)==0);
             mlunitext.assert_equals(true, isTestRes);
             
             %Check on diaganal matrix
-            testEllipsoid=self.EllFactoryObj.create(diag(1:0.2:5.2));
+            testEllipsoid=self.ellFactoryObj.create(diag(1:0.2:5.2));
             isTestRes=(maxeig(testEllipsoid)==5.2);
             mlunitext.assert_equals(true, isTestRes);
             
             %Check on not diaganal matrix
-            testEllipsoid=self.EllFactoryObj.create([1 1 -1; 1 4 -3; -1 -3 9]);
+            testEllipsoid=self.ellFactoryObj.create([1 1 -1; 1 4 -3; -1 -3 9]);
             isTestRes=( (maxeig(testEllipsoid)-max(eig([1 1 -1; 1 4 -3; -1 -3 9])))<=eps );
             mlunitext.assert_equals(true, isTestRes);
             
             %High-dimensional ellipsoids
-            testEllVec = [self.EllFactoryObj.create(diag(1:12)), self.EllFactoryObj.create((0:0.1:1.4).',diag(0.1:0.1:1.5)), ...
-                self.EllFactoryObj.create(rand(20,1),diag(1:20))];
+            testEllVec = [self.ellFactoryObj.create(diag(1:12)), self.ellFactoryObj.create((0:0.1:1.4).',diag(0.1:0.1:1.5)), ...
+                self.ellFactoryObj.create(rand(20,1),diag(1:20))];
             testMaxEigVec = maxeig(testEllVec);
             isTestRes = all( testMaxEigVec == [12 1.5 20] );
             mlunitext.assert_equals(true, isTestRes);
             
-            testEllMat= [self.EllFactoryObj.create((0:0.1:2).',diag(0:0.01:0.2)), self.EllFactoryObj.create(-10*ones(41,1),diag(20:10:420)), self.EllFactoryObj.create(rand(50,1),9*eye(50,50));
-                self.EllFactoryObj.create(5*eye(10,10)), self.EllFactoryObj.create(diag(0:0.0001:0.01)), self.EllFactoryObj.create(zeros(30,30))];
+            testEllMat= [self.ellFactoryObj.create((0:0.1:2).',diag(0:0.01:0.2)), self.ellFactoryObj.create(-10*ones(41,1),diag(20:10:420)), self.ellFactoryObj.create(rand(50,1),9*eye(50,50));
+                self.ellFactoryObj.create(5*eye(10,10)), self.ellFactoryObj.create(diag(0:0.0001:0.01)), self.ellFactoryObj.create(zeros(30,30))];
             testMaxEigMat = maxeig(testEllMat);
             isTestMat = (testMaxEigMat == [0.2 420 9; 5 0.01 0]);
             isTestRes = all( isTestMat(:));
@@ -732,30 +732,30 @@ classdef EllipsoidTestCase < mlunitext.test_case
             self.runAndCheckError('mineig(ellipsoid)','wrongInput:emptyEllipsoid');
             
             %Check degenerate matrix
-            testEllipsoid1=self.EllFactoryObj.create([-2; -2], zeros(2,2));
-            testEllipsoid2=self.EllFactoryObj.create(zeros(2,2));
+            testEllipsoid1=self.ellFactoryObj.create([-2; -2], zeros(2,2));
+            testEllipsoid2=self.ellFactoryObj.create(zeros(2,2));
             isTestRes=(mineig(testEllipsoid1)==0)&&(mineig(testEllipsoid2)==0);
             mlunitext.assert_equals(true, isTestRes);
             
             %Check on diaganal matrix
-            testEllipsoid=self.EllFactoryObj.create(diag(4:-0.2:1.2));
+            testEllipsoid=self.ellFactoryObj.create(diag(4:-0.2:1.2));
             isTestRes=(mineig(testEllipsoid)==1.2);
             mlunitext.assert_equals(true, isTestRes);
             
             %Check on not diaganal matrix
-            testEllipsoid=self.EllFactoryObj.create([1 1 -1; 1 4 -4; -1 -4 9]);
+            testEllipsoid=self.ellFactoryObj.create([1 1 -1; 1 4 -4; -1 -4 9]);
             isTestRes=( (mineig(testEllipsoid)-min(eig([1 1 -1; 1 4 -3; -1 -3 9])))<=eps );
             mlunitext.assert_equals(true, isTestRes);
             
             %High-dimensional ellipsoids
-            testEllVec = [self.EllFactoryObj.create(diag(1:12)), self.EllFactoryObj.create((0:0.1:1.4).',diag(0.1:0.1:1.5)), ...
-                self.EllFactoryObj.create(rand(21,1),diag(0:20))];
+            testEllVec = [self.ellFactoryObj.create(diag(1:12)), self.ellFactoryObj.create((0:0.1:1.4).',diag(0.1:0.1:1.5)), ...
+                self.ellFactoryObj.create(rand(21,1),diag(0:20))];
             testMinEigVec = mineig(testEllVec);
             isTestRes = all( testMinEigVec == [1 0.1 0] );
             mlunitext.assert_equals(true, isTestRes);
             
-            testEllMat= [self.EllFactoryObj.create((0.1:0.1:2).',diag(0.01:0.01:0.2)), self.EllFactoryObj.create(-10*ones(41,1),diag(20:10:420)), self.EllFactoryObj.create(rand(50,1),9*eye(50,50));
-                self.EllFactoryObj.create(repmat(diag(1:20),2,2)), self.EllFactoryObj.create(diag(0.0001:0.0001:0.01)), self.EllFactoryObj.create(zeros(30,30))];
+            testEllMat= [self.ellFactoryObj.create((0.1:0.1:2).',diag(0.01:0.01:0.2)), self.ellFactoryObj.create(-10*ones(41,1),diag(20:10:420)), self.ellFactoryObj.create(rand(50,1),9*eye(50,50));
+                self.ellFactoryObj.create(repmat(diag(1:20),2,2)), self.ellFactoryObj.create(diag(0.0001:0.0001:0.01)), self.ellFactoryObj.create(zeros(30,30))];
             testMinEigMat = mineig(testEllMat);
             isTestMat = (testMinEigMat == [0.01 20 9; 0 0.0001 0]);
             isTestRes = all( isTestMat(:));
@@ -767,24 +767,24 @@ classdef EllipsoidTestCase < mlunitext.test_case
             self.runAndCheckError('trace(ellipsoid)','wrongInput:emptyEllipsoid');
             
             %Not empty ellipsoid
-            testEllipsoid=self.EllFactoryObj.create(zeros(10,1),eye(10,10));
+            testEllipsoid=self.ellFactoryObj.create(zeros(10,1),eye(10,10));
             isTestRes=trace(testEllipsoid)==10;
             mlunitext.assert_equals(true, isTestRes);
             
-            testEllipsoid=self.EllFactoryObj.create(-eye(3,1),[1 0 1; 0 0 0; 1 0 2 ]);
+            testEllipsoid=self.ellFactoryObj.create(-eye(3,1),[1 0 1; 0 0 0; 1 0 2 ]);
             isTestRes=trace(testEllipsoid)==3;
             mlunitext.assert_equals(true, isTestRes);
             
             %High-dimensional ellipsoids
-            testEllVec = [self.EllFactoryObj.create(diag(1:12)), self.EllFactoryObj.create((0:0.1:1.4).',diag(0.1:0.1:1.5)), ...
-                self.EllFactoryObj.create(rand(21,1),diag(0:20))];
+            testEllVec = [self.ellFactoryObj.create(diag(1:12)), self.ellFactoryObj.create((0:0.1:1.4).',diag(0.1:0.1:1.5)), ...
+                self.ellFactoryObj.create(rand(21,1),diag(0:20))];
             testTraceVec = trace(testEllVec);
             isTestRes = all( testTraceVec == [78 12 210] );
             mlunitext.assert_equals(true, isTestRes);
             
-            testEllMat= [self.EllFactoryObj.create((0.1:0.1:2).',diag(0.01:0.01:0.2)), self.EllFactoryObj.create(-10*ones(41,1),diag(20:10:420)),...
-                self.EllFactoryObj.create(rand(50,1),9*eye(50,50));   self.EllFactoryObj.create(repmat(diag(1:20),2,2)),...
-                self.EllFactoryObj.create(diag(0.0001:0.0001:0.01)), self.EllFactoryObj.create(zeros(30,30))];
+            testEllMat= [self.ellFactoryObj.create((0.1:0.1:2).',diag(0.01:0.01:0.2)), self.ellFactoryObj.create(-10*ones(41,1),diag(20:10:420)),...
+                self.ellFactoryObj.create(rand(50,1),9*eye(50,50));   self.ellFactoryObj.create(repmat(diag(1:20),2,2)),...
+                self.ellFactoryObj.create(diag(0.0001:0.0001:0.01)), self.ellFactoryObj.create(zeros(30,30))];
             testTraceMat = trace(testEllMat);
             isTestMat = ( testTraceMat == [sum(0.01:0.01:0.2) sum(20:10:420) 9*50; 2*sum(1:20) sum(0.0001:0.0001:0.01) 0] );
             isTestRes = all( isTestMat(:));
@@ -798,41 +798,41 @@ classdef EllipsoidTestCase < mlunitext.test_case
             self.runAndCheckError('volume(ellipsoid)','wrongInput:emptyEllipsoid');
             
             %Check degenerate ellipsoid
-            testEllipsoid=self.EllFactoryObj.create([1 0 0;0 1 0;0 0 0]);
+            testEllipsoid=self.ellFactoryObj.create([1 0 0;0 1 0;0 0 0]);
             isTestRes=volume(testEllipsoid)==0;
             mlunitext.assert_equals(true, isTestRes);
             
             %Check dim=1 with two different centers
-            testEllipsoid1=self.EllFactoryObj.create(2,1);
-            testEllipsoid2=self.EllFactoryObj.create(1);
+            testEllipsoid1=self.ellFactoryObj.create(2,1);
+            testEllipsoid2=self.ellFactoryObj.create(1);
             isTestRes=(volume(testEllipsoid1)==2)&&(volume(testEllipsoid2)==2);
             mlunitext.assert_equals(true, isTestRes);
             
             %Check dim=2 with two different centers
-            testEllipsoid1=self.EllFactoryObj.create([1; -1],eye(2,2));
-            testEllipsoid2=self.EllFactoryObj.create(eye(2,2));
+            testEllipsoid1=self.ellFactoryObj.create([1; -1],eye(2,2));
+            testEllipsoid2=self.ellFactoryObj.create(eye(2,2));
             isTestRes=( (volume(testEllipsoid1)-pi)<=absTol )&&( (volume(testEllipsoid2)-pi)<=absTol );
             mlunitext.assert_equals(true, isTestRes);
             
             %Chek dim=3 with not diaganal matrix
-            testEllipsoid=self.EllFactoryObj.create([1 1 -1; 1 4 -3; -1 -3 9]);
+            testEllipsoid=self.ellFactoryObj.create([1 1 -1; 1 4 -3; -1 -3 9]);
             isTestRes=( (volume(testEllipsoid)-(8*realsqrt(5)*pi/3)<=absTol ) );
             mlunitext.assert_equals(true, isTestRes);
             
             %Check dim=5
-            testEllipsoid=self.EllFactoryObj.create(4*ones(5,1),eye(5,5));
+            testEllipsoid=self.ellFactoryObj.create(4*ones(5,1),eye(5,5));
             isTestRes=( (volume(testEllipsoid)-(8*pi*pi/15)<=absTol ) );
             mlunitext.assert_equals(true, isTestRes);
             
             %Check dim=6
-            testEllipsoid=self.EllFactoryObj.create(-ones(6,1),diag([1, 4, 9, 16,1, 25]));
+            testEllipsoid=self.ellFactoryObj.create(-ones(6,1),diag([1, 4, 9, 16,1, 25]));
             isTestRes=( (volume(testEllipsoid)-(20*pi*pi*pi)<=absTol ) );
             mlunitext.assert_equals(true, isTestRes);
             
             %High-dimensional ellipsoids
-            testEllMat= [self.EllFactoryObj.create((0.1:0.1:2).',diag(0.01:0.01:0.2)), self.EllFactoryObj.create(-10*ones(13,1),diag(0.1:0.1:1.3));
-                self.EllFactoryObj.create(rand(20,1),9*diag(0:19)), self.EllFactoryObj.create(diag(1:21));
-                self.EllFactoryObj.create(diag(0.1:0.1:10)), self.EllFactoryObj.create(diag(0:0.0001:0.01))];
+            testEllMat= [self.ellFactoryObj.create((0.1:0.1:2).',diag(0.01:0.01:0.2)), self.ellFactoryObj.create(-10*ones(13,1),diag(0.1:0.1:1.3));
+                self.ellFactoryObj.create(rand(20,1),9*diag(0:19)), self.ellFactoryObj.create(diag(1:21));
+                self.ellFactoryObj.create(diag(0.1:0.1:10)), self.ellFactoryObj.create(diag(0:0.0001:0.01))];
             testVolMat = volume(testEllMat);
             testRightVolMat = [(pi^6)*realsqrt(prod(0.01:0.01:0.2))/prod(1:6), (pi^6)*(2^7)*realsqrt(prod(0.1:0.1:1.3))/prod(1:2:13);
                 0,                                          (pi^10)*(2^11)*realsqrt(prod(1:21))/prod(1:2:21);
@@ -848,33 +848,33 @@ classdef EllipsoidTestCase < mlunitext.test_case
             MAX_TOL = Properties.getRelTol();
             
             testMat = eye(2);
-            self.checkEllEqual(self.EllFactoryObj.create(testMat), self.EllFactoryObj.create(testMat), true, '');
+            self.checkEllEqual(self.ellFactoryObj.create(testMat), self.ellFactoryObj.create(testMat), true, '');
             
             test1Mat = eye(2);
             test2Mat = eye(2) + MAX_TOL;
-            self.checkEllEqual(self.EllFactoryObj.create(test1Mat), self.EllFactoryObj.create(test2Mat), true, '');
+            self.checkEllEqual(self.ellFactoryObj.create(test1Mat), self.ellFactoryObj.create(test2Mat), true, '');
             
             test1Mat = eye(2);
             test2Mat = eye(2) - 0.99*MAX_TOL;
-            self.checkEllEqual(self.EllFactoryObj.create(test1Mat), self.EllFactoryObj.create(test2Mat), true, '');
+            self.checkEllEqual(self.ellFactoryObj.create(test1Mat), self.ellFactoryObj.create(test2Mat), true, '');
             
             test1Mat = 100*eye(2);
             test2Mat = 100*eye(2) - 0.99*MAX_TOL;
-            self.checkEllEqual(self.EllFactoryObj.create(test1Mat), self.EllFactoryObj.create(test2Mat), true, '');
+            self.checkEllEqual(self.ellFactoryObj.create(test1Mat), self.ellFactoryObj.create(test2Mat), true, '');
             %
             %test for maxTolerance
             firstMat = eye(2);
             secMat = eye(2)+1;
             secVec = [1;0];
             maxTol = 1;
-            ell1 = self.EllFactoryObj.create(firstMat);
-            ell2 = self.EllFactoryObj.create(secVec,secMat);
+            ell1 = self.ellFactoryObj.create(firstMat);
+            ell2 = self.ellFactoryObj.create(secVec,secMat);
             [isOk,reportStr]=ell1.isEqual(ell2);
             mlunitext.assert(~isOk,reportStr);
             %
             %
-            testEll = self.EllFactoryObj.create(eye(2));
-            testEll2 = self.EllFactoryObj.create([1e-3, 0].', eye(2));
+            testEll = self.ellFactoryObj.create(eye(2));
+            testEll2 = self.ellFactoryObj.create([1e-3, 0].', eye(2));
             mDim = 10;
             nDim = 15;
             testEllArr = repmat(testEll, mDim, nDim);
@@ -1189,29 +1189,29 @@ classdef EllipsoidTestCase < mlunitext.test_case
         end
         %
         function self = testMtimes(self)
-            testEllipsoid1 = self.EllFactoryObj.create([1; 1], eye(2));
+            testEllipsoid1 = self.ellFactoryObj.create([1; 1], eye(2));
             
             [testHighDimShapeMat testHighDimMat] = self.createTypicalHighDimEll(4);
-            testEllHighDim = self.EllFactoryObj.create(testHighDimShapeMat);
+            testEllHighDim = self.ellFactoryObj.create(testHighDimShapeMat);
             
             resEll = mtimes(testHighDimMat, testEllHighDim);
-            ansEll = self.EllFactoryObj.create(zeros(12, 1), testHighDimMat*testHighDimShapeMat*testHighDimMat');
+            ansEll = self.ellFactoryObj.create(zeros(12, 1), testHighDimMat*testHighDimShapeMat*testHighDimMat');
             [isEq, reportStr] = isEqual(resEll, ansEll);
             mlunitext.assert_equals(true, isEq, reportStr);
             
             [testHighDimShapeMat testHighDimMat] = self.createTypicalHighDimEll(5);
-            testEllHighDim = self.EllFactoryObj.create(testHighDimShapeMat);
+            testEllHighDim = self.ellFactoryObj.create(testHighDimShapeMat);
             
             resEll = mtimes(testHighDimMat, testEllHighDim);
-            ansEll = self.EllFactoryObj.create(zeros(20, 1), testHighDimMat*testHighDimShapeMat*testHighDimMat');
+            ansEll = self.ellFactoryObj.create(zeros(20, 1), testHighDimMat*testHighDimShapeMat*testHighDimMat');
             [isEq, reportStr] = isEqual(resEll, ansEll);
             mlunitext.assert_equals(true, isEq, reportStr);
             
             [testHighDimShapeMat testHighDimMat] = self.createTypicalHighDimEll(6);
-            testEllHighDim = self.EllFactoryObj.create(testHighDimShapeMat);
+            testEllHighDim = self.ellFactoryObj.create(testHighDimShapeMat);
             
             resEll = mtimes(testHighDimMat, testEllHighDim);
-            ansEll = self.EllFactoryObj.create(zeros(100, 1), testHighDimMat*testHighDimShapeMat*testHighDimMat');
+            ansEll = self.ellFactoryObj.create(zeros(100, 1), testHighDimMat*testHighDimShapeMat*testHighDimMat');
             [isEq, reportStr] = isEqual(resEll, ansEll);
             mlunitext.assert_equals(true, isEq, reportStr);
             
@@ -1222,15 +1222,15 @@ classdef EllipsoidTestCase < mlunitext.test_case
                 0.00000000000000 + 0.00000000000000i 0.255693118460086 + 0.343438979993794i 0.00000000000000 + 0.00000000000000i;...
                 0.00000000000000 + 0.00000000000000i 0.00000000000000 + 0.00000000000000i 0.00000000000000 + 0.00000000000000i...
                 0.255693118460086 - 0.343438979993794i];
-            testEllipsoid3 = self.EllFactoryObj.create(diag(1:1:4));
+            testEllipsoid3 = self.ellFactoryObj.create(diag(1:1:4));
             resEll = mtimes(AMat, testEllipsoid3);
-            ansEll = self.EllFactoryObj.create(zeros(4, 1), AMat*diag(1:1:4)*AMat');
+            ansEll = self.ellFactoryObj.create(zeros(4, 1), AMat*diag(1:1:4)*AMat');
             [isEq, reportStr] = isEqual(resEll, ansEll);
             mlunitext.assert_equals(true, isEq, reportStr);
             
             AMat = 2*eye(2);
             resEll = mtimes(AMat, testEllipsoid1);
-            ansEll = self.EllFactoryObj.create([2; 2], 4*eye(2));
+            ansEll = self.ellFactoryObj.create([2; 2], 4*eye(2));
             [isEq, reportStr] = isEqual(resEll, ansEll);
             mlunitext.assert_equals(true, isEq, reportStr);
             
@@ -1244,19 +1244,19 @@ classdef EllipsoidTestCase < mlunitext.test_case
             
             AMat = zeros(2);
             resEll = mtimes(AMat, testEllipsoid1);
-            ansEll = self.EllFactoryObj.create(zeros(2));
+            ansEll = self.ellFactoryObj.create(zeros(2));
             [isEq, reportStr] = isEqual(resEll, ansEll);
             mlunitext.assert_equals(true, isEq, reportStr);
             
             AMat = [1 2; 3 4; 5 6];
             resEll = mtimes(AMat, testEllipsoid1);
-            ansEll = self.EllFactoryObj.create([3; 7; 11], [5 11 17; 11 25 39; 17 39 61]);
+            ansEll = self.ellFactoryObj.create([3; 7; 11], [5 11 17; 11 25 39; 17 39 61]);
             [isEq, reportStr] = isEqual(resEll, ansEll);
             mlunitext.assert_equals(true, isEq, reportStr);
             
-            testEllipsoid1 = self.EllFactoryObj.create([0; 0], zeros(2));
+            testEllipsoid1 = self.ellFactoryObj.create([0; 0], zeros(2));
             resEll = mtimes(AMat, testEllipsoid1);
-            ansEll = self.EllFactoryObj.create(zeros(3));
+            ansEll = self.ellFactoryObj.create(zeros(3));
             [isEq, reportStr] = isEqual(resEll, ansEll);
             mlunitext.assert_equals(true, isEq, reportStr);
         end
@@ -1265,8 +1265,8 @@ classdef EllipsoidTestCase < mlunitext.test_case
             import elltool.conf.Properties;
             absTol=Properties.getAbsTol();
             %positive test
-            resObj=isbaddirection(self.EllFactoryObj.create(2*eye(2)),...
-                self.EllFactoryObj.create(eye(2)),[1 1]',absTol);
+            resObj=isbaddirection(self.ellFactoryObj.create(2*eye(2)),...
+                self.ellFactoryObj.create(eye(2)),[1 1]',absTol);
             mlunitext.assert(isa(resObj,'logical'));
             %
             %negative test
@@ -1278,15 +1278,15 @@ classdef EllipsoidTestCase < mlunitext.test_case
         %
         function self = testFromRepMat(self)
             sizeArr = [2, 3, 3, 5];
-            ellArr1 = self.EllFactoryObj.create.fromRepMat(sizeArr);
+            ellArr1 = self.ellFactoryObj.create.fromRepMat(sizeArr);
             isOk1Arr = ellArr1.isEmpty();
             mlunitext.assert(all(isOk1Arr(:)));
             %
             shMat = eye(2);
             cVec = [2; 3];
             absTol = 1e-10;
-            ell2 = self.EllFactoryObj.create(cVec,shMat,'absTol',absTol);
-            ell2Arr = self.EllFactoryObj.create.fromRepMat(cVec,shMat,sizeArr,'absTol',absTol);
+            ell2 = self.ellFactoryObj.create(cVec,shMat,'absTol',absTol);
+            ell2Arr = self.ellFactoryObj.create.fromRepMat(cVec,shMat,sizeArr,'absTol',absTol);
             %
             isOkArr2 = eq(ell2,ell2Arr);
             mlunitext.assert(all(isOkArr2(:)));
@@ -1306,19 +1306,19 @@ classdef EllipsoidTestCase < mlunitext.test_case
         function self = testMultiDimensionalConstructor(self)
             % one argument
             testShape = [2,0;0,3];
-            testEll = self.EllFactoryObj.create(testShape);
+            testEll = self.ellFactoryObj.create(testShape);
             testShMatArray = zeros(2,2,3,4);
             testShMatArray(:,:,1,3) = testShape;
-            testEllArray = self.EllFactoryObj.create(testShMatArray);
+            testEllArray = self.ellFactoryObj.create(testShMatArray);
             mlunitext.assert(eq(testEllArray(1,3),testEll));
             % two arguments and properties
             testShape = [2,0;0,3];
             testCent = [1;5];
-            testEll = self.EllFactoryObj.create(testCent, testShape);
+            testEll = self.ellFactoryObj.create(testCent, testShape);
             testCentArray = zeros(2,3,4);
             testCentArray(:,1,3) = testCent;
-            testEllArray1 = self.EllFactoryObj.create(testCentArray, testShMatArray);
-            testEllArray2 = self.EllFactoryObj.create(testCentArray, testShMatArray, ...
+            testEllArray1 = self.ellFactoryObj.create(testCentArray, testShMatArray);
+            testEllArray2 = self.ellFactoryObj.create(testCentArray, testShMatArray, ...
                 'absTol', 1e-3);
             mlunitext.assert(eq(testEllArray1(1,3),testEll));
             mlunitext.assert(eq(testEllArray2(1,3),testEll));
@@ -1327,7 +1327,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             testShMatArray(:,:,1) = testShape;
             testCentArray = zeros(2,3);
             testCentArray(:,1) = testCent;
-            testEllArray = self.EllFactoryObj.create(testCentArray, testShMatArray);
+            testEllArray = self.ellFactoryObj.create(testCentArray, testShMatArray);
             mlunitext.assert(eq(testEllArray(1),testEll));
             % bad dimensions
             self.runAndCheckError(...
@@ -1345,16 +1345,16 @@ classdef EllipsoidTestCase < mlunitext.test_case
         end
         %
         function self = testGetCopy(self)
-            ellMat(3, 3) = self.EllFactoryObj.create;
-            ellMat(1) = self.EllFactoryObj.create(eye(3));
-            ellMat(2) = self.EllFactoryObj.create([0; 1; 2], ones(3));
-            ellMat(3) = self.EllFactoryObj.create(eye(4));
-            ellMat(4) = self.EllFactoryObj.create(1.0001*eye(3));
-            ellMat(5) = self.EllFactoryObj.create(1.0000000001*eye(3));
-            ellMat(6) = self.EllFactoryObj.create([0; 1; 2], ones(3));
-            ellMat(7) = self.EllFactoryObj.create(eye(2));
-            ellMat(8) = self.EllFactoryObj.create(eye(3));
-            ellMat(9) = self.EllFactoryObj.create(eye(5));
+            ellMat(3, 3) = self.ellFactoryObj.create;
+            ellMat(1) = self.ellFactoryObj.create(eye(3));
+            ellMat(2) = self.ellFactoryObj.create([0; 1; 2], ones(3));
+            ellMat(3) = self.ellFactoryObj.create(eye(4));
+            ellMat(4) = self.ellFactoryObj.create(1.0001*eye(3));
+            ellMat(5) = self.ellFactoryObj.create(1.0000000001*eye(3));
+            ellMat(6) = self.ellFactoryObj.create([0; 1; 2], ones(3));
+            ellMat(7) = self.ellFactoryObj.create(eye(2));
+            ellMat(8) = self.ellFactoryObj.create(eye(3));
+            ellMat(9) = self.ellFactoryObj.create(eye(5));
             copiedEllMat = ellMat.getCopy();
             isEqualMat = copiedEllMat.isEqual(ellMat);
             isOk = all(isEqualMat(:));
@@ -1378,8 +1378,8 @@ classdef EllipsoidTestCase < mlunitext.test_case
         function self = testSqrtmposToleranceFailure(self)
             sh1Mat = diag(repmat(0.0000001, 1, 4)) + diag([1 1 0 0]);
             sh2Mat = diag(ones(1, 4));
-            minksum_ia([self.EllFactoryObj.create(zeros(4, 1), sh1Mat),...
-                self.EllFactoryObj.create(zeros(4, 1), sh2Mat)], [0 0 1 0]');
+            minksum_ia([self.ellFactoryObj.create(zeros(4, 1), sh1Mat),...
+                self.ellFactoryObj.create(zeros(4, 1), sh2Mat)], [0 0 1 0]');
         end
         %
         function self = testToStruct(self)
@@ -1392,7 +1392,7 @@ classdef EllipsoidTestCase < mlunitext.test_case
             centerCVec{4} = [1 0 0 0];
             shapeMatCVec{4} = diag([3 2 1 0]);
             for iElem = 1 : 4
-                ellVec(iElem) = self.EllFactoryObj.create(centerCVec{iElem}', shapeMatCVec{iElem});
+                ellVec(iElem) = self.ellFactoryObj.create(centerCVec{iElem}', shapeMatCVec{iElem});
                 transposedCenterCVec{iElem} = centerCVec{iElem}';
             end
             SEllVec = struct('centerVec', transposedCenterCVec, 'shapeMat', shapeMatCVec);
@@ -1407,9 +1407,9 @@ function fCheckForTestEllipsoidAndDouble(self, qCenterVec, qShapeMat)
     if nargin < 3
         qShapeMat = qCenterVec;
         qCenterVec = zeros(size(qShapeMat,1),1);
-        testEllipsoid=self.EllFactoryObj.create(qShapeMat);
+        testEllipsoid=self.ellFactoryObj.create(qShapeMat);
     else
-        testEllipsoid=self.EllFactoryObj.create(qCenterVec,qShapeMat);
+        testEllipsoid=self.ellFactoryObj.create(qCenterVec,qShapeMat);
     end
     [testCenterVec, testShapeMat]=double(testEllipsoid);
     try
@@ -1426,9 +1426,9 @@ function fCheckForTestParameters(self, qCenterVec, qShapeMat)
     if nargin < 3
         qShapeMat = qCenterVec;
         qCenterVec = zeros(size(qShapeMat,1),1);
-        testEllipsoid=self.EllFactoryObj.create(qShapeMat);
+        testEllipsoid=self.ellFactoryObj.create(qShapeMat);
     else
-        testEllipsoid=self.EllFactoryObj.create(qCenterVec,qShapeMat);
+        testEllipsoid=self.ellFactoryObj.create(qCenterVec,qShapeMat);
     end
     [testCenterVec, testShapeMat]=parameters(testEllipsoid);
     try
@@ -1509,19 +1509,19 @@ end
 function [varargout] = createTypicalEll(self, flag)
     switch flag
         case 1
-            varargout{1} = self.EllFactoryObj.create([0; 0], [1 0; 0 1]);
-            varargout{2} = self.EllFactoryObj.create([1; 0], [1 0; 0 1]);
-            varargout{3} = self.EllFactoryObj.create([1; 0], [2 0; 0 1]);
-            varargout{4} = self.EllFactoryObj.create([0; 0], [0 0; 0 0]);
-            varargout{5} = self.EllFactoryObj.create([0; 0; 0], [0 0 0 ;0 0 0; 0 0 0]);
-            varargout{6} = self.EllFactoryObj.create;
-            varargout{7} = self.EllFactoryObj.create([2; 1], [3 1; 1 1]);
-            varargout{8} = self.EllFactoryObj.create([1; 1], [1 0; 0 1]);
+            varargout{1} = self.ellFactoryObj.create([0; 0], [1 0; 0 1]);
+            varargout{2} = self.ellFactoryObj.create([1; 0], [1 0; 0 1]);
+            varargout{3} = self.ellFactoryObj.create([1; 0], [2 0; 0 1]);
+            varargout{4} = self.ellFactoryObj.create([0; 0], [0 0; 0 0]);
+            varargout{5} = self.ellFactoryObj.create([0; 0; 0], [0 0 0 ;0 0 0; 0 0 0]);
+            varargout{6} = self.ellFactoryObj.create;
+            varargout{7} = self.ellFactoryObj.create([2; 1], [3 1; 1 1]);
+            varargout{8} = self.ellFactoryObj.create([1; 1], [1 0; 0 1]);
         case 2
-            varargout{1} = self.EllFactoryObj.create([0; 0], [1 0; 0 1]);
-            varargout{2} = self.EllFactoryObj.create([0; 0], [2 0; 0 2]);
-            varargout{3} = self.EllFactoryObj.create([0; 0], [4 2; 2 4]);
-            varargout{4} = self.EllFactoryObj.create;
+            varargout{1} = self.ellFactoryObj.create([0; 0], [1 0; 0 1]);
+            varargout{2} = self.ellFactoryObj.create([0; 0], [2 0; 0 2]);
+            varargout{3} = self.ellFactoryObj.create([0; 0], [4 2; 2 4]);
+            varargout{4} = self.ellFactoryObj.create;
         otherwise
     end
 end
@@ -1539,14 +1539,14 @@ end
 function [varargout] = createTypicalHighDimEll(self, flag)
     switch flag
         case 1
-            varargout{1} = self.EllFactoryObj.create(diag(1:0.5:6.5));
-            varargout{2} = self.EllFactoryObj.create(diag(11:0.5:16.5));
+            varargout{1} = self.ellFactoryObj.create(diag(1:0.5:6.5));
+            varargout{2} = self.ellFactoryObj.create(diag(11:0.5:16.5));
         case 2
-            varargout{1} = self.EllFactoryObj.create(diag(1:0.5:10.5));
-            varargout{2} = self.EllFactoryObj.create(diag(11:0.5:20.5));
+            varargout{1} = self.ellFactoryObj.create(diag(1:0.5:10.5));
+            varargout{2} = self.ellFactoryObj.create(diag(11:0.5:20.5));
         case 3
-            varargout{1} = self.EllFactoryObj.create(diag(1:0.1:10.9));
-            varargout{2} = self.EllFactoryObj.create(diag(11:0.1:20.9));
+            varargout{1} = self.ellFactoryObj.create(diag(1:0.1:10.9));
+            varargout{2} = self.ellFactoryObj.create(diag(11:0.1:20.9));
         case 4
             varargout{1} = diag(1:0.5:6.5);
             varargout{2} = diag(11:0.5:16.5);

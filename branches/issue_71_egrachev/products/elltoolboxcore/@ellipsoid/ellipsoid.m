@@ -1,12 +1,14 @@
 classdef ellipsoid < elltool.core.AEllipsoid
     %ELLIPSOID class of ellipsoids
     properties (Access=private,Hidden)
-        centerVec
-        shapeMat
+        centerVec      
         absTol
         relTol
         nPlot2dPoints
         nPlot3dPoints
+    end
+    properties (Access = protected)
+        shapeMat
     end
     
     
@@ -19,18 +21,7 @@ classdef ellipsoid < elltool.core.AEllipsoid
             end
             self.shapeMat=shMat;
         end
-    end
-    %
-    methods (Access=private)
-        function checkIfScalar(self,errMsg)
-            if nargin<2
-                errMsg='input argument must be single ellipsoid.';
-            end
-            modgen.common.checkvar(self,'isscalar(x)',...
-                'errorMessage',errMsg);
-        end
-    end
-    methods
+        
         function resArr=repMat(self,varargin)
             % REPMAT - is analogous to built-in repmat function with one exception - it
             %          copies the objects, not just the handles
@@ -109,8 +100,7 @@ classdef ellipsoid < elltool.core.AEllipsoid
             self.checkIfScalar();
             centerVecVec=self.centerVec;
         end
-    end
-    methods
+        
         function [ellMat] = ellipsoid(varargin)
             %
             % ELLIPSOID - constructor of the ellipsoid object.
@@ -296,31 +286,16 @@ classdef ellipsoid < elltool.core.AEllipsoid
             end
         end
     end
-    methods(Static)
-        ellArr = fromRepMat(varargin)
-        ellArr = fromStruct(SEllArr)
-    end
-    methods(Static,Access = private)
-        regQMat = regularize(qMat,absTol)
-        clrDirsMat = rm_bad_directions(q1Mat, q2Mat, dirsMat,absTol)
-        [isBadDirVec,pUniversalVec] = isbaddirectionmat(q1Mat, q2Mat,...
-            dirsMat,absTol)
-        [supArr, bpMat] = rhomat(ellShapeMat,ellCenterVec,absTol, dirsMat)
-        [diffBoundMat, isPlotCenter3d] = calcdiffonedir(fstEll,secEll,...
-            lMat,pUniversalVec,isGoodDirVec)
-        [ bpMat, fMat] = ellbndr_3dmat(nPoints, cenVec, qMat,absTol)
-        [ bpMat, fMat] = ellbndr_2dmat(nPoints, cenVec, qMat,absTol)
-    end
-    methods(Access = private)
-        [propMat, propVal] = getProperty(hplaneMat,propName, fPropFun)
-        [bpMat, fVec] = getGridByFactor(ellObj,factorVec)
-        checkDoesContainArgs(ell,poly)
-        doesContain = doesContainPoly(ellArr,polytope,varagin)
-    end 
-    methods (Static)
-        checkIsMe(someObj,varargin)
-    end
+    %
     methods (Access=private)
+        function checkIfScalar(self,errMsg)
+            if nargin<2
+                errMsg='input argument must be single ellipsoid.';
+            end
+            modgen.common.checkvar(self,'isscalar(x)',...
+                'errorMessage',errMsg);
+        end
+        
         function isArrEq = isMatEqualInternal(self,aArr,bArr)
             % ISMATEQUALINTERNAL - returns isArrEq - logical 1(true) if
             %           multidimensional arrays aArr and bArr are equal,
@@ -351,8 +326,34 @@ classdef ellipsoid < elltool.core.AEllipsoid
                 isArrEq = true;
             end
         end
+        
+        %[propMat, propVal] = getProperty(hplaneMat,propName, fPropFun)
+        %[bpMat, fVec] = getGridByFactor(ellObj,factorVec)       
+        %doesContain = doesContainPoly(ellArr,polytope,varagin)
     end
-    methods (Access = protected, Static)
+    
+    methods(Access = protected)
+        checkDoesContainArgs(ell,poly)
+    end
+
+    methods(Static)
+        ellArr = fromRepMat(varargin)
+        ellArr = fromStruct(SEllArr)
+    end
+    
+    methods(Static,Access = private)
+        regQMat = regularize(qMat,absTol)
+        clrDirsMat = rm_bad_directions(q1Mat, q2Mat, dirsMat,absTol)
+        [isBadDirVec,pUniversalVec] = isbaddirectionmat(q1Mat, q2Mat,...
+            dirsMat,absTol)
+        [supArr, bpMat] = rhomat(ellShapeMat,ellCenterVec,absTol, dirsMat)
+        [diffBoundMat, isPlotCenter3d] = calcdiffonedir(fstEll,secEll,...
+            lMat,pUniversalVec,isGoodDirVec)
+        [ bpMat, fMat] = ellbndr_3dmat(nPoints, cenVec, qMat,absTol)
+        [ bpMat, fMat] = ellbndr_2dmat(nPoints, cenVec, qMat,absTol)
+    end
+    
+    methods (Static, Access = protected)
         function SComp = formCompStruct(SEll, SFieldNiceNames, absTol, isPropIncluded)
             if (~isempty(SEll.shapeMat))
                 SComp.(SFieldNiceNames.shapeMat) = gras.la.sqrtmpos(SEll.shapeMat, absTol);

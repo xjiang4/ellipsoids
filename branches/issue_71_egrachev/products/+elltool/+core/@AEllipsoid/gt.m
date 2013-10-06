@@ -37,8 +37,8 @@ function isPositiveArr = gt(firstEllArr, secondEllArr)
 import modgen.common.throwerror;
 import modgen.common.checkmultvar;
 
-ellipsoid.checkIsMe(firstEllArr,'first');
-ellipsoid.checkIsMe(secondEllArr,'second');
+firstEllArr.checkIsMe(firstEllArr,'first');
+secondEllArr.checkIsMe(secondEllArr,'second');
 
 isFstScal = isscalar(firstEllArr);
 isSecScal = isscalar(secondEllArr);

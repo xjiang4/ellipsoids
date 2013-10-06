@@ -64,7 +64,7 @@ import elltool.conf.Properties;
 import modgen.common.checkvar;
 import modgen.common.checkmultvar;
 
-ellipsoid.checkIsMe(myEllArr,'first');
+myEllArr.checkIsMe(myEllArr,'first');
 modgen.common.checkvar(matrixOfVecMat,@(x) isa(x, 'double'),...
     'errorTag','wrongInput',...
     'errorMessage', 'The second input argument must be a double matrix.');

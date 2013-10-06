@@ -1,5 +1,5 @@
 classdef AEllipsoid < handle
-    properties (Abstract) 
+    properties (Access = protected, Abstract) 
         shapeMat
     end
     
@@ -10,11 +10,13 @@ classdef AEllipsoid < handle
     
     methods (Abstract)
         getCopy(ellArr)
-        checkIsMe(ellArr, varargin)
-        checkDoesContainArgs(fstEllArr,secObjArr)
+        checkIsMe(~, ellArr, varargin)        
         isEmpty(myEllArr)
     end
-    
+    methods (Abstract, Access = protected)
+        checkDoesContainArgs(fstEllArr,secObjArr)
+    end
+        
     methods
         function resArr=repMat(self,varargin)
             % REPMAT - is analogous to built-in repmat function with one exception - it
@@ -95,7 +97,9 @@ classdef AEllipsoid < handle
             centerVecVec=self.centerVec;
         end
     end
-   
+    methods (Access = private)
+        %doesContain = doesContainPoly(ellArr,polytope,varagin)
+    end
     methods (Access = protected)
         function [isEqualArr, reportStr] = isEqualInternal(ellFirstArr,...
                 ellSecArr, isPropIncluded)

@@ -34,7 +34,7 @@ function trArr = trace(ellArr)
 %            System Analysis Department 2012 $
 %
 
-ellipsoid.checkIsMe(ellArr);
+self.checkIsMe(ellArr);
 modgen.common.checkvar(ellArr,'~any(x(:).isEmpty())',...
     'errorTag','wrongInput:emptyEllipsoid',...
     'errorMessage','input argument contains empty ellipsoid.')

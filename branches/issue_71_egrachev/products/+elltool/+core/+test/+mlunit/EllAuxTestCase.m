@@ -3,14 +3,14 @@ classdef EllAuxTestCase < mlunitext.test_case
         ABS_TOL = 1e-8;
     end
     properties
-        EllFactoryObj
+        ellFactoryObj
     end
     methods
         function self=EllAuxTestCase(varargin)
             self=self@mlunitext.test_case(varargin{:});
         end
-        function self = set_up_param(self, EllFactoryObj)
-            self.EllFactoryObj = EllFactoryObj;
+        function self = set_up_param(self, ellFactoryObj)
+            self.ellFactoryObj = ellFactoryObj;
         end
         %
         function testEllRegularize(self)
@@ -31,7 +31,7 @@ classdef EllAuxTestCase < mlunitext.test_case
             shRegMat=gras.la.regposdefmat(shMat,absTol);
             masterCheckIsPos(shRegMat);
             %
-            ell=self.EllFactoryObj.create(shMat,'absTol',absTol);
+            ell=self.ellFactoryObj.create(shMat,'absTol',absTol);
             mlunitext.assert(isequal(ell.getShapeMat(),shMat));
             %
             checkApxReg(@minksum_ia);
@@ -65,7 +65,7 @@ classdef EllAuxTestCase < mlunitext.test_case
                     isSemPosDef=false;
                 end
                 if ~isSemPosDef
-                    ell=self.EllFactoryObj.create(inpMat,'absTol',absTol+delta);
+                    ell=self.ellFactoryObj.create(inpMat,'absTol',absTol+delta);
                     isOk=~ell.isdegenerate();
                     mlunitext.assert_equals(isOk,isExpOk);
                 end

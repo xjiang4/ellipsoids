@@ -4,7 +4,7 @@ function checkDoesContainArgs(fstEllArr,secObjArr)
 import modgen.common.throwerror;
 import modgen.common.checkmultvar;
 
-ellipsoid.checkIsMe(fstEllArr,'first');
+fstEllArr.checkIsMe(fstEllArr,'first');
 modgen.common.checkvar(secObjArr,@(x) isa(x, 'ellipsoid') ||...
     isa(x, 'polytope'),'errorTag','wrongInput', 'errorMessage',...
     'second input argument must be ellipsoid or polytope.');

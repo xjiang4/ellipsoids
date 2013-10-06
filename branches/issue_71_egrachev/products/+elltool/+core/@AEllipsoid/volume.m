@@ -38,7 +38,7 @@ function volArr = volume(ellArr)
 %            System Analysis Department 2012 $
 %
 
-ellipsoid.checkIsMe(ellArr); 
+self.checkIsMe(ellArr); 
 
 modgen.common.checkvar(ellArr,'~any(x(:).isEmpty())',...
     'errorTag','wrongInput:emptyEllipsoid',...

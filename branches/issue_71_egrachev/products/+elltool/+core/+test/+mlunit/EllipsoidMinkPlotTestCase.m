@@ -2,7 +2,7 @@ classdef EllipsoidMinkPlotTestCase < mlunitext.test_case
     %
     properties (Access=private)
         testDataRootDir
-        EllFactoryObj
+        ellFactoryObj
     end
     %
     methods
@@ -13,16 +13,16 @@ classdef EllipsoidMinkPlotTestCase < mlunitext.test_case
             self.testDataRootDir=[fileparts(which(className)),filesep,'TestData',...
                 filesep,shortClassName];
         end
-        function self = set_up_param(self, EllFactoryObj)
-            self.EllFactoryObj = EllFactoryObj;
+        function self = set_up_param(self, ellFactoryObj)
+            self.ellFactoryObj = ellFactoryObj;
         end
         function self = tear_down(self,varargin)
             close all;
         end
         function self = testFillAndShade(self)
-            testFirEll = self.EllFactoryObj.create(2*eye(2));
-            testSecEll = self.EllFactoryObj.create([1, 0].', eye(2));
-            testThirdEll = self.EllFactoryObj.create([0, -1].', 1.5*eye(2));
+            testFirEll = self.ellFactoryObj.create(2*eye(2));
+            testSecEll = self.ellFactoryObj.create([1, 0].', eye(2));
+            testThirdEll = self.ellFactoryObj.create([0, -1].', 1.5*eye(2));
             minksum(testFirEll,testSecEll,'fill',false,'shade',0.7);
             minksum(testFirEll,testSecEll,'fill',true,'shade',0.7);
             minksum(testFirEll,testSecEll,testThirdEll,'fill',false,'shade',1);

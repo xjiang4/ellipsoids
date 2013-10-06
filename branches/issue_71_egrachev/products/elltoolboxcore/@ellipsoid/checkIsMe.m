@@ -1,4 +1,4 @@
-function checkIsMe(ellArr,varargin)
+function checkIsMe(~, ellArr,varargin)
 %
 % CHECKISME - determine whether input object is ellipsoid. And display
 %             message and abort function if input object

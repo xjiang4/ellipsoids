@@ -74,8 +74,8 @@ import gras.la.sqrtmpos;
 
 persistent logger;
 
-ellipsoid.checkIsMe(fstEll,'first');
-ellipsoid.checkIsMe(secEll,'second');
+fstEll.checkIsMe(fstEll,'first');
+secEll.checkIsMe(secEll,'second');
 checkmultvar('isscalar(x1)&&isscalar(x2)',2,fstEll,secEll,...
     'errorTag','wrongInput','errorMessage',...
     'first and second arguments must be single ellipsoids.');

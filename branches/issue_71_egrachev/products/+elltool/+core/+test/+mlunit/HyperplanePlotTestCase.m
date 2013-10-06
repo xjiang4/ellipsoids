@@ -8,7 +8,7 @@ classdef HyperplanePlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
     %            System Analysis Department 2013 $
     properties (Access=private)
         testDataRootDir
-        EllFactoryObj
+        ellFactoryObj
     end
     %
     methods(Access=protected)
@@ -60,8 +60,8 @@ classdef HyperplanePlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
                 end
             end
         end
-        function self = set_up_param(self, EllFactoryObj)
-            self.EllFactoryObj = EllFactoryObj;
+        function self = set_up_param(self, ellFactoryObj)
+            self.ellFactoryObj = ellFactoryObj;
         end
         function self = tear_down(self,varargin)
             close all;
