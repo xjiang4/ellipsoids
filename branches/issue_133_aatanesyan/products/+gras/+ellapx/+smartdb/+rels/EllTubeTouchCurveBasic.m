@@ -1,48 +1,4 @@
 classdef EllTubeTouchCurveBasic<handle
-    %
-    %  One of the basic abstract classes in the Ellipsoidal Toolbox. It 
-    %  allows to keep with touch point curves of internal and external 
-    %  ellipsoid approximations.
-    %
-    %  Fields:
-    %    dim:double[1, 1] - the dimension of the space in which the 
-    %                       touching curve is defined
-    %    sTime:double[1, 1] - specific point of time which is best suited
-    %                         to describe good direction
-    %    approxSchemaName:cell->char[1,] - name of the approximation schema
-    %    approxSchemaDescr:cell->char[1,] - description of the 
-    %                                       approximation schema
-    %    approxType:gras.ellapx.enums.EApproxType - Type of approximation
-    %                                               (external, internal, 
-    %                                                not defined)
-    %    timeVec:cell->double[1, nElem] - time vector (nElem is number of 
-    %                                     points of time)
-    %    calcPrecision:double[1, 1] - calculation precision
-    %    indSTime:double[1, 1]  - index of sTime point within timeVec
-    %    ltGoodDirMat:cell->double[dim, nElem] - matrix of good direction 
-    %                                            vectors at any point of 
-    %                                            time from timeVec
-    %    lsGoodDirVec:cell->double[dim, 1] - good direction vector at 
-    %                                        sTime
-    %    ltGoodDirNormVec:cell->double[1, nElem] - norm of good direction
-    %                                              vector at any point of 
-    %                                              time from timeVec
-    %    lsGoodDirNorm:double[1, 1] - norm of good direction vector at
-    %                                 sTime
-    %    xTouchCurveMat:cell->double[dim, nElem] - matrix of touch point 
-    %                                              curves for each initial 
-    %                                              direction specified by
-    %                                              the user
-    %    xTouchOpCurveMat:cell->double[1, nElem] - matrix of touch point 
-    %                                              curves for each 
-    %                                              direction opposite to
-    %                                              the initial direction
-    %                                              specified by the user
-    %    xsTouchVec:cell->double[dim, 1]  - touch point curve vector at 
-    %                                       sTime
-    %    xsTouchOpVec:cell->double[dim, 1] - vector opposite to the touch
-    %                                        point curve vector at sTime
-    %
     properties (Constant,Hidden)
         FCODE_DIM
         FCODE_S_TIME
@@ -71,28 +27,6 @@ classdef EllTubeTouchCurveBasic<handle
         %
         function checkSVsTConsistency(~,lsList,ltList,indList,...
                 lsName,ltName,fCheck)
-            % CHECKSVSTCONSISTENCY - checks the consistency of tuples in
-            %                        lsList and ltList
-            %
-            % Input:
-            %   regular:
-            %       lsList: - list of tuples at point of time sTime
-            %
-            %       ltList: - list of tuples
-            %
-            %       indList: - list of indices of tuples which are to be
-            %                   checked
-            %
-            %       lsName: - name of the field lsList
-            %
-            %       ltName: - name of the field ltList
-            %
-            %       fCheck: - function which checks the consistency of 
-            %                  tuples in lsList and ltList
-            %
-            % Output:
-            %   None.
-            %
             import modgen.common.throwerror;
             if ~isempty(indList)
                 isOkVec=cellfun(fCheck,lsList,ltList,indList);
@@ -105,20 +39,6 @@ classdef EllTubeTouchCurveBasic<handle
         end
         %
         function checkForNan(self,valFieldName,touchFieldName)
-            % CHECKSFORNAN - checks for NAN the values of the field
-            %                valFieldName
-            %
-            % Input:
-            %   regular:
-            %       valFieldName: - field which has to be cheked for NAN
-            %                       values
-            %
-            %       touchFieldName: - field which has the indices of values
-            %                         which has to be cheked for NAN
-            %
-            % Output:
-            %   None.
-            %
             valMat=self.(valFieldName);
             isTouchVec=self.(touchFieldName);
             if islogical(isTouchVec)
@@ -148,23 +68,6 @@ classdef EllTubeTouchCurveBasic<handle
     methods (Access=protected)
         %
         function strVal=goodDirProp2Str(~,lsGoodDirOrigVec,sTime)
-            % GOODDIRPROP2STR - brings the elements of good direction
-            %                   vector to the initial tolerance 
-            %                   GOOD_DIR_DISP_TOL and displays 
-            %                   N_GOOD_DIR_DISP_DIGITS digits
-            %      
-            % Input:
-            %   regular:
-            %       lsGoodDirOrigVec:double[dim, 1]  - the initial good 
-            %                                          direction vector
-            %
-            %       sTime:double[1, 1] - specific point of time which is 
-            %                            best suited to describe good 
-            %                            direction
-            %
-            % Output:
-            %   None.
-            %
             import gras.ellapx.smartdb.rels.EllTubeTouchCurveProjBasic;
             nGoodDirDispDigits=EllTubeTouchCurveProjBasic.N_GOOD_DIR_DISP_DIGITS;
             goodDirDispTol=EllTubeTouchCurveProjBasic.GOOD_DIR_DISP_TOL;
@@ -175,42 +78,15 @@ classdef EllTubeTouchCurveBasic<handle
         end
         %
         function checkFieldList=getTouchCurveDependencyCheckedFieldList(~)
-            % GETTOUCHCURVEDEPENDENCYCHECKEDFIELDLIST - gets the list of
-            %                                           fields
-            %
-            % Input:
-            %   None.
-            %
-            % Output:
-            %   checkFieldList:cell->char[, 4] - list of fields
-            %
             checkFieldList={'xTouchCurveMat','xTouchOpCurveMat',...
                 'xsTouchVec','xsTouchOpVec'};
         end
         %
         function depFieldList=getProblemDependencyFieldList(~)
-            % GETPROBLEMDEPENDENCYFIELDLIST - 
-            %
-            % Input:
-            %   None.
-            %
-            % Output:
-            %   depFieldList:cell->char[1, 1] - 
-            %
             depFieldList={'MArray'};
         end
         %
         function fCheckFieldTransfList=getTouchCurveDependencyCheckTransFuncList(~)
-            % GETTOUCHCURVEDEPENDENCYCHECKTRANSFUNCLIST - gets list of
-            %                                             functions which
-            %                                             are used for 
-            %
-            % Input:
-            %   None.
-            %
-            % Output:
-            %   fCheckFieldTransfList:cellfun[, 4] - list of functions
-            %
             fCheckFieldTransfList={...
                 @(fieldVal,scaleFactor,aMat,indSTime)(fieldVal-aMat)./scaleFactor,...
                 @(fieldVal,scaleFactor,aMat,indSTime)(fieldVal-aMat)./scaleFactor,...
@@ -219,34 +95,11 @@ classdef EllTubeTouchCurveBasic<handle
         end
         %
         function fieldNameList=getProjectionDependencyFieldList(~)
-            % GETPROJECTIONDEPENDENCYFIELDLIST - gets the names of fields 
-            %                                    on which depends the
-            %                                    projection of touch point
-            %                                    curves
-            %
-            % Input:
-            %   None.
-            %
-            % Output:
-            %   fieldNameList:cell->char[, 4] - list of field names
-            %
             fieldNameList={'timeVec','sTime','dim','indSTime'};
         end
         %
         function [valFieldNameList,touchFieldNameList]=...
                 getPossibleNanFieldList(~)
-            % GETPOSSIBLENANFIELDLIST - gets names of fields which can
-            %                           contain NAN values
-            %
-            % Input:
-            %   None.
-            %
-            % Output:
-            %   valFieldNameList:cell->char[, 4] - list of field names
-            %
-            %   touchFieldNameList:cell->char[, 4] - list of indices
-            %
-            %
             valFieldNameList={'xsTouchVec','xTouchCurveMat',...
                 'xsTouchOpVec','xTouchOpCurveMat'};
             touchFieldNameList={'isLsTouch','isLtTouchVec','isLsTouch',...
@@ -254,15 +107,6 @@ classdef EllTubeTouchCurveBasic<handle
         end
         %
         function checkDataConsistency(self)
-            % CHECKDATACONSISTENCY - checks data consistency of
-            %                        EllTubeTouchCurveBasic object.
-            %
-            % Input:
-            %   None.
-            %
-            % Output:
-            %   None.
-            %
             import modgen.common.throwerror;
             import gras.gen.SquareMatVector;
             import modgen.common.num2cell;
@@ -356,16 +200,6 @@ classdef EllTubeTouchCurveBasic<handle
     end
     methods (Access=private)
         function checkTouchCurveIndependence(self,rel)
-            % CHECKSTOUCHCURVEINDEPENDENCE - checks the touch point curve's
-            %                                fields for independence
-            %
-            % Input:
-            %   regular:
-            %       rel:  - smartdb.relations.DynamicRelation object
-            %
-            % Output:
-            %   None.
-            %
             import modgen.common.absrelcompare;
             %
             dependencyFieldList=self.getTouchCurveDependencyFieldList;
