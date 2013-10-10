@@ -5,7 +5,7 @@ classdef MPTController < elltool.exttbx.IExtTBXController
         
     end
     methods
-        function fullSetup(self,absTol,relTol,isVerbose)   
+        function fullSetup(self,absTol,relTol,isVerbose)
             self.checkIfOnPath();
             if isempty(whos('global',self.MPT_GLOBAL_OPT))
                 if isVerbose
