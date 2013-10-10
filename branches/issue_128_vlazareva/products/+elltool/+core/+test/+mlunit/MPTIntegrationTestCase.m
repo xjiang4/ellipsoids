@@ -211,8 +211,9 @@ classdef MPTIntegrationTestCase < mlunitext.test_case
             %
             %polytope lies in ellipsoid
             ell5 = ellipsoid(eye(2));
-            poly5 = polytope([eye(2); -eye(2)], 1/4*ones(4,1));
-            expEll = ellipsoid(1/16*eye(2));
+            poly5 = polytope([eye(2); eye(2)], 1/4*ones(4,1));
+            expEll = ellipsoid([-0.362623; -0.362623],...
+                [0.375307 -0.13955;-0.13955 0.375307]);
             ellPolyIA5 = intersection_ia(ell5,poly5);
             mlunitext.assert(eq(expEll,ellPolyIA5));
             %
