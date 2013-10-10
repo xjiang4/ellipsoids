@@ -35,7 +35,7 @@ classdef CVXController < elltool.exttbx.IExtTBXController
         function isPositive=isSetUp(self)
             if self.isOnPath()
                 cvxConfFileName=[ prefdir, filesep,...
-                    self.CVX_PREF_FILE_NAME]
+                    self.CVX_PREF_FILE_NAME];
                 isPositive=modgen.system.ExistanceChecker.isFile(...
                     cvxConfFileName);
             else
