@@ -1,9 +1,9 @@
 classdef ellipsoid < elltool.core.AEllipsoid
     %ELLIPSOID class of ellipsoids
-    properties (Access=private,Hidden)
-        centerVec      
-        absTol
-        relTol
+    properties (Access=private)
+        %centerVec      
+        %absTol
+        %relTol
         nPlot2dPoints
         nPlot3dPoints
     end
@@ -287,49 +287,10 @@ classdef ellipsoid < elltool.core.AEllipsoid
         end
     end
     %
-    methods (Access=private)
-        function checkIfScalar(self,errMsg)
-            if nargin<2
-                errMsg='input argument must be single ellipsoid.';
-            end
-            modgen.common.checkvar(self,'isscalar(x)',...
-                'errorMessage',errMsg);
-        end
-        
-        function isArrEq = isMatEqualInternal(self,aArr,bArr)
-            % ISMATEQUALINTERNAL - returns isArrEq - logical 1(true) if
-            %           multidimensional arrays aArr and bArr are equal,
-            %           and logical 0(false) otherwise, comparing them
-            %           using absTol and relTol fields of the object self
-            %
-            % Input:
-            %   regular:
-            %      self: ellipsoid[1,1]
-            %      aArr: double[nDim1,nDim2,...,nDimk]
-            %      bArr: double[nDim1,nDim2,...,nDimk]
-            %
-            % Output:
-            %   isArrEq: logical[1,1]
-            %
-            %
-            %
-            % $Author: Victor Gribov <illuminati1606@gmail.com> $   $Date: 28-05-2013$
-            % $Copyright: Moscow State University,
-            %             Faculty of Computational Mathematics and Cybernetics,
-            %             Science, System Analysis Department 2012-2013 $
-            self.checkIfScalar();
-            absTol = self.absTol;
-            if any(abs(aArr(:))>absTol) || any(abs(bArr(:))>absTol)
-                isArrEq = abs(2*(aArr-bArr)./(aArr+bArr));
-                isArrEq = all(isArrEq(:)<=self.relTol);
-            else
-                isArrEq = true;
-            end
-        end
-        
+    methods (Access=private)               
         [propMat, propVal] = getProperty(hplaneMat,propName, fPropFun)
-        %[bpMat, fVec] = getGridByFactor(ellObj,factorVec)       
-        %doesContain = doesContainPoly(ellArr,polytope,varagin)
+        [bpMat, fVec] = getGridByFactor(ellObj,factorVec)       
+        doesContain = doesContainPoly(ellArr,polytope,varagin)
     end
     
     methods(Access = protected)
@@ -342,7 +303,7 @@ classdef ellipsoid < elltool.core.AEllipsoid
     end
     
     methods(Static,Access = private)
-        regQMat = regularize(qMat,absTol)
+        
         clrDirsMat = rm_bad_directions(q1Mat, q2Mat, dirsMat,absTol)
         [isBadDirVec,pUniversalVec] = isbaddirectionmat(q1Mat, q2Mat,...
             dirsMat,absTol)
@@ -353,7 +314,7 @@ classdef ellipsoid < elltool.core.AEllipsoid
         [ bpMat, fMat] = ellbndr_2dmat(nPoints, cenVec, qMat,absTol)
     end
     
-    methods (Static, Access = protected)
+    methods (Static, Access = public)
         function SComp = formCompStruct(SEll, SFieldNiceNames, absTol, isPropIncluded)
             if (~isempty(SEll.shapeMat))
                 SComp.(SFieldNiceNames.shapeMat) = gras.la.sqrtmpos(SEll.shapeMat, absTol);

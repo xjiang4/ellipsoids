@@ -6,9 +6,7 @@ classdef ADispStructTC < mlunitext.test_case
     %            Faculty of Computational Mathematics
     %            and Computer Science,
     %            System Analysis Department 2013 $
-    properties
-        ellFactoryObj
-    end
+
     methods (Abstract, Static, Access = protected)
         getToStructObj()
         getToStructStruct()
@@ -107,9 +105,5 @@ classdef ADispStructTC < mlunitext.test_case
             end
         end
     end
-    methods
-        function self = set_up_param(self, ellFactoryObj)
-            self.ellFactoryObj = ellFactoryObj;
-        end
-    end
+
 end

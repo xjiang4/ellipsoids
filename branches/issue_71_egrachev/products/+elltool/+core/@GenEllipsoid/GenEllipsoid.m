@@ -36,11 +36,11 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
     %            System Analysis Department 2012 $
     %
     properties (Access = private)
-        centerVec
+        %centerVec
         diagMat
         eigvMat
-        absTol
-        relTol
+        %absTol
+        %relTol
     end
     properties (Access = protected, Dependent)
         shapeMat
@@ -364,39 +364,31 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
         end             
     end
     
-    methods (Access=private)
-        function SCompArr=toStruct(ellArr)
-            SCompArr=arrayfun(@formStruct,ellArr);
-            function SComp=formStruct(ellObj)
-                diagMat=ellObj.diagMat;
-                if isempty(diagMat)
-                    qMat=[];
-                    qInfMat=[];
-                    centerVec=[];
-                    isnInfVec=logical.empty(0,0);
-                else
-                    eigvMat=ellObj.eigvMat;
-                    centerVec=ellObj.centerVec;
-                    diagMat=ellObj.diagMat;
-                    diagVec=diag(diagMat);
-                    isnInfVec=diagVec~=Inf;
-                    eigvFinMat=eigvMat(:,isnInfVec);
-                    qMat=eigvFinMat*diag(diagVec(isnInfVec))*eigvFinMat.';
-                    isInfVec=~isnInfVec;
-                    eigvInfMat=eigvMat(:,isInfVec);
-                    qInfMat=eigvInfMat*eigvInfMat.';
-                end
-                SComp=struct('Q',qMat,'q',centerVec.','QInf',qInfMat);
-            end
-        end
-        
-        function checkIfScalar(self,errMsg)
-            if nargin<2
-                errMsg='input argument must be single ellipsoid.';
-            end
-            modgen.common.checkvar(self,'isscalar(x)',...
-                'errorMessage',errMsg);
-        end
+    methods %(Access=private)
+%         function SCompArr=toStruct(ellArr, isPropIncluded)
+%             SCompArr=arrayfun(@formStruct,ellArr, isPropIncluded);
+%             function SComp=formStruct(ellObj, isPropIncluded)
+%                 diagMat=ellObj.diagMat;
+%                 if isempty(diagMat)
+%                     qMat=[];
+%                     qInfMat=[];
+%                     centerVec=[];
+%                     isnInfVec=logical.empty(0,0);
+%                 else
+%                     eigvMat=ellObj.eigvMat;
+%                     centerVec=ellObj.centerVec;
+%                     diagMat=ellObj.diagMat;
+%                     diagVec=diag(diagMat);
+%                     isnInfVec=diagVec~=Inf;
+%                     eigvFinMat=eigvMat(:,isnInfVec);
+%                     qMat=eigvFinMat*diag(diagVec(isnInfVec))*eigvFinMat.';
+%                     isInfVec=~isnInfVec;
+%                     eigvInfMat=eigvMat(:,isInfVec);
+%                     qInfMat=eigvInfMat*eigvInfMat.';
+%                 end
+%                 SComp=struct('Q',qMat,'q',centerVec.','QInf',qInfMat);
+%             end
+%         end           
     end
     
     methods(Access = protected)
@@ -418,7 +410,7 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
         end
     end
 %         
-    methods (Static,Access = private)
+    methods (Static,Access = private)        
         [isOk, pPar] = getIsGoodDirForMat(ellQ1Mat,ellQ2Mat,dirVec,absTol)
         sqMat = findSqrtOfMatrix(qMat,absTol)
         isBigger=checkBigger(ellObj1,ellObj2,nDimSpace,absTol)
@@ -435,5 +427,22 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
         [ resQMat diagQVec ] = findDiffINFC(fMethod, ellObj1,...
             ellObj2,curDirVec,isInf1Vec,isInfForFinBas,absTol)
         resQMat=findDiffIaND(ellQ1Mat, ellQ2Mat,curDirVec,absTol)
+    end
+    
+    methods (Static, Access = public)
+        function SComp = formCompStruct(SEll, SFieldNiceNames, absTol, isPropIncluded)
+            if (~isempty(SEll.shapeMat))
+                SComp.(SFieldNiceNames.shapeMat) = gras.la.sqrtmpos(SEll.shapeMat, absTol);
+            else
+                SComp.(SFieldNiceNames.shapeMat) = [];
+            end
+            SComp.(SFieldNiceNames.centerVec) = SEll.centerVec;
+            if (isPropIncluded)
+                SComp.(SFieldNiceNames.absTol) = SEll.absTol;
+                SComp.(SFieldNiceNames.relTol) = SEll.relTol;
+                SComp.(SFieldNiceNames.nPlot2dPoints) = SEll.nPlot2dPoints;
+                SComp.(SFieldNiceNames.nPlot3dPoints) = SEll.nPlot3dPoints;
+            end
+        end
     end
 end

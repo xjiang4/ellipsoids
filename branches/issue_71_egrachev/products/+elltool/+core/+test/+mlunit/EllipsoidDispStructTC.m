@@ -7,7 +7,14 @@ classdef EllipsoidDispStructTC < elltool.core.test.mlunit.ADispStructTC
     %            and Computer Science,
     %            System Analysis Department 2013 $
     
-    
+    properties
+        ellFactoryObj
+    end
+    methods 
+        function self = set_up_param(self, ellFactoryObj)
+            self.ellFactoryObj = ellFactoryObj;
+        end
+    end
     methods (Access = protected, Static)
         function objArrCVec = getToStructObj(self)
             objArrCVec = {self.ellFactoryObj.create([1, 1]', eye(2)),...

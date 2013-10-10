@@ -32,7 +32,7 @@ function minEigArr = mineig(inpEllArr)
 
 import elltool.conf.Properties;
 
-self.checkIsMe(inpEllArr);
+%self.checkIsMe(inpEllArr);
 modgen.common.checkvar(inpEllArr,'~any(x(:).isEmpty())',...
     'errorTag','wrongInput:emptyEllipsoid','errorMessage',...
     'input argument contains empty ellipsoid');

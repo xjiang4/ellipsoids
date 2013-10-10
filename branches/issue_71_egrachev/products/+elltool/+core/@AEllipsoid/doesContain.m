@@ -100,7 +100,7 @@ else
 end
 %
     function res = checkContaintment(firstIndex,secondIndex)
-        if isa(secondObjArr,'ellipsoid')
+        if isa(secondObjArr,'ellipsoid') || isa(secondObjArr,'elltool.core.GenEllipsoid')
             res = l_check_containment(firstEllArr(firstIndex),...
                 secondObjArr(secondIndex));
         else
@@ -138,10 +138,12 @@ persistent logger;
 [fstEllCentVec, fstEllShMat] = double(firstEll);
 [secEllCentVec, secEllShMat] = double(secondEll);
 if isdegenerate(firstEll)
-    fstEllShMat = ellipsoid.regularize(fstEllShMat,firstEll.absTol);
+    %fstEllShMat = ellipsoid.regularize(fstEllShMat,firstEll.absTol);
+    fstEllShMat = firstEll.regularize(fstEllShMat,firstEll.absTol);
 end
 if isdegenerate(secondEll)
-    secEllShMat = ellipsoid.regularize(secEllShMat,secondEll.absTol);
+    %secEllShMat = ellipsoid.regularize(secEllShMat,secondEll.absTol);
+    secEllShMat = secondEll.regularize(secEllShMat,secondEll.absTol);
 end
 
 invFstEllShMat = ell_inv(fstEllShMat);
