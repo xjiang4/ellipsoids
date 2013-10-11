@@ -55,7 +55,7 @@ function [dimArr, rankArr] = dimension(myEllArr)
 
 import elltool.conf.Properties;
 
-myEllArr.checkIsMe(myEllArr);
+%myEllArr.checkIsMe(myEllArr);
 
 dimArr = arrayfun(@(x) size(x.shapeMat,1), myEllArr);
 if nargout > 1

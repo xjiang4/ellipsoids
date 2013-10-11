@@ -11,14 +11,20 @@ classdef AEllipsoid < handle
     end
     
     %methods (Access = protected, Abstract, Static)
-    methods (Access = public, Abstract, Static)
-        SComp = formCompStruct(SEll, SFieldNiceNames, absTol, isPropIncluded)     
+    methods (Access = protected, Abstract, Static)
+        %SComp = formCompStruct(SEll, SFieldNiceNames, absTol, isPropIncluded)     
     end   
+    
+    methods (Abstract, Static)
+        ellArr = fromRepMat(varargin)
+        ellArr = fromStruct(SEllArr)
+        polEllArr = polar(ellArr)
+    end
     
     methods (Abstract)
         getCopy(ellArr)
         checkIsMe(ellArr, varargin)   
-        ellArr = fromRepMat(varargin)
+        
     end
     methods (Abstract, Access = protected)
         checkDoesContainArgs(fstEllArr,secObjArr)
@@ -26,6 +32,21 @@ classdef AEllipsoid < handle
     
     methods (Static, Access = protected)
         regQMat = regularize(qMat,absTol)
+        
+        function SComp = formCompStruct(SEll, SFieldNiceNames, absTol, isPropIncluded)
+            if (~isempty(SEll.shapeMat))
+                SComp.(SFieldNiceNames.shapeMat) = gras.la.sqrtmpos(SEll.shapeMat, absTol);
+            else
+                SComp.(SFieldNiceNames.shapeMat) = [];
+            end
+            SComp.(SFieldNiceNames.centerVec) = SEll.centerVec;
+            if (isPropIncluded)
+                SComp.(SFieldNiceNames.absTol) = SEll.absTol;
+                SComp.(SFieldNiceNames.relTol) = SEll.relTol;
+                SComp.(SFieldNiceNames.nPlot2dPoints) = SEll.nPlot2dPoints;
+                SComp.(SFieldNiceNames.nPlot3dPoints) = SEll.nPlot3dPoints;
+            end
+        end
     end
         
     methods
@@ -209,7 +230,5 @@ classdef AEllipsoid < handle
                     SEll2Array, tolerance);
             end
         end        
-    end
-    
-    
+    end   
 end

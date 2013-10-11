@@ -4,8 +4,8 @@ classdef ellipsoid < elltool.core.AEllipsoid
         %centerVec      
         %absTol
         %relTol
-        nPlot2dPoints
-        nPlot3dPoints
+        %nPlot2dPoints
+        %nPlot3dPoints
     end
     properties (Access = protected)
         shapeMat
@@ -314,20 +314,20 @@ classdef ellipsoid < elltool.core.AEllipsoid
         [ bpMat, fMat] = ellbndr_2dmat(nPoints, cenVec, qMat,absTol)
     end
     
-    methods (Static, Access = public)
-        function SComp = formCompStruct(SEll, SFieldNiceNames, absTol, isPropIncluded)
-            if (~isempty(SEll.shapeMat))
-                SComp.(SFieldNiceNames.shapeMat) = gras.la.sqrtmpos(SEll.shapeMat, absTol);
-            else
-                SComp.(SFieldNiceNames.shapeMat) = [];
-            end
-            SComp.(SFieldNiceNames.centerVec) = SEll.centerVec;
-            if (isPropIncluded)
-                SComp.(SFieldNiceNames.absTol) = SEll.absTol;
-                SComp.(SFieldNiceNames.relTol) = SEll.relTol;
-                SComp.(SFieldNiceNames.nPlot2dPoints) = SEll.nPlot2dPoints;
-                SComp.(SFieldNiceNames.nPlot3dPoints) = SEll.nPlot3dPoints;
-            end
-        end
+    methods (Access = protected, Static)
+%         function SComp = formCompStruct(SEll, SFieldNiceNames, absTol, isPropIncluded)
+%             if (~isempty(SEll.shapeMat))
+%                 SComp.(SFieldNiceNames.shapeMat) = gras.la.sqrtmpos(SEll.shapeMat, absTol);
+%             else
+%                 SComp.(SFieldNiceNames.shapeMat) = [];
+%             end
+%             SComp.(SFieldNiceNames.centerVec) = SEll.centerVec;
+%             if (isPropIncluded)
+%                 SComp.(SFieldNiceNames.absTol) = SEll.absTol;
+%                 SComp.(SFieldNiceNames.relTol) = SEll.relTol;
+%                 SComp.(SFieldNiceNames.nPlot2dPoints) = SEll.nPlot2dPoints;
+%                 SComp.(SFieldNiceNames.nPlot3dPoints) = SEll.nPlot3dPoints;
+%             end
+%         end
     end
 end

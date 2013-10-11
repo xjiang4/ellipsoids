@@ -361,7 +361,7 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
         %
                 
             diagMat=self.diagMat;
-        end             
+        end     
     end
     
     methods %(Access=private)
@@ -408,6 +408,9 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
             import elltool.core.GenEllipsoid;
             tol=GenEllipsoid.CHECK_TOL;
         end
+        
+        ellArr = fromRepMat(varargin)
+        ellArr = fromStruct(SEllArr)
     end
 %         
     methods (Static,Access = private)        
@@ -429,20 +432,20 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
         resQMat=findDiffIaND(ellQ1Mat, ellQ2Mat,curDirVec,absTol)
     end
     
-    methods (Static, Access = public)
-        function SComp = formCompStruct(SEll, SFieldNiceNames, absTol, isPropIncluded)
-            if (~isempty(SEll.shapeMat))
-                SComp.(SFieldNiceNames.shapeMat) = gras.la.sqrtmpos(SEll.shapeMat, absTol);
-            else
-                SComp.(SFieldNiceNames.shapeMat) = [];
-            end
-            SComp.(SFieldNiceNames.centerVec) = SEll.centerVec;
-            if (isPropIncluded)
-                SComp.(SFieldNiceNames.absTol) = SEll.absTol;
-                SComp.(SFieldNiceNames.relTol) = SEll.relTol;
-                SComp.(SFieldNiceNames.nPlot2dPoints) = SEll.nPlot2dPoints;
-                SComp.(SFieldNiceNames.nPlot3dPoints) = SEll.nPlot3dPoints;
-            end
-        end
+    methods (Static, Access = protected)
+%         function SComp = formCompStruct(SEll, SFieldNiceNames, absTol, isPropIncluded)
+%             if (~isempty(SEll.shapeMat))
+%                 SComp.(SFieldNiceNames.shapeMat) = gras.la.sqrtmpos(SEll.shapeMat, absTol);
+%             else
+%                 SComp.(SFieldNiceNames.shapeMat) = [];
+%             end
+%             SComp.(SFieldNiceNames.centerVec) = SEll.centerVec;
+%             if (isPropIncluded)
+%                 SComp.(SFieldNiceNames.absTol) = SEll.absTol;
+%                 SComp.(SFieldNiceNames.relTol) = SEll.relTol;
+%                 SComp.(SFieldNiceNames.nPlot2dPoints) = SEll.nPlot2dPoints;
+%                 SComp.(SFieldNiceNames.nPlot3dPoints) = SEll.nPlot3dPoints;
+%             end
+%         end
     end
 end

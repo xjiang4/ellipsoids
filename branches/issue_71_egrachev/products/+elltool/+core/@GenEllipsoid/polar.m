@@ -43,14 +43,14 @@ function polEllArr = polar(ellArr)
 
 import modgen.common.throwerror
 
-ellArr.checkIsMe(ellArr);
+%ellArr.checkIsMe(ellArr);
 modgen.common.checkvar(ellArr,'~any(isdegenerate(x))',...
     'errorTag','degenerateEllipsoid',...
     'errorMessage','The resulting ellipsoid is not bounded');
 
 sizeCVec = num2cell(size(ellArr));
 %polEllArr(sizeCVec{:}) = ellipsoid;
-polEllArr(sizeCVec{:}) = elltool.core.AEllipsoid;
+polEllArr(sizeCVec{:}) = elltool.core.GenEllipsoid;
 arrayfun(@(x) fSinglePolar(x), 1:numel(ellArr));
 
     function fSinglePolar(index)
