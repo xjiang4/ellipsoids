@@ -304,12 +304,7 @@ classdef ellipsoid < elltool.core.AEllipsoid
     
     methods(Static,Access = private)
         
-        clrDirsMat = rm_bad_directions(q1Mat, q2Mat, dirsMat,absTol)
-        [isBadDirVec,pUniversalVec] = isbaddirectionmat(q1Mat, q2Mat,...
-            dirsMat,absTol)
         [supArr, bpMat] = rhomat(ellShapeMat,ellCenterVec,absTol, dirsMat)
-        [diffBoundMat, isPlotCenter3d] = calcdiffonedir(fstEll,secEll,...
-            lMat,pUniversalVec,isGoodDirVec)
         [ bpMat, fMat] = ellbndr_3dmat(nPoints, cenVec, qMat,absTol)
         [ bpMat, fMat] = ellbndr_2dmat(nPoints, cenVec, qMat,absTol)
     end

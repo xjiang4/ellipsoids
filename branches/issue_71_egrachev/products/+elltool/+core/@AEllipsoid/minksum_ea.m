@@ -66,7 +66,7 @@ import elltool.logging.Log4jConfigurator;
 
 persistent logger;
 
-inpEllArr.checkIsMe(inpEllArr,'first');
+%inpEllArr.checkIsMe(inpEllArr,'first');
 nDimsInpEllArr = dimension(inpEllArr);
 
 [nDims, nCols] = size(dirMat);
@@ -122,7 +122,7 @@ end
                     logger.info('Degenerate ellipsoid.');
                     logger.info('Regularizing...')
                 end
-                shMat = ellipsoid.regularize(shMat, absTol);
+                shMat = elltool.core.AEllipsoid.regularize(shMat, absTol);
             end
             fstCoef = realsqrt(dirVec'*shMat*dirVec);
             subShMat = subShMat + ((1/fstCoef) * shMat);

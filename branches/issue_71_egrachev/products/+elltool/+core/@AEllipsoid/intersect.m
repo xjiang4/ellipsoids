@@ -129,9 +129,9 @@ persistent logger;
 
 myEllArr.checkIsMe(myEllArr,'first');
 modgen.common.checkvar(objArr,@(x) isa(x, 'ellipsoid') ||...
-    isa(x, 'hyperplane') || isa(x, 'polytope'),...
+    isa(x, 'hyperplane') || isa(x, 'polytope') || isa(x, 'elltool.core.GenEllipsoid'),...
     'errorTag','wrongInput', 'errorMessage',...
-    'second input argument must be ellipsoid,hyperplane or polytope.');
+    'second input argument must be ellipsoid, generalized ellipsoid,hyperplane or polytope.');
 
 if (nargin < 3) || ~(ischar(mode))
     mode = 'u';
@@ -157,6 +157,15 @@ if mode == 'u'
     res = cellfun(@(x) double(any(x(:) <= absTolArr(:))),auxArr);
     status = [];
 elseif isa(objArr, 'ellipsoid')
+   
+    fCheckDims(dimension(myEllArr),dimension(objArr));
+   
+    if Properties.getIsVerbose()
+        logger.info('Invoking CVX...\n');
+    end
+   
+    [resArr statusArr] = arrayfun(@(x) qcqp(myEllArr, x), objArr);
+elseif isa(objArr, 'elltool.core.GenEllipsoid')
    
     fCheckDims(dimension(myEllArr),dimension(objArr));
    

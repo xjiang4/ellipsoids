@@ -72,7 +72,7 @@ else
 end
     
     function ellsVec = getEllArr(ellsArr)
-        if isa(ellsArr, 'ellipsoid')
+        if isa(ellsArr, 'ellipsoid') || isa(ellsArr, 'elltool.core.GenEllipsoid')
             cnt    = numel(ellsArr);
             ellsVec = reshape(ellsArr, cnt, 1);
         end

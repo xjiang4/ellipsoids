@@ -70,8 +70,8 @@ import elltool.logging.Log4jConfigurator;
 
 persistent logger;
 
-fstEll.checkIsMe(fstEll,'first');
-secEll.checkIsMe(secEll,'second');
+%fstEll.checkIsMe(fstEll,'first');
+%secEll.checkIsMe(secEll,'second');
 checkmultvar('isscalar(x1)&&isscalar(x2)',2,fstEll,secEll,...
     'errorTag','wrongInput','errorMessage',...
     'first and second arguments must be single ellipsoids.')
@@ -97,14 +97,14 @@ checkmultvar('(x1==x2)',2,dimension(fstEll),size(directionsMat, 1),...
 centVec = fstEll.centerVec - secEll.centerVec;
 fstEllShMat = fstEll.shapeMat;
 if isdegenerate(fstEll)
-    fstEllShMat = ellipsoid.regularize(fstEllShMat,fstEll.absTol);
+    fstEllShMat = elltool.core.AEllipsoid.regularize(fstEllShMat,fstEll.absTol);
 end
 secEllShMat = secEll.shapeMat;
 if isdegenerate(secEll)
-    secEllShMat = ellipsoid.regularize(secEllShMat,secEll.absTol);
+    secEllShMat = elltool.core.AEllipsoid.regularize(secEllShMat,secEll.absTol);
 end
 absTolVal=min(fstEll.absTol, secEll.absTol);
-directionsMat  = ellipsoid.rm_bad_directions(fstEllShMat, ...
+directionsMat  = elltool.core.AEllipsoid.rm_bad_directions(fstEllShMat, ...
     secEllShMat, directionsMat,absTolVal);
 nDirs  = size(directionsMat, 2);
 if nDirs < 1

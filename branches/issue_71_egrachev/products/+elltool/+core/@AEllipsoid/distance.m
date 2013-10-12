@@ -83,6 +83,9 @@ if isa(objArr, 'double')
 elseif isa(objArr, 'ellipsoid')
     [distValArray, statusArray] = computeEllEllDist(ellObjArr, objArr,...
         isFlagOn);
+elseif isa(objArr, 'elltool.core.GenEllipsoid')
+    [distValArray, statusArray] = computeEllEllDist(ellObjArr, objArr,...
+        isFlagOn);
 elseif isa(objArr, 'hyperplane')
     [distValArray, statusArray] = computeEllHpDist(ellObjArr, objArr,...
         isFlagOn);
@@ -115,7 +118,7 @@ function [ellDist timeOfCalculation] = findEllMetDistance(ellObj1,ellObj2,nMaxIt
 [cen1Vec ellQ1Mat]=double(ellObj1);
 [cen2Vec ellQ2Mat]=double(ellObj2);
 if rank(ellQ1Mat) < size(ellQ1Mat, 2)
-    ellQ1Mat = ellipsoid.regularize(ellQ1Mat,ellObj1.absTol);
+    ellQ1Mat = elltool.core.AEllipsoid.regularize(ellQ1Mat,ellObj1.absTol);
 end
 sqrQ1Mat=gras.la.sqrtmpos(ellQ1Mat,ellObj1.absTol);
 sqrInvQ1Mat=sqrQ1Mat\eye(size(sqrQ1Mat));
@@ -152,10 +155,10 @@ tic;
 [ellCenter1Vec, ellQ1Mat] = double(ellObj1);
 [ellCenter2Vec, ellQ2Mat] = double(ellObj2);
 if rank(ellQ1Mat) < size(ellQ1Mat, 2)
-    ellQ1Mat = ellipsoid.regularize(ellQ1Mat,ellObj1.absTol);
+    ellQ1Mat = elltool.core.AEllipsoid.regularize(ellQ1Mat,ellObj1.absTol);
 end
 if rank(ellQ2Mat) < size(ellQ2Mat, 2)
-    ellQ2Mat = ellipsoid.regularize(ellQ2Mat,ellObj2.absTol);
+    ellQ2Mat = elltool.core.AEllipsoid.regularize(ellQ2Mat,ellObj2.absTol);
 end
 
 %
@@ -257,7 +260,7 @@ import modgen.common.throwerror
 tic;
 [ellCenterVec, ellQMat] = double(ellObj);
 if rank(ellQMat) < size(ellQMat, 2)
-    ellQMat = ellipsoid.regularize(ellQMat,absTol);
+    ellQMat = elltool.core.AEllipsoid.regularize(ellQMat,absTol);
 end
 ellQMat=ellQMat\eye(size(ellQMat));
 vectorVec=vectorVec-ellCenterVec;
@@ -608,7 +611,7 @@ absTol=ellObj.getAbsTol();
 [qPar, QPar] = parameters(ellObj);
 [aMat, bVec] = double(polObj);
 if size(QPar, 2) > rank(QPar)
-    QPar = ellipsoid.regularize(QPar,absTol);
+    QPar = elltool.core.AEllipsoid.regularize(QPar,absTol);
 end
 QPar  = ell_inv(QPar);
 QPar  = 0.5*(QPar + QPar');

@@ -164,10 +164,11 @@ if Properties.getIsVerbose()
     end
     logger.info('Invoking CVX...');
 end
+
 cvx_begin sdp
-variable cvxxVec(1, 1)
-AMat <= cvxxVec*BMat
-cvxxVec >= 0
+    variable cvxxVec(1, 1)
+    AMat <= cvxxVec*BMat
+    cvxxVec >= 0
 cvx_end
 
 if strcmp(cvx_status,'Failed')

@@ -24,7 +24,7 @@ classdef AEllipsoid < handle
     methods (Abstract)
         getCopy(ellArr)
         checkIsMe(ellArr, varargin)   
-        
+        res = isInside(ellArr, objArr)        
     end
     methods (Abstract, Access = protected)
         checkDoesContainArgs(fstEllArr,secObjArr)
@@ -32,6 +32,11 @@ classdef AEllipsoid < handle
     
     methods (Static, Access = protected)
         regQMat = regularize(qMat,absTol)
+        [isBadDirVec,pUniversalVec] = isbaddirectionmat(q1Mat, q2Mat,...
+            dirsMat,absTol)
+        clrDirsMat = rm_bad_directions(q1Mat, q2Mat, dirsMat,absTol)
+        [diffBoundMat, isPlotCenter3d] = calcdiffonedir(fstEll,secEll,...
+            lMat,pUniversalVec,isGoodDirVec)
         
         function SComp = formCompStruct(SEll, SFieldNiceNames, absTol, isPropIncluded)
             if (~isempty(SEll.shapeMat))

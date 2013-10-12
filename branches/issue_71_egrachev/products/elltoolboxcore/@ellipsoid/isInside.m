@@ -43,7 +43,9 @@ import modgen.common.checkmultvar;
 import modgen.common.throwerror;
 %
 %Checking arguments
+
 ellipsoid.checkIsMe(ellArr,'first');
+
 checkvar(objArr,@(x) isa(x,'polytope') || isa(x,'ellipsoid'),...
     'wrongInput','errorMessage',...
     'second argument must be vector of ellipsoids or polytopes.');

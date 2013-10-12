@@ -153,6 +153,7 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
             import gras.la.ismatsymm;
             import gras.la.ismatposdef;
             %
+            
             absTol=ellObj.CHECK_TOL;
             %
             ellObj.absTol = absTol;

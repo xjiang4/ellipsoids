@@ -55,8 +55,8 @@ import elltool.logging.Log4jConfigurator;
 
 persistent logger;
 
-inpEllArr.checkIsMe(inpEllArr,'first');
-inpEll.checkIsMe(inpEll,'second');
+%inpEllArr.checkIsMe(inpEllArr,'first');
+%inpEll.checkIsMe(inpEll,'second');
 
 absTol=inpEll.getAbsTol();
 
