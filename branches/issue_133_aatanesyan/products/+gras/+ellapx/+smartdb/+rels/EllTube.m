@@ -232,31 +232,40 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
     end
     methods (Static)
         function ellTubeRel=fromQArrays(QArrayList,aMat,varargin)
-            % FROMQARRAYS  - creates a relation object using an array of ellipsoids,
-            %                described by the array of ellipsoid matrices and
-            %                array of ellipsoid centers.This method used default
-            %                scale factor.
+            % FROMQARRAYS creates nEllTubes ellipsoid tube objects using an
+            % array of ellipsoid matrices and an array of ellipsoid centers
+            % specified at any point of time from timeVec.
             %
             % Input:
             %   regular:
-            %     QArrayList: double[nDim1, nDim2, ..., nDimN] - array of ellipsoid
-            %         matrices
-            %     aMat: double[nDim1, nDim2, ..., nDimN] - array of ellipsoid centers
-            %
-            % Optional:
-            %    MArrayList:cell[1, nElem] - array of regularization ellipsoid matrices
-            %    timeVec:cell[1, m] - time vector
-            %    ltGoodDirArray:cell[1, nElem] - good direction at time s
-            %    sTime:double[1, 1] - time s
-            %    approxType:gras.ellapx.enums.EApproxType - type of approximation
-            %                 (external, internal, not defined)
-            %    approxSchemaName:cell[1,] - name of the schema
-            %    approxSchemaDescr:cell[1,] - description of the schema
-            %    calcPrecision:double[1, 1] - calculation precision
+            %       QArrayList: cell[1,nEllTubes] of double[nDim,nDim,nTimePoints] - 
+            %           cell of nEllTubes arrays of nTimePoints ellipsoid matrices of 
+            %           double[nDim,nDim] type. Each element from 
+            %           double[nDim,nDim,nTimePoints] array specifies double[nDim,nDim]
+            %           ellipsoid matrix at nTimePoint point of time. Here nTimePoints 
+            %           is number of elements in timeVec.
+            %       aMat: cell[1,nTimePoints] of double[1,nDim] - array of nTimePoints
+            %           ellipsoid centers. Each center is specified for nTimePoint 
+            %           point of time.
+            %       timeVec: cell[1,1] of double[1,nTimePoints] - time vector
+            %       ltGoodDirArray: cell[1,nEllTubes] of double[nDim, nTimePoints] - 
+            %           cell of nEllTubes arrays of nTimePoints good direction vectors
+            %           at any point of time from timeVec
+            %       sTime: double[1,1] - specific point of time from timeVec which is
+            %           best suited to describe good direction
+            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of 
+            %           approximation (external, internal, not defined)
+            %       approxSchemaName: cell[1,1] of char[1,] - name of the approximation
+            %           schema
+            %       approxSchemaDescr: cell[1,1] of char[1,] - description of the 
+            %           approximation schema
+            %       calcPrecision: double[1, 1] - calculation precision
             %
             % Output:
-            %    ellTubeRel: smartdb.relation.StaticRelation[1, 1] - constructed relation
-            %        object
+            %   ellTubeRel: cell[1,nEllTubes] of 
+            %       gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid tube
+            %       objects
+            %
             import gras.ellapx.smartdb.rels.EllTube;
             import gras.ellapx.smartdb.rels.EllTubeBasic;
             %
