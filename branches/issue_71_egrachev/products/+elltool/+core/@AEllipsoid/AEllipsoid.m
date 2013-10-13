@@ -24,7 +24,22 @@ classdef AEllipsoid < handle
     methods (Abstract)
         getCopy(ellArr)
         checkIsMe(ellArr, varargin)   
-        res = isInside(ellArr, objArr)        
+        res = isInside(ellArr, objArr)  
+        varargout = minkCommonAction(getEllArr,fCalcBodyTriArr,...
+            fCalcCenterTriArr,varargin)
+        [varargout] = minkdiff(varargin)
+        extApprEllVec = minkdiff_ea(fstEll, secEll, directionsMat)
+        intApprEllVec = minkdiff_ia(fstEll, secEll, directionsMat)
+        varargout = minkmp(varargin)
+        extApprEllVec = minkmp_ea(fstEll, secEll, sumEllArr, dirMat)
+        intApprEllVec = minkmp_ia(fstEll, secEll, sumEllArr, dirMat)
+        [varargout] = minkpm(varargin)
+        extApprEllVec = minkpm_ea(inpEllArr, inpEll, dirMat)
+        intApprEllVec = minkpm_ia(inpEllArr, inpEll, dirMat)
+        [varargout] = minksum(varargin)
+        extApprEllVec = minksum_ea(inpEllArr, dirMat)
+        intApprEllVec = minksum_ia(inpEllArr, dirMat)
+        
     end
     methods (Abstract, Access = protected)
         checkDoesContainArgs(fstEllArr,secObjArr)
@@ -34,6 +49,7 @@ classdef AEllipsoid < handle
         regQMat = regularize(qMat,absTol)
         [isBadDirVec,pUniversalVec] = isbaddirectionmat(q1Mat, q2Mat,...
             dirsMat,absTol)
+
         clrDirsMat = rm_bad_directions(q1Mat, q2Mat, dirsMat,absTol)
         [diffBoundMat, isPlotCenter3d] = calcdiffonedir(fstEll,secEll,...
             lMat,pUniversalVec,isGoodDirVec)
@@ -52,6 +68,12 @@ classdef AEllipsoid < handle
                 SComp.(SFieldNiceNames.nPlot3dPoints) = SEll.nPlot3dPoints;
             end
         end
+    end
+    
+    methods (Static)
+         %test
+        [isBadDirVec,pUniversalVec] = isbaddirection(fstEll, secEll, dirsMat,absTol)
+        %
     end
         
     methods

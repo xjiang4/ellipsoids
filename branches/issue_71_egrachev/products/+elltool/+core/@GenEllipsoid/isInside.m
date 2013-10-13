@@ -44,7 +44,7 @@ import modgen.common.throwerror;
 %
 %Checking arguments
 
-elltool.core.GenEllipsoid.checkIsMe(ellArr,'first');
+%elltool.core.GenEllipsoid.checkIsMe(ellArr,'first');
 
 checkvar(objArr,@(x) isa(x,'polytope') || isa(x,'elltool.core.GenEllipsoid'),...
     'wrongInput','errorMessage',...

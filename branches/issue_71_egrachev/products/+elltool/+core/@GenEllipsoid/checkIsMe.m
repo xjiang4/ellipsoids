@@ -26,7 +26,7 @@ function checkIsMe(ellArr,varargin)
     elseif nArgIn==2
         modgen.common.checkvar(ellArr,@(x) isa(x,'elltool.core.GenEllipsoid'),...
             'errorTag','wrongInput','errorMessage',...
-            [varargin{1}]);%, ' input argument must be elltool.core.GenEllipsoid.']);
+            [varargin{1}], ' input argument must be elltool.core.GenEllipsoid.');
     else
         modgen.common.checkvar(ellArr,@(x) isa(x,'elltool.core.GenEllipsoid'),varargin{:});
     end
