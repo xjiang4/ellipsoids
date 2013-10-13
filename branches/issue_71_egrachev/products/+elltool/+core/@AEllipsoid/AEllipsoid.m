@@ -49,6 +49,7 @@ classdef AEllipsoid < handle
         regQMat = regularize(qMat,absTol)
         [isBadDirVec,pUniversalVec] = isbaddirectionmat(q1Mat, q2Mat,...
             dirsMat,absTol)
+        [isBadDirVec,pUniversalVec] = isbaddirection(fstEll, secEll, dirsMat,absTol)
 
         clrDirsMat = rm_bad_directions(q1Mat, q2Mat, dirsMat,absTol)
         [diffBoundMat, isPlotCenter3d] = calcdiffonedir(fstEll,secEll,...
