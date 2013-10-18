@@ -64,7 +64,7 @@ collector can fit it properly into the toolbox manual.*
 %         Note: property names are case-insensitive!
 %
 %   optional:
-%       nRegExpected: numeric[1,1]/[1,2] - an expected number of regular
+%       nRegExpected: double[1,1]/[1,2] - an expected number of regular
 %          arguments/range of regular argument numbers. If the actual
 %          number doesn't mach the expected number an exception is thrown.
 %
