@@ -722,10 +722,10 @@ function compareForIsCII(self, test1EllVec, test2EllVec, myString, myResult)
     mlunitext.assert_equals(myResult, testRes);
 end
 function compareExpForIsBadDir(self, test1Ell, test2Ell, a1Mat, a2Mat,absTol)
-    isTestResVec = isbaddirection(test1Ell, test2Ell, a1Mat,absTol);
+    isTestResVec = self.ellFactoryObj.create.isbaddirection(test1Ell, test2Ell, a1Mat,absTol);
     isTestRes = all(isTestResVec);
     mlunitext.assert_equals(true, isTestRes);
-    isTestResVec = isbaddirection(test1Ell, test2Ell, a2Mat,absTol);
+    isTestResVec = self.ellFactoryObj.create.isbaddirection(test1Ell, test2Ell, a2Mat,absTol);
     isTestRes = any(isTestResVec);
     mlunitext.assert_equals(false, isTestRes);
 end

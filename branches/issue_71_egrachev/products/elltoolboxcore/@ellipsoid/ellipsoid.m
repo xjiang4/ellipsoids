@@ -1,16 +1,8 @@
 classdef ellipsoid < elltool.core.AEllipsoid
     %ELLIPSOID class of ellipsoids
-    properties (Access=private)
-        %centerVec      
-        %absTol
-        %relTol
-        %nPlot2dPoints
-        %nPlot3dPoints
-    end
     properties (Access = protected)
         shapeMat
-    end
-    
+    end    
     
     methods
         function set.shapeMat(self,shMat)
@@ -22,6 +14,9 @@ classdef ellipsoid < elltool.core.AEllipsoid
             self.shapeMat=shMat;
         end
         
+    end
+    %
+    methods
         function resArr=repMat(self,varargin)
             % REPMAT - is analogous to built-in repmat function with one exception - it
             %          copies the objects, not just the handles
@@ -194,6 +189,9 @@ classdef ellipsoid < elltool.core.AEllipsoid
                 'nPlot2dPoints','nPlot3dPoints'};
             [regParamList,propNameValList]=modgen.common.parseparams(...
                 varargin,NEEDED_PROP_NAME_LIST);
+            %[regParamList,propNameValList]=modgen.common.parseparams(...
+            %    varargin,NEEDED_PROP_NAME_LIST, 2);
+            %мб нужна 2 в конце
             [absTolVal, relTolVal,nPlot2dPointsVal,nPlot3dPointsVal] =...
                 elltool.conf.Properties.parseProp(propNameValList,...
                 NEEDED_PROP_NAME_LIST);
@@ -286,15 +284,10 @@ classdef ellipsoid < elltool.core.AEllipsoid
             end
         end
     end
-    %
-    methods (Access=private)               
-        [propMat, propVal] = getProperty(hplaneMat,propName, fPropFun)
-        [bpMat, fVec] = getGridByFactor(ellObj,factorVec)       
-        doesContain = doesContainPoly(ellArr,polytope,varagin)
-    end
     
     methods(Access = protected)
-        checkDoesContainArgs(ell,poly)
+        %checkDoesContainArgs(ell,poly)
+        
     end
 
     methods(Static)
@@ -302,8 +295,7 @@ classdef ellipsoid < elltool.core.AEllipsoid
         ellArr = fromStruct(SEllArr)
     end
     
-    methods(Static,Access = private)
-        
+    methods(Static,Access = private)        
         [supArr, bpMat] = rhomat(ellShapeMat,ellCenterVec,absTol, dirsMat)
         [ bpMat, fMat] = ellbndr_3dmat(nPoints, cenVec, qMat,absTol)
         [ bpMat, fMat] = ellbndr_2dmat(nPoints, cenVec, qMat,absTol)

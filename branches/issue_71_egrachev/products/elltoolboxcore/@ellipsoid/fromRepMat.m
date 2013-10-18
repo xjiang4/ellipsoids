@@ -68,14 +68,16 @@ checkvar(sizeVec,@(x) isa(x,'double')&&all(isreal(x(:)))&&...
     'size array must contain positive integer values.');
 %
 nEllipsoids = prod(sizeVec);
+
 ellArr(nEllipsoids) = ellipsoid();
 % 
 ell = ellipsoid(varargin{indVec});
+
 arrayfun(@(x)makeEllipsoid(x),1:nEllipsoids);
 ellArr = reshape(ellArr,sizeVec);
 %
-function makeEllipsoid(index)
-    ellArr(index) = getCopy(ell);
-end
+    function makeEllipsoid(index)
+        ellArr(index) = getCopy(ell);
+    end
 end
         

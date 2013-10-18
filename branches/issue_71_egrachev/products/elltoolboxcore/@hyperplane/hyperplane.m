@@ -1,4 +1,4 @@
-classdef hyperplane < elltool.core.AGenEllipsoid
+classdef hyperplane < elltool.core.ABasicEllipsoid
     %HYPERPLANE - a class for hyperplanes
     properties (Access=private)
         normal
@@ -6,8 +6,7 @@ classdef hyperplane < elltool.core.AGenEllipsoid
         absTol
         relTol
     end
-    methods
-        
+    methods        
         function hypObjArr = hyperplane(hypNormArr, hypConstArr, varargin)
             %
             % HYPERPLANE - creates hyperplane structure
@@ -244,6 +243,6 @@ classdef hyperplane < elltool.core.AGenEllipsoid
 end
 %
 function [nElems outSizeVec] = setSizes(inpObjArr)
-nElems = numel(inpObjArr);
-outSizeVec = size(inpObjArr);
+    nElems = numel(inpObjArr);
+    outSizeVec = size(inpObjArr);
 end

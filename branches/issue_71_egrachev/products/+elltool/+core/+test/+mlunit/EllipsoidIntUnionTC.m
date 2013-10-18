@@ -175,10 +175,16 @@ classdef EllipsoidIntUnionTC < mlunitext.test_case
         end
         
         function testIsInternalCenter(self)
+%             my1EllVec(2) = self.ellFactoryObj.create([5; 5; 5; 5], ...
+%                 [4, 1, 1, 1; 1, 2, 1, 1; 1, 1, 5, 1; 1, 1, 1, 6], 2);
+%             my1EllVec(1) = self.ellFactoryObj.create([5; 5; 5; 5], ...
+%                 [4, 1, 1, 1; 1, 2, 1, 1; 1, 1, 5, 1; 1, 1, 1, 6], 2);
+%             
             my1EllVec(2) = self.ellFactoryObj.create([5; 5; 5; 5], ...
-                [4, 1, 1, 1; 1, 2, 1, 1; 1, 1, 5, 1; 1, 1, 1, 6], 2);
+                [4, 1, 1, 1; 1, 2, 1, 1; 1, 1, 5, 1; 1, 1, 1, 6]);
             my1EllVec(1) = self.ellFactoryObj.create([5; 5; 5; 5], ...
-                [4, 1, 1, 1; 1, 2, 1, 1; 1, 1, 5, 1; 1, 1, 1, 6], 2);
+                [4, 1, 1, 1; 1, 2, 1, 1; 1, 1, 5, 1; 1, 1, 1, 6]);
+            
             my2EllVec(2) = ell_unitball(4);
             my2EllVec(1) = ell_unitball(4);
             isOk = doesIntersectionContain(my2EllVec, my1EllVec, 'i');

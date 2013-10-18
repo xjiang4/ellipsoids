@@ -36,15 +36,11 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
     %            System Analysis Department 2012 $
     %
     properties (Access = private)
-        %centerVec
         diagMat
         eigvMat
-        %absTol
-        %relTol
     end
     properties (Access = protected, Dependent)
-        shapeMat
-        
+        shapeMat       
     end
 
     properties (Constant,GetAccess = private)
@@ -54,6 +50,7 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
     methods
         function shapeMat=get.shapeMat(self)
               shapeMat=self.eigvMat*self.diagMat*transpose(self.eigvMat);
+              shapeMat = (shapeMat + transpose(shapeMat)) / 2;
         end
         
         function obj=set.shapeMat(obj, value)
@@ -393,7 +390,7 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
     end
     
     methods(Access = protected)
-        checkDoesContainArgs(ell,poly)
+        %checkDoesContainArgs(ell,poly)        
     end
     %
     methods (Static)        

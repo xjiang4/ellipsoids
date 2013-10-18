@@ -43,7 +43,7 @@ function myEllArr = inv(myEllArr)
 %            System Analysis Department 2012 $
 %
 
-ellipsoid.checkIsMe(myEllArr);
+%ellipsoid.checkIsMe(myEllArr);
 arrayfun(@(x) fSingleInv(x),myEllArr);
     function fSingleInv(ellObj)
         if isdegenerate(ellObj)

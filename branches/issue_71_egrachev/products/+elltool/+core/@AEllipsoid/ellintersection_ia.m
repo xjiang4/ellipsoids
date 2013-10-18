@@ -93,7 +93,11 @@ if is2EllEqCentre(inpEllVec)
              sqrtFirstEllShMat';
     ellMat = 0.5*(ellMat + ellMat');
 
-    outEll = ellipsoid(EllCenterVec, ellMat);
+    if (isa(firstEllObj, 'ellipsoid') && isa(secEllObj, 'ellipsoid'))
+        outEll = ellipsoid(EllCenterVec, ellMat);
+    elseif(isa(firstEllObj, 'elltool.core.GenEllipsoid') && isa(secEllObj, 'elltool.core.GenEllipsoid'))
+        outEll = elltool.core.GenEllipsoid(EllCenterVec, ellMat);
+    end
 else
 
     if Properties.getIsVerbose()
@@ -115,7 +119,7 @@ else
         [inpEllcenrVec, inpEllShMat] = double(inpEllVec(iEllipsoid));
         if rank(inpEllShMat) < minEllDim
             inpEllShMat = ...
-                ellipsoid.regularize(inpEllShMat,absTolVec(iEllipsoid));
+                elltool.core.AEllipsoid.regularize(inpEllShMat,absTolVec(iEllipsoid));
         end
         invShMat     = ell_inv(inpEllShMat);
         bVec     = -invShMat * inpEllcenrVec;
@@ -139,13 +143,20 @@ else
 
     if rank(cvxEllMat) < minEllDim
         cvxEllMat = ...
-            ellipsoid.regularize(cvxEllMat,absTol);
+            elltool.core.AEllipsoid.regularize(cvxEllMat,absTol);
     end
 
     ellMat = cvxEllMat * cvxEllMat';
     ellMat = 0.5*(ellMat + ellMat');
 
-    outEll = ellipsoid(cvxEllCenterVec, ellMat);
+    firstEllObj = inpEllVec(1);
+    secEllObj = inpEllVec(2);
+    
+    if (isa(firstEllObj, 'ellipsoid') && isa(secEllObj, 'ellipsoid'))
+        outEll = ellipsoid(cvxEllCenterVec, ellMat);
+    elseif(isa(firstEllObj, 'elltool.core.GenEllipsoid') && isa(secEllObj, 'elltool.core.GenEllipsoid'))
+        outEll = elltool.core.GenEllipsoid(cvxEllCenterVec, ellMat);
+    end
 end
 end
 

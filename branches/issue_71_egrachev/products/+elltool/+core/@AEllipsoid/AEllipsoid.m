@@ -1,4 +1,4 @@
-classdef AEllipsoid < handle
+classdef AEllipsoid < elltool.core.ABasicEllipsoid
     properties (Access = protected, Abstract) 
         shapeMat
     end
@@ -23,37 +23,19 @@ classdef AEllipsoid < handle
     
     methods (Abstract)
         getCopy(ellArr)
-        checkIsMe(ellArr, varargin)   
-        res = isInside(ellArr, objArr)  
-        varargout = minkCommonAction(getEllArr,fCalcBodyTriArr,...
-            fCalcCenterTriArr,varargin)
-        [varargout] = minkdiff(varargin)
-        extApprEllVec = minkdiff_ea(fstEll, secEll, directionsMat)
-        intApprEllVec = minkdiff_ia(fstEll, secEll, directionsMat)
-        varargout = minkmp(varargin)
-        extApprEllVec = minkmp_ea(fstEll, secEll, sumEllArr, dirMat)
-        intApprEllVec = minkmp_ia(fstEll, secEll, sumEllArr, dirMat)
-        [varargout] = minkpm(varargin)
-        extApprEllVec = minkpm_ea(inpEllArr, inpEll, dirMat)
-        intApprEllVec = minkpm_ia(inpEllArr, inpEll, dirMat)
-        [varargout] = minksum(varargin)
-        extApprEllVec = minksum_ea(inpEllArr, dirMat)
-        intApprEllVec = minksum_ia(inpEllArr, dirMat)
-        
+        checkIsMe(ellArr, varargin)           
     end
-    methods (Abstract, Access = protected)
+    methods (Static, Access = protected)        
         checkDoesContainArgs(fstEllArr,secObjArr)
     end
     
     methods (Static, Access = protected)
         regQMat = regularize(qMat,absTol)
-        [isBadDirVec,pUniversalVec] = isbaddirectionmat(q1Mat, q2Mat,...
-            dirsMat,absTol)
-        [isBadDirVec,pUniversalVec] = isbaddirection(fstEll, secEll, dirsMat,absTol)
 
         clrDirsMat = rm_bad_directions(q1Mat, q2Mat, dirsMat,absTol)
         [diffBoundMat, isPlotCenter3d] = calcdiffonedir(fstEll,secEll,...
             lMat,pUniversalVec,isGoodDirVec)
+        
         
         function SComp = formCompStruct(SEll, SFieldNiceNames, absTol, isPropIncluded)
             if (~isempty(SEll.shapeMat))
@@ -71,10 +53,10 @@ classdef AEllipsoid < handle
         end
     end
     
-    methods (Static)
-         %test
+    methods(Static)
+        [isBadDirVec,pUniversalVec] = isbaddirectionmat(q1Mat, q2Mat,...
+            dirsMat,absTol)
         [isBadDirVec,pUniversalVec] = isbaddirection(fstEll, secEll, dirsMat,absTol)
-        %
     end
         
     methods
@@ -157,13 +139,8 @@ classdef AEllipsoid < handle
             centerVecVec=self.centerVec;
         end
         
-        function checkIfScalar(self,errMsg)
-            if nargin<2
-                errMsg='input argument must be single ellipsoid.';
-            end
-            modgen.common.checkvar(self,'isscalar(x)',...
-                'errorMessage',errMsg);
-        end
+        [bpMat, fMat, supVec,lGridMat] = getRhoBoundary(ellObj,nPoints)
+        [bpGridMat, fGridMat, supVec, lGridMat] = getRhoBoundaryByFactor(ellObj,factorVec)
     end
     methods (Access = protected)
        function isArrEq = isMatEqualInternal(self,aArr,bArr)
@@ -195,12 +172,9 @@ classdef AEllipsoid < handle
             else
                 isArrEq = true;
             end
-        end
-        %doesContain = doesContainPoly(ellArr,polytope,varagin)
-        %[propMat, propVal] = getProperty(hplaneMat,propName, fPropFun)
-    end
-    methods (Access = protected)
-        function [isEqualArr, reportStr] = isEqualInternal(ellFirstArr,...
+       end
+       
+       function [isEqualArr, reportStr] = isEqualInternal(ellFirstArr,...
                 ellSecArr, isPropIncluded)
             import modgen.struct.structcomparevec;
             import gras.la.sqrtmpos;
@@ -257,6 +231,11 @@ classdef AEllipsoid < handle
                     modgen.struct.structcomparevec(SEll1Array,...
                     SEll2Array, tolerance);
             end
-        end        
+       end 
+        
+       checkIfScalar(self,errMsg)
+       [bpMat, fVec] = getGridByFactor(ellObj,factorVec)    
+       doesContain = doesContainPoly(ellArr,polytope,varagin)
+              
     end   
 end

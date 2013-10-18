@@ -4,6 +4,141 @@ classdef EllipsoidBasicSecondTC < mlunitext.test_case
         ellFactoryObj
     end    
     methods
+        function self = testGetBoundary(self)            
+            [testEllCVec testNumPointsCVec]  = self.getEllParams(1);
+            [bpCMat fCMat] = cellfun(@(x,y)getBoundary(x,y),testEllCVec,...
+                testNumPointsCVec, 'UniformOutput', false);
+            bpRightCMat = {[1 0; 0.5 sqrt(3) / 2; -0.5 sqrt(3) / 2; -1 0;...
+                -0.5 -sqrt(3) / 2; 0.5 -sqrt(3) / 2],...
+                [2 0; 1.5 sqrt(3) / 2; 0.5 sqrt(3) / 2; 0 0;...
+                0.5 -sqrt(3) / 2; 1.5 -sqrt(3) / 2],...
+                [0 0; 0 0; 0 0; 0 0; 0 0; 0 0],...
+                [4 1; 3 sqrt(3) + 1; 1 sqrt(3)+1; 0 1; 1 -sqrt(3) + 1;...
+                3 -sqrt(3) + 1]};
+            fRightCMat = repmat({[1 2; 2 3; 3 4; 4 5; 5 6; 6 1]}, 1, 4);
+            isOk = compareCells(bpCMat, fCMat, bpRightCMat, fRightCMat);
+            mlunitext.assert(isOk);
+            
+        end
+        
+        function self = testGetBoundaryByFactor(self)
+          [testEllCVec testNumPointsCVec]  = self.getEllParams(1);         
+          [bpCMat fCMat] = cellfun(@(x, y)getBoundaryByFactor(x, y),testEllCVec,...
+              testNumPointsCVec, 'UniformOutput', false);
+          testNumRightPointsCVec = {1200, 1200, 1200, 1200};
+          [bpRightCMat fRightCMat] = cellfun(@(x, y)getBoundary(x, y),...
+              testEllCVec, testNumRightPointsCVec, 'UniformOutput', false);
+          isOk = compareCells(bpCMat, fCMat, bpRightCMat, fRightCMat);
+          mlunitext.assert(isOk);
+            
+        end
+        
+        function self = testGetRhoBoundary(self)
+            [testEllCVec testNumPointsCVec]  = self.getEllParams(2);
+            
+            [bpMatCArr fMatCArr supCVec lGridCMat] = cellfun(@(x, y)self.ellFactoryObj.create.getRhoBoundary(x, y)...
+                ,testEllCVec, testNumPointsCVec, 'UniformOutput', false);
+            
+            [bpRightMatCArr fRightMatCArr] = cellfun(@(x, y)getBoundary(x, y),...
+                testEllCVec, testNumPointsCVec, 'UniformOutput', false);
+            
+            bpRightMatCArr = {[bpRightMatCArr{1, 1}; bpRightMatCArr{1, 1}(1, :)],...
+                [bpRightMatCArr{1, 2}; bpRightMatCArr{1, 2}(1, :)],...
+                [bpRightMatCArr{1, 3}; bpRightMatCArr{1, 3}(1, :)],...
+                [bpRightMatCArr{1, 4}; bpRightMatCArr{1, 4}(1, :)]};
+            
+            [supRightCVec lGridRightCMat] = cellfun(@(x, y)rhofun(x, y),...
+                testEllCVec, bpRightMatCArr, 'UniformOutput', false);
+             
+            isOk = isequal([bpMatCArr fMatCArr supCVec lGridCMat],...
+                [bpRightMatCArr fRightMatCArr supRightCVec lGridRightCMat]);
+            mlunitext.assert(isOk);
+            
+            function [supRightVec lGridRightMat] = rhofun(testEll, bpRightMat)
+                [cenMat, ~] = double(testEll);
+                cenMat = repmat(cenMat.', size(bpRightMat, 1), 1);
+                lGridRightMat = bpRightMat - cenMat;
+                supRightVec = (rho(testEll, lGridRightMat.')).';
+            end
+            
+        end
+        
+        function self = testGetRhoBoundaryByFactor(self)
+            [testEllCVec testNumPointsCVec]  = self.getEllParams(2);
+            
+            [bpMatCArr fMatCArr supCVec lGridCMat] = cellfun(@(x, y)self.ellFactoryObj.create.getRhoBoundaryByFactor(x, y),...
+                testEllCVec, testNumPointsCVec, 'UniformOutput', false);
+            
+            testNumRightPointsCVec = {2000, 4000, 7000, 1000};
+            
+            [bpRightMatCArr fRightMatCArr, supRightCVec, lGridRightCMat] = ...
+                cellfun(@(x, y)self.ellFactoryObj.create.getRhoBoundary(x, y), testEllCVec, testNumRightPointsCVec,...
+                'UniformOutput', false);
+            isOk = isequal([bpMatCArr fMatCArr supCVec lGridCMat],...
+                [bpRightMatCArr fRightMatCArr, supRightCVec, lGridRightCMat]);
+            mlunitext.assert(isOk);   
+            
+        end
+        
+        function self = testNegBoundary(self)
+            checkDim(self);
+            checkScal(self);
+            
+            function checkDim (self)
+                self.runAndCheckError(@checkDimGB, 'wrongDim');
+                self.runAndCheckError(@checkDimGBBF, 'wrongDim');
+                self.runAndCheckError(@checkDimGRB, 'wrongDim');
+                self.runAndCheckError(@checkDimGRBBF, 'wrongDim');
+                
+                function checkDimGB()
+                    ellObj = self.ellFactoryObj.create(eye(4));
+                    getBoundary(ellObj);
+                end
+                function checkDimGBBF()
+                    ellObj = self.ellFactoryObj.create(eye(4));
+                    getBoundaryByFactor(ellObj);
+                end
+                function checkDimGRB()
+                    ellObj = self.ellFactoryObj.create(eye(4));
+                    self.ellFactoryObj.create.getRhoBoundary(ellObj);
+                end
+                function checkDimGRBBF()
+                    ellObj = self.ellFactoryObj.create(eye(4));
+                    self.ellFactoryObj.create.getRhoBoundaryByFactor(ellObj);
+                end
+                
+            end
+            
+            function checkScal(self)
+                self.runAndCheckError(@checkScalGB, 'wrongInput');
+                self.runAndCheckError(@checkScalGBBF, 'wrongInput');
+                self.runAndCheckError(@checkScalGRB, 'wrongInput');
+                self.runAndCheckError(@checkScalGRBBF, 'wrongInput');
+                
+                function checkScalGB()
+                    ellVec = [self.ellFactoryObj.create([1; 3], eye(2))...
+                        self.ellFactoryObj.create([2; 5], [4 1; 1 1])];
+                    getBoundary(ellVec);
+                end
+                function checkScalGBBF()
+                    ellVec = [self.ellFactoryObj.create([1; 3], eye(2))...
+                        self.ellFactoryObj.create([2; 5], [4 1; 1 1])];
+                    getBoundaryByFactor(ellVec);
+                end
+                function checkScalGRB()
+                    ellVec = [self.ellFactoryObj.create([1; 3], eye(2))...
+                        self.ellFactoryObj.create([2; 5], [4 1; 1 1])];
+                    self.ellFactoryObj.create.getRhoBoundary(ellVec);
+                end
+                function checkScalGRBBF()
+                    ellVec = [self.ellFactoryObj.create([1; 3], eye(2))...
+                        self.ellFactoryObj.create([2; 5], [4 1; 1 1])];
+                    self.ellFactoryObj.create.getRhoBoundaryByFactor(ellVec);
+                end
+            end
+        end
+        
+        
         function self=EllipsoidBasicSecondTC(varargin)
             self=self@mlunitext.test_case(varargin{:});
             [~,className]=modgen.common.getcallernameext(1);
@@ -453,8 +588,35 @@ classdef EllipsoidBasicSecondTC < mlunitext.test_case
             self.auxTestProjection('getProjection',centVec, shapeMat, projMat, dimVec);
         end    
         
-function operationCheckEqFunc(self, testEllArr, compList, operation,...
-    argument)
+        function isFlag = compareCells(self, bpCMat, fCMat, bpRightCMat, fRightCMat)
+            ABSTOL = 1.0e-12;
+            [isEqual1,~,~,~,~] = modgen.common.absrelcompare(cell2mat(bpRightCMat),...
+                cell2mat(bpCMat),ABSTOL,ABSTOL,@norm);
+            [isEqual2,~,~,~,~] = modgen.common.absrelcompare(cell2mat(fCMat),...
+                cell2mat(fRightCMat),ABSTOL,ABSTOL,@norm);
+            isFlag = isEqual1 && isEqual2;
+        end
+
+
+        function [ellCVec pointsCVec] = getEllParams(self, flag)
+    if(flag == 1)
+        test1Ell = self.ellFactoryObj.create(eye(2));
+        test2Ell = self.ellFactoryObj.create([1; 0], [1 0; 0 1]);
+        test3Ell = self.ellFactoryObj.create([0; 0], [0 0; 0 0]);
+        test4Ell = self.ellFactoryObj.create([2; 1], [4 0; 0 4]);
+        pointsCVec = {6 6 6 6};
+    else
+        test1Ell = self.ellFactoryObj.create(eye(2));
+        test2Ell = self.ellFactoryObj.create([1; 3], [3 1; 1 1]);
+        test3Ell = self.ellFactoryObj.create([2; 1], [4 -1; -1 1]);
+        test4Ell = self.ellFactoryObj.create(eye(3));
+        pointsCVec = {10 20 35 [5, 5]};
+    end
+    ellCVec = {test1Ell, test2Ell, test3Ell, test4Ell};
+        end
+                    
+        function operationCheckEqFunc(self, testEllArr, compList, operation,...
+                    argument)
     OBJ_MODIFICATING_METHODS_LIST = {'inv', 'move2origin',...
         'shape'};
     isObjModifMethod = ismember(operation, OBJ_MODIFICATING_METHODS_LIST);
@@ -475,8 +637,8 @@ function operationCheckEqFunc(self, testEllArr, compList, operation,...
         isNotModif = all(testCopyEllArr(:).isEqual(testEllArr(:)));
         mlunitext.assert_equals(isNotModif, 1);
     end    
-end
-function checkRes(self, testEllResArr,compList, operation)
+        end
+        function checkRes(self, testEllResArr,compList, operation)
     import modgen.common.throwerror;
     import modgen.cell.cellstr2expression;
     %
@@ -502,17 +664,17 @@ function checkRes(self, testEllResArr,compList, operation)
     mlunitext.assert_equals(testIsRight, 1);
 end
 %
-function checkRhoSize(self, supArr,bpArr,dirArr,arrSizeVec)
+        function checkRhoSize(self, supArr,bpArr,dirArr,arrSizeVec)
     isRhoOk=all(size(supArr)==arrSizeVec);
     isBPOk=all(size(bpArr)==size(dirArr));
     mlunitext.assert_equals(true,isRhoOk && isBPOk);
-end
-function checkRhoRes(self, supArr,bpArr)
+        end
+        function checkRhoRes(self, supArr,bpArr)
     isRhoOk=all(supArr(:)==5);
     isBPOk=all(bpArr(1,:)==5) && all(bpArr(2,:)==0);
     mlunitext.assert_equals(true,isRhoOk && isBPOk);
-end
-function emptyTest(self, methodName, sizeVec, argument)
+        end
+        function emptyTest(self, methodName, sizeVec, argument)
     testEllArr = self.ellFactoryObj.create.empty(sizeVec);
     checkCenterVecList = repmat({},sizeVec);
     if nargin < 4
@@ -521,8 +683,8 @@ function emptyTest(self, methodName, sizeVec, argument)
         self.operationCheckEqFunc(testEllArr, checkCenterVecList, methodName,...
             argument);
     end    
-end
-function auxTestProjection(self, methodName, centVec, shapeMat, projMat, dimVec)
+        end
+        function auxTestProjection(self, methodName, centVec, shapeMat, projMat, dimVec)
      import modgen.common.throwerror;
      import modgen.cell.cellstr2expression;
      INP_OBJ_MODIF_LIST = {'projection'};
@@ -559,7 +721,7 @@ function auxTestProjection(self, methodName, centVec, shapeMat, projMat, dimVec)
         end    
         projEllArr = ellArr.(methodName)(projMat);
         compEllArr = compEllObj.repMat(dimVec);
-        testIsRight1 = isequal(compEllArr, projEllArr);
+        [testIsRight1,reportStr] = isequal(compEllArr, projEllArr);
         if isInpObjModif    
             %additional test for modification of input array
             testIsRight2 = all(compEllArr(:).isEqual(ellArr(:)));
@@ -568,9 +730,12 @@ function auxTestProjection(self, methodName, centVec, shapeMat, projMat, dimVec)
             testIsRight2 = all(ellCopyArr(:).isEqual(ellArr(:)));
         end
      end    
-     mlunitext.assert_equals(testIsRight1, 1);
-     mlunitext.assert_equals(testIsRight2, 1);
+     mlunitext.assert_equals(testIsRight1, true,reportStr);
+     mlunitext.assert_equals(testIsRight2, true);
 end
+%
     end
 end
 %
+
+

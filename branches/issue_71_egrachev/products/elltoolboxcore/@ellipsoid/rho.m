@@ -67,7 +67,7 @@ function [supArr, bpArr] = rho(ellArr, dirsArr)
 %
 import modgen.common.checkmultvar;
 %
-ellipsoid.checkIsMe(ellArr,'first');
+%ellipsoid.checkIsMe(ellArr,'first');
 modgen.common.checkvar(dirsArr, @(x)isa(x,'double'),...
     'errorMessage','second argument must be matrix of direction vectors.');
 %

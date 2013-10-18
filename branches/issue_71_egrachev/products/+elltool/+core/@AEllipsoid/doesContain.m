@@ -55,7 +55,12 @@ import modgen.common.throwerror;
 import modgen.common.checkmultvar;
 %
 persistent logger;
-checkDoesContainArgs(firstEllArr,secondObjArr);
+    if (isa(firstEllArr(1), 'ellipsoid') && isa(secondObjArr(1), 'ellipsoid'))
+        ellipsoid.checkDoesContainArgs(firstEllArr,secondObjArr);
+    elseif(isa(firstEllArr(1), 'elltool.core.GenEllipsoid') && isa(secondObjArr(1), 'elltool.core.GenEllipsoid'))
+        elltool.core.GenEllipsoid.checkDoesContainArgs(firstEllArr,secondObjArr);
+    end
+%checkDoesContainArgs(firstEllArr,secondObjArr);
 %
 isFirstScal = isscalar(firstEllArr);
 isSecScal = isscalar(secondObjArr);
@@ -139,11 +144,11 @@ persistent logger;
 [secEllCentVec, secEllShMat] = double(secondEll);
 if isdegenerate(firstEll)
     %fstEllShMat = ellipsoid.regularize(fstEllShMat,firstEll.absTol);
-    fstEllShMat = firstEll.regularize(fstEllShMat,firstEll.absTol);
+    fstEllShMat = elltool.core.AEllipsoid.regularize(fstEllShMat,firstEll.absTol);
 end
 if isdegenerate(secondEll)
     %secEllShMat = ellipsoid.regularize(secEllShMat,secondEll.absTol);
-    secEllShMat = secondEll.regularize(secEllShMat,secondEll.absTol);
+    secEllShMat = elltool.core.AEllipsoid.regularize(secEllShMat,secondEll.absTol);
 end
 
 invFstEllShMat = ell_inv(fstEllShMat);

@@ -159,7 +159,11 @@ invShMat = inv(shMat);
 normConst = cVec'*(shMat\cVec);
 polarCVec = -(shMat\cVec)/(1-normConst);
 polarShMat = invShMat/(1-normConst) + polarCVec*polarCVec';
-polar = ellipsoid(polarCVec,polarShMat);
+if (isa(ell, 'ellipsoid'))
+    polar = ellipsoid(polarCVec,polarShMat);
+elseif (isa(ell, 'elltool.core.GenEllipsoid'))
+    polar = elltool.core.GenEllipsoid(polarCVec, polarShMat);
+end
 end
 
 
