@@ -68,7 +68,7 @@ collector can fit it properly into the toolbox manual.*
 %          arguments/range of regular argument numbers. If the actual
 %          number doesn't mach the expected number an exception is thrown.
 %
-%       nPropExpected: numeric[1,1] - an expected number of properties
+%       nPropExpected: double[1,1] - an expected number of properties
 %
 %   properties:
 %       regCheckList: cell[1,nRegMax] of char[1,] - list of regular
