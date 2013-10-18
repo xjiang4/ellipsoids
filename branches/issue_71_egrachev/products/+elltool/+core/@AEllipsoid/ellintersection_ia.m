@@ -92,12 +92,13 @@ if is2EllEqCentre(inpEllVec)
         intermEllShMat * vSecMat' * ...
              sqrtFirstEllShMat';
     ellMat = 0.5*(ellMat + ellMat');
-
-    if (isa(firstEllObj, 'ellipsoid') && isa(secEllObj, 'ellipsoid'))
-        outEll = ellipsoid(EllCenterVec, ellMat);
-    elseif(isa(firstEllObj, 'elltool.core.GenEllipsoid') && isa(secEllObj, 'elltool.core.GenEllipsoid'))
-        outEll = elltool.core.GenEllipsoid(EllCenterVec, ellMat);
-    end
+% 
+%     if (isa(firstEllObj, 'ellipsoid') && isa(secEllObj, 'ellipsoid'))
+%         outEll = ellipsoid(EllCenterVec, ellMat);
+%     elseif(isa(firstEllObj, 'elltool.core.GenEllipsoid') && isa(secEllObj, 'elltool.core.GenEllipsoid'))
+%         outEll = elltool.core.GenEllipsoid(EllCenterVec, ellMat);
+%     end
+    outEll = firstEllObj.create(EllCenterVec, ellMat);
 else
 
     if Properties.getIsVerbose()
@@ -149,14 +150,15 @@ else
     ellMat = cvxEllMat * cvxEllMat';
     ellMat = 0.5*(ellMat + ellMat');
 
-    firstEllObj = inpEllVec(1);
-    secEllObj = inpEllVec(2);
+     firstEllObj = inpEllVec(1);
+%     secEllObj = inpEllVec(2);
+    outEll = firstEllObj.create(cvxEllCenterVec, ellMat);
+%     if (isa(firstEllObj, 'ellipsoid') && isa(secEllObj, 'ellipsoid'))
+%         outEll = ellipsoid(cvxEllCenterVec, ellMat);
+%     elseif(isa(firstEllObj, 'elltool.core.GenEllipsoid') && isa(secEllObj, 'elltool.core.GenEllipsoid'))
+%         outEll = elltool.core.GenEllipsoid(cvxEllCenterVec, ellMat);
+%     end
     
-    if (isa(firstEllObj, 'ellipsoid') && isa(secEllObj, 'ellipsoid'))
-        outEll = ellipsoid(cvxEllCenterVec, ellMat);
-    elseif(isa(firstEllObj, 'elltool.core.GenEllipsoid') && isa(secEllObj, 'elltool.core.GenEllipsoid'))
-        outEll = elltool.core.GenEllipsoid(cvxEllCenterVec, ellMat);
-    end
 end
 end
 

@@ -145,7 +145,8 @@ end
         centVec= extApproxEllVec(1).centerVec - inpEll.centerVec;
         nCols = size(dirMat, 2);
 
-                extApprEllVec(1,nCols) = ellipsoid();
+                %extApprEllVec(1,nCols) = ellipsoid();
+                extApprEllVec(1,nCols) = inpEll.create()
                 arrayfun(@(x) fCase2extAppr(x),1:nCols);
                 
                 mValVec=zeros(1, nCols);
@@ -191,8 +192,8 @@ end
         nDim = 2;
         function ellTwoDim = oneDim2TwoDim(ell)
             [ellCenVec, qMat] = ell.double();
-            ellTwoDim = ellipsoid([ellCenVec, 0].', ...
-                diag([qMat, 0]));
+            %ellTwoDim = ellipsoid([ellCenVec, 0].',diag([qMat, 0]));
+            ellTwoDim = ell.create([ellCenVec, 0].',diag([qMat, 0]));
         end
     end
 

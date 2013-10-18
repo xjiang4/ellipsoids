@@ -19,11 +19,13 @@ classdef AEllipsoid < elltool.core.ABasicEllipsoid
         ellArr = fromRepMat(varargin)
         ellArr = fromStruct(SEllArr)
         polEllArr = polar(ellArr)
+        
     end
     
     methods (Abstract)
         getCopy(ellArr)
-        checkIsMe(ellArr, varargin)           
+        checkIsMe(ellArr, varargin)      
+        ellObj = create(self, varargin)
     end
     methods (Static, Access = protected)        
         checkDoesContainArgs(fstEllArr,secObjArr)

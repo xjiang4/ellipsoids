@@ -96,7 +96,8 @@ absTolVal=min(fstEll.absTol, secEll.absTol);
 isGoodDirVec = ~elltool.core.AEllipsoid.isbaddirection(fstEll, secEll, dirMat,absTolVal);
 nGoodDirs = sum(isGoodDirVec);
 goodDirsMat = dirMat(:,isGoodDirVec);
-extApprEllVec(nGoodDirs) = ellipsoid();
+%extApprEllVec(nGoodDirs) = ellipsoid();
+extApprEllVec(nGoodDirs) = fstEll.create();
 arrayfun(@(x) fSingleMP(x),1:nGoodDirs)
 
 Properties.setIsVerbose(isVrb);

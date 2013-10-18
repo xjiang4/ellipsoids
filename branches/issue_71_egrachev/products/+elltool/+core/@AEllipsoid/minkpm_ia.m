@@ -73,7 +73,9 @@ fstIntApprEllVec = minksum_ia(inpEllArr, dirMat);
 isVrb = Properties.getIsVerbose();
 Properties.setIsVerbose(false);
 
-intApprEllVec(nCols) = ellipsoid();
+%intApprEllVec(nCols) = ellipsoid();
+intApprEllVec(nCols) = inpEll.create();
+
 arrayfun(@(x) fSetIntApprVec(x),1:nCols);
 intApprEllVec = intApprEllVec(~intApprEllVec.isEmpty());
 

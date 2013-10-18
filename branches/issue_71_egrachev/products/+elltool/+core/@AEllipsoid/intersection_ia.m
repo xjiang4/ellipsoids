@@ -78,9 +78,9 @@ function outEllArr = intersection_ia(myEllArr, objArr)
 
 import modgen.common.throwerror;
 import modgen.common.checkmultvar;
-ellipsoid.checkIsMe(myEllArr,'first');
+%ellipsoid.checkIsMe(myEllArr,'first');
 modgen.common.checkvar(objArr,@(x) isa(x, 'ellipsoid') ||...
-    isa(x, 'hyperplane') || isa(x, 'polytope'),...
+    isa(x, 'hyperplane') || isa(x, 'polytope') || isa(x, 'elltool.core.GenEllipsoid'),...
     'errorTag','wrongInput', 'errorMessage',...
     'second input argument must be ellipsoid,hyperplane or polytope.');
 
@@ -164,11 +164,12 @@ function outEll = l_intersection_ia(fstEll, secObj)
 % $Author: Alex Kurzhanskiy <akurzhan@eecs.berkeley.edu>
 % $Copyright:  The Regents of the University of California 2004-2008 $
 
-if isa(secObj, 'ellipsoid')
+if isa(secObj, 'ellipsoid') || isa(secObj, 'elltool.core.GenEllipsoid')
     if fstEll == secObj
         outEll = fstEll;
     elseif ~intersect(fstEll, secObj)
-        outEll = ellipsoid;
+        %outEll = ellipsoid;
+        outEll = fstEll.create();
     else
         outEll = ellintersection_ia([fstEll secObj]);
     end
@@ -178,7 +179,7 @@ end
 fstEllCentVec = fstEll.centerVec;
 fstEllShMat = fstEll.shapeMat;
 if rank(fstEllShMat) < size(fstEllShMat, 1)
-    fstEllShMat = ell_inv(ellipsoid.regularize(fstEllShMat,...
+    fstEllShMat = ell_inv(elltool.core.AEllipsoid.regularize(fstEllShMat,...
         fstEll.absTol));
 else
     fstEllShMat = ell_inv(fstEllShMat);
@@ -222,8 +223,9 @@ intEllShMat      = intEllShMat/(1 - ...
     intEllCentVec'*intEllShMat*intEllCentVec));
 intEllShMat      = ell_inv(intEllShMat);
 intEllShMat      = (1-fstEll.absTol)*0.5*(intEllShMat + intEllShMat');
-outEll      = ellipsoid(intEllCentVec, intEllShMat);
 
+%outEll      = ellipsoid(intEllCentVec, intEllShMat);
+outEll = fstEll.create(intEllCentVec, intEllShMat);
 end
 
 
@@ -257,7 +259,8 @@ function outEll = l_polyintersect(ell, poly)
 if doesIntersectionContain(ell, poly)
     outEll = getInnerEllipsoid(poly);
 elseif ~intersect(ell,poly)
-    outEll = ellipsoid();
+    outEll = ell.create();
+    %outEll = ellipsoid();
 else
     [ellVec ellMat] = double(ell);
     [n,~] = size(ellMat);
@@ -266,7 +269,7 @@ else
     polyVec = polyDouble(:,end);
     polyCSize = size(polyMat,1);
     if size(ellMat,2) > rank(ellMat)
-        ellMat = ellipsoid.regularize(ellMat,getAbsTol(ell));
+        ellMat = elltool.core.AEllipsoid.regularize(ellMat,getAbsTol(ell));
     end
     invEllMat = inv(ellMat);
     ellShift = -invEllMat*ellVec;
@@ -288,9 +291,11 @@ else
     Q = (B*B');
     v = d;
     if ~gras.la.ismatposdef(Q,getAbsTol(ell))
-        outEll = ellipsoid(v,zeros(size(Q)));
+        %outEll = ellipsoid(v,zeros(size(Q)));
+        outEll = ell.create(v,zeros(size(Q)));
     else
-        outEll = ellipsoid(v,Q);
+        %outEll = ellipsoid(v,Q);
+        outEll = ell.create(v, Q);
     end
 end
 end
@@ -411,5 +416,6 @@ end
 
 E = inv(E);
 E = 0.5*(E + E');
-E = ellipsoid(x0, E);
+%E = ellipsoid(x0, E);
+E = create(x0, E);
 end

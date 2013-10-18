@@ -190,6 +190,7 @@ intEllCentVec   = myEllCentVec + myEllCentVec(1, 1)*...
     [-1; invMyEllShMat*invShMatrixVec];
 intEllShMat   = (1 - hCoefficient) * [0 zeros(1, maxEllDim-1); ...
     zeros(maxEllDim-1, 1) invMyEllShMat];
-intEll   = ellipsoid(intEllCentVec, intEllShMat);
+%intEll   = ellipsoid(intEllCentVec, intEllShMat);
+intEll = myEll.create(intEllCentVec, intEllShMat);
 intEll   = ell_inv(tMat)*(intEll + rotVec);
 end

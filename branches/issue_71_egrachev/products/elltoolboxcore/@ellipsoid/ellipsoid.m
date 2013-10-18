@@ -283,6 +283,10 @@ classdef ellipsoid < elltool.core.AEllipsoid
                 ellMat(iEll).nPlot3dPoints = nPlot3dPointsVal;
             end
         end
+        
+        function [ellMat] = create(self, varargin)
+            ellMat = ellipsoid(varargin{:});
+        end
     end
     
     methods(Access = protected)
@@ -293,6 +297,7 @@ classdef ellipsoid < elltool.core.AEllipsoid
     methods(Static)
         ellArr = fromRepMat(varargin)
         ellArr = fromStruct(SEllArr)
+
     end
     
     methods(Static,Access = private)        

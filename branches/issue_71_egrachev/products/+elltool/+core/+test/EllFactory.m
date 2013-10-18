@@ -12,9 +12,7 @@ classdef EllFactory
             if (strcmp(self.ellType, 'ellipsoid'))
                 ellObj = ellipsoid(varargin{:});
             elseif (strcmp(self.ellType, 'GenEllipsoid'))
-
                 ellObj = elltool.core.GenEllipsoid(varargin{:});
-
             else 
                 modgen.common.throwerror('wrongInput','unsupported ellipsoid type');
             end

@@ -321,6 +321,10 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
             end
         end
         
+        function ellObj = create(self, varargin)
+            ellObj = elltool.core.GenEllipsoid(varargin{:});
+        end
+        
         function cVec=getCenter(self)
         % Example:
         %   ellObj = elltool.core.GenEllipsoid([5;2], eye(2), [1 3; 4 5]);
@@ -409,6 +413,7 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
         
         ellArr = fromRepMat(varargin)
         ellArr = fromStruct(SEllArr)
+        
     end
 %         
     methods (Static,Access = private)        

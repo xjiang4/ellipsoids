@@ -208,8 +208,9 @@ const = 1 - lambda*(1 - lambda)*(qSecVec - ...
 qCenterVec = invXMat*(lambda*fstEllShMat*fstEllCentVec + ...
     (1 - lambda)*seqQMat*qSecVec);
 shQMat = const*invXMat;
-outEll = ellipsoid(qCenterVec, shQMat);
 
+%outEll = ellipsoid(qCenterVec, shQMat);
+outEll = fstEll.create(qCenterVecm shQMat);
 end
 
 
