@@ -66,7 +66,7 @@ import elltool.logging.Log4jConfigurator;
 
 persistent logger;
 
-%ellipsoid.checkIsMe(inpEllArr,'first');
+ellipsoid.checkIsMe(inpEllArr,'first');
 nDimsInpEllArr = dimension(inpEllArr);
 
 [nDims, nCols] = size(dirMat);

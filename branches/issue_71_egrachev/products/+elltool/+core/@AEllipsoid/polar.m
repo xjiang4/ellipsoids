@@ -43,7 +43,7 @@ function polEllArr = polar(ellArr)
 
 import modgen.common.throwerror
 
-%ellipsoid.checkIsMe(ellArr);
+ellipsoid.checkIsMe(ellArr);
 modgen.common.checkvar(ellArr,'~any(isdegenerate(x))',...
     'errorTag','degenerateEllipsoid',...
     'errorMessage','The resulting ellipsoid is not bounded');

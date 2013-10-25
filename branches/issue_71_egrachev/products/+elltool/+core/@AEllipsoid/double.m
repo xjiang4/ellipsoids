@@ -38,7 +38,7 @@ function [myEllCentVec,  myEllShMat] = double(myEll)
 %            System Analysis Department 2012 $
 %
 
-%ellipsoid.checkIsMe(myEll);
+ellipsoid.checkIsMe(myEll);
 myEll.checkIfScalar();
 %
 if nargout < 2

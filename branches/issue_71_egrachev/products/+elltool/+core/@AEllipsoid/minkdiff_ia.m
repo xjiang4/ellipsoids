@@ -70,8 +70,8 @@ import elltool.logging.Log4jConfigurator;
 
 persistent logger;
 
-%ellipsoid.checkIsMe(fstEll,'first');
-%ellipsoid.checkIsMe(secEll,'second');
+ellipsoid.checkIsMe(fstEll,'first');
+ellipsoid.checkIsMe(secEll,'second');
 checkmultvar('isscalar(x1)&&isscalar(x2)',2,fstEll,secEll,...
     'errorTag','wrongInput','errorMessage',...
     'first and second arguments must be single ellipsoids.')

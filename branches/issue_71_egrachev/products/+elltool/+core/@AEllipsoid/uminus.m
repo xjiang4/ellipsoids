@@ -38,7 +38,7 @@ function outEllArr = uminus(ellArr)
 %            System Analysis Department 2012 $
 %
 
-%ellipsoid.checkIsMe(ellArr);
+ellipsoid.checkIsMe(ellArr);
 sizeCVec = num2cell(size(ellArr));
 if isempty(ellArr)
 %     outEllArr = ellipsoid.empty(sizeCVec{:});

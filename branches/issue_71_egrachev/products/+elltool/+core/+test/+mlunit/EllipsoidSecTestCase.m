@@ -428,21 +428,26 @@ function [varargout] = createTypicalEll(self, flag)
     switch flag
         case 1
             varargout{1} = self.ellFactoryObj.create([2; 1], [4, 1; 1, 1]);
-            varargout{2} = ell_unitball(2);
+            %varargout{2} = ell_unitball(2);
+            varargout{2} = self.ellFactoryObj.create(eye(2));
         case 2
             varargout{1} = self.ellFactoryObj.create([2; 1; 0], ...
                 [4, 1, 1; 1, 2, 1; 1, 1, 5]);
-            varargout{2} = ell_unitball(3);
+            %varargout{2} = ell_unitball(3);
+            varargout{2} = self.ellFactoryObj.create(eye(3));
         case 3
             varargout{1} = self.ellFactoryObj.create([5; 5; 5], ...
                 [4, 1, 1; 1, 2, 1; 1, 1, 5]);
-            varargout{2} = ell_unitball(3);
+            %varargout{2} = ell_unitball(3);
+            varargout{2} = self.ellFactoryObj.create(eye(3));
         case 4
             varargout{1} = self.ellFactoryObj.create([5; 5; 5; 5], ...
                 [4, 1, 1, 1; 1, 2, 1, 1; 1, 1, 5, 1; 1, 1, 1, 6]);
-            varargout{2} = ell_unitball(4);    
+            %varargout{2} = ell_unitball(4);    
+            varargout{2} = self.ellFactoryObj.create(eye(4));
         case 5
-            varargout{1} = ell_unitball(6);
+            %varargout{1} = ell_unitball(6);
+            varargout{1} = self.ellFactoryObj.create(eye(6));
             varargout{2} = self.ellFactoryObj.create(zeros(6, 1), diag(0.5 * ones(6, 1)));
         case 6
             varargout{1} = self.ellFactoryObj.create([5; 0], diag([4, 1]));

@@ -46,7 +46,7 @@ function outEllVec = mtimes(multMat, inpEllVec)
 
 import modgen.common.checkvar
 
-%ellipsoid.checkIsMe(inpEllVec,'second');
+ellipsoid.checkIsMe(inpEllVec,'second');
 checkvar(multMat,@(x) isa(x,'double'),...
     'errorTag','wrongInput','errorMessage',...
     'first input argument must be matrix or sacalar.');

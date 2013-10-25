@@ -48,7 +48,7 @@ function ellArr = shape(ellArr, modMat)
 %
 
 
-%ellipsoid.checkIsMe(ellArr,'first');
+ellipsoid.checkIsMe(ellArr,'first');
 modgen.common.checkvar(modMat, @(x)isa(x,'double'),...
     'errorMessage','second input argument must be double');   
 isModScal = isscalar(modMat);

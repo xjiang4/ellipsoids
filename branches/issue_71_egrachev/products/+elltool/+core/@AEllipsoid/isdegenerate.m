@@ -30,7 +30,7 @@ function isPositiveArr = isdegenerate(myEllArr)
 %            Faculty of Computational Mathematics and Computer Science,
 %            System Analysis Department 2012 $
 %
-%ellipsoid.checkIsMe(myEllArr);
+ellipsoid.checkIsMe(myEllArr);
 modgen.common.checkvar(myEllArr,'~any(x(:).isEmpty())',...
     'errorTag','wrongInput:emptyEllipsoid',...
     'errorMessage','input argument contains empty ellipsoid.');

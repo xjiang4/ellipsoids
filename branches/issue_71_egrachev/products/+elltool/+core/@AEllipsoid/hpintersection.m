@@ -44,7 +44,7 @@ import elltool.logging.Log4jConfigurator;
   
 persistent logger;
 
-%ellipsoid.checkIsMe(myEllArr,'first');
+ellipsoid.checkIsMe(myEllArr,'first');
 modgen.common.checkvar(myHypArr,@(x) isa(x,'hyperplane'),...
     'errorTag','wrongInput',...
     'errorMessage','second argument must be hyperplane.');
