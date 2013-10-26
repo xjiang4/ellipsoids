@@ -23,10 +23,9 @@ classdef MatrixColCubicSpline<gras.interp.AMatrixCubicSpline
     end
     methods (Access=public)
         function resArray = evaluate(self, timeVec)
-            nDims = self.nDims;
             nRows = self.nRows;
             nCols = self.nCols;
-            nTimePoints = length(timeVec);            
+            nTimePoints = length(timeVec);        
             if nTimePoints == 1
                 if timeVec >= self.timeVec(end)
                     iPiece = self.nTimePoints - 1;
@@ -44,16 +43,11 @@ classdef MatrixColCubicSpline<gras.interp.AMatrixCubicSpline
                 for k = 1:nCols
                     resArray(:,k) = self.ppFormList{k}.coefs(iPieces,:)*tVec;
                 end
-            else
-                switch nDims
-                    case 1
-                        resArray = ppval(self.ppFormList{1}, timeVec);
-                    case 2
-                        resArray = zeros(nRows, nCols, nTimePoints);
-                        for k=1:1:nCols
-                            resArray(:,k,:) = ppval(self.ppFormList{k},timeVec);
-                        end
-                end                
+            else   
+                resArray = zeros(nRows, nCols, nTimePoints);
+                for k=1:1:nCols
+                    resArray(:,k,:) = ppval(self.ppFormList{k},timeVec);
+                end
             end
         end
     end

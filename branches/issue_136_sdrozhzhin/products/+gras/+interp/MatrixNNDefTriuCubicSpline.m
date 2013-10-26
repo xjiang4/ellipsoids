@@ -8,21 +8,31 @@ classdef MatrixNNDefTriuCubicSpline<gras.interp.MatrixColTriuSymmCubicSpline
         zeroEigTol
     end
     methods 
-        function resArray=evaluate(self,timeVec)
-            absTol=self.zeroEigTol;
-            resArray=evaluate@...
-                gras.interp.MatrixColTriuSymmCubicSpline(self,timeVec);
-            nTimes=size(resArray,3);
-            for iTime=1:nTimes
-                [oMat,dMat]=eig(resArray(:,:,iTime));
-                dVec=diag(dMat);
-                isLessVec=dVec<=absTol;
+        function resArray = evaluate(self,timeVec)
+            absTol = self.zeroEigTol;
+            resArray = evaluate@...
+                gras.interp.MatrixColTriuSymmCubicSpline(self, timeVec);
+            nOldTimes = size(resArray, 3);
+            if(self.nDims == 1)
+                resArray = reshape(resArray, self.nRows, nOldTimes);
+            end
+            
+            nTimes = size(resArray, 3);
+            for iTime = 1 : nTimes
+                [oMat, dMat] = eig(resArray(:, :, iTime));
+                dVec = diag(dMat);
+                isLessVec = dVec <= absTol;
                 if any(isLessVec)
-                    dVec(isLessVec)=absTol;
-                    dMat=diag(dVec);
-                    resArray(:,:,iTime)=oMat*dMat*oMat.';
+                    dVec(isLessVec) = absTol;
+                    dMat = diag(dVec);
+                    resArray(:, :, iTime) = oMat * dMat * oMat.';
                 end
             end
+            if(self.nDims == 1)
+                resArray = reshape(resArray, self.nRows, self.nCols,...
+                        nOldTimes);
+            end
+                    
         end
     end
     methods
