@@ -14,11 +14,6 @@ classdef MatrixNNDefTriuCubicSpline<gras.mat.interp.MatrixColTriuSymmCubicSpline
                 gras.mat.interp.MatrixColTriuSymmCubicSpline(self, timeVec);
             nOldTimes = size(resArray, 3);
             if(self.nDims == 1)
-                %rArray = zeros(size(resArray,1),nOldTimes);
-                %for k = 1 : nOldTimes
-                 %   rArray(k, :) = resArray(k,:,:);
-                %end
-                %resArray = rArray;
                 resArray = reshape(resArray, self.nRows, nOldTimes);
             end
             
@@ -34,11 +29,6 @@ classdef MatrixNNDefTriuCubicSpline<gras.mat.interp.MatrixColTriuSymmCubicSpline
                 end
             end
             if(self.nDims == 1)
-                %rArray = zeros(self.nRows, self.nCols, nOldTimes);
-                %for k = 1 : nOldTimes
-                 %   rArray(:,:,k) = resArray(1:self.nRows,k);
-                %end
-                %resArray = rArray;
                 resArray = reshape(resArray, self.nRows, self.nCols,...
                         nOldTimes);
             end

@@ -41,10 +41,6 @@ classdef MatrixColTriuCubicSpline<gras.mat.interp.AMatrixCubicSpline
             resArray = zeros(nRows, nCols, nTimePoints);  
             switch nDims
                 case 1
-                    %rArray=fnval(self.ppFormList{1},timeVec);
-                    %for k = 1 : nTimePoints
-                     %  resArray(:,:,k) = rArray(1:nRows,k);
-                    %end
                     resArray = fnval(self.ppFormList{1}, timeVec);
                     resArray = reshape(resArray, nRows, nCols,...
                         nTimePoints);

@@ -277,7 +277,6 @@ classdef SuiteBasic < mlunitext.test_case
                         catDataArray = cat(2, dataList{:});
                     else
                         catDataArray = threeDim2TwoDim(cell2mat(dataList));
-                        %catDataArray=dataList{1}
                     end
                     mlunitext.assert_equals(true, isequal(resDataArray,...
                         catDataArray));
@@ -289,11 +288,6 @@ classdef SuiteBasic < mlunitext.test_case
                         sprintf('max tol %g', maxTol));
                 end
                 function evalMat = threeDim2TwoDim(eMat)
-                   % for i = 1 : size(eMat, 1)
-                    %    for j = 1 : size(eMat, 3)
-                     %       evalMat(i, j) = eMat(i, :, j);
-                      %  end
-                    %end
                     evalMat = reshape(eMat, size(eMat, 1), size(eMat, 3));
                 end
                 %
