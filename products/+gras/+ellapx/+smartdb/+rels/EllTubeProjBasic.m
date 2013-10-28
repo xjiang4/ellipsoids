@@ -42,6 +42,14 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
     end
     methods
         function fieldsList = getNoCatOrCutFieldsList(self)
+            % GETNOCATORCUTFIELDLIST - returns a list of 
+            %
+            % Input:
+            %   regular:
+            %       self.
+            % Output:
+            %   namePrefix: char[4, ] - 
+            %
             import  gras.ellapx.smartdb.F;
             ellTubeBasicList = self.getNoCatOrCutFieldsList@...
                 gras.ellapx.smartdb.rels.EllTubeBasic;
@@ -50,19 +58,25 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
                 'LS_GOOD_DIR_ORIG_VEC';'PROJ_S_MAT';'PROJ_TYPE'})];
         end
         function namePrefix=getReachTubeNamePrefix(self)
-            % GETREACHTUBEANEPREFIX - return prefix of the reach tube
+            % GETREACHTUBEANEPREFIX - returns the prefix of the reach tube
             %
             % Input:
             %   regular:
-            %      self.
+            %       self.
+            % Output:
+            %   namePrefix: char[1, ] - prefix of the reach tube
+            %
             namePrefix=self.REACH_TUBE_PREFIX;
         end
         function namePrefix=getRegTubeNamePrefix(self)
-            % GETREGTUBEANEPREFIX - return prefix of the reg tube
+            % GETREGTUBEANEPREFIX - returns the prefix of the reg tube
             %
             % Input:
             %   regular:
-            %      self.
+            %       self.
+            % Output:
+            %   namePrefix: char[1, ] - prefix of the reg tube
+            %
             namePrefix=self.REG_TUBE_PREFIX;
         end
     end

@@ -7,6 +7,21 @@ classdef ATypifiedAdjustedRel<gras.ellapx.smartdb.rels.TypifiedByFieldCodeRel
         end
         %
         function [isOk,reportStr]=isEqual(self,otherRel,varargin)
+            % ISEQUAL - checks if the relation object self is equal to the
+            % relation object otherRel
+            % Input:
+            %   regular:
+            %       self.
+            %       otherRel:
+            %   optional:
+            % Output:
+            %   isOk: logical[nFields, 1] - logical vector elements of
+            %       which take OK value if the fields in self and otherRel are
+            %       equal and FALSE value - otherwise
+            %   reportStr: char[1, ] - name of field which is not equal in
+            %       self and otherRel
+            %
+            
             self.checkIfObjectScalar();
             otherRel.checkIfObjectScalar();
             [reg,prop]=modgen.common.parseparams(varargin,...
