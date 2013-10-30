@@ -66,7 +66,7 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
                 @SquareMatVector.rMultiplyByVec);
             %
             
-            aMat = threeDim2TwoDim(aMat);
+            aMat = squeeze(aMat);
             
             xTouchOpMat= aMat - centRegCurve;
             xTouchMat= aMat + centRegCurve;
@@ -428,7 +428,7 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
                         fieldListStr);
                 end
                 
-                self.aMat = cellfun(@(x)threeDim2TwoDim(x), self.aMat,...
+                self.aMat = cellfun(@(x)squeeze(x), self.aMat,...
                     'UniformOutput',false);
                 
                 checkFieldList={'QArray','aMat','scaleFactor',...
@@ -1241,12 +1241,5 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
             end
             %
         end
-    end
-end
-function twoDimMat = threeDim2TwoDim(aMat)
-    if((size(aMat, 2)) == 1 && (size(aMat, 3) > 1))
-        twoDimMat = reshape(aMat, size(aMat, 1), size(aMat, 3)); 
-    else
-        twoDimMat = aMat;
     end
 end

@@ -7,7 +7,7 @@ classdef MatrixNNDefTriuCubicSpline<gras.interp.MatrixColTriuSymmCubicSpline
     properties (Access=private)
         zeroEigTol
     end
-    methods 
+    methods
         function resArray = evaluate(self,timeVec)
             absTol = self.zeroEigTol;
             resArray = evaluate@...
@@ -30,9 +30,9 @@ classdef MatrixNNDefTriuCubicSpline<gras.interp.MatrixColTriuSymmCubicSpline
             end
             if(self.nDims == 1)
                 resArray = reshape(resArray, self.nRows, self.nCols,...
-                        nOldTimes);
+                    nOldTimes);
             end
-                    
+            
         end
     end
     methods
@@ -51,7 +51,7 @@ classdef MatrixNNDefTriuCubicSpline<gras.interp.MatrixColTriuSymmCubicSpline
             %           input matrix at some time moment is less than this
             %           value it is considered to be equal to zero
             %
-            ZERO_EIG_TOL=0;            
+            ZERO_EIG_TOL=0;
             import modgen.common.parseparext;
             [reg,~,absTol]=parseparext(varargin,{'zeroEigTol';ZERO_EIG_TOL;...
                 'isscalar(x)&&isnumeric(x)&&(x>=0)'});

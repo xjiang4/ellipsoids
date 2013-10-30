@@ -3,7 +3,7 @@ classdef MatrixRowCubicSpline<gras.interp.AMatrixCubicSpline
     % $Copyright: Moscow State University,
     %            Faculty of Computational Mathematics and Computer Science,
     %            System Analysis Department 2011 $
-    %    
+    %
     methods (Access=protected,Static)
         function ppFormList=buildSplineCoeffs(dataArray,timeVec)
             import gras.interp.AMatrixCubicSpline;
@@ -45,7 +45,7 @@ classdef MatrixRowCubicSpline<gras.interp.AMatrixCubicSpline
             %       dataArray: double[nCols,nRows,nTimePoints]
             %               /double[nRows,nTimes] - data array
             %       timeVec: double[1,nTimePoints] -
-            %           
+            %
             %
             self=self@gras.interp.AMatrixCubicSpline(varargin{:});
         end

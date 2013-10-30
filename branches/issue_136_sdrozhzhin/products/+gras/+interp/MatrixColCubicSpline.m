@@ -25,7 +25,7 @@ classdef MatrixColCubicSpline<gras.interp.AMatrixCubicSpline
         function resArray = evaluate(self, timeVec)
             nRows = self.nRows;
             nCols = self.nCols;
-            nTimePoints = length(timeVec);        
+            nTimePoints = length(timeVec);
             if nTimePoints == 1
                 if timeVec >= self.timeVec(end)
                     iPiece = self.nTimePoints - 1;
@@ -43,7 +43,7 @@ classdef MatrixColCubicSpline<gras.interp.AMatrixCubicSpline
                 for k = 1:nCols
                     resArray(:,k) = self.ppFormList{k}.coefs(iPieces,:)*tVec;
                 end
-            else   
+            else
                 resArray = zeros(nRows, nCols, nTimePoints);
                 for k=1:1:nCols
                     resArray(:,k,:) = ppval(self.ppFormList{k},timeVec);

@@ -157,7 +157,7 @@ classdef SuiteBasic < mlunitext.test_case
             end
         end
         function testMatrixCubicSplineBasic(self)
-           MAX_TOL = 1e-13;
+            MAX_TOL = 1e-13;
             N_TIME_POINTS = 100;
             dataArray = rand(8, 7, N_TIME_POINTS);
             timeVec = 1 : N_TIME_POINTS;
@@ -191,7 +191,7 @@ classdef SuiteBasic < mlunitext.test_case
             dataArray = rand(8, N_TIME_POINTS);
             check('column');
             check('row');
-
+            
             %%
             posArray = rand(8, 8, N_TIME_POINTS);
             for iTime = 1 : N_TIME_POINTS
@@ -251,7 +251,7 @@ classdef SuiteBasic < mlunitext.test_case
                 evalCMat = {obj.evaluate(timeLeftVec),...
                     obj.evaluate(timeRightVec)};
                 if((nDims == 1) && (strcmp(shape, 'column') || strcmp(shape, 'row')))
-                    catArgCMat = cellfun(@(x)threeDim2TwoDim(x), evalCMat,...
+                    catArgCMat = cellfun(@(x)squeeze(x), evalCMat,...
                         'UniformOutput', false);
                     resDataArray = cat(nDims + 1, catArgCMat{1, 1},...
                         catArgCMat{1, 2});
@@ -276,7 +276,7 @@ classdef SuiteBasic < mlunitext.test_case
                             'UniformOutput', false);
                         catDataArray = cat(2, dataList{:});
                     else
-                        catDataArray = threeDim2TwoDim(cell2mat(dataList));
+                        catDataArray = squeeze(cell2mat(dataList));
                     end
                     mlunitext.assert_equals(true, isequal(resDataArray,...
                         catDataArray));
@@ -286,9 +286,6 @@ classdef SuiteBasic < mlunitext.test_case
                     isOk = maxTol <= MAX_TOL;
                     mlunitext.assert_equals(true, isOk,...
                         sprintf('max tol %g', maxTol));
-                end
-                function evalMat = threeDim2TwoDim(eMat)
-                    evalMat = reshape(eMat, size(eMat, 1), size(eMat, 3));
                 end
                 %
             end

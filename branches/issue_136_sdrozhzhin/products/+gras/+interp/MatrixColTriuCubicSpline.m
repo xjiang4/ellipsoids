@@ -3,7 +3,7 @@ classdef MatrixColTriuCubicSpline<gras.interp.AMatrixCubicSpline
     % $Copyright: Moscow State University,
     %            Faculty of Computational Mathematics and Computer Science,
     %            System Analysis Department 2011 $
-    %    
+    %
     methods (Access=protected,Static)
         function ppFormList=buildSplineCoeffs(dataArray,timeVec)
             import modgen.common.throwerror;
@@ -38,17 +38,17 @@ classdef MatrixColTriuCubicSpline<gras.interp.AMatrixCubicSpline
             nCols = self.nCols;
             nTimePoints = length(timeVec);
             
-            resArray = zeros(nRows, nCols, nTimePoints);  
+            resArray = zeros(nRows, nCols, nTimePoints);
             switch nDims
                 case 1
                     resArray = fnval(self.ppFormList{1}, timeVec);
                     resArray = reshape(resArray, nRows, nCols,...
                         nTimePoints);
-                case 2    
+                case 2
                     for k = 1 : 1 : nCols
                         resArray(1 : k, k, :) = fnval(self.ppFormList{k},...
                             timeVec);
-                   end
+                    end
             end
         end
     end
@@ -62,7 +62,7 @@ classdef MatrixColTriuCubicSpline<gras.interp.AMatrixCubicSpline
             %       dataArray: double[nCols,nRows,nTimePoints]
             %               /double[nRows,nTimes] - data array
             %       timeVec: double[1,nTimePoints] -
-            %           
+            %
             %
             import gras.interp.MatrixColTriuCubicSpline
             import modgen.common.throwerror;
