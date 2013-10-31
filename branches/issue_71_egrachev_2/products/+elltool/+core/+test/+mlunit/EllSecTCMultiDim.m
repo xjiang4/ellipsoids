@@ -50,8 +50,10 @@ classdef EllSecTCMultiDim < mlunitext.test_case
             array2Size = [1, 2, 1, 1, 1, 1, 1];
             test2EllArray = self.createObjectArray(array2Size, @(x)self.ellFactoryObj.create(eye(x)), ...
                 3, 1, 1);
+%             test2EllArray(1, 2, 1, 1, 1, 1, 1) = self.ellFactoryObj.create([5; 5; 5], ...
+%                 myMat, 2);
             test2EllArray(1, 2, 1, 1, 1, 1, 1) = self.ellFactoryObj.create([5; 5; 5], ...
-                myMat, 2);
+                myMat);
             testCorrect(1, 'i', -1);
             testCorrect(1, 'u', 0);
             array1Size = [1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1];
@@ -61,8 +63,10 @@ classdef EllSecTCMultiDim < mlunitext.test_case
             array2Size = [2, 2, 1, 1, 1, 1, 1];
             test2EllArray = self.createObjectArray(array2Size, @(x)self.ellFactoryObj.create(eye(x)), ...
                 4, 1, 1);
+%             test2EllArray(1, 2, 1, 1, 1, 1, 1) = self.ellFactoryObj.create([5; 5; 5; 5], ...
+%                 [4, 1, 1, 1; 1, 2, 1, 1; 1, 1, 5, 1; 1, 1, 1, 6], 2);
             test2EllArray(1, 2, 1, 1, 1, 1, 1) = self.ellFactoryObj.create([5; 5; 5; 5], ...
-                [4, 1, 1, 1; 1, 2, 1, 1; 1, 1, 5, 1; 1, 1, 1, 6], 2);
+                    [4, 1, 1, 1; 1, 2, 1, 1; 1, 1, 5, 1; 1, 1, 1, 6]);
             testCorrect(2, 'i', 0);
             testCorrect(3, [], 0);
             array1Size = [1, 2, 1, 1, 2, 1];
@@ -70,8 +74,7 @@ classdef EllSecTCMultiDim < mlunitext.test_case
                 zeros(100, 1), diag([5 * ones(1, 50), 2 * ones(1, 50)]), 2);
             array2Size = [1, 2, 1, 1, 1, 2, 1];
             test2EllArray = self.createObjectArray(array2Size, @(varargin)self.ellFactoryObj.create(varargin{:}), ...
-                ones(100, 1), diag([0.2 * ones(1, 50), ...
-                0.5 * ones(1, 50)]), 2);
+                ones(100, 1), diag([0.2 * ones(1, 50), 0.5 * ones(1, 50)]), 2);
             test2EllArray(1, 2, 1, 1, 1, 2, 1) = self.ellFactoryObj.create(-ones(100, 1), ...
                 diag([5 * ones(1, 50), 2 * ones(1, 50)]));
             testCorrect(1, 'i', -1);
