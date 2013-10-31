@@ -633,7 +633,7 @@ classdef EllipsoidIntUnionTC < mlunitext.test_case
             testEllVec = self.ellFactoryObj.create(eye(nDim));
             testHpVec = hyperplane([1, 0].', 0);
             resEllVec = hpintersection(testEllVec, testHpVec);
-            ansEllVec = self.ellFactoryObj.create([0, 0; 0, 1]);
+            ansEllVec = self.ellFactoryObj.create([0, 0; 0, 1]);    
             self.flexAssert(true, eq(resEllVec, ansEllVec));
             
             nDim = 2;

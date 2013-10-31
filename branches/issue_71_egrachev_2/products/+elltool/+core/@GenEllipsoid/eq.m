@@ -30,6 +30,15 @@ import gras.la.sqrtmpos;
 import elltool.core.GenEllipsoid;
 relTol=GenEllipsoid.getCheckTol();
 
+%test section
+nFirstElems = numel(ellFirstArr);
+nSecElems = numel(ellSecArr);
+if (nFirstElems == 0 || nSecElems == 0)
+    throwerror('wrongInput:emptyArray',...
+        'input ellipsoidal arrays should be empty at the same time');
+end
+%test_section_end
+
 GenEllipsoid.checkIsMe(ellFirstArr);
 GenEllipsoid.checkIsMe(ellSecArr);
 nFirstElems = numel(ellFirstArr);

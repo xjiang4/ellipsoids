@@ -95,7 +95,6 @@ classdef AEllipsoid < elltool.core.ABasicEllipsoid
     methods (Abstract)
        [SDataArr,SFieldNiceNames,SFieldDescr]=toStruct(ellArr,isPropIncluded)
        copyEllArr = getCopy(ellArr)
-
        [distValArray, statusArray] = distance(ellObjArr, objArr, isFlagOn)
     end
     methods (Abstract, Static)

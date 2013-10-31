@@ -75,7 +75,7 @@ arrayfun(@(x)makeEllipsoid(x),1:nEllipsoids);
 ellArr = reshape(ellArr,sizeVec);
 %
 function makeEllipsoid(index)
-    ellArr(index) = elltool.core.GenEllipsoid.getCopy(ell);
+    ellArr(index) = getCopy(ell);
 end
 end
         

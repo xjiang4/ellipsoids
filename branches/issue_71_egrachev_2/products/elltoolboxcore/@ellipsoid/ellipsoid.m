@@ -16,11 +16,6 @@ classdef ellipsoid < elltool.core.AEllipsoid
     end
     %
     methods
-
-        %
-
-    end
-    methods
         function [ellMat] = ellipsoid(varargin)
             %
             % ELLIPSOID - constructor of the ellipsoid object.

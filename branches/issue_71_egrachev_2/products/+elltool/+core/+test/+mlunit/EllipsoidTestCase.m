@@ -235,8 +235,12 @@ classdef EllipsoidTestCase < mlunitext.test_case
             %distance between two vectors of ellipsoids of rather high
             %dimension (12<=nDim<=26) with matrices that have nonzero non
             %diagonal elements
+%             load(strcat(self.testDataRootDir,filesep,'testEllEllDist.mat'),...
+%                 'testEllipsoid1Vec','testEllipsoid2Vec','testAnswVec','nEllVec');
             load(strcat(self.testDataRootDir,filesep,'testEllEllDist.mat'),...
-                'testEllipsoid1Vec','testEllipsoid2Vec','testAnswVec','nEllVec');
+                'testEllipsoid1Struct','testEllipsoid2Struct','testAnswVec','nEllVec');
+            testEllipsoid1Vec = self.ellFactoryObj.create.fromStruct(testEllipsoid1Struct);
+            testEllipsoid2Vec = self.ellFactoryObj.create.fromStruct(testEllipsoid2Struct);
             testResVec=distance(testEllipsoid1Vec,testEllipsoid2Vec);
             mlunitext.assert_equals(ones(1,nEllVec),...
                 abs(testResVec-testAnswVec)<absTol);
@@ -280,8 +284,11 @@ classdef EllipsoidTestCase < mlunitext.test_case
             %
             %
             % distance between single ellipsoid and array of ellipsoids
+%             load(strcat(self.testDataRootDir,filesep,'testEllEllDist.mat'),...
+%                 'testEllArr','testDistResArr');
             load(strcat(self.testDataRootDir,filesep,'testEllEllDist.mat'),...
-                'testEllArr','testDistResArr');
+                'testEllStruct','testDistResArr');
+            testEllArr = self.ellFactoryObj.create.fromStruct(testEllStruct);
             testEll = self.ellFactoryObj.create(eye(2));
             resArr = distance(testEll, testEllArr);
             isOkArr = abs(resArr - testDistResArr) <= elltool.conf.Properties.getAbsTol();

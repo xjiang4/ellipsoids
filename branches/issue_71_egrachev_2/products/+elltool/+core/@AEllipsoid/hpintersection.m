@@ -122,19 +122,12 @@ end
            intEllArr(index) = myEll.create;
            isnIntersectedArr(index) = true;
         else
-            intEllArr(index) = l_compute1intersection(myEll,myHyp,...
-                maxEllDim);
+            intEllArr(index)=l_compute1intersection(myEll,myHyp,maxEllDim);
             isnIntersectedArr(index) = false;
         end
     end
 end
-
-
-
-
-
 %%%%%%%%
-
 function intEll = l_compute1intersection(myEll, myHyp, maxEllDim)
 %
 % L_COMPUTE1INTERSECTION - computes intersection of single ellipsoid with
@@ -167,7 +160,6 @@ rotVec = (hypScalar*tMat*normHypVec)/(normHypVec'*normHypVec);
 myEll = tMat*myEll - rotVec;
 myEllCentVec = myEll.centerVec;
 myEllShMat = myEll.shapeMat;
-
 if rank(myEllShMat) < maxEllDim
     if Properties.getIsVerbose()
             if isempty(logger)
@@ -176,7 +168,7 @@ if rank(myEllShMat) < maxEllDim
         logger.info('HPINTERSECTION: Warning! Degenerate ellipsoid.');
         logger.info('                Regularizing...');
     end
-    myEllShMat = ellipsoid.regularize(myEllShMat,myEll.absTol);
+    myEllShMat = elltool.core.AEllipsoid.regularize(myEllShMat,myEll.absTol);
 end
 
 invMyEllShMat   = ell_inv(myEllShMat);
@@ -191,6 +183,6 @@ intEllCentVec   = myEllCentVec + myEllCentVec(1, 1)*...
     [-1; invMyEllShMat*invShMatrixVec];
 intEllShMat   = (1 - hCoefficient) * [0 zeros(1, maxEllDim-1); ...
     zeros(maxEllDim-1, 1) invMyEllShMat];
-intEll   = ellipsoid(intEllCentVec, intEllShMat);
-intEll   = ell_inv(tMat)*(intEll + rotVec);
+intEll = myEll.create(intEllCentVec, intEllShMat);
+intEll = ell_inv(tMat)*(intEll + rotVec);
 end

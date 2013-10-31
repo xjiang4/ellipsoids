@@ -35,7 +35,7 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
     %            Faculty of Computational Mathematics and Computer Science,
     %            System Analysis Department 2012 $
     %
-    properties (Access = private)
+    properties(Access = private)
         diagMat
         eigvMat
     end
@@ -57,7 +57,10 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
               shapeMat = (shapeMat + transpose(shapeMat)) / 2;
         end
         
-        function obj=set.shapeMat(obj, value)
+        function obj = set.shapeMat(self, shMat)
+            import modgen.common.throwerror;
+            [self.eigvMat, self.diagMat] = eig(shMat);
+            %throwerror('wrongParameters', 'Access to set.shapeMat');
         end
         
         function isOk=getIsGoodDir(ellObj1,ellObj2,curDirVec)
@@ -490,10 +493,10 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
             end
             SComp.(SFieldNiceNames.centerVec) = SEll.centerVec;
             if (isPropIncluded)
-                %SComp.(SFieldNiceNames.absTol) = SEll.absTol;
-                %SComp.(SFieldNiceNames.relTol) = SEll.relTol;
-                %SComp.(SFieldNiceNames.nPlot2dPoints) = SEll.nPlot2dPoints;
-                %SComp.(SFieldNiceNames.nPlot3dPoints) = SEll.nPlot3dPoints;
+                SComp.(SFieldNiceNames.absTol) = SEll.absTol;
+                SComp.(SFieldNiceNames.relTol) = SEll.relTol;
+                SComp.(SFieldNiceNames.nPlot2dPoints) = SEll.nPlot2dPoints;
+                SComp.(SFieldNiceNames.nPlot3dPoints) = SEll.nPlot3dPoints;
             end
         end
     end

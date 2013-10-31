@@ -79,12 +79,6 @@ if (isa(varargin{1}, 'ellipsoid')||isa(varargin{1}, 'elltool.core.GenEllipsoid')
 elseif (isa(varargin{2}, 'ellipsoid')||isa(varargin{2}, 'elltool.core.GenEllipsoid'))&&isa(varargin{1}, 'double')
     inpEllArr = varargin{2};
     inpVec = varargin{1};
-% if isMe(varargin{1})&&isa(varargin{2}, 'double')
-%     inpEllArr = varargin{1};
-%     inpVec = varargin{2};
-% elseif isMe(varargin{2})&&isa(varargin{1}, 'double')
-%     inpEllArr = varargin{2};
-%     inpVec = varargin{1};
 else
     throwerror('wrongInput',errMsg);
 end
@@ -94,6 +88,7 @@ if isempty(inpEllArr)
     outEllArr = inpEllArr.create.empty(sizeCVec{:});
 else    
     dimArr = dimension(inpEllArr);
+    
     checkmultvar('iscolumn(x1)&&all(x2(:)==length(x1))',2,inpVec,dimArr,...
         'errorMessage','dimensions mismatch');
 %     outEllArr(sizeCVec{:})=ellipsoid;

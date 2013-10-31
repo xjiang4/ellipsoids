@@ -72,7 +72,7 @@ checkmultvar('(x1(1)==x2(1))&&all(x1(:)==x1(1))&&all(x2(:)==x2(1))',...
 %
 %
 absTol = ellArr.getAbsTol();
-isEll = isa(objArr,'ellipsoid');
+isEll = isa(objArr,'ellipsoid') || isa(objArr, 'elltool.core.GenEllipsoid');
 
 if ~isEllScal && ~isPolyScal
     indVec = getIndVec(size(ellArr));
