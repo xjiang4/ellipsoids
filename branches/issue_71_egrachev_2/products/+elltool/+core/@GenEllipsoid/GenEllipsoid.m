@@ -204,10 +204,12 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
                         'errorTag','wrongInput:imagArgs',...
                         'errorMessage','shapeMat matrix must be real.');
                 ellMat = regParamList{1};
+                nShDim = ndims(ellMat);
                 %    
                 [mSize nSize]=size(ellMat);
                 isPar2Vector = nSize==1;
                 isMatSquare = mSize == nSize;
+                
                 %
                 if isPar2Vector
                     ellObj.diagMat=diag(ellMat);

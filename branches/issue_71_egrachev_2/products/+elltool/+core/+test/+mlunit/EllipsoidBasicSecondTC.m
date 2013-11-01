@@ -647,6 +647,7 @@ function auxTestProjection(self, methodName, centVec, shapeMat, projMat, dimVec)
             testIsRight2 = all(ellCopyArr(:).isEqual(ellArr(:)));
         end
      end    
+     
      mlunitext.assert_equals(testIsRight1, 1);
      mlunitext.assert_equals(testIsRight2, 1);
 end 
