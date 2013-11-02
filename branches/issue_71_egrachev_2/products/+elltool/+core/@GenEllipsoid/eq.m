@@ -28,7 +28,8 @@ import modgen.common.throwerror;
 import modgen.struct.structcomparevec;
 import gras.la.sqrtmpos;
 import elltool.core.GenEllipsoid;
-relTol=GenEllipsoid.getCheckTol();
+% relTol=GenEllipsoid.getCheckTol();
+relTol=ellFirstArr(1).getRelTol();
 
 %test section
 nFirstElems = numel(ellFirstArr);

@@ -158,22 +158,22 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
 %         end
     end
     methods
-        function display(ellArr)
-        % Example:
-        %   ellObj = elltool.core.GenEllipsoid([5;2], eye(2), [1 3; 4 5]);
-        %   ellObj.display()
-        %      |    
-        %      |----- q : [5 2]
-        %      |          -------
-        %      |----- Q : |10|19|
-        %      |          |19|41|
-        %      |          -------
-        %      |          -----
-        %      |-- QInf : |0|0|
-        %      |          |0|0|
-        %      |          -----
-            strucdisp(ellArr(:).toStruct());
-        end
+%         function display(ellArr)
+%         % Example:
+%         %   ellObj = elltool.core.GenEllipsoid([5;2], eye(2), [1 3; 4 5]);
+%         %   ellObj.display()
+%         %      |    
+%         %      |----- q : [5 2]
+%         %      |          -------
+%         %      |----- Q : |10|19|
+%         %      |          |19|41|
+%         %      |          -------
+%         %      |          -----
+%         %      |-- QInf : |0|0|
+%         %      |          |0|0|
+%         %      |          -----
+%             strucdisp(ellArr(:).toStruct());
+%         end
     end
     methods
         function ellObj = GenEllipsoid(varargin)
@@ -488,10 +488,17 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
     
     methods (Access = protected, Static)
         function SComp = formCompStruct(SEll, SFieldNiceNames, absTol, isPropIncluded)
-            if (~isempty(SEll.shapeMat))
-                SComp.(SFieldNiceNames.shapeMat) = gras.la.sqrtmpos(SEll.shapeMat, absTol);
+%             if (~isempty(SEll.shapeMat))
+%                 SComp.(SFieldNiceNames.shapeMat) = gras.la.sqrtmpos(SEll.shapeMat, absTol);
+%             else
+%                 SComp.(SFieldNiceNames.shapeMat) = [];
+%             end
+            if (~isempty(SEll.diagMat) && ~isempty(SEll.eigvMat))
+                SComp.diagMat = realsqrt(SEll.diagMat);
+                SComp.eigvMat = SEll.eigvMat;
             else
-                SComp.(SFieldNiceNames.shapeMat) = [];
+                SComp.diagMat = [];
+                SComp.eigvMat = [];
             end
             SComp.(SFieldNiceNames.centerVec) = SEll.centerVec;
             if (isPropIncluded)

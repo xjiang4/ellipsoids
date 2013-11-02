@@ -29,7 +29,6 @@ classdef ABasicEllipsoid < handle
             isnSecScalar=nSecElems > 1;
             
             [~, tolerance] = ellFirstArr.getRelTol;
-            
             [SEll1Array, SFieldNiceNames, ~] = ...
                 ellFirstArr.toStruct(isPropIncluded);
             SEll2Array = ellSecArr.toStruct(isPropIncluded);

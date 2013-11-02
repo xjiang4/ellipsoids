@@ -36,8 +36,9 @@ if (nargin < 2)
 end
 
 SDataArr = arrayfun(@(ellObj)ell2Struct(ellObj, isPropIncluded), ellArr);
-SFieldNiceNames = struct('shapeMat', 'Q', 'centerVec', 'q');
-SFieldDescr = struct('shapeMat', 'Ellipsoid shape matrix.',...
+SFieldNiceNames = struct('diagMat', 'D', 'eigvMat', 'V', 'centerVec', 'q');
+SFieldDescr = struct('diagMat', 'Diagonal matrix',...
+    'eigvMat', 'Square matrix',...
     'centerVec', 'Ellipsoid center vector.');
 
 if (isPropIncluded)
@@ -59,7 +60,7 @@ end
 end
 
 function SEll = ell2Struct(ellObj, isPropIncluded)
-SEll = struct('shapeMat', ellObj.shapeMat, 'centerVec', ellObj.centerVec);
+SEll = struct('diagMat', ellObj.diagMat, 'eigvMat', ellObj.eigvMat, 'centerVec', ellObj.centerVec);
 if (isPropIncluded)
     SEll.absTol = ellObj.absTol;
     SEll.relTol = ellObj.relTol;
