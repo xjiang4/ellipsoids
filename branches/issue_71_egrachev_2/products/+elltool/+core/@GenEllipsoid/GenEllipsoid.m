@@ -494,8 +494,24 @@ classdef GenEllipsoid < elltool.core.AEllipsoid
 %                 SComp.(SFieldNiceNames.shapeMat) = [];
 %             end
             if (~isempty(SEll.diagMat) && ~isempty(SEll.eigvMat))
-                SComp.diagMat = realsqrt(SEll.diagMat);
-                SComp.eigvMat = SEll.eigvMat;
+                %SComp.diagMat = realsqrt(SEll.diagMat);
+                %SComp.eigvMat = SEll.eigvMat;
+                
+                dMat = SEll.diagMat;
+                vMat = SEll.eigvMat;
+                dVec = diag(dMat);
+                if any(dVec < -absTol)
+                throwerror('wrongInput:notPosSemDef',...
+                    'input matrix is expected to be positive semi-definite');
+                end
+                %
+                isZeroVec = dVec <0;
+                dVec(isZeroVec) = 0;
+                dMat = diag(dVec);
+                dMat = realsqrt(dMat);
+                
+                SComp.diagMat = dMat;
+                SComp.eigvMat = vMat;
             else
                 SComp.diagMat = [];
                 SComp.eigvMat = [];

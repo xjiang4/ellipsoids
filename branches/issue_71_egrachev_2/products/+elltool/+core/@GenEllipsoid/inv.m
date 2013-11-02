@@ -51,3 +51,4 @@ arrayfun(@(x) fSingleInv(x),myEllArr);
         diagVec(isZeroVec)=Inf;
         ellInvObj=elltool.core.GenEllipsoid(ellObj.centerVec,diagVec,ellObj.eigvMat);
     end
+end
