@@ -199,7 +199,8 @@ classdef MPTIntegrationTestCase < mlunitext.test_case
                 'wrongInput:class');
             
         end
-        
+        %
+        %3
         function self = testIntersectionIA(self)
            import elltool.exttbx.mpt.gen.*;
             %ELLIPSOID AND POLYTOPE
@@ -251,25 +252,31 @@ classdef MPTIntegrationTestCase < mlunitext.test_case
             poly9 = [-1;-1]+polytope([1 1], -sqrt(2));
             ellPolyIA9 = intersection_ia(ell9,poly9);
             mlunitext.assert(isEmpty(ellPolyIA9))
+        end
+        %
+        %
+        function self = testIntersectionIAForEll(self)
             %ELLIPSOID AND ELLIPSOID
             %test if the second ellipsoid lies in the first
             ell_11 = ellipsoid(eye(2));
             ell_12 = [0.5; 0]+ellipsoid(0.2*eye(2));
-            ellEllIA1 = intersection_ia(ell_11, ell_12);
-            mlunitext.assert(eq(ell_12,ellEllIA1));
+            ellEllIA1 = ell_11.intersection_ia(ell_12);
+            [isOk, reportStr] = ell_12.isEqual(ellEllIA1);
+            mlunitext.assert(isOk, reportStr);
             %
             %test if internal approximation is really internal
-            ell_11 = ellipsoid([0; 1; 0], eye(3));
-            ell_12 = ellipsoid([1; 0; 0], eye(3));
-            ellEllIA1 = intersection_ia(ell_11, ell_12);
-            mlunitext.assert(doesIntersectionContain([ell_11 ell_12], ellEllIA1))
+            ell_21 = ellipsoid([0; 1; 0], eye(3));
+            ell_22 = ellipsoid([1; 0; 0], eye(3));
+            ellEllIA2 = ell_21.intersection_ia(ell_22);
+            ell = [ell_21 ell_22];
+            mlunitext.assert(ell.doesIntersectionContain(ellEllIA2));
             %
             %test if internal approximation is a point, when
             %the first ellipsoid touches the second
             eps=1e-8;
             ell_31 = ellipsoid(0.5*eye(2));
             ell_32 = [1;1]+ellipsoid(0.5*eye(2));
-            ellEllIA3 = intersection_ia(ell_31,ell_32);
+            ellEllIA3 = ell_31.intersection_ia(ell_32);
             [~,ellEll3Mat] = double(ellEllIA3);
             mlunitext.assert(all(ellEll3Mat(:) < eps));
             %
@@ -277,32 +284,37 @@ classdef MPTIntegrationTestCase < mlunitext.test_case
             %when the ellipsoids do not intersect
             ell_41 = ellipsoid(0.5*eye(2));
             ell_42 = [2;2]+ellipsoid(0.5*eye(2));
-            ellEllIA4 = intersection_ia(ell_41,ell_42);
-            mlunitext.assert(isEmpty(ellEllIA4))            
-            %ELLIPSOID AND HALFSPACE
-            %ellipsoid lies in halfspace
-            ell10 = ellipsoid(eye(2));
-            hyp10 = hyperplane([1;1], 3);
-            ellHypIA10 = intersection_ia(ell10, hyp10);
-            mlunitext.assert(eq(ell10, ellHypIA10));
-            %
-            %test if internal approximation is an empty ellipsoid, when
-            %ellipsoid doesn't lie in the halfspace
-            ell11 = ellipsoid(eye(2));
-            hyp11 = hyperplane([-1;-1], -3);
-            ellHypIA11 = intersection_ia(ell11, hyp11);
-            [~,ellHyp11Mat] = double(ellHypIA11);
-            mlunitext.assert(ellHyp11Mat == [])
-            %
-            %halfspace intersects an ellpsoid
-            ell12 = ellipsoid(eye(3));
-            hyp12 = hyperplane([-1;1;1], 1);
-            ellHypIA12 = intersection_ia(ell12, hyp12);
-            mlunitext.assert(doesIntersectionContain(ell12, ellHypIA12));
+            ellEllIA4 = ell_41.intersection_ia(ell_42);
+            mlunitext.assert(isEmpty(ellEllIA4))
         end
         %
         %
-   function self = testIntersectionEA(self)
+        function self = testIntersectionIAForHyper(self)
+            %ELLIPSOID AND HALFSPACE
+            %ellipsoid lies in halfspace
+            ell1 = ellipsoid(eye(2));
+            hyp1 = hyperplane([1;1], 3);
+            ellHypIA1 = ell1.intersection_ia(hyp1);
+            [isOk, reportStr] = ell1.isEqual(ellHypIA1);
+            mlunitext.assert(isOk, reportStr)
+            %
+            %test if internal approximation is an empty ellipsoid, when
+            %ellipsoid doesn't lie in the halfspace
+            ell2 = ellipsoid(eye(2));
+            hyp2 = hyperplane([-1;-1], -3);
+            ellHypIA2 = intersection_ia(ell2, hyp2);
+            [~,ellHyp2Mat] = double(ellHypIA2);
+            mlunitext.assert(ellHyp2Mat == [])
+            %
+            %halfspace intersects an ellpsoid
+            ell3 = ellipsoid(eye(3));
+            hyp3 = hyperplane([-1;1;1], 1);
+            ellHypIA3 = ell3.intersection_ia(hyp3);
+            mlunitext.assert(ell3.doesIntersectionContain(ellHypIA3));
+        end
+        %
+        %
+        function self = testIntersectionEA(self)
             %ELLIPSOID AND POLYTOPE
             %analitically proved, that minimal volume ellipsoid, covering
             %intersection of ell1 and poly1 is ell1.
@@ -316,12 +328,12 @@ classdef MPTIntegrationTestCase < mlunitext.test_case
             %
             %if we apply same linear tranform to both ell1 and poly1, than
             %minimal volume ellipsoid shouldn't change.
-            transfMat1 =  [1 3; 2 2];
-            shiftVec1 = [1; 1];
-            transfShMat1 = transfMat1*(transfMat1)';
-            ell2 = ellipsoid(shiftVec1,transfShMat1);
-            poly2 = polytope(defaultPolyMat/(transfMat1),...
-                defaultPolyConst+(defaultPolyMat/(transfMat1))*shiftVec1);
+            transfMat =  [1 3; 2 2];
+            shiftVec = [1; 1];
+            transfShMat1 = transfMat*(transfMat)';
+            ell2 = ellipsoid(shiftVec,transfShMat1);
+            poly2 = polytope(defaultPolyMat/(transfMat),...
+                defaultPolyConst+(defaultPolyMat/(transfMat))*shiftVec);
             ellPolyEA2 = intersection_ea(ell2,poly2);
             mlunitext.assert(eq(ell2,ellPolyEA2));
             %
@@ -364,6 +376,10 @@ classdef MPTIntegrationTestCase < mlunitext.test_case
                 -(polyNConst+(polyNMat/(transfNMat))*shiftNVec));
             ellPolyEAN2 = intersection_ea(ellN2,polyN2);
             mlunitext.assert(eq(ellN2,ellPolyEAN2));
+        end
+        %
+        %
+        function self = testIntersectionEAForEll(self)
             %ELLIPSOID AND ELLIPSOID
             %analitically proved, that minimal volume ellipsoid, covering
             %intersection of ell_11 and ell_12 is ell_11.
@@ -373,37 +389,47 @@ classdef MPTIntegrationTestCase < mlunitext.test_case
             ellVec2 = [0.5;0];
             ell_11 = ellipsoid(ellVec1, defaultShMat1);
             ell_12 = ellipsoid(ellVec2, defaultShMat2);
-            ellEllEA1 = intersection_ea(ell_11, ell_12);
-            mlunitext.assert(eq(ell_12,ellEllEA1));
+            ellEllEA1 = ell_11.intersection_ea(ell_12);
+            [isOk, reportStr] = ell_12.isEqual(ellEllEA1);
+            mlunitext.assert(isOk, reportStr)
             %if we apply same linear tranform to both ell1 and poly1, than
             %minimal volume ellipsoid shouldn't change.
-            transfMat2 = [1 2; 3 3];
-            shiftVec2 = [1; 2];
-            ell_21 = ellipsoid(shiftVec2, transfMat2*transfMat2');
-            ell_22 = ellipsoid(transfMat2*ellVec2 + shiftVec2,...
-            transfMat2*defaultShMat2*transfMat2');
-            ellEllEA2 = intersection_ea(ell_21,ell_22);
-            mlunitext.assert(eq(ell_22,ellEllEA2));
+            transfMat = [1 2; 3 3];
+            shiftVec = [1; 2];
+            ell_21 = ellipsoid(shiftVec, transfMat*transfMat');
+            ell_22 = ellipsoid(transfMat*ellVec2 + shiftVec,...
+            transfMat*defaultShMat2*transfMat');
+            ellEllEA2 = ell_21.intersection_ea(ell_22);
+            [isOk, reportStr] = ell_22.isEqual(ellEllEA2);
+            mlunitext.assert(isOk, reportStr)
             %for 3 dims analitically proved, that minimal volume ellipsoid,
             %covering intersection of ell_31 and ell_32, is ell_33
             ell_33 = ellipsoid([0.5; 0; 0], 0.75*eye(3));
             ell_31 = ellipsoid(eye(3));
             ell_32 = ellipsoid([1; 0; 0], eye(3));
-            ellEllEA3 = intersection_ea(ell_31, ell_32);
-            mlunitext.assert(eq(ell_33,ellEllEA3));
+            ellEllEA3 = ell_31.intersection_ea(ell_32);
+            [isOk, reportStr] = ell_33.isEqual(ellEllEA3);
+            mlunitext.assert(isOk, reportStr)
+        end
+        %
+        %
+        function self = testIntersectionEAForHyper(self)
             %ELLIPSOID AND HALFSPACE
             %ellipsoid lies in halfspace
-            ell3 = ellipsoid([-5;2;1],eye(3));
-            hyp3 = hyperplane([1;1;0], 1);
-            ellHypEA3 = intersection_ea(ell3, hyp3);
-            mlunitext.assert(eq(ell3,ellHypEA3));
+            ell1 = ellipsoid([-5;2;1],eye(3));
+            hyp1 = hyperplane([1;1;0], 1);
+            ellHypEA1 = ell1.intersection_ea(hyp1);
+            [isOk, reportStr] = ell1.isEqual(ellHypEA1);
+            mlunitext.assert(isOk, reportStr)
             %analitically proved, that minimal volume ellipsoid, covering
             %intersection of ell3 and hyp3 is ell3.
-            ell4 = ellipsoid([-2;2],eye(2));
-            hyp4 = hyperplane([1;1], 1);
-            ellHypEA4 = intersection_ea(ell4, hyp4);
-            mlunitext.assert(eq(ell4,ellHypEA4));
+            ell2 = ellipsoid([-2;2],eye(2));
+            hyp2 = hyperplane([1;1], 1);
+            ellHypEA2 = ell2.intersection_ea(hyp2);
+            [isOk, reportStr] = ell2.isEqual(ellHypEA2);
+            mlunitext.assert(isOk, reportStr)
         end
+
         %
         %
         function self = testIsInside(self)
