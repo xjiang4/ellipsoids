@@ -55,6 +55,18 @@ classdef EllUnionTubeStaticProj<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&..
     %     gras.ellapx.smartdb.rels.EllUnionTubeStaticProj
     methods
         function fieldsList = getNoCatOrCutFieldsList(self)
+            % GETNOCATORCUTFIELDLIST - returns a list of fields of
+            % EllUnionTubeStaticProj object, which are not to be
+            % concatenated or cut.
+            %
+            % Input:
+            %   regular:
+            %       self.
+            % Output:
+            %   namePrefix: char[nFields, ] - list of fields of
+            %       EllUnionTubeStaticProj object, which are not to be
+            %       concatenated or cut
+            %
             import  gras.ellapx.smartdb.F;
             fieldsList = [getNoCatOrCutFieldsList@gras.ellapx.smartdb.rels.EllTubeProjBasic(self);
                 getNoCatOrCutFieldsList@gras.ellapx.smartdb.rels.EllUnionTubeBasic(self)];

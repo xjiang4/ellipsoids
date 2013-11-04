@@ -666,6 +666,26 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
                 varargin{:});
         end
         function [ellTubeProjRel,indProj2OrigVec]=project(self,varargin)
+            %
+            % PROJECT - projects ellipsoid tube onto subspace
+            %
+            % Input:
+            %   regular:
+            %       self.
+            %       projType: gras.ellapx.enums.EProjType[1, 1] - type of
+            %           projection. It can be Static or DynamicAlongGoodCurve.
+            %       projMatList: double[nDims, nDims] -  subspace defined its basis 
+            %           vectors on which ellipsoid tube has to be projected
+            %       fGetProjMat: cell_fun[1, ] - function that is used to
+            %           get the projection.
+            %   optional:
+            %       projType: gras.ellapx.enums.EProjType[1, 1] -  type of
+            %           projection
+            %
+            % Output:
+            %   ellTubeProjRel: gras.ellapx.smartdb.rels.EllTubeProj[1, 1] -
+            %       ellipsoid tube projection
+            %   indProj2OrigVec: ???
             import gras.ellapx.smartdb.rels.EllTubeProj;
             if self.getNTuples()>0
                 [rel,indProj2OrigVec]=self.projectInternal(varargin{:});

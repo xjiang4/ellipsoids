@@ -14,6 +14,18 @@ classdef EllUnionTubeBasic<handle
     end
    methods 
         function fieldsList = getNoCatOrCutFieldsList(~)
+            % GETNOCATORCUTFIELDLIST - returns a list of fields of
+            % EllUionTubeBasic object, which are not to be
+            % concatenated or cut.
+            %
+            % Input:
+            %   regular:
+            %       self.
+            % Output:
+            %   namePrefix: char[nFields, ] - list of fields of
+            %       EllUionTubeBasic object, which are not to be
+            %       concatenated or cut
+            %
             import  gras.ellapx.smartdb.F;
             fieldsList=F().getNameList({'ELL_UNION_TIME_DIRECTION';...
                 'IS_LS_TOUCH_OP'});

@@ -9,6 +9,18 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
     end
     methods
         function fieldsList = getNoCatOrCutFieldsList(~)
+            % GETNOCATORCUTFIELDLIST - returns a list of fields of
+            % EllTubeBasic object, which are not to be
+            % concatenated or cut.
+            %
+            % Input:
+            %   regular:
+            %       self.
+            % Output:
+            %   namePrefix: char[nFields, ] - list of fields of
+            %       EllTubeBasic object, which are not to be
+            %       concatenated or cut
+            %
             import  gras.ellapx.smartdb.F;
             fieldsList=F().getNameList({'APPROX_SCHEMA_DESCR';'DIM';...
                 'APPROX_SCHEMA_NAME';'APPROX_TYPE';'CALC_PRECISION';...
@@ -787,7 +799,7 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
     end
     methods
         function [apprEllMat timeVec] = getEllArray(self, approxType)
-            % GETELLARRAY - returns array of matrix's ellipsoid according to
+            % GETELLARRAY - returns array of ellipsoids according to
             %               approxType
             %
             % Input:
@@ -796,8 +808,11 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
             %     approxType:char[1,] - type of approximation(internal/external)
             %
             % Output:
-            %   apprEllMat:double[nDim1,..., nDimN] - array of array of ellipsoid's
-            %            matrices
+            %   apprEllMat: ellipsoid[1, nTimePoints*nEllTubes] - an array
+            %       of all the ellipsoids from all the ellipsoid tubes that are
+            %       stored in self object
+            %       optional:
+            %   timeVec: cell[1,1] of double[1,nTimePoints] - time vector
             import gras.ellapx.enums.EApproxType;
             import gras.ellapx.smartdb.F;
             APPROX_TYPE = F.APPROX_TYPE;
@@ -818,28 +833,25 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
                 end
             end
         end
-        %
-        % INTERP - interpolates ellipsoidal tube on a new time vector
-        %
-        % Input:
-        %   regular:
-        %       self.
-        %
-        %       timeVec: double[nPoints] - sorted time vector to interpolate on.
-        %                Must begin with self.timeVec[1] and end with
-        %                self.timeVec[end]
-        %
-        % Output:
-        %   obj: gras.ellapx.smartdb.rels.EllTubeBasic[1, 1] - interpolated
-        %        ellipsoidal tube
-        %
-        % $Author: Daniil Stepenskiy <reinkarn@gmail.com> $
-        % $Date: May-2013 $
-        % $Copyright: Moscow State University,
-        %             Faculty of Computational
-        %             Mathematics and Computer Science,
-        %             System Analysis Department 2013 $
         function interpEllTube = interp(self, timeVec)
+            % INTERP - interpolates ellipsoidal tube on a new time vector
+            %
+            % Input:
+            %   regular:
+            %       self.
+            %       timeVec: double[1, nTimePoints] - sorted time vector to interpolate on.
+            %           Must begin with self.timeVec[1] and end with self.timeVec[end]
+            %
+            % Output:
+            %   interpEllTube: gras.ellapx.smartdb.rels.EllTubeBasic[1, 1] - 
+            %       interpolated ellipsoidal tube
+            %
+            % $Author: Daniil Stepenskiy <reinkarn@gmail.com> $
+            % $Date: May-2013 $
+            % $Copyright: Moscow State University,
+            %             Faculty of Computational
+            %             Mathematics and Computer Science,
+            %             System Analysis Department 2013 $
             import gras.interp.MatrixInterpolantFactory;
             import gras.ellapx.smartdb.rels.EllTube;
             import modgen.common.throwerror;
@@ -952,18 +964,20 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
                     SData.(fieldName), 'UniformOutput', false);
             end
         end
-        % CUT - extracts the piece of the relation object from given start time to
-        %       given end time.
-        % Input:
-        %  regular:
-        %     self.
-        %     cutTimeVec: double[1, 2]/ double[1, 1] - time interval to cut
         %
-        % Output:
-        % cutEllTubeRel: smartdb.relation.StaticRelation[1, 1]/
-        %      smartdb.relation.DynamicRelation[1, 1] - relation object resulting
-        %      from CUT operation
         function cutEllTubeRel = cut(self, cutTimeVec)
+            % CUT - extracts the piece of the ellipsoid tube object from given start 
+            % point of time to given end point of time.
+            % 
+            % Input:
+            %  regular:
+            %     self.
+            %     cutTimeVec: double[1, 2]/ double[1, 1] - time interval to cut
+            %
+            % Output:
+            %   cutEllTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] -
+            %   ellipsoid tube which is created from the original one by
+            %   cutting it from given start  point of time to given end point of time
             import gras.ellapx.smartdb.F;
             import modgen.common.throwerror;
             %
