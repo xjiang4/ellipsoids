@@ -42,13 +42,17 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
     end
     methods
         function fieldsList = getNoCatOrCutFieldsList(self)
-            % GETNOCATORCUTFIELDLIST - returns a list of 
+            % GETNOCATORCUTFIELDLIST - returns a list of fields of
+            % EllTubeProjBasic object, which are not to be
+            % concatenated or cut.
             %
             % Input:
             %   regular:
             %       self.
             % Output:
-            %   namePrefix: char[4, ] - 
+            %   namePrefix: char[nFields, ] - list of fields of
+            %       EllTubeProjBasic object, which are not to be
+            %       concatenated or cut
             %
             import  gras.ellapx.smartdb.F;
             ellTubeBasicList = self.getNoCatOrCutFieldsList@...
@@ -580,13 +584,6 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
         function plObj = plotExt(self,varargin)
             % PLOTEXT - plots external approximation of ellTube.
             %
-            %
-            % Usage:
-            %       obj.plotExt() - plots external approximation of ellTube.
-            %       obj.plotExt('Property',PropValue,...) - plots external approximation
-            %                                               of ellTube with setting
-            %                                               properties.
-            %
             % Input:
             %   regular:
             %       obj:  EllTubeProj: EllTubeProj object
@@ -594,9 +591,7 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
             %       relDataPlotter:smartdb.disp.RelationDataPlotter[1,1] - relation data plotter object.
             %       colorSpec: char[1,1] - color specification code, can be 'r','g',
             %                    etc (any code supported by built-in Matlab function).
-            %
             %   properties:
-            %
             %       fGetColor: function_handle[1, 1] -
             %           function that specified colorVec for
             %           ellipsoidal tubes
@@ -629,8 +624,11 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
             %       plObj: smartdb.disp.RelationDataPlotter[1,1] - returns the relation
             %       data plotter object.
             %
-            
-            
+            % Usage:
+            %       obj.plotExt() - plots external approximation of ellTube.
+            %       obj.plotExt('Property',PropValue,...) - plots external approximation
+            %                                               of ellTube with setting
+            %                                               properties.
             % $Author: <Ilya Lyubich>  <lubi4ig@gmail.com> $    $Date: <30 January  2013> $
             % $Copyright: Moscow State University,
             %            Faculty of Computational Mathematics and Cybernetics,
@@ -644,13 +642,6 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
         function plObj = plotInt(self,varargin)
             % PLOTINT - plots internal approximation of ellTube.
             %
-            %
-            % Usage:
-            %       obj.plotInt() - plots internal approximation of ellTube.
-            %       obj.plotInt('Property',PropValue,...) - plots internal approximation
-            %                                               of ellTube with setting
-            %                                               properties.
-            %
             % Input:
             %   regular:
             %       obj:  EllTubeProj: EllTubeProj object
@@ -658,9 +649,7 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
             %       relDataPlotter:smartdb.disp.RelationDataPlotter[1,1] - relation data plotter object.
             %       colorSpec: char[1,1] - color specification code, can be 'r','g',
             %                    etc (any code supported by built-in Matlab function).
-            %
             %   properties:
-            %
             %       fGetColor: function_handle[1, 1] -
             %           function that specified colorVec for
             %           ellipsoidal tubes
@@ -693,6 +682,13 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
             %       plObj: smartdb.disp.RelationDataPlotter[1,1] - returns the relation
             %       data plotter object.
             %
+            % Usage:
+            %       obj.plotInt() - plots internal approximation of ellTube.
+            %       obj.plotInt('Property',PropValue,...) - plots internal approximation
+            %                                               of ellTube with setting
+            %                                               properties.
+            %
+            
             import gras.ellapx.enums.EApproxType;
             approxType = gras.ellapx.enums.EApproxType.Internal;
             plObj = self.getTuplesFilteredBy(...
