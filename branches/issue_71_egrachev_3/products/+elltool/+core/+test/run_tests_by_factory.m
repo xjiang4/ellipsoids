@@ -41,7 +41,7 @@ function result=run_tests_by_factory(className, varargin)
                                 'EllipsoidBasicSecondTC',...
                                 'EllipsoidDispStructTC',...
                                 'HyperplaneDispStructTC'};        
-%                   testCaseList = {'EllipsoidIntUnionTC'};
+%                   testCaseList = {'EllipsoidTestCase'};
                 testCaseList = strcat('elltool.core.test.mlunit.',testCaseList);
                 suite = mlunitext.test_suite.fromTestCaseNameList(testCaseList,{EllFactory(className)});
                 result = runner.run(suite);
