@@ -91,6 +91,30 @@ classdef ReachPlotTestCase < mlunitext.test_case
             fRight = @(a,b,c) a-b<=c;
             check2Plot(self, 'plotByEa',EApproxType.External,fRight);
         end
+        function testPlotByEaRDP(self)
+            [testObj plObj] = getPlObjAndTestObj('ReachDiscrete', 'plotByEa');
+            check(testObj, plObj);
+            [testObj plObj] = getPlObjAndTestObj('ReachContinuous', 'plotByEa');
+            check(testObj, plObj);
+        end
+        function testPlotEaRDP(self)
+            [testObj plObj] = getPlObjAndTestObj('ReachDiscrete', 'plotEa');
+            check(testObj, plObj);
+            [testObj plObj] = getPlObjAndTestObj('ReachContinuous', 'plotEa');
+            check(testObj, plObj);
+        end
+        function testPlotByIaRDP(self)
+            [testObj plObj] = getPlObjAndTestObj('ReachDiscrete', 'plotByIa');
+            check(testObj, plObj);
+            [testObj plObj] = getPlObjAndTestObj('ReachContinuous', 'plotByIa');
+            check(testObj, plObj);
+        end
+        function testPlotIaRDP(self)
+            [testObj plObj] = getPlObjAndTestObj('ReachDiscrete', 'plotIa');
+            check(testObj, plObj);
+            [testObj plObj] = getPlObjAndTestObj('ReachContinuous', 'plotIa');
+            check(testObj, plObj);
+        end
         function check2Plot(self,namePlot,approxType,fRight)
             import gras.ellapx.smartdb.test.mlunit.EllTubePlotTestCase
             import gras.ellapx.enums.EApproxType;
@@ -229,6 +253,55 @@ classdef ReachPlotTestCase < mlunitext.test_case
                     lineWidthFieldList, transFieldList, namePlot,...
                     approxType)
             end
+        end
+        function [testObj plObj] = getPlObjAndTestObj(rFunname, plotFunName)
+    if(strcmp(rFunname, 'ReachDiscrete'))
+        adMat = [0 1; -1 -0.5];
+        bdMat = [0; 1];
+        udBoundsEllObj  = ellipsoid(1);
+        dtsys = elltool.linsys.LinSysDiscrete(adMat, bdMat, udBoundsEllObj);
+        x0EllObj = ell_unitball(2);
+        timeVec = [0 10];
+        dirsMat = [1 0; 0 1]';
+        rObj = elltool.reach.ReachDiscrete(dtsys, x0EllObj, dirsMat, timeVec);
+        plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
+        testObj = getTestObj(rObj, plObj, plotFunName);
+    elseif(strcmp(rFunname, 'ReachContinuous'))
+        aMat = [0 1; 0 0]; 
+        bMat = eye(2);
+        SUBounds = struct();
+        SUBounds.center = {'sin(t)'; 'cos(t)'};
+        SUBounds.shape = [9 0; 0 2];
+        sys = elltool.linsys.LinSysContinuous(aMat, bMat, SUBounds);
+        x0EllObj = ell_unitball(2);
+        timeVec = [0 10];
+        dirsMat = [1 0; 0 1]';
+        rObj = elltool.reach.ReachContinuous(sys, x0EllObj, dirsMat, timeVec);
+        plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
+        testObj = getTestObj(rObj, plObj, plotFunName);
+    end
+    %
+    function testObj = getTestObj(reachObj, plObj, plotFunName)
+        if(strcmp(plotFunName, 'plotByEa'))
+            testObj = reachObj.plotByEa(plObj);
+        elseif(strcmp(plotFunName, 'plotEa'))
+            testObj = reachObj.plotEa(plObj);
+        elseif(strcmp(plotFunName, 'plotByIa'))
+            testObj = reachObj.plotByIa(plObj);
+        elseif(strcmp(plotFunName, 'plotIa'))
+            testObj = reachObj.plotIa(plObj);
+                 
+        end
+    end
+        end
+        function check(testObj, plObj)
+            isOkCVec{1, 1} = testObj.getPlotStructure.figHMap.isEqual(...
+                plObj.getPlotStructure.figHMap);
+            isOkCVec{1, 2} = testObj.getPlotStructure.figToAxesToHMap.isEqual(...
+                plObj.getPlotStructure.figToAxesToHMap);
+            isOkCVec{1, 3} = testObj.getPlotStructure.figToAxesToPlotHMap.isEqual(...
+                plObj.getPlotStructure.figToAxesToPlotHMap);
+            mlunitext.assert_equals(true,all([isOkCVec{:}]));
         end
     end   
 end
