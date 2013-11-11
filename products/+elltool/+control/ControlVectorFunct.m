@@ -18,7 +18,7 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
             %depends on input, should be check if x has wrong dimension
             res=zeros(size(x,1),size(timeVec,2));
             
-            %curProbDynObj, curGoodDierSetObj must correspond the time period!!!
+            %curProbDynObj, curGoodDirSetObj must correspond the time period
             
             %self.probDynamicsList{1}{1}.getTimeVec();
             for i=1:size(timeVec,2)
@@ -47,7 +47,9 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
                 pMat=st1tMat*bpbMat*st1tMat';
                 
                 ellTubeTimeVec=self.properEllTube.timeVec{:};
-                ind=find(ellTubeTimeVec < timeVec(i));
+                
+                % ! can be mistake 
+                ind=find(ellTubeTimeVec <= timeVec(i));
                 tInd=size(ind,2);
                 if ellTubeTimeVec(tInd)<timeVec(i)
                     
@@ -68,15 +70,18 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
                     end;
                     
                 else
-                    if (ellTubeTimeVec(tInd)<timeVec(i))
-                        qVec=self.intEllTube.aMat{:}(:,tInd);
-                        qMat=self.intEllTube.QArray{:}(:,:,tInd);
+                    if (ellTubeTimeVec(tInd)==timeVec(i))
+                        qVec=self.properEllTube.aMat{:}(:,tInd);
+                        qMat=self.properEllTube.QArray{:}(:,:,tInd);
                     end
                 end
+                
+                % should check if x is always in tube
+                
                 l0=findl0(qVec,qMat,x);
                 %res=pMat(timeVec(ind))-PArray(timeVec(ind))*l0*dot(l0,QArray(timeVec(ind))*l0)^(-1/2);
                 res(:,i)=pVec-(pMat*l0)/sqrt(dot(l0,pMat*l0));
-                %res(:,i)=pinv(B)*inv(st1t)*res(:,i);!
+                res(:,i)=inv(st1tMat)*res(:,i);
                 
                 %                 bCMat=curGoodDirSetObj.getProblemDef().getBMatDef();
                 %                 %bMat=cellfun(@eval,bCMat);
@@ -94,6 +99,8 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
             end
             
         end
-        
+        function iTube=getITube(self)
+            iTube=self.iTube;
+        end
     end
 end

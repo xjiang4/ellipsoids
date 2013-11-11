@@ -24,8 +24,8 @@ classdef ContControlBuilder
                 %check if x is in E(q,Q), x: <x-q,Q^(-1)(x-q)><=1
                 %if (dot(x-qVec,inv(qMat)*(x-qVec))<=1)
                 
-                qVec=self.intEllTube.aMat{iTube}(:,1);
-                qMat=self.intEllTube.QArray{iTube}(:,:,1);
+                qVec=self.intEllTube.aMat{iTube}(:,1);  % end или 1
+                qMat=self.intEllTube.QArray{iTube}(:,:,1); %или 1
                 if (dot(x0-qVec,qMat\(x0-qVec))<=1)
                     ellObj = ellipsoid(qVec, qMat);
                     % now is always -1
@@ -40,8 +40,11 @@ classdef ContControlBuilder
             goodDirOrderedVec=mapGoodDirInd(self.goodDirSetList{1}{1},self.intEllTube);
             indTube=goodDirOrderedVec(properIndTube);
             properEllTube=self.intEllTube.getTuples(properIndTube);
-            qVec=properEllTube.aMat{:}(:,1);
-            qMat=properEllTube.QArray{:}(:,:,1);
+            qVec=properEllTube.aMat{:}(:,1);  % end или 1
+            qMat=properEllTube.QArray{:}(:,:,1);  %или 1
+%             qVec=properEllTube.aMat(:,1);  % end или 1
+%             qMat=properEllTube.QArray(:,:,1); 
+
             k=findEllWithoutX(qVec, qMat, x0);
             properEllTube.scale(@(x)sqrt(k),'QArray'); %% или 1/k
             % multiply k^2
@@ -54,11 +57,15 @@ classdef ContControlBuilder
                 k=1;
                 if (dot(x0-qVec,qMat\(x0-qVec))<=1)
                     % find proper k
-                    step=1e-2;
-                    k=1-step;
-                    while ((dot(x0-qVec,inv(k*qMat)*(x0-qVec))<=1+epsilon)&&(k>0))
-                        k=k-step;
-                    end;                    
+                    %step=1e-5;
+                    step=0.1;
+                    %k=1-step;
+                    k=k*step;
+                    while ((k>0)&&(dot(x0-qVec,inv(k*qMat)*(x0-qVec))<=1+epsilon))
+                        %k=k-step;
+                        k=k*step;
+                    end;
+                    
                     %qNewMat=k*qMat;
                 else                    
                     %qNewMat=qMat;
