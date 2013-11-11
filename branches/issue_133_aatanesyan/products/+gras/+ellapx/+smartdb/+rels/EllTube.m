@@ -242,31 +242,31 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %
             % Input:
             %   regular:
-            %       QArrayList: cell[nEllTubes,1] of double[nDims,nDims,nTimePoints] - 
-            %           cell of nEllTubes arrays of nTimePoints ellipsoid matrices of 
-            %           double[nDims,nDims] type. Each element from 
+            %       QArrayList: cell[nEllTubes,1] of double[nDims,nDims,nTimePoints] -
+            %           cell of nEllTubes arrays of nTimePoints ellipsoid matrices of
+            %           double[nDims,nDims] type. Each element from
             %           double[nDims,nDims,nTimePoints] array specifies double[nDims,nDims]
-            %           ellipsoid matrix at nTimePoint point of time. Here nTimePoints 
+            %           ellipsoid matrix at nTimePoint point of time. Here nTimePoints
             %           is number of elements in timeVec.
             %       aMat: cell[1,nTimePoints] of double[nDims,1] - array of nTimePoints
-            %           ellipsoid centers. Each center is specified for nTimePoint 
+            %           ellipsoid centers. Each center is specified for nTimePoint
             %           point of time.
             %       timeVec: cell[1,1] of double[1,nTimePoints] - time vector
-            %       ltGoodDirArray: cell[nEllTubes,1] of double[nDim, nTimePoints] - 
+            %       ltGoodDirArray: cell[nEllTubes,1] of double[nDim, nTimePoints] -
             %           cell of nEllTubes arrays of nTimePoints good direction vectors
             %           at any point of time from timeVec
             %       sTime: double[1,1] - specific point of time from timeVec which is
             %           best suited to describe good direction
-            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of 
+            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of
             %           approximation (External, Internal, NotDefined)
             %       approxSchemaName: char[1,] - name of the approximation
             %           schema
-            %       approxSchemaDescr: char[1,] - description of the 
+            %       approxSchemaDescr: char[1,] - description of the
             %           approximation schema
             %       calcPrecision: double[1, 1] - calculation precision
             %
             % Output:
-            %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid 
+            %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid
             %       tube object
             %
             import gras.ellapx.smartdb.rels.EllTube;
@@ -283,41 +283,41 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
                 varargin)
             % FROMQMARRAYS creates nEllTubes ellipsoid tube objects using an
             % array of ellipsoid matrices, an array of ellipsoid centers
-            % and an array of regularization marices specified at any point 
+            % and an array of regularization marices specified at any point
             % of time from timeVec.
             %
             % Input:
             %   regular:
-            %       QArrayList: cell[nEllTubes,1] of double[nDims,nDims,nTimePoints] - 
-            %           cell of nEllTubes arrays of nTimePoints ellipsoid matrices of 
-            %           double[nDims,nDims] type. Each element from 
+            %       QArrayList: cell[nEllTubes,1] of double[nDims,nDims,nTimePoints] -
+            %           cell of nEllTubes arrays of nTimePoints ellipsoid matrices of
+            %           double[nDims,nDims] type. Each element from
             %           double[nDims,nDims,nTimePoints] array specifies double[nDims,nDims]
-            %           ellipsoid matrix at nTimePoint point of time. Here nTimePoints 
+            %           ellipsoid matrix at nTimePoint point of time. Here nTimePoints
             %           is number of elements in timeVec.
             %       aMat: cell[1,nTimePoints] of double[nDims,1] - array of nTimePoints
-            %           ellipsoid centers. Each center is specified for nTimePoint 
+            %           ellipsoid centers. Each center is specified for nTimePoint
             %           point of time.
-            %       MArrayList: cell[nEllTubes,1] of double[nDims,nDims,nTimePoints] - 
-            %           cell of nEllTubes arrays of nTimePoints regularization matrices 
-            %           of double[nDims,nDims] type. Each element from 
+            %       MArrayList: cell[nEllTubes,1] of double[nDims,nDims,nTimePoints] -
+            %           cell of nEllTubes arrays of nTimePoints regularization matrices
+            %           of double[nDims,nDims] type. Each element from
             %           double[nDims,nDims,nTimePoints] array specifies double[nDim,nDim]
             %           regularization matrix at nTimePoint point of time.
             %       timeVec: cell[1,1] of double[1,nTimePoints] - time vector
-            %       ltGoodDirArray: cell[nEllTubes,1] of double[nDim, nTimePoints] - 
+            %       ltGoodDirArray: cell[nEllTubes,1] of double[nDim, nTimePoints] -
             %           cell of nEllTubes arrays of nTimePoints good direction vectors
             %           at any point of time from timeVec
             %       sTime: double[1,1] - specific point of time from timeVec which is
             %           best suited to describe good direction
-            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of 
+            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of
             %           approximation (External, Internal, NotDefined)
             %       approxSchemaName: char[1,] - name of the approximation
             %           schema
-            %       approxSchemaDescr: char[1,] - description of the 
+            %       approxSchemaDescr: char[1,] - description of the
             %           approximation schema
             %       calcPrecision: double[1, 1] - calculation precision
             %
             % Output:
-            %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid 
+            %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid
             %       tube object
             %
             import gras.ellapx.smartdb.rels.EllTube;
@@ -332,44 +332,44 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
                 varargin)
             % FROMQMSCALEDARRAYS creates nEllTubes ellipsoid tube objects using an
             % array of ellipsoid matrices, an array of ellipsoid centers,
-            % an array of regularization marices specified at any point 
-            % of time from timeVec and a vector of scale factors 
+            % an array of regularization marices specified at any point
+            % of time from timeVec and a vector of scale factors
             % specified for every created ellipsoid tube
             %
             % Input:
             %   regular:
-            %       QArrayList: cell[nEllTubes,1] of double[nDims,nDims,nTimePoints] - 
-            %           cell of nEllTubes arrays of nTimePoints ellipsoid matrices of 
-            %           double[nDims,nDims] type. Each element from 
+            %       QArrayList: cell[nEllTubes,1] of double[nDims,nDims,nTimePoints] -
+            %           cell of nEllTubes arrays of nTimePoints ellipsoid matrices of
+            %           double[nDims,nDims] type. Each element from
             %           double[nDims,nDims,nTimePoints] array specifies double[nDims,nDims]
-            %           ellipsoid matrix at nTimePoint point of time. Here nTimePoints 
+            %           ellipsoid matrix at nTimePoint point of time. Here nTimePoints
             %           is number of elements in timeVec.
             %       aMat: cell[1,nTimePoints] of double[nDims,1] - array of nTimePoints
-            %           ellipsoid centers. Each center is specified for nTimePoint 
+            %           ellipsoid centers. Each center is specified for nTimePoint
             %           point of time.
-            %       MArrayList: cell[nEllTubes,1] of double[nDims,nDims,nTimePoints] - 
-            %           cell of nEllTubes arrays of nTimePoints regularization matrices 
-            %           of double[nDims,nDims] type. Each element from 
+            %       MArrayList: cell[nEllTubes,1] of double[nDims,nDims,nTimePoints] -
+            %           cell of nEllTubes arrays of nTimePoints regularization matrices
+            %           of double[nDims,nDims] type. Each element from
             %           double[nDims,nDims,nTimePoints] array specifies double[nDim,nDim]
             %           regularization matrix at nTimePoint point of time.
             %       timeVec: cell[1,1] of double[1,nTimePoints] - time vector
-            %       ltGoodDirArray: cell[nEllTubes,1] of double[nDim, nTimePoints] - 
+            %       ltGoodDirArray: cell[nEllTubes,1] of double[nDim, nTimePoints] -
             %           cell of nEllTubes arrays of nTimePoints good direction vectors
             %           at any point of time from timeVec
             %       sTime: double[1,1] - specific point of time from timeVec which is
             %           best suited to describe good direction
-            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of 
+            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of
             %           approximation (External, Internal, NotDefined)
             %       approxSchemaName: char[1,] - name of the approximation
             %           schema
-            %       approxSchemaDescr: char[1,] - description of the 
+            %       approxSchemaDescr: char[1,] - description of the
             %           approximation schema
             %       calcPrecision: double[1, 1] - calculation precision
             %       scaleFactor: double[1, nEllTubes] - a vector of scale
             %           factors specified for every created ellipsoid tube.
             %
             % Output:
-            %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid 
+            %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid
             %       tube object
             import gras.ellapx.smartdb.rels.EllTube;
             import gras.ellapx.smartdb.rels.EllTubeBasic;
@@ -385,30 +385,30 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             % Input:
             %   regular:
             %       qEllArray: double[nDims,nDims,nTimePoints] - array of
-            %           ellipsoids. Each element from double[nDims,nDims,nTimePoints] 
-            %           array specifies double[nDims,nDims] ellipsoid at nTimePoint 
+            %           ellipsoids. Each element from double[nDims,nDims,nTimePoints]
+            %           array specifies double[nDims,nDims] ellipsoid at nTimePoint
             %           point of time. Here nTimePoints is number of elements in timeVec.
-            %       ellMArr: double[nDims,nDims,nTimePoints] - an array of nTimePoints 
-            %           regularization matrices of double[nDims,nDims] type. Each 
-            %           element from double[nDims,nDims,nTimePoints] array specifies 
-            %           double[nDim,nDim] regularization matrix at nTimePoint point of 
+            %       ellMArr: double[nDims,nDims,nTimePoints] - an array of nTimePoints
+            %           regularization matrices of double[nDims,nDims] type. Each
+            %           element from double[nDims,nDims,nTimePoints] array specifies
+            %           double[nDim,nDim] regularization matrix at nTimePoint point of
             %           time.
             %       timeVec: cell[1,1] of double[1,nTimePoints] - time vector
-            %       ltGoodDirArray: cell[nEllTubes,1] of double[nDim, nTimePoints] - 
+            %       ltGoodDirArray: cell[nEllTubes,1] of double[nDim, nTimePoints] -
             %           cell of nEllTubes arrays of nTimePoints good direction vectors
             %           at any point of time from timeVec
             %       sTime: double[1,1] - specific point of time from timeVec which is
             %           best suited to describe good direction
-            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of 
+            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of
             %           approximation (External, Internal, NotDefined)
             %       approxSchemaName: char[1,] - name of the approximation
             %           schema
-            %       approxSchemaDescr: char[1,] - description of the 
+            %       approxSchemaDescr: char[1,] - description of the
             %           approximation schema
             %       calcPrecision: double[1, 1] - calculation precision
             %
             % Output:
-            %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid 
+            %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid
             %       tube object
             %
             import gras.ellapx.smartdb.rels.EllTube;
@@ -436,25 +436,25 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             % Input:
             %   regular:
             %       qEllArray: double[nDims,nDims,nTimePoints] - array of
-            %           ellipsoids. Each element from double[nDims,nDims,nTimePoints] 
-            %           array specifies double[nDim,nDim] ellipsoid at nTimePoint 
+            %           ellipsoids. Each element from double[nDims,nDims,nTimePoints]
+            %           array specifies double[nDim,nDim] ellipsoid at nTimePoint
             %           point of time. Here nTimePoints is number of elements in timeVec.
             %       timeVec: cell[1,1] of double[1,nTimePoints] - time vector
-            %       ltGoodDirArray: cell[nEllTubes,1] of double[nDim, nTimePoints] - 
+            %       ltGoodDirArray: cell[nEllTubes,1] of double[nDim, nTimePoints] -
             %           cell of nEllTubes arrays of nTimePoints good direction vectors
             %           at any point of time from timeVec
             %       sTime: double[1,1] - specific point of time from timeVec which is
             %           best suited to describe good direction
-            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of 
+            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of
             %           approximation (External, Internal, NotDefined)
             %       approxSchemaName: char[1,] - name of the approximation
             %           schema
-            %       approxSchemaDescr: char[1,] - description of the 
+            %       approxSchemaDescr: char[1,] - description of the
             %           approximation schema
             %       calcPrecision: double[1, 1] - calculation precision
             %
             % Output:
-            %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid 
+            %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid
             %       tube object
             %
             import gras.ellapx.smartdb.rels.EllTube;
@@ -618,42 +618,20 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             end
         end
         function scale(self,fCalcFactor,fieldNameList)
-            % SCALE - scales relation object
+            % SCALE - calculates new value of scaleFactor for fields from
+            % fieldNameList using fCalcFactor function
             %
             % Input:
             %   regular:
             %       self.
-            %       fCalcFactor - function which calculates factor for
+            %       fCalcFactor: cell_fun{1, 1] - function which calculates scaleFactor for
             %           fields in fieldNameList
-            %       fieldNameList: char/cell[1,] of char - a list of fields
+            %       fieldNameList: char[1, ]/cell[1,] of char[1, ] - a list of fields
             %           for which scale factor will be calculated
-            % Output:
-            %   factor:double[1, 1] - calculated scale factor
-            %
-            %       fieldNameList:cell[1,nElem]/char[1,] - names of the fields
             %
             %  Output:
-            %       none
+            %       none.
             %
-            % Example:
-            %   nPoints=5;
-            %   calcPrecision=0.001;
-            %   approxSchemaDescr=char.empty(1,0);
-            %   approxSchemaName=char.empty(1,0);
-            %   nDims=3;
-            %   nTubes=1;
-            %   lsGoodDirVec=[1;0;1];
-            %   aMat=zeros(nDims,nPoints);
-            %   timeVec=1:nPoints;
-            %   sTime=nPoints;
-            %   approxType=gras.ellapx.enums.EApproxType.Internal;
-            %   qArrayList=repmat({repmat(diag([1 2 3]),[1,1,nPoints])},1,nTubes);
-            %   ltGoodDirArray=repmat(lsGoodDirVec,[1,nTubes,nPoints]);
-            %   fromMatEllTube=...
-            %         gras.ellapx.smartdb.rels.EllTube.fromQArrays(qArrayList,...
-            %         aMat, timeVec,ltGoodDirArray, sTime, approxType,...
-            %         approxSchemaName, approxSchemaDescr, calcPrecision);
-            %   fromMatEllTube.scale(@(varargin)2,{});
             import gras.ellapx.smartdb.rels.EllTubeBasic;
             scaleFactorVec=self.applyTupleGetFunc(fCalcFactor,...
                 fieldNameList);
@@ -674,18 +652,15 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %       self.
             %       projType: gras.ellapx.enums.EProjType[1, 1] - type of
             %           projection. It can be Static or DynamicAlongGoodCurve.
-            %       projMatList: double[nDims, nDims] -  subspace defined its basis 
+            %       projMatList: double[nDims, nDims] -  subspace defined by its basis
             %           vectors on which ellipsoid tube has to be projected
             %       fGetProjMat: cell_fun[1, ] - function that is used to
             %           get the projection.
-            %   optional:
-            %       projType: gras.ellapx.enums.EProjType[1, 1] -  type of
-            %           projection
             %
             % Output:
             %   ellTubeProjRel: gras.ellapx.smartdb.rels.EllTubeProj[1, 1] -
             %       ellipsoid tube projection
-            %   indProj2OrigVec: ???
+            %   indProj2OrigVec: double[1, ] - vector of indices
             import gras.ellapx.smartdb.rels.EllTubeProj;
             if self.getNTuples()>0
                 [rel,indProj2OrigVec]=self.projectInternal(varargin{:});
@@ -707,7 +682,7 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           standart basis
             %   optional:
             %       projType: gras.ellapx.enums.EProjType[1, 1] -  type of
-            %           projection
+            %           projection. Default option is Static.
             %
             % Output:
             %   ellTubeProjRel: gras.ellapx.smartdb.rels.EllTubeProj[1, 1] -
