@@ -604,7 +604,7 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
                 sTime=newTimeVec(indMin);
                 %
                 function interpArray=simpleInterp(inpArray,isVector)
-                    import gras.interp.MatrixInterpolantFactory;
+                    import gras.mat.interp.MatrixInterpolantFactory;
                     if nargin<2
                         isVector=false;
                     end
