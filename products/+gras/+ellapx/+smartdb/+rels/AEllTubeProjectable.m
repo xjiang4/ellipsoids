@@ -83,7 +83,7 @@ classdef AEllTubeProjectable<handle
         %       unionEllTube = ...
         %           gras.ellapx.smartdb.rels.EllUnionTube.fromEllTubes(ellTubeObj);
         %       projMatList = {[1 0;0 1]};
-        %       statEllTubeProj = unionEllTube.project(projMatList);
+        %       statEllTubeProj = unionEllTube.projectStatic(projMatList);
         %       plObj=smartdb.disp.RelationDataPlotter();
         %       statEllTubeProj.plot(plObj);
         %   end

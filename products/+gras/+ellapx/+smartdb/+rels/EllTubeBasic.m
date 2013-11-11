@@ -812,14 +812,14 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
             % Input:
             %  regular:
             %     self.
-            %     approxType:char[1,] - type of approximation(internal/external)
+            %     approxType: char[1,] - type of approximation(internal/external)
             %
             % Output:
             %   apprEllMat: ellipsoid[1, nTimePoints*nEllTubes] - an array
             %       of all the ellipsoids from all the ellipsoid tubes that are
             %       stored in self object
-            %       optional:
-            %   timeVec: cell[1,1] of double[1,nTimePoints] - time vector
+            %   optional:
+            %       timeVec: cell[1,1] of double[1,nTimePoints] - time vector
             import gras.ellapx.enums.EApproxType;
             import gras.ellapx.smartdb.F;
             APPROX_TYPE = F.APPROX_TYPE;
@@ -885,6 +885,23 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
         %
         function thinnedEllTubeRel =...
                 thinOutTuples(self, indVec)
+            % THINOUTTUPLES - thins ellipsoid tube object using vector of
+            % indices specified by the user. The function returns new
+            % ellipsoid tube object containing only ellipsoids with indices
+            % specified in indVec.
+            %
+            % Input:
+            %  regular:
+            %     self.
+            %     indVec: double[nIndices, 1] - indices of ellipsoids which
+            %         are to be included in new ellipsoid tube object
+            %
+            % Output:
+            %   thinnedEllTubeRel: gras.ellapx.smartdb.rels.EllTubeBasic[1, 1] - 
+            %       new ellipsoid tube object containing only ellipsoids with 
+            %       indices specified in indVec
+            %       
+            %
             import gras.ellapx.smartdb.F;
             import modgen.common.throwerror;
             SData = self.getData();
