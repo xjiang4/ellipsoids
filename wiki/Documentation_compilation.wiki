@@ -1,0 +1,15 @@
+#summary Describes a software needed and a sequence of steps a developer should follow in order to compile documentation.
+#labels Phase-Implementation
+
+= Installing software =
+
+At first, you need to install _Sphinx_ according to [http://sphinx-doc.org/latest/install.html this instruction]. Sphinx goes as a package for _Python_, which installation is also described on a page above. Better install Python version 2.7.6 and don't change default directory for installation. The latest Sphinx version by the moment when this instruction was written had been 1.2b3. You will also 
+need Sphinx package for numbering figures called _numfig_, which latest version can be downloaded [http://sourceforge.net/p/numfig/wiki/Home/ here]. Untar downloaded tarball, open Command Prompt and go to the directory with the *.py files from this tarball, then type: `python setup.py install`.
+
+= Compilation =
+
+To compile documentation, you need to open Windows PowerShell, go to the main directory of the project, which is /doc/ and:
+* to get HTML version, run `.\make html`,
+* to get LaTeX version, run `.\make latexpdf`. To get PDF out from the LaTeX sources, you need  the latest version of MiKTeX to be installed (can be downloaded from [http://miktex.org/download here]). Better choose to install packages on-the-fly when asked during the installation. When installation is finished, reboot the computer. To get PDF, open Command Prompt, go to the doc\_build\latex and type `pdflatex elltool_manual.tex` and then once again to get references fixed. 
+
+Documentation structure is defined in main_manual.rst, some of the additional features can be set in conf.py.
