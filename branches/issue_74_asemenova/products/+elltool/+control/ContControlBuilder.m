@@ -1,5 +1,5 @@
 classdef ContControlBuilder
-    properties (Access = protected)
+    properties (Access = private)
         %reachObj
         intEllTube
         probDynamicsList
@@ -7,19 +7,30 @@ classdef ContControlBuilder
     end
     methods        
         function self=ContControlBuilder(reachContObj)
-            %reachObj=reachContObj.getCopy();
+            import modgen.common.throwerror;
             ellTubeRel=reachContObj.getEllTubeRel();
             self.intEllTube=ellTubeRel.getTuplesFilteredBy('approxType', ...
                 gras.ellapx.enums.EApproxType.Internal);
             self.probDynamicsList=reachContObj.getIntProbDynamicsList();
             self.goodDirSetList=reachContObj.getGoodDirSetList();
+            isBackward=reachContObj.isbackward();
+            if (~isBackward)
+                throwerror('wrongInput',...
+                    'System is in the forward time while should be backward system');                
+            end
         end
         
         function controlFuncObj=getControl(self,x0)
+            import modgen.common.throwerror;
             nTuples = self.intEllTube.getNTuples;
             %Tuple selection
             properIndTube=1;
             minDistance=1e+3;
+            isx0inset=false;
+            if (~all(size(x0)==size(self.intEllTube.aMat{1}(:,1))))
+                throwerror('wrongInput',...
+                    'the dimension of x0 does not correspond the dimension of solvability domain');
+            end
             for iTube=1:nTuples
                 %check if x is in E(q,Q), x: <x-q,Q^(-1)(x-q)><=1
                 %if (dot(x-qVec,inv(qMat)*(x-qVec))<=1)
@@ -30,12 +41,17 @@ classdef ContControlBuilder
                     ellObj = ellipsoid(qVec, qMat);
                     % now is always -1
                     iDistance=ellObj.distance(x0);
-                    
+                    isx0inset=true;
                     if (iDistance<minDistance)
                        minDistance=iDistance;
                        properIndTube=iTube;
                     end
                 end
+            end
+            if (~isx0inset)
+                throwerror('wrongInput',...
+                    'Solvability domain does not contain x0');
+                %x0 does not belong to solvability domain
             end
             goodDirOrderedVec=mapGoodDirInd(self.goodDirSetList{1}{1},self.intEllTube);
             indTube=goodDirOrderedVec(properIndTube);
