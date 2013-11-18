@@ -1,4 +1,3 @@
-% classdef ControlVectorFunct<gras.mat.IMatrixFunction
 classdef ControlVectorFunct < elltool.control.IControlVectFunction
     properties
         properEllTube
@@ -17,7 +16,8 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
         function res=evaluate(self,x,timeVec)
             %depends on input, should be check if x has wrong dimension
             res=zeros(size(x,1),size(timeVec,2));
-            
+       
+               
             %curProbDynObj, curGoodDirSetObj must correspond the time period
             
             %self.probDynamicsList{1}{1}.getTimeVec();
@@ -26,6 +26,7 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
                 if ((timeVec(i)<=probTimeVec(end))&&(timeVec(i)>=probTimeVec(1)))
                     curProbDynObj=self.probDynamicsList{1}{1};
                     curGoodDirSetObj=self.goodDirSetList{1}{1};
+                    
                 else
                     for iSwitch=2:numel(self.probDynamicsList)
                         probTimeVec=self.probDynamicsList{iSwitch}{self.iTube}.getTimeVec();
@@ -37,18 +38,23 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
                     end
                 end;
                 %X(t,t0)=X(t,s)*X(s,t0)=inv(X(s,t))*X(s,t0);
-                xtt0Mat=curGoodDirSetObj.getXstTransDynamics();
-                %             st1tMat=inv(xtt0Mat.evaluate(timeVec(i)))*xtt0Mat.evaluate(timeVec(i));
-                st1tMat=(xtt0Mat.evaluate(timeVec(i)))\xtt0Mat.evaluate(timeVec(i));
+                xstTransMat=(curGoodDirSetObj.getXstTransDynamics());
+                t1=max(probTimeVec);                
+                %st1tMat=xtt0Mat.evaluate(t1)*inv(xtt0Mat.evaluate(timeVec(i)));                
+                st1tMat=inv(xstTransMat.evaluate(t1)')*(xstTransMat.evaluate(timeVec(i))');
+                
                 %\ instead inv(A)*b to reduce calculation time
                 bpVec=curProbDynObj.getBptDynamics.evaluate(timeVec(i));%ellipsoid center
                 bpbMat=curProbDynObj.getBPBTransDynamics.evaluate(timeVec(i));   %ellipsoid matrice
                 pVec=st1tMat*bpVec;
                 pMat=st1tMat*bpbMat*st1tMat';
                 
+%                 pVec=st1tMat*bpVec;
+%                 pMat=st1tMat*bpbMat*st1tMat';
+                
                 ellTubeTimeVec=self.properEllTube.timeVec{:};
                 
-                % ! can be mistake 
+                % ! can be mistake
                 ind=find(ellTubeTimeVec <= timeVec(i));
                 tInd=size(ind,2);
                 if ellTubeTimeVec(tInd)<timeVec(i)
@@ -82,7 +88,11 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
                 %res=pMat(timeVec(ind))-PArray(timeVec(ind))*l0*dot(l0,QArray(timeVec(ind))*l0)^(-1/2);
                 res(:,i)=pVec-(pMat*l0)/sqrt(dot(l0,pMat*l0));
                 res(:,i)=inv(st1tMat)*res(:,i);
-                
+                ump0Vec=res(:,i)-bpVec;
+                elu=dot(ump0Vec,bpbMat\ump0Vec)
+                if (elu>1+1e-5)
+                   isCurEqual=false
+                end
                 %                 bCMat=curGoodDirSetObj.getProblemDef().getBMatDef();
                 %                 %bMat=cellfun(@eval,bCMat);
             end
@@ -93,7 +103,7 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
                 %                     inv(elXMat)*inv(I+lambda*inv(elXMat))*(x-elxCentVec))-1;
                 f=@(lambda) 1/dot((I+lambda*inv(elXMat))\(x-elxCentVec),...
                     inv(elXMat)*inv(I+lambda*inv(elXMat))*(x-elxCentVec))-1;
-                lambda=fsolve(f,0);
+                lambda=fsolve(f,1.0e-3);
                 s0=(I+lambda*inv(elXMat))\(x-elxCentVec)+elxCentVec;
                 l0=(x-s0)/norm(x-s0);
             end

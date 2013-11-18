@@ -10,10 +10,10 @@ crm=gras.ellapx.uncertcalc.test.regr.conf.ConfRepoMgr();
 crmSys=gras.ellapx.uncertcalc.test.regr.conf.sysdef.ConfRepoMgr();
 %
 confCMat = {
-    'demo3firstTest',  [0 1 ]; %1 0 1 0 1 0 1 1 0 1 1 0];
-    'demo3secondTest', [0 1 ]; %0 0 0 0 0 0 1 0 0 0 0 0];
-    'demo3thirdTest',  [0 1 ]; %0 0 0 1 0 1 1 0 0 0 0 0];
-    'demo3fourthTest', [1 1 ]; %0 1 1 1 0 0 1 0 0 0 0 1];
+    'demo3firstTest',  [0 1]; %1 0 1 0 1 0 1 1 0 1 1 0];
+    'demo3secondTest', [0 1]; %0 0 0 0 0 0 1 0 0 0 0 0];
+    'demo3thirdTest',  [1 1]; %0 0 0 1 0 1 1 0 0 0 0 0];
+    'demo3fourthTest', [1 1]; %0 1 1 1 0 0 1 0 0 0 0 1];
    % 'test2dbad',       [0 0 0 0 0 0 0 0 0 0 1 0 0 0]...
     };
 %
@@ -23,18 +23,18 @@ suiteList = {};
 for iConf = 1:nConfs
     confName = confCMat{iConf, 1};
     confTestsVec = confCMat{iConf, 2};
-%     if confTestsVec(1)
-%         suiteList{end + 1} = loader.load_tests_from_test_case(...
-%             'elltool.control.test.mlunit.ReachContTC',...
-%             ReachFactory(confName, crm, crmSys, true, false),...
-%             'marker',[confName,'_IsBackTrueIsEvolveFalse']);
-%     end
     if confTestsVec(1)
         suiteList{end + 1} = loader.load_tests_from_test_case(...
             'elltool.control.test.mlunit.ReachContTC',...
-            ReachFactory(confName, crm, crmSys, true, true),...
-            'marker',[confName,'_IsBackTrueIsEvolveTrue']);
+            ReachFactory(confName, crm, crmSys, true, false),...
+            'marker',[confName,'_IsBackTrueIsEvolveFalse']);
     end
+%     if confTestsVec(1)
+%         suiteList{end + 1} = loader.load_tests_from_test_case(...
+%             'elltool.control.test.mlunit.ReachContTC',...
+%             ReachFactory(confName, crm, crmSys, true, true),...
+%             'marker',[confName,'_IsBackTrueIsEvolveTrue']);
+%     end
     
     
     
