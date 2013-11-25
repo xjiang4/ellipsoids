@@ -56,17 +56,17 @@ classdef ContControlBuilder
             goodDirOrderedVec=mapGoodDirInd(self.goodDirSetList{1}{1},self.intEllTube);
             indTube=goodDirOrderedVec(properIndTube);
             properEllTube=self.intEllTube.getTuples(properIndTube);
-            qVec=properEllTube.aMat{:}(:,1);  % end или 1
-            qMat=properEllTube.QArray{:}(:,:,1);  %или 1
-%             qVec=properEllTube.aMat(:,1);  % end или 1
+            qVec=properEllTube.aMat{:}(:,1);  
+            qMat=properEllTube.QArray{:}(:,:,1);  
+%             qVec=properEllTube.aMat(:,1);  
 %             qMat=properEllTube.QArray(:,:,1); 
 
             k=findEllWithoutX(qVec, qMat, x0);
             properEllTube.scale(@(x)sqrt(k),'QArray'); %% или 1/k
-            % multiply k^2
+            % scale multiplies k^2 
             controlFuncObj=elltool.control.ControlVectorFunct(properEllTube,...
-                self.probDynamicsList, self.goodDirSetList,indTube);  
-            %
+                self.probDynamicsList, self.goodDirSetList,indTube,k);  %соответ номер в списке
+            % 
             function k=findEllWithoutX(qVec, qMat, x0)
                
                 epsilon=1e-3;
@@ -80,11 +80,8 @@ classdef ContControlBuilder
                     while ((k>0)&&(dot(x0-qVec,inv(k*qMat)*(x0-qVec))<=1+epsilon))
                         %k=k-step;
                         k=k*step;
-                    end;
-                    
-                    %qNewMat=k*qMat;
-                else                    
-                    %qNewMat=qMat;
+                    end;                   
+                   
                 end                
             end            
    
