@@ -4,23 +4,24 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
         probDynamicsList
         goodDirSetList
         iTube
+        koef
     end
     methods
         function self=ControlVectorFunct(properEllTube,...
-                probDynamicsList, goodDirSetList,iTube)
+                probDynamicsList, goodDirSetList,iTube,k)
             self.properEllTube=properEllTube;
             self.probDynamicsList=probDynamicsList;
             self.goodDirSetList=goodDirSetList;
             self.iTube=iTube;
+            self.koef=k;
         end
         function res=evaluate(self,x,timeVec)
-            %depends on input, should be check if x has wrong dimension
-            res=zeros(size(x,1),size(timeVec,2));
-       
-               
-            %curProbDynObj, curGoodDirSetObj must correspond the time period
             
-            %self.probDynamicsList{1}{1}.getTimeVec();
+            res=zeros(size(x,1),size(timeVec,2));
+            import ;
+            isMistake=false;   
+            %find curProbDynObj, curGoodDirSetObj corresponding to that time period                       
+            
             for i=1:size(timeVec,2)
                 probTimeVec=self.probDynamicsList{1}{1}.getTimeVec();
                 if ((timeVec(i)<=probTimeVec(end))&&(timeVec(i)>=probTimeVec(1)))
@@ -37,26 +38,26 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
                         end
                     end
                 end;
-                %X(t,t0)=X(t,s)*X(s,t0)=inv(X(s,t))*X(s,t0);
+                
                 xstTransMat=(curGoodDirSetObj.getXstTransDynamics());
                 t1=max(probTimeVec);                
-                %st1tMat=xtt0Mat.evaluate(t1)*inv(xtt0Mat.evaluate(timeVec(i)));                
-                st1tMat=inv(xstTransMat.evaluate(t1)')*(xstTransMat.evaluate(timeVec(i))');
                 
+                %st1tMat=X(t,t1)=X(t,s)X(s,t1)=inv(X(s,t))X(s,t1)
+                
+                %%%st1tMat=inv(xstTransMat.evaluate(t1)')*(xstTransMat.evaluate(timeVec(i))');
+                st1tMat=inv(xstTransMat.evaluate(timeVec(i))')*(xstTransMat.evaluate(t1)');
                 %\ instead inv(A)*b to reduce calculation time
                 bpVec=curProbDynObj.getBptDynamics.evaluate(timeVec(i));%ellipsoid center
                 bpbMat=curProbDynObj.getBPBTransDynamics.evaluate(timeVec(i));   %ellipsoid matrice
                 pVec=st1tMat*bpVec;
                 pMat=st1tMat*bpbMat*st1tMat';
                 
-%                 pVec=st1tMat*bpVec;
-%                 pMat=st1tMat*bpbMat*st1tMat';
-                
                 ellTubeTimeVec=self.properEllTube.timeVec{:};
                 
-                % ! can be mistake
                 ind=find(ellTubeTimeVec <= timeVec(i));
                 tInd=size(ind,2);
+              
+                %find proper ellipsoid which corresponts current time
                 if ellTubeTimeVec(tInd)<timeVec(i)
                     
                     nDim=size(self.properEllTube.aMat{:},1);
@@ -82,19 +83,43 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
                     end
                 end
                 
-                % should check if x is always in tube
+                % check if x is always in tube (to find out if there is already mistake)
+                elext=dot(x-qVec,qMat\(x-qVec))
+                elint=dot(x-qVec,(qMat*(1/self.koef))\(x-qVec))   
+                curtime=timeVec(i)
+%                 ellipsoidExt=ellipsoid(qVec,qMat);
+%                 ellipsoidInt=ellipsoid(qVec,qMat*(1/self.koef));
+%                 %figure;
+%                 plot(ellipsoidInt);
+%                 hold on;
+%                 plot(ellipsoidExt,'g');
+%                 hold on;
+%                 plot(x(1),x(2),'*');
+%                 hold on;
+                if ((dot(x-qVec,qMat\(x-qVec))<1)||(dot(x-qVec,(qMat*(1/self.koef))\(x-qVec))>1))                    
+                    isMistake=true            
+                    ellipsoidExt=ellipsoid(qVec,qMat);
+                    ellipsoidInt=ellipsoid(qVec,qMat*(1/self.koef));
+                %figure;
+                    plot(ellipsoidInt);
+                    hold on;
+                    plot(ellipsoidExt,'g');
+                    hold on;
+                    plot(x(1),x(2),'*');
+                    hold on;
+                end
                 
-                l0=findl0(qVec,qMat,x);
+                l0=findl0(qVec,qMat,x)
                 %res=pMat(timeVec(ind))-PArray(timeVec(ind))*l0*dot(l0,QArray(timeVec(ind))*l0)^(-1/2);
                 res(:,i)=pVec-(pMat*l0)/sqrt(dot(l0,pMat*l0));
                 res(:,i)=inv(st1tMat)*res(:,i);
                 ump0Vec=res(:,i)-bpVec;
-                elu=dot(ump0Vec,bpbMat\ump0Vec)
-                if (elu>1+1e-5)
-                   isCurEqual=false
-                end
-                %                 bCMat=curGoodDirSetObj.getProblemDef().getBMatDef();
-                %                 %bMat=cellfun(@eval,bCMat);
+                %%% u is always in the boundary of control set
+%                 elu=dot(ump0Vec,bpbMat\ump0Vec)
+%                 if (elu>1+1e-5)
+%                    isCurEqual=false
+%                 end
+                
             end
             function l0=findl0(elxCentVec,elXMat,x)
                 
@@ -103,7 +128,7 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
                 %                     inv(elXMat)*inv(I+lambda*inv(elXMat))*(x-elxCentVec))-1;
                 f=@(lambda) 1/dot((I+lambda*inv(elXMat))\(x-elxCentVec),...
                     inv(elXMat)*inv(I+lambda*inv(elXMat))*(x-elxCentVec))-1;
-                lambda=fsolve(f,1.0e-3);
+                lambda=fsolve(f,1.0e-3)
                 s0=(I+lambda*inv(elXMat))\(x-elxCentVec)+elxCentVec;
                 l0=(x-s0)/norm(x-s0);
             end

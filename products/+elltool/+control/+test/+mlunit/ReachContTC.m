@@ -46,6 +46,7 @@ classdef ReachContTC < mlunitext.test_case
 
             nTuples = intEllTube.getNTuples();
             x0Vec=[50; 10];
+            %particular example (there aren't any switches)
             %x0Vec=[1.7; 1.3; -11.1; -11.6];
             isX0inSet=false;
             controlObj=elltool.control.ContControlBuilder(self.reachObj);
@@ -80,18 +81,11 @@ classdef ReachContTC < mlunitext.test_case
             iTube=1;
             for iSwitch=1:switchTimeVecLenght-1
                 if (iSwitch>1)
-                    iTube=properTube;
+                    iTube=properTube; %check if this number corresponds tuple in ellTube
                 end
                 iSwitchBack=switchTimeVecLenght-iSwitch;               
                 bpVec=intProbDynamicsList{iSwitchBack}{iTube}.getBptDynamics();
                 bpbMat=intProbDynamicsList{iSwitchBack}{iTube}.getBPBTransDynamics();
-                %check if u(x,t)\in P(t) for all t
-                
-%                 ump0Vec=controlFuncObj.evaluate(xi,timeVec(:))-bpVec.evaluate(timeVec(:));
-%                 if (dot(ump0Vec,bpbMat.evaluate(timeVec(:))\ump0Vec)>1)
-%                    isCurrentEqual=false; 
-%                 end
-%                 isEqual=isEqual&&isCurrentEqual;
 %                 
                 t0=switchSysTimeVec(iSwitch);
                 t1=switchSysTimeVec(iSwitch+1);
@@ -99,7 +93,7 @@ classdef ReachContTC < mlunitext.test_case
                 AtMat=intProbDynamicsList{iSwitchBack}{iTube}.getAtDynamics();
                 
                 [T,Y] = ode45(@(t,y)ode(t,y,AtMat,controlFuncObj,bpVec,bpbMat),[t0 t1],x0Vec',options);
-                q1Vec=ellTubeRel.aMat{iTube}(:,ind);
+                q1Vec=ellTubeRel.aMat{iTube}(:,ind); 
                 q1Mat=ellTubeRel.QArray{iTube}(:,:,ind);
                 
                 if (dot(Y(end,:)'-q1Vec,q1Mat\(Y(end,:)'-q1Vec))>1)
@@ -110,7 +104,7 @@ classdef ReachContTC < mlunitext.test_case
             end
             q1Vec=ellTubeRel.aMat{iTube}(:,end);
             q1Mat=ellTubeRel.QArray{iTube}(:,:,end);
-            % Unfortunately this comparison doesn't satisfied so there
+            % Unfortunately this comparison is satisfied so there
             % are mistakes
             if (dot(Y(end,:)'-q1Vec,q1Mat\(Y(end,:)'-q1Vec))>1+1e-05)
                 isCurrentEqual=false;
@@ -128,10 +122,10 @@ classdef ReachContTC < mlunitext.test_case
                isCurEqual=true;
                dy=zeros(AtMat.getNRows(),1); 
                dy=AtMat.evaluate(t)*y+controlFuncVec.evaluate(y,t);
-               ump0Vec=controlFuncVec.evaluate(y,t)-bpVec.evaluate(t);
-               if (dot(ump0Vec,bpbMat.evaluate(t)\ump0Vec)>1)
-                   isCurEqual=false;
-               end
+%                ump0Vec=controlFuncVec.evaluate(y,t)-bpVec.evaluate(t);
+%                if (dot(ump0Vec,bpbMat.evaluate(t)\ump0Vec)>1)
+%                    isCurEqual=false;
+%                end
                % return or events
             end
         end        
