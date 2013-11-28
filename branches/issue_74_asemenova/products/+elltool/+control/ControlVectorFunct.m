@@ -84,9 +84,11 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
                 end
                 
                 % check if x is always in tube (to find out if there is already mistake)
-                elext=dot(x-qVec,qMat\(x-qVec))
-                elint=dot(x-qVec,(qMat*(1/self.koef))\(x-qVec))   
+%                 elext=dot(x-qVec,qMat\(x-qVec))
+%                 elint=dot(x-qVec,(qMat*(1/self.koef))\(x-qVec))   
                 curtime=timeVec(i)
+
+
 %                 ellipsoidExt=ellipsoid(qVec,qMat);
 %                 ellipsoidInt=ellipsoid(qVec,qMat*(1/self.koef));
 %                 %figure;
@@ -101,36 +103,43 @@ classdef ControlVectorFunct < elltool.control.IControlVectFunction
                     ellipsoidExt=ellipsoid(qVec,qMat);
                     ellipsoidInt=ellipsoid(qVec,qMat*(1/self.koef));
                 %figure;
-                    plot(ellipsoidInt);
-                    hold on;
-                    plot(ellipsoidExt,'g');
-                    hold on;
-                    plot(x(1),x(2),'*');
-                    hold on;
+%                     plot(ellipsoidInt);
+%                     hold on;
+%                     plot(ellipsoidExt,'g');
+%                     hold on;
+%                     plot(x(1),x(2),'*');
+%                     hold on;
                 end
                 
                 l0=findl0(qVec,qMat,x)
                 %res=pMat(timeVec(ind))-PArray(timeVec(ind))*l0*dot(l0,QArray(timeVec(ind))*l0)^(-1/2);
-                res(:,i)=pVec-(pMat*l0)/sqrt(dot(l0,pMat*l0));
-                res(:,i)=inv(st1tMat)*res(:,i);
+                res(:,i)=pVec-(pMat*l0)/sqrt(dot(l0,pMat*l0));%-!!!
+                res(:,i)=inv(st1tMat)*res(:,i)
                 ump0Vec=res(:,i)-bpVec;
                 %%% u is always in the boundary of control set
 %                 elu=dot(ump0Vec,bpbMat\ump0Vec)
 %                 if (elu>1+1e-5)
 %                    isCurEqual=false
+
 %                 end
-                
+
             end
             function l0=findl0(elxCentVec,elXMat,x)
                 
-                I=eye(size(elXMat));
-                %                 f=@(lambda) 1/dot(inv(I+lambda*inv(elXMat))*(x-elxCentVec),...
-                %                     inv(elXMat)*inv(I+lambda*inv(elXMat))*(x-elxCentVec))-1;
-                f=@(lambda) 1/dot((I+lambda*inv(elXMat))\(x-elxCentVec),...
-                    inv(elXMat)*inv(I+lambda*inv(elXMat))*(x-elxCentVec))-1;
-                lambda=fsolve(f,1.0e-3)
-                s0=(I+lambda*inv(elXMat))\(x-elxCentVec)+elxCentVec;
-                l0=(x-s0)/norm(x-s0);
+                 I=eye(size(elXMat));
+%                 %                 f=@(lambda) 1/dot(inv(I+lambda*inv(elXMat))*(x-elxCentVec),...
+%                 %                     inv(elXMat)*inv(I+lambda*inv(elXMat))*(x-elxCentVec))-1;
+%                 f=@(lambda) 1/dot((I+lambda*inv(elXMat))\(x-elxCentVec),...
+%                     inv(elXMat)*inv(I+lambda*inv(elXMat))*(x-elxCentVec))-1;
+%                 lambda=fsolve(f,1.0e-3)
+%                 s0=(I+lambda*inv(elXMat))\(x-elxCentVec)+elxCentVec;
+%                 l0=(x-s0)/norm(x-s0);
+                  f=@(lambda)1/(dot(inv(I+lambda*inv(elXMat))*(x-elxCentVec),...
+                      inv(elXMat)*inv(I+lambda*inv(elXMat))*(x-elxCentVec)))-1;
+                  lambda=fsolve(f,1.0e-5);
+                  s0=inv(I+lambda*inv(elXMat))*(x-elxCentVec)+elxCentVec;
+                  l0=(x-s0)/norm(x-s0);
+
             end
             
         end

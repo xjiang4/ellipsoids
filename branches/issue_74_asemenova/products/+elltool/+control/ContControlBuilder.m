@@ -74,14 +74,16 @@ classdef ContControlBuilder
                 if (dot(x0-qVec,qMat\(x0-qVec))<=1)
                     % find proper k
                     %step=1e-5;
-                    step=0.1;
-                    %k=1-step;
-                    k=k*step;
-                    while ((k>0)&&(dot(x0-qVec,inv(k*qMat)*(x0-qVec))<=1+epsilon))
-                        %k=k-step;
-                        k=k*step;
-                    end;                   
-                   
+%                     step=0.1;
+%                     %k=1-step;
+%                     k=k*step;
+%                     while ((k>0)&&(dot(x0-qVec,inv(k*qMat)*(x0-qVec))<=1+epsilon))
+%                         %k=k-step;
+%                         k=k*step;
+%                     end;    
+                    k=dot(x0-qVec,qMat\(x0-qVec))-(1e-5);
+                    nd=dot(x0-qVec,inv(k*qMat)*(x0-qVec))
+%                    
                 end                
             end            
    
