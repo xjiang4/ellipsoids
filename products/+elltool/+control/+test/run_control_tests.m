@@ -10,10 +10,14 @@ crm=gras.ellapx.uncertcalc.test.regr.conf.ConfRepoMgr();
 crmSys=gras.ellapx.uncertcalc.test.regr.conf.sysdef.ConfRepoMgr();
 %
 confCMat = {
-    'demo3firstTest',  [0 1]; %1 0 1 0 1 0 1 1 0 1 1 0];
-    'demo3secondTest', [0 1]; %0 0 0 0 0 0 1 0 0 0 0 0];
-    'demo3thirdTest',  [1 1]; %0 0 0 1 0 1 1 0 0 0 0 0];
-    'demo3fourthTest', [1 1]; %0 1 1 1 0 0 1 0 0 0 0 1];
+    'testnull', [0 0]; %0 1 1 1 0 0 1 0 0 0 0 1];
+    'testA0Cunitball', [1 0]; %0 1 1 1 0 0 1 0 0 0 0 1];
+    'testA0UInterval', [0 0]; %0 1 1 1 0 0 1 0 0 0 0 1];
+    'rot2d', [0 0]; %0 1 1 1 0 0 1 0 0 0 0 1];
+    'demo3firstTest',  [0 0]; %1 0 1 0 1 0 1 1 0 1 1 0];
+    'demo3secondTest', [0 0]; %0 0 0 0 0 0 1 0 0 0 0 0];
+    'demo3thirdTest',  [0 0]; %0 0 0 1 0 1 1 0 0 0 0 0];
+    'demo3fourthTest', [0 0]; %0 1 1 1 0 0 1 0 0 0 0 1];
    % 'test2dbad',       [0 0 0 0 0 0 0 0 0 0 1 0 0 0]...
     };
 %
