@@ -160,6 +160,31 @@ classdef EllipsoidPlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
                 diag([1, 100, 0.1]), [1 0 0;0 1 0; 0 0 0]};
             self = plotND(self,nDims,inpCenCList,inpQMatCList);
         end
+        function self = testPlotRDP(self)
+            plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
+                @(x)[x,'_mySuffix']);
+            inpCenCList = {[0, 0].', [100, 100].',...
+                [0, 0, 0].', [1, 10, -1].'};
+            inpQMatCList = {[cos(pi/4), sin(pi/4); -sin(pi/4),cos(pi/4)] *...
+                [1, 0; 0, 4]*[cos(pi/4), sin(pi/4); -sin(pi/4), cos(pi/4)].', ...
+                [1, 2; 2, 5], eye(3),[2 0 0;0 0.325 -0.3897;0 -0.3897 0.775]};
+            nElem = numel(inpCenCList); 
+            for iElem = 1 : nElem
+                testEll = ellipsoid(inpCenCList{iElem}, inpQMatCList{iElem});  
+                testObjCVec{1, iElem} = plot(testEll,'relDataPlotter',plObj);
+            end
+            cellfun(@(x)checkRDP(x, plObj), testObjCVec, 'UniformOutput', false);
+        end
     end
     
+end
+
+function checkRDP(testObj, plObj)
+isOkCVec{1, 1} = testObj.getPlotStructure.figHMap.isEqual(...
+    plObj.getPlotStructure.figHMap);
+isOkCVec{1, 2} = testObj.getPlotStructure.figToAxesToHMap.isEqual(...
+    plObj.getPlotStructure.figToAxesToHMap);
+isOkCVec{1, 3} = testObj.getPlotStructure.figToAxesToPlotHMap.isEqual(...
+    plObj.getPlotStructure.figToAxesToPlotHMap);
+mlunitext.assert_equals(true,all([isOkCVec{:}]));
 end

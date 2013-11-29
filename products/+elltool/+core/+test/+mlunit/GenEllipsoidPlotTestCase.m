@@ -182,6 +182,31 @@ classdef GenEllipsoidPlotTestCase < elltool.plot.test.AGeomBodyPlotTestCase
             end
             check(testEllArr, nDims);
         end
+        
+        function self = testPlotRDP(self)
+            import elltool.core.GenEllipsoid;
+            plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
+                @(x)[x,'_mySuffix']);
+            inpArgCList = {1, 5, diag([10000, 10000]), diag([1e-5, 4]),...
+                eye(3), diag([2, 1, 0.1])};
+            inpCenCList = {1, -1, [0, 0].', [-10, -10].', [0, 0, 0].',...
+                [1, 10, -1].'};
+            inpRotCList = {eye(3),...
+                [1, 0, 0; 0, cos(pi/3), -sin(pi/3); 0, sin(pi/3), cos(pi/3)]};
+            nElem = numel(inpArgCList); 
+            for iElem = 1 : nElem
+                if(nElem - iElem >= numel(inpRotCList))
+                    testEll = GenEllipsoid(inpCenCList{iElem},...
+                        inpArgCList{iElem});   
+                else
+                    testEll = GenEllipsoid(inpCenCList{iElem},...
+                        inpArgCList{iElem},...
+                        inpRotCList{iElem - (nElem - numel(inpRotCList))});
+                end
+                testObjCVec{1, iElem} = plot(testEll,'relDataPlotter',plObj); 
+            end
+            cellfun(@(x)checkRDP(x, plObj), testObjCVec, 'UniformOutput', false);
+        end
     end
 end
 
@@ -343,6 +368,16 @@ mlunitext.assert_equals(isBoundVec, ones(size(isBoundVec)));
             (eigPoint(x) - qCenVec)) < 1 + absTol, cellPoints) ;
         
     end
+end
+
+function checkRDP(testObj, plObj)
+isOkCVec{1, 1} = testObj.getPlotStructure.figHMap.isEqual(...
+    plObj.getPlotStructure.figHMap);
+isOkCVec{1, 2} = testObj.getPlotStructure.figToAxesToHMap.isEqual(...
+    plObj.getPlotStructure.figToAxesToHMap);
+isOkCVec{1, 3} = testObj.getPlotStructure.figToAxesToPlotHMap.isEqual(...
+    plObj.getPlotStructure.figToAxesToPlotHMap);
+mlunitext.assert_equals(true,all([isOkCVec{:}]));
 end
 
 

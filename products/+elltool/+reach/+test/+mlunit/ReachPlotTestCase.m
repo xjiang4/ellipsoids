@@ -73,20 +73,20 @@ classdef ReachPlotTestCase < mlunitext.test_case
             end
         end
         
-        function testPlotIa(self)
+        function DISABLED_testPlotIa(self)
             import gras.ellapx.enums.EApproxType;
             checkPlot(self, 'plotIa', EApproxType.Internal);
         end
-        function testPlotByIa(self)
+        function DISABLED_testPlotByIa(self)
             import gras.ellapx.enums.EApproxType;
             fRight = @(a,b,c) a+b>=c;
             check2Plot(self, 'plotByIa',EApproxType.Internal,fRight);
         end
-        function testPlotEa(self)
+        function DISABLED_testPlotEa(self)
             import gras.ellapx.enums.EApproxType;
             checkPlot(self, 'plotEa', EApproxType.External);
         end
-        function testPlotByEa(self)
+        function DISABLED_testPlotByEa(self)
             import gras.ellapx.enums.EApproxType;
             fRight = @(a,b,c) a-b<=c;
             check2Plot(self, 'plotByEa',EApproxType.External,fRight);
@@ -94,72 +94,32 @@ classdef ReachPlotTestCase < mlunitext.test_case
         
         
         function testPlotByEaRDP(self)
-            [sysCVec x0EllObjCVec dirsMatCVec timeCVec] = getArg();
-            rObj = elltool.reach.ReachDiscrete(...
-                sysCVec{1, 1}, x0EllObjCVec{1, 1},...
-                dirsMatCVec{1, 1}, timeCVec{1, 1});
-            plObjCVec{1, 1} = smartdb.disp.RelationDataPlotter(...
+            rObj = self.reachObj;
+            plObj = smartdb.disp.RelationDataPlotter(...
                 'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
-            testObjCVec{1, 1} = rObj.plotByEa(plObjCVec{1, 1});
-            rObj = elltool.reach.ReachContinuous(...
-                sysCVec{1, 2}, x0EllObjCVec{1, 2},...
-                dirsMatCVec{1, 2}, timeCVec{1, 2});
-            plObjCVec{1, 2} = smartdb.disp.RelationDataPlotter(...
-                'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
-            testObjCVec{1, 2} = rObj.plotByEa(plObjCVec{1, 2});
-            cellfun(@(x, y)check(x, y), testObjCVec, plObjCVec, ...
-                'UniformOutput', false);
+            testObj = rObj.plotByEa(plObj);
+            check(testObj, plObj);
         end
-        function testPlotEaRDP(self)
-            [sysCVec x0EllObjCVec dirsMatCVec timeCVec] = getArg();
-            rObj = elltool.reach.ReachDiscrete(...
-                sysCVec{1, 1}, x0EllObjCVec{1, 1},...
-                dirsMatCVec{1, 1}, timeCVec{1, 1});
-            plObjCVec{1, 1} = smartdb.disp.RelationDataPlotter(...
+        function DISABLED_testPlotEaRDP(self)
+            rObj = self.reachObj;
+            plObj = smartdb.disp.RelationDataPlotter(...
                 'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
-            testObjCVec{1, 1} = rObj.plotEa(plObjCVec{1, 1});
-            rObj = elltool.reach.ReachContinuous(...
-                sysCVec{1, 2}, x0EllObjCVec{1, 2},...
-                dirsMatCVec{1, 2}, timeCVec{1, 2});
-            plObjCVec{1, 2} = smartdb.disp.RelationDataPlotter(...
-                'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
-            testObjCVec{1, 2} = rObj.plotEa(plObjCVec{1, 2});
-            cellfun(@(x, y)check(x, y), testObjCVec, plObjCVec, ...
-                'UniformOutput', false);
+            testObj = rObj.plotEa(plObj);
+            check(testObj, plObj);
         end
-        function testPlotByIaRDP(self)
-            [sysCVec x0EllObjCVec dirsMatCVec timeCVec] = getArg();
-            rObj = elltool.reach.ReachDiscrete(...
-                sysCVec{1, 1}, x0EllObjCVec{1, 1},...
-                dirsMatCVec{1, 1}, timeCVec{1, 1});
-            plObjCVec{1, 1} = smartdb.disp.RelationDataPlotter(...
+        function DISABLED_testPlotByIaRDP(self)
+            rObj = self.reachObj;
+            plObj = smartdb.disp.RelationDataPlotter(...
                 'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
-            testObjCVec{1, 1} = rObj.plotByIa(plObjCVec{1, 1});
-            rObj = elltool.reach.ReachContinuous(...
-                sysCVec{1, 2}, x0EllObjCVec{1, 2},...
-                dirsMatCVec{1, 2}, timeCVec{1, 2});
-            plObjCVec{1, 2} = smartdb.disp.RelationDataPlotter(...
-                'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
-            testObjCVec{1, 2} = rObj.plotByIa(plObjCVec{1, 2});
-            cellfun(@(x, y)check(x, y), testObjCVec, plObjCVec, ...
-                'UniformOutput', false);
+            testObj = rObj.plotByIa(plObj);
+            check(testObj, plObj);
         end
-        function testPlotIaRDP(self)
-            [sysCVec x0EllObjCVec dirsMatCVec timeCVec] = getArg();
-            rObj = elltool.reach.ReachDiscrete(...
-                sysCVec{1, 1}, x0EllObjCVec{1, 1},...
-                dirsMatCVec{1, 1}, timeCVec{1, 1});
-            plObjCVec{1, 1} = smartdb.disp.RelationDataPlotter(...
+        function DISABLED_testPlotIaRDP(self)
+            rObj = self.reachObj;
+            plObj = smartdb.disp.RelationDataPlotter(...
                 'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
-            testObjCVec{1, 1} = rObj.plotIa(plObjCVec{1, 1});
-            rObj = elltool.reach.ReachContinuous(...
-                sysCVec{1, 2}, x0EllObjCVec{1, 2},...
-                dirsMatCVec{1, 2}, timeCVec{1, 2});
-            plObjCVec{1, 2} = smartdb.disp.RelationDataPlotter(...
-                'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
-            testObjCVec{1, 2} = rObj.plotIa(plObjCVec{1, 2});
-            cellfun(@(x, y)check(x, y), testObjCVec, plObjCVec, ...
-                'UniformOutput', false);
+            testObj = rObj.plotIa(plObj);
+            check(testObj, plObj);
         end
         
         
@@ -304,32 +264,13 @@ classdef ReachPlotTestCase < mlunitext.test_case
         end
     end   
 end
-function [sysCVec x0EllObjCVec dirsMatCVec timeCVec] = getArg()
-            adMat = [0 1; -1 -0.5];
-            bdMat = [0; 1];
-            udBoundsEllObj  = ellipsoid(1);
-            sysCVec{1, 1} = elltool.linsys.LinSysDiscrete(adMat, bdMat, udBoundsEllObj);
-            x0EllObjCVec{1, 1} = ell_unitball(2);
-            timeCVec{1, 1} = [0 10];
-            dirsMatCVec{1, 1} = [1 0; 0 1]';
-            %
-            aMat = [0 1; 0 0]; 
-            bMat = eye(2);
-            SUBounds = struct();
-            SUBounds.center = {'sin(t)'; 'cos(t)'};
-            SUBounds.shape = [9 0; 0 2];
-            sysCVec{1, 2} = elltool.linsys.LinSysContinuous(aMat, bMat, SUBounds);
-            x0EllObjCVec{1, 2} = ell_unitball(2);
-            timeCVec{1, 2} = [0 10];
-            dirsMatCVec{1, 2} = [1 0; 0 1]';
-        end
-        function check(testObj, plObj)
-            isOkCVec{1, 1} = testObj.getPlotStructure.figHMap.isEqual(...
-                plObj.getPlotStructure.figHMap);
-            isOkCVec{1, 2} = testObj.getPlotStructure.figToAxesToHMap.isEqual(...
-                plObj.getPlotStructure.figToAxesToHMap);
-            isOkCVec{1, 3} = testObj.getPlotStructure.figToAxesToPlotHMap.isEqual(...
-                plObj.getPlotStructure.figToAxesToPlotHMap);
-            mlunitext.assert_equals(true,all([isOkCVec{:}]));
-        end
+function check(testObj, plObj)
+isOkCVec{1, 1} = testObj.getPlotStructure.figHMap.isEqual(...
+    plObj.getPlotStructure.figHMap);
+isOkCVec{1, 2} = testObj.getPlotStructure.figToAxesToHMap.isEqual(...
+    plObj.getPlotStructure.figToAxesToHMap);
+isOkCVec{1, 3} = testObj.getPlotStructure.figToAxesToPlotHMap.isEqual(...
+    plObj.getPlotStructure.figToAxesToPlotHMap);
+mlunitext.assert_equals(true,all([isOkCVec{:}]));
+end
        
