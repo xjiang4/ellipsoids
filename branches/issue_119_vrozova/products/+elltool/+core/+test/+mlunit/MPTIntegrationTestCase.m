@@ -298,16 +298,13 @@ function self = testIntersectionIA(self)
             my5EllEllIAObj = my51Ell.intersection_ia(my52Ell);
             mlunitext.assert(isEmpty(my5EllEllIAObj))
             %
-            %intersection of N ellipsoids
-            N=8;
-            alpha = 2*pi/N;
-            EllIAObj=[cos(alpha);sin(alpha)]+ellipsoid(1.5*eye(2));
-            for i=1:N
-                myEllArray(i)=[cos(i*alpha); sin(i*alpha)]+ellipsoid(1.5*eye(2));
-                EllIAObj=EllIAObj.intersection_ia(myEllArray(i));
-                mlunitext.assert(myEllArray.doesIntersectionContain(EllIAObj));
-            end
-            %            
+            %test when a shape matrix is a multidimensional array
+            dimsMatArray=[2,2,3];
+            CheckForShMultiDimArrayAndEll(dimsMatArray);
+            %
+            %test for an array of ellipsoids
+            dimsArray=[2,3,1,5];
+            CheckArrayOfEllAndEll(dimsArray);            
         end
         %
         %
@@ -443,6 +440,7 @@ function self = testIntersectionIA(self)
             my3EllEllEAObj = my31Ell.intersection_ea(my32Ell);
             [isOk, reportStr] = myExpectedEll.isEqual(my3EllEllEAObj);
             mlunitext.assert(isOk, reportStr)
+            %
             %one more example for nDims
             nDims = 3;
             myMat = [0.1 0.3 01;...
@@ -454,6 +452,10 @@ function self = testIntersectionIA(self)
             my4EllEllEAObj=intersection_ea(my41Ell, my42Ell);
             [isOk, reportStr] = my41Ell.isEqual(my4EllEllEAObj);
             mlunitext.assert(isOk, reportStr);
+            %
+            %test when a shape matrix is a multidimensional array
+            dimsMatArray=[2,2,4];
+            CheckEAForShMultiDimArrayAndEll(dimsMatArray);
         end
         %
         %
