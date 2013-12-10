@@ -248,7 +248,7 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           double[nDims,nDims,nTimePoints] array specifies double[nDims,nDims]
             %           ellipsoid matrix at nTimePoint point of time. Here nTimePoints
             %           is number of elements in timeVec.
-            %       aMat: cell[1,nTimePoints] of double[nDims,1] - array of nTimePoints
+            %       aMat: double[nTimePoints,nDims] - array of nTimePoints
             %           ellipsoid centers. Each center is specified for nTimePoint
             %           point of time.
             %       timeVec: cell[1,1] of double[1,nTimePoints] - time vector
