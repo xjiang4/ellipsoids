@@ -50,7 +50,7 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
             %   regular:
             %       self.
             % Output:
-            %   namePrefix: char[nFields, ] - list of fields of
+            %   fieldsList: cell[nFields, 1] of char[1, ] - list of fields of
             %       EllTubeProjBasic object, which are not to be
             %       concatenated or cut
             %
@@ -62,7 +62,7 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
                 'LS_GOOD_DIR_ORIG_VEC';'PROJ_S_MAT';'PROJ_TYPE'})];
         end
         function namePrefix=getReachTubeNamePrefix(self)
-            % GETREACHTUBEANEPREFIX - returns the prefix of the reach tube
+            % GETREACHTUBENAMEPREFIX - returns the prefix of the reach tube
             %
             % Input:
             %   regular:
@@ -73,13 +73,13 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
             namePrefix=self.REACH_TUBE_PREFIX;
         end
         function namePrefix=getRegTubeNamePrefix(self)
-            % GETREGTUBEANEPREFIX - returns the prefix of the reg tube
+            % GETREGTUBENAMEPREFIX - returns the prefix of the regular tube
             %
             % Input:
             %   regular:
             %       self.
             % Output:
-            %   namePrefix: char[1, ] - prefix of the reg tube
+            %   namePrefix: char[1, ] - prefix of the regular tube
             %
             namePrefix=self.REG_TUBE_PREFIX;
         end
@@ -470,7 +470,7 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
             %       fillFieldList: cell[nIsFillFields, ] of char[1, ] -
             %           list of parameters for fill function
             %       plotSpecFieldList: cell[nPlotFields, ] of char[1, ] -
-            %           defaul list of parameters. If for any function in
+            %           default list of parameters. If for any function in
             %           properties not specified list of parameters,
             %           this one will be used
             %

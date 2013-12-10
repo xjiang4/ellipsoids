@@ -56,8 +56,8 @@ classdef EllUnionTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %   regular:
             %       self.
             % Output:
-            %   namePrefix: char[nFields, ] - list of fields of
-            %       EllUionTube object, which are not to be
+            %   fieldsList: cell[nFields, 1] of char[1, ] - list of fields 
+            %       of EllUionTube object, which are not to be
             %       concatenated or cut
             %
             import  gras.ellapx.smartdb.F;

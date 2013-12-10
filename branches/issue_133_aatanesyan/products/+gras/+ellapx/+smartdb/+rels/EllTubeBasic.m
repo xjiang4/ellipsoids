@@ -17,7 +17,7 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
             %   regular:
             %       self.
             % Output:
-            %   namePrefix: char[nFields, ] - list of fields of
+            %   fieldsList: cell[nFields, 1] of char[1, ] - list of fields of
             %       EllTubeBasic object, which are not to be
             %       concatenated or cut
             %
@@ -807,19 +807,18 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
     methods
         function [apprEllMat timeVec] = getEllArray(self, approxType)
             % GETELLARRAY - returns array of ellipsoids according to
-            %               approxType
+            % approxType
             %
             % Input:
             %  regular:
             %     self.
-            %     approxType: char[1,] - type of approximation(internal/external)
+            %     approxType: cell[nEllTubes, 1] of char[1,] - type of approximation(internal/external)
             %
             % Output:
-            %   apprEllMat: ellipsoid[1, nTimePoints*nEllTubes] - an array
+            %   apprEllMat: ellipsoid[nTimePoints, nEllTubes] - an array
             %       of all the ellipsoids from all the ellipsoid tubes that are
             %       stored in self object
-            %   optional:
-            %       timeVec: cell[1,1] of double[1,nTimePoints] - time vector
+            %   timeVec: cell[1,1] of double[1,nTimePoints] - time vector
             import gras.ellapx.enums.EApproxType;
             import gras.ellapx.smartdb.F;
             APPROX_TYPE = F.APPROX_TYPE;
@@ -887,8 +886,8 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
                 thinOutTuples(self, indVec)
             % THINOUTTUPLES - thins ellipsoid tube object using vector of
             % indices specified by the user. The function returns new
-            % ellipsoid tube object containing only ellipsoids with indices
-            % specified in indVec.
+            % ellipsoid tube object containing only ellipsoids from the 
+            % original ellipsoid tube with indices specified in indVec.
             %
             % Input:
             %  regular:
@@ -1000,8 +999,9 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
             %
             % Output:
             %   cutEllTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] -
-            %   ellipsoid tube which is created from the original one by
-            %   cutting it from given start  point of time to given end point of time
+            %       ellipsoid tube which is created from the original one by
+            %       cutting it from given start  point of time to given end 
+            %       point of time
             import gras.ellapx.smartdb.F;
             import modgen.common.throwerror;
             %
@@ -1037,50 +1037,6 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
     end
     methods (Access=protected)
         function [isPos, reportStr] = isEqualAdjustedInternal(self, ellTubeObj, varargin)
-            % ISEQUAL - compares current relation object with other relation object and
-            %           returns true if they are equal, otherwise it returns false
-            %
-            %
-            % Usage: isEq=isEqual(self,otherObj)
-            %
-            % Input:
-            %   regular:
-            %     self: ARelation [1,1] - current relation object
-            %     otherObj: ARelation [1,1] - other relation object
-            %
-            %   properties:
-            %     checkFieldOrder/isFieldOrderCheck: logical [1,1] - if true, then fields
-            %         in compared relations must be in the same order, otherwise the
-            %         order is not  important (false by default)
-            %     checkTupleOrder: logical[1,1] -  if true, then the tuples in the
-            %         compared relations are expected to be in the same order,
-            %         otherwise the order is not important (false by default)
-            %
-            %     maxTolerance: double [1,1] - maximum allowed tolerance
-            %
-            %     maxRelativeTolerance: double [1,1] - maximum allowed relative
-            %        tolerance
-            %
-            %     compareMetaDataBackwardRef: logical[1,1] if true, the CubeStruct's
-            %         referenced from the meta data objects are also compared
-            %
-            %     notComparedFieldList: cell[1,nFields] of char[1,] - list
-            %        of fields that are not compared
-            %
-            %     areTimeBoundsCompared: logical[1,1] - if false,
-            %       ellipsoidal tubes are compared on intersection of
-            %       definition domains
-            %
-            % Output:
-            %   isEq: logical[1,1] - result of comparison
-            %   reportStr: char[1,] - report of comparsion
-            %
-            %
-            % $Author: Peter Gagarinov  <pgagarinov@gmail.com> $	$Date: 2013-06-13 $
-            % $Copyright: Moscow State University,
-            %            Faculty of Computational Mathematics and Computer Science,
-            %            System Analysis Department 2012 $
-            %
             import gras.ellapx.smartdb.F;
             import gras.ellapx.enums.EApproxType;
             import elltool.logging.Log4jConfigurator;
