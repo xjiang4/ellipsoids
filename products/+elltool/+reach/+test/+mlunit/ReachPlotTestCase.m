@@ -6,9 +6,27 @@ classdef ReachPlotTestCase < mlunitext.test_case
     methods(Access = private)
         function getPlotAndCheck(self, passedArgList, fColor,...
                 fLineWidth, fTrans, colorFieldList, lineWidthFieldList,...
-                transFieldList, namePlot, approxType)
-            
-            plObj = feval(namePlot, self.reachObj, passedArgList{:});
+                transFieldList, namePlot, approxType, flag)
+            if flag == 1
+                plObj = feval(namePlot, self.reachObj, passedArgList{:});
+            else
+                rObj = self.reachObj;
+                plotObj = smartdb.disp.RelationDataPlotter(...
+                    'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
+                if strcmp(namePlot, 'PlotIa') == 1
+                    fun = @rObj.PlotIa;
+                else if strcmp(namePlot, 'PlotEa') == 1
+                        fun = @rObj.PlotEa;
+                    end
+                end
+                plObj = feval(fun, plotObj,  passedArgList{:});
+                if(plObj == plotObj)
+                    isOk = 1;
+                else
+                    isOk = 0;
+                end
+                mlunitext.assert_equals(true, isOk);
+            end
             relByAppType = self.getTupleByApproxType( approxType);
             
             gras.ellapx.smartdb.test.mlunit.EllTubePlotPropTest...
@@ -73,57 +91,45 @@ classdef ReachPlotTestCase < mlunitext.test_case
             end
         end
         
-        function DISABLED_testPlotIa(self)
+        function testPlotIa(self)
             import gras.ellapx.enums.EApproxType;
-            checkPlot(self, 'plotIa', EApproxType.Internal);
+            checkPlot(self, 'plotIa', EApproxType.Internal, 1);
         end
-        function DISABLED_testPlotByIa(self)
+        function testPlotByIa(self)
             import gras.ellapx.enums.EApproxType;
             fRight = @(a,b,c) a+b>=c;
-            check2Plot(self, 'plotByIa',EApproxType.Internal,fRight);
+            check2Plot(self, 'plotByIa',EApproxType.Internal,fRight, 1);
         end
-        function DISABLED_testPlotEa(self)
+        function testPlotEa(self)
             import gras.ellapx.enums.EApproxType;
-            checkPlot(self, 'plotEa', EApproxType.External);
+            checkPlot(self, 'plotEa', EApproxType.External, 1);
         end
-        function DISABLED_testPlotByEa(self)
+        function testPlotByEa(self)
             import gras.ellapx.enums.EApproxType;
             fRight = @(a,b,c) a-b<=c;
-            check2Plot(self, 'plotByEa',EApproxType.External,fRight);
+            check2Plot(self, 'plotByEa',EApproxType.External,fRight, 1);
         end
-        
-        
+        %
+        function testPlotIaRDP(self)
+            import gras.ellapx.enums.EApproxType;
+            checkPlot(self, 'plotIa', EApproxType.Internal, 2);
+        end
+        function testPlotEaRDP(self)
+            import gras.ellapx.enums.EApproxType;
+            checkPlot(self, 'plotEa', EApproxType.External, 2);
+        end
+        function testPlotByIaRDP(self)
+            import gras.ellapx.enums.EApproxType;
+            fRight = @(a,b,c) a+b>=c;
+            check2Plot(self, 'plotByIa',EApproxType.Internal,fRight, 2);
+        end
         function testPlotByEaRDP(self)
-            rObj = self.reachObj;
-            plObj = smartdb.disp.RelationDataPlotter(...
-                'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
-            testObj = rObj.plotByEa(plObj);
-            check(testObj, plObj);
-        end
-        function DISABLED_testPlotEaRDP(self)
-            rObj = self.reachObj;
-            plObj = smartdb.disp.RelationDataPlotter(...
-                'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
-            testObj = rObj.plotEa(plObj);
-            check(testObj, plObj);
-        end
-        function DISABLED_testPlotByIaRDP(self)
-            rObj = self.reachObj;
-            plObj = smartdb.disp.RelationDataPlotter(...
-                'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
-            testObj = rObj.plotByIa(plObj);
-            check(testObj, plObj);
-        end
-        function DISABLED_testPlotIaRDP(self)
-            rObj = self.reachObj;
-            plObj = smartdb.disp.RelationDataPlotter(...
-                'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
-            testObj = rObj.plotIa(plObj);
-            check(testObj, plObj);
+            import gras.ellapx.enums.EApproxType;
+            fRight = @(a,b,c) a-b<=c;
+            check2Plot(self, 'plotByEa',EApproxType.External,fRight, 2);
         end
         
-        
-        function check2Plot(self,namePlot,approxType,fRight)
+        function check2Plot(self,namePlot,approxType,fRight, flag)
             import gras.ellapx.smartdb.test.mlunit.EllTubePlotTestCase
             import gras.ellapx.enums.EApproxType;
             rel = self.getTupleByApproxType(approxType);
@@ -151,8 +157,21 @@ classdef ReachPlotTestCase < mlunitext.test_case
                 end
                 switch curCase
                     case 1
-                        plObj = feval(namePlot, self.reachObj,...
-                             'r');
+                        if flag == 1
+                            plObj = feval(namePlot, self.reachObj,...
+                                 'r');
+                        else
+                            rObj = self.reachObj;
+                            plotObj = smartdb.disp.RelationDataPlotter(...
+                                'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
+                            if strcmp(namePlot, 'PlotByIa') == 1
+                                fun = @rObj.PlotByIa;
+                            else if strcmp(namePlot, 'PlotByEa') == 1
+                                    fun = @rObj.PlotByEa;
+                                end
+                            end
+                            plObj = feval(fun, plotObj, 'r');
+                        end
                         gras.ellapx.smartdb.test.mlunit...
                             .EllTubePlotTestCase...
                             .checkParams(plObj, expLineWidth, expFill,...
@@ -162,9 +181,23 @@ classdef ReachPlotTestCase < mlunitext.test_case
                             .checkPoints...
                             (rel,plObj,1,fRight);
                     case 2
-                        plObj = feval(namePlot, self.reachObj,...
-                            'linewidth', 4, ...
-                            'fill', true, 'shade', 0.8);                     
+                        if flag == 1
+                            plObj = feval(namePlot, self.reachObj,...
+                                'linewidth', 4, ...
+                                'fill', true, 'shade', 0.8);
+                        else
+                            rObj = self.reachObj;
+                            plotObj = smartdb.disp.RelationDataPlotter(...
+                                'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
+                            if strcmp(namePlot, 'PlotByIa') == 1
+                                fun = @rObj.PlotByIa;
+                            else if strcmp(namePlot, 'PlotByEa') == 1
+                                    fun = @rObj.PlotByEa;
+                                end
+                            end
+                            plObj = feval(fun, plotObj, 'linewidth', 4, ...
+                                'fill', true, 'shade', 0.8);
+                        end
                         gras.ellapx.smartdb.test.mlunit...
                             .EllTubePlotTestCase...
                             .checkParamsheckParams(plObj, 4, true,...
@@ -174,9 +207,23 @@ classdef ReachPlotTestCase < mlunitext.test_case
                             .checkPoints...
                             (rel,plObj,2,fRight);
                     case 3
-                        plObj = feval(namePlot, self.reachObj,...
-                            'fill', true, 'shade', 0.1, ...
-                            'color', [0, 1, 1]);      
+                        if flag == 1
+                            plObj = feval(namePlot, self.reachObj,...
+                                'fill', true, 'shade', 0.1, ...
+                                'color', [0, 1, 1]);
+                        else
+                            rObj = self.reachObj;
+                            plotObj = smartdb.disp.RelationDataPlotter(...
+                                'figureGroupKeySuffFunc',@(x)[x,'_mySuffix']);
+                            if strcmp(namePlot, 'PlotByIa') == 1
+                                fun = @rObj.PlotByIa;
+                            else if strcmp(namePlot, 'PlotByEa') == 1
+                                    fun = @rObj.PlotByEa;
+                                end
+                            end
+                            plObj = feval(fun, plotObj, 'fill', true,...
+                                'shade', 0.1, 'color', [0, 1, 1]);
+                        end
                         gras.ellapx.smartdb.test.mlunit...
                             .EllTubePlotTestCase...
                             .checkParams(plObj, [], true, 0.1, [0 1 1]);
@@ -184,10 +231,18 @@ classdef ReachPlotTestCase < mlunitext.test_case
                             .EllTubePlotTestCase...
                             .checkPoints...
                             (rel,plObj,3,fRight);
-                end               
+                end  
+                if flag == 2
+                    if(plObj == plotObj)
+                        isOk = 1;
+                    else
+                        isOk = 0;
+                    end
+                    mlunitext.assert_equals(true, isOk);
+                end
             end
         end
-        function checkPlot(self, namePlot, approxType)
+        function checkPlot(self, namePlot, approxType, flag)
             import gras.ellapx.smartdb.test.mlunit.EllTubePlotPropTest
             import gras.ellapx.enums.EApproxType;
             
@@ -211,7 +266,7 @@ classdef ReachPlotTestCase < mlunitext.test_case
                 getPlotAndCheck(self, passedArgList, fColor,...
                     fLineWidth, fTrans, colorFieldList,...
                     lineWidthFieldList, transFieldList, namePlot,...
-                    approxType)
+                    approxType, flag)
             end
             
             function checkPlotDefault()
@@ -223,7 +278,7 @@ classdef ReachPlotTestCase < mlunitext.test_case
                 getPlotAndCheck(self, passedArgList, fColor,...
                     fLineWidth, fTrans, colorFieldList,...
                     lineWidthFieldList, transFieldList, namePlot,...
-                    approxType)
+                    approxType, flag)
             end
             
             function checkPlotSemiDefault()
@@ -235,7 +290,7 @@ classdef ReachPlotTestCase < mlunitext.test_case
                 getPlotAndCheck(self, passedArgList, fColor,...
                     fLineWidth, fTrans, colorFieldList,...
                     lineWidthFieldList, transFieldList, namePlot,...
-                    approxType)
+                    approxType, flag)
             end
             
             function checkPlotSymColor()
@@ -247,7 +302,7 @@ classdef ReachPlotTestCase < mlunitext.test_case
                 getPlotAndCheck(self, passedArgList, fColor,...
                     fLineWidth, fTrans, colorFieldList,...
                     lineWidthFieldList, transFieldList, namePlot,...
-                    approxType)
+                    approxType, flag)
             end
             
             function checkPlotSym()
@@ -259,18 +314,9 @@ classdef ReachPlotTestCase < mlunitext.test_case
                 getPlotAndCheck(self, passedArgList, fColor,...
                     fLineWidth, fTrans, colorFieldList,...
                     lineWidthFieldList, transFieldList, namePlot,...
-                    approxType)
+                    approxType, flag)
             end
         end
     end   
-end
-function check(testObj, plObj)
-isOkCVec{1, 1} = testObj.getPlotStructure.figHMap.isEqual(...
-    plObj.getPlotStructure.figHMap);
-isOkCVec{1, 2} = testObj.getPlotStructure.figToAxesToHMap.isEqual(...
-    plObj.getPlotStructure.figToAxesToHMap);
-isOkCVec{1, 3} = testObj.getPlotStructure.figToAxesToPlotHMap.isEqual(...
-    plObj.getPlotStructure.figToAxesToPlotHMap);
-mlunitext.assert_equals(true,all([isOkCVec{:}]));
 end
        

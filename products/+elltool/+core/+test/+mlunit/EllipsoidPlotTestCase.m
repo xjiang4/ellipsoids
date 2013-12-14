@@ -148,7 +148,7 @@ classdef EllipsoidPlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
                 diag([10000, 10000]), diag([1e-5, 4]),[1 0; 0 0]};
             inpCenCList = {[0, 0].', [100, 100].', [0, 0].', [4, 5].', ...
                 [0, 0].', [-10, -10].',[0 0]'};
-            self = plotND(self,nDims,inpCenCList,inpArgCList);
+            self = plotND(self,nDims,inpCenCList,inpArgCList, 1);
         end
         function self = testPlot3d(self)
             nDims = 3;
@@ -158,33 +158,33 @@ classdef EllipsoidPlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
                 0 0.325 -0.3897;0 -0.3897 0.775],...
                 [1.5 0 -0.866;0 1 0; -0.866 0 2.5],...
                 diag([1, 100, 0.1]), [1 0 0;0 1 0; 0 0 0]};
-            self = plotND(self,nDims,inpCenCList,inpQMatCList);
+            self = plotND(self,nDims,inpCenCList,inpQMatCList, 1);
         end
+        %
         function self = testPlotRDP(self)
-            plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
-                @(x)[x,'_mySuffix']);
-            inpCenCList = {[0, 0].', [100, 100].',...
-                [0, 0, 0].', [1, 10, -1].'};
-            inpQMatCList = {[cos(pi/4), sin(pi/4); -sin(pi/4),cos(pi/4)] *...
-                [1, 0; 0, 4]*[cos(pi/4), sin(pi/4); -sin(pi/4), cos(pi/4)].', ...
-                [1, 2; 2, 5], eye(3),[2 0 0;0 0.325 -0.3897;0 -0.3897 0.775]};
-            nElem = numel(inpCenCList); 
-            for iElem = 1 : nElem
-                testEll = ellipsoid(inpCenCList{iElem}, inpQMatCList{iElem});  
-                testObjCVec{1, iElem} = plot(testEll,'relDataPlotter',plObj);
-            end
-            cellfun(@(x)checkRDP(x, plObj), testObjCVec, 'UniformOutput', false);
+            nDims = 2;
+            inpArgCList = {[cos(pi/4), sin(pi/4); -sin(pi/4),...
+                cos(pi/4)]* ...
+                [1, 0; 0, 4]*[cos(pi/4), sin(pi/4); -sin(pi/4),...
+                cos(pi/4)].', ...
+                [1, 2; 2, 5], diag([10000, 1e-5]), diag([3, 0.1]), ...
+                diag([10000, 10000]), diag([1e-5, 4]),[1 0; 0 0]};
+            inpCenCList = {[0, 0].', [100, 100].', [0, 0].', [4, 5].', ...
+                [0, 0].', [-10, -10].',[0 0]'};
+            self = plotND(self,nDims,inpCenCList,inpArgCList, 2);
+            %
+            nDims = 3;
+            inpCenCList = {[0, 0, 0].', [1, 10, -1].', [0, 0, 0].', ...
+                [1, 1, 0].', [10, -10, 10].'};
+            inpQMatCList = {eye(3),[2 0 0;...
+                0 0.325 -0.3897;0 -0.3897 0.775],...
+                [1.5 0 -0.866;0 1 0; -0.866 0 2.5],...
+                diag([1, 100, 0.1]), [1 0 0;0 1 0; 0 0 0]};
+            self = plotND(self,nDims,inpCenCList,inpQMatCList, 2);
+            
         end
+      
+        
     end
     
-end
-
-function checkRDP(testObj, plObj)
-isOkCVec{1, 1} = testObj.getPlotStructure.figHMap.isEqual(...
-    plObj.getPlotStructure.figHMap);
-isOkCVec{1, 2} = testObj.getPlotStructure.figToAxesToHMap.isEqual(...
-    plObj.getPlotStructure.figToAxesToHMap);
-isOkCVec{1, 3} = testObj.getPlotStructure.figToAxesToPlotHMap.isEqual(...
-    plObj.getPlotStructure.figToAxesToPlotHMap);
-mlunitext.assert_equals(true,all([isOkCVec{:}]));
 end

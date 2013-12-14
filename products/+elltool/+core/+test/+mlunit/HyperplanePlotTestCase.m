@@ -67,13 +67,13 @@ classdef HyperplanePlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
             nDims = 2;
             inpNormCList = {[1;1],[2;1],[0;0]};
             inpScalCList = {1,3,0};
-            self = plotND(self,nDims,inpNormCList,inpScalCList);
+            self = plotND(self,nDims,inpNormCList,inpScalCList, 1);
         end
         function self = testPlot3d(self)
             nDims = 3;
             inpNormCList = {[1;1;1],[2;1;3],[0;0;0],[1;0;0]};
             inpScalCList = {1,3,0,0};
-            self = plotND(self,nDims,inpNormCList,inpScalCList);
+            self = plotND(self,nDims,inpNormCList,inpScalCList, 1);
         end
         function testWrongCenterSize(self)
             testFirstHyp = hyperplane([2;1],-1);
@@ -89,29 +89,22 @@ classdef HyperplanePlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
             plot(testFirstHyp,testSecondHyp,'size',100);
             plot(testFirstHyp,testSecondHyp,'size',[100;2]);
         end
+        %
         function self = testPlotRDP(self)
-            plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
-                @(x)[x,'_mySuffix']);
-            inpNormCList = {[1;1], [2;1], [0;0], [1;1;1], [2;1;3], [0;0;0]};
-            inpScalCList = {1, 3, 0, 1, 3, 0};
-            nElem = numel(inpNormCList); 
-            for iElem = 1 : nElem
-                testEll = hyperplane(inpNormCList{iElem}, inpScalCList{iElem});  
-                testObjCVec{1, iElem} = plot(testEll,'relDataPlotter',plObj);
-            end
-            cellfun(@(x)checkRDP(x, plObj), testObjCVec, 'UniformOutput', false);
+            nDims = 2;
+            inpNormCList = {[1;1],[2;1],[0;0]};
+            inpScalCList = {1,3,0};
+            self = plotND(self,nDims,inpNormCList,inpScalCList, 2); 
+            %
+            nDims = 3;
+            inpNormCList = {[1;1;1],[2;1;3],[0;0;0],[1;0;0]};
+            inpScalCList = {1,3,0,0};
+            self = plotND(self,nDims,inpNormCList,inpScalCList, 2);
         end
+     
         
         
     end
 end
 
-function checkRDP(testObj, plObj)
-isOkCVec{1, 1} = testObj.getPlotStructure.figHMap.isEqual(...
-    plObj.getPlotStructure.figHMap);
-isOkCVec{1, 2} = testObj.getPlotStructure.figToAxesToHMap.isEqual(...
-    plObj.getPlotStructure.figToAxesToHMap);
-isOkCVec{1, 3} = testObj.getPlotStructure.figToAxesToPlotHMap.isEqual(...
-    plObj.getPlotStructure.figToAxesToPlotHMap);
-mlunitext.assert_equals(true,all([isOkCVec{:}]));
-end
+
