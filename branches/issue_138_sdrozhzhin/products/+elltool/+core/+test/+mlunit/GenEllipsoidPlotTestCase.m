@@ -45,12 +45,12 @@ classdef GenEllipsoidPlotTestCase < elltool.plot.test.AGeomBodyPlotTestCase
             nElem = numel(inpArgCList);
             for iElem = 1:nElem
                 testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem});
-                check(testEll, nDims);
+                check(testEll, nDims, 1);
             end
             testEllArr(1) = GenEllipsoid(inpCenCList{1}, inpArgCList{1});
             testEllArr(2) = GenEllipsoid(inpCenCList{2}, inpArgCList{2});
             testEllArr(3) = GenEllipsoid(inpCenCList{3}, inpArgCList{3});
-            check(testEllArr, nDims);
+            check(testEllArr, nDims, 1);
             
         end
         function self = testOrdinaryPlot2d(self)
@@ -65,18 +65,18 @@ classdef GenEllipsoidPlotTestCase < elltool.plot.test.AGeomBodyPlotTestCase
             nElem = numel(inpArgCList);
             for iElem = 1:nElem
                 testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem});
-                check(testEll, nDims);
+                check(testEll, nDims, 1);
             end
             
             testEllArr(1) = GenEllipsoid(inpCenCList{1}, inpArgCList{1});
             testEllArr(2) = GenEllipsoid(inpCenCList{2}, inpArgCList{2});
-            check(testEllArr, nDims);
+            check(testEllArr, nDims, 1);
             
             for iElem = 1:nElem
                 testEllArr(iElem) = GenEllipsoid(inpCenCList{iElem},...
                     inpArgCList{iElem});
             end
-            check(testEllArr, nDims);
+            check(testEllArr, nDims, 1);
             
         end
         
@@ -95,14 +95,14 @@ classdef GenEllipsoidPlotTestCase < elltool.plot.test.AGeomBodyPlotTestCase
             for iElem = 1:nElem
                 testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
                     inpRotCList{iElem});
-                check(testEll, nDims);
+                check(testEll, nDims, 1);
             end
             
             for iElem = 1:nElem
                 testEllArr(iElem)=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
                     inpRotCList{iElem});
             end
-            check(testEllArr, nDims);
+            check(testEllArr, nDims, 1);
             
         end
         
@@ -121,14 +121,14 @@ classdef GenEllipsoidPlotTestCase < elltool.plot.test.AGeomBodyPlotTestCase
             for iElem = 1:nElem
                 testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
                     inpRotCList{iElem});
-                check(testEll, nDims);
+                check(testEll, nDims, 1);
             end
             
             for iElem = 1:nElem
                 testEllArr(iElem)=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
                     inpRotCList{iElem});
             end
-            check(testEllArr, nDims);
+            check(testEllArr, nDims, 1);
         end
         
         function self = testDegeneratePlot3d(self)
@@ -167,56 +167,186 @@ classdef GenEllipsoidPlotTestCase < elltool.plot.test.AGeomBodyPlotTestCase
             for iElem = 1:nElem
                 testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
                     inpRotCList{iElem});
-                check(testEll, nDims);
+                check(testEll, nDims, 1);
             end
             
             for iElem = 1:5
                 testEllArr(iElem)=GenEllipsoid(inpCenCList{iElem}, ...
                     inpArgCList{iElem}, inpRotCList{iElem});
             end
-            check(testEllArr, nDims);
+            check(testEllArr, nDims, 1);
             
             for iElem = 1:nElem
                 testEllArr(iElem)=GenEllipsoid(inpCenCList{iElem}, ...
                     inpArgCList{iElem}, inpRotCList{iElem});
             end
-            check(testEllArr, nDims);
+            check(testEllArr, nDims, 1);
         end
-        
-        function self = testPlotRDP(self)
+        %
+        function self = testPlot1dRDP(self)
             import elltool.core.GenEllipsoid;
-            plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
-                @(x)[x,'_mySuffix']);
-            inpArgCList = {1, 5, diag([10000, 10000]), diag([1e-5, 4]),...
-                eye(3), diag([2, 1, 0.1])};
-            inpCenCList = {1, -1, [0, 0].', [-10, -10].', [0, 0, 0].',...
-                [1, 10, -1].'};
-            inpRotCList = {eye(3),...
-                [1, 0, 0; 0, cos(pi/3), -sin(pi/3); 0, sin(pi/3), cos(pi/3)]};
-            nElem = numel(inpArgCList); 
-            for iElem = 1 : nElem
-                if(nElem - iElem >= numel(inpRotCList))
-                    testEll = GenEllipsoid(inpCenCList{iElem},...
-                        inpArgCList{iElem});   
-                else
-                    testEll = GenEllipsoid(inpCenCList{iElem},...
-                        inpArgCList{iElem},...
-                        inpRotCList{iElem - (nElem - numel(inpRotCList))});
-                end
-                testObjCVec{1, iElem} = plot(testEll,'relDataPlotter',plObj); 
+            nDims = 1;
+            inpArgCList = {1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 0};
+            inpCenCList = {1, 2, 3, 4, 5, -5, -4, -3, -2, -1, 0};
+            nElem = numel(inpArgCList);
+            for iElem = 1:nElem
+                testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem});
+                check(testEll, nDims, 2);
             end
-            cellfun(@(x)checkRDP(x, plObj), testObjCVec, 'UniformOutput', false);
+            testEllArr(1) = GenEllipsoid(inpCenCList{1}, inpArgCList{1});
+            testEllArr(2) = GenEllipsoid(inpCenCList{2}, inpArgCList{2});
+            testEllArr(3) = GenEllipsoid(inpCenCList{3}, inpArgCList{3});
+            check(testEllArr, nDims, 2);
+            
         end
+        %
+        function self = testPlot2dRDP(self)
+            import elltool.core.GenEllipsoid;
+            nDims = 2;
+            inpArgCList = {[cos(pi/4), sin(pi/4); -sin(pi/4), cos(pi/4)]* ...
+                [1, 0; 0, 4]*[cos(pi/4), sin(pi/4); -sin(pi/4), cos(pi/4)].', ...
+                [1, 2; 2, 5], diag([10000, 1e-5]), diag([3, 0.1]), ...
+                diag([10000, 10000]), diag([1e-5, 4])};
+            inpCenCList = {[0, 0].', [100, 100].', [0, 0].', [4, 5].', ...
+                [0, 0].', [-10, -10].'};
+            nElem = numel(inpArgCList);
+            for iElem = 1:nElem
+                testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem});
+                check(testEll, nDims, 2);
+            end
+            
+            testEllArr(1) = GenEllipsoid(inpCenCList{1}, inpArgCList{1});
+            testEllArr(2) = GenEllipsoid(inpCenCList{2}, inpArgCList{2});
+            check(testEllArr, nDims, 2);
+            
+            for iElem = 1:nElem
+                testEllArr(iElem) = GenEllipsoid(inpCenCList{iElem},...
+                    inpArgCList{iElem});
+            end
+            check(testEllArr, nDims, 2);
+            
+             inpArgCList = {[0, 0; 0, 4], [0, 0; 0, 9], [0.25, 0; 0, 0], ...
+                [9, 0; 0, 0], [Inf, 0; 0, 4], [4, 0; 0, Inf], [9, 0; 0, Inf]};
+            inpRotCList = {eye(2), [cos(pi/3), -sin(pi/3); sin(pi/3), cos(pi/3)], ...
+                eye(2), [cos(pi/3), -sin(pi/3); sin(pi/3), cos(pi/3)], ...
+                eye(2), [cos(pi/3), -sin(pi/3); sin(pi/3), cos(pi/3)], ...
+                eye(2), [cos(pi/3), sin(pi/3); -sin(pi/3), cos(pi/3)]};
+            inpCenCList = {[0, 0].', [0, 0].', [0, 0].', [10, 7].', ...
+                [1, -5].', [10, 7].', [1, -5].'};
+            nElem = numel(inpCenCList);
+            for iElem = 1:nElem
+                testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
+                    inpRotCList{iElem});
+                check(testEll, nDims, 2);
+            end
+            
+            for iElem = 1:nElem
+                testEllArr(iElem)=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
+                    inpRotCList{iElem});
+            end
+            check(testEllArr, nDims, 2);
+            
+        end
+        %
+         function self = testPlot3dRDP(self)
+            import elltool.core.GenEllipsoid;
+            nDims = 3;
+            inpArgCList = {eye(3), diag([2, 1, 0.1]), diag([3, 1, 1]), ...
+                diag([0.1, 0.1, 0.01]), diag([1, 100, 0.1]),[0 0 0;0 1 0; 0 0 1]};
+            inpCenCList = {[0, 0, 0].', [1, 10, -1].', [0, 0, 0].', ...
+                [1, 1, 0].', [10, -10, 10].',[0 0 0]'};
+            inpRotCList = {eye(3), [1, 0, 0; 0, cos(pi/3), -sin(pi/3); 0, sin(pi/3), cos(pi/3)], ...
+               [cos(pi/3), 0, -sin(pi/3); 0, 1, 0; sin(pi/3), 0, cos(pi/3)], ...
+               [cos(pi/3), -sin(pi/3), 0; sin(pi/3), cos(pi/3), 0; 0, 0, 1], ...
+                eye(3),[0 0 1;0 1 0; 1 0 0]};
+            nElem = numel(inpArgCList);
+            for iElem = 1:nElem
+                testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
+                    inpRotCList{iElem});
+                check(testEll, nDims, 2);
+            end
+            
+            for iElem = 1:nElem
+                testEllArr(iElem)=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
+                    inpRotCList{iElem});
+            end
+            check(testEllArr, nDims, 2);
+            
+            
+            inpArgCList = {diag([Inf, 1, 1]), diag([0.25, Inf, 3]),...
+                diag([0, 5, Inf]), ...
+                diag([Inf, 4, 0.5]), diag([Inf, Inf, 1]), diag([Inf, 4, Inf]),...
+                diag([3, Inf, Inf]), ...
+                diag([0, 1, 1]), diag([1.1, 0, 4]), diag([3, 1, 0]), ...
+                diag([1, Inf, 0]), ...
+                diag([Inf, 1, 0]), diag([0, Inf, 3]), diag([0, 3, Inf]),...
+                diag([0.01, Inf, 1])};
+            inpCenCList = {[1, 0, 0].', [0, 0, 1].', ...
+                [0, 0, 0].', [1, 1, 1].', [1, 1, 0].', ...
+                [-1, 1, 0].', [-1, -1, 0].', [0, 0, -1].', [0, -1, 1].', ...
+                [1, 1, 0].', [-1, 1, 0].', ...
+                [0, 0, 0].', [0, 0, 0].', [1, 0, 0].', [-1, 1, -1].'};
+            inpRotCList = {eye(3), [1, 0, 0; 0, cos(pi/3), -sin(pi/3); 0, ...
+                sin(pi/3), cos(pi/3)], ...
+                eye(3), [cos(pi/3), 0, -sin(pi/3); 0, 1, 0; ...
+                sin(pi/3), 0, cos(pi/3)], ...
+                eye(3), [cos(pi/3), -sin(pi/3), 0; sin(pi/3), ...
+                cos(pi/3), 0; 0, 0, 1], ...
+                eye(3), eye(3), [cos(pi/6), -sin(pi/6), 0;...
+                sin(pi/6), cos(pi/6), 0; 0, 0, 1], ...
+                [1, 0, 0; 0, cos(pi/4), -sin(pi/4);...
+                0, sin(pi/4), cos(pi/4)], ...
+                [cos(pi/4), 0, sin(pi/4); 0, 1, 0; ...
+                -sin(pi/4), 0, cos(pi/4)], eye(3), ...
+                eye(3),  [cos(pi/3), 0, -sin(pi/3); ...
+                0, 1, 0; sin(pi/3), 0, cos(pi/3)], ...
+                [cos(pi/3), -sin(pi/3), 0;...
+                sin(pi/3), cos(pi/3), 0; 0, 0, 1]};
+            nElem = numel(inpArgCList);
+            for iElem = 1:nElem
+                testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
+                    inpRotCList{iElem});
+                check(testEll, nDims, 2);
+            end
+            
+            for iElem = 1:5
+                testEllArr(iElem)=GenEllipsoid(inpCenCList{iElem}, ...
+                    inpArgCList{iElem}, inpRotCList{iElem});
+            end
+            check(testEllArr, nDims, 2);
+            
+            for iElem = 1:nElem
+                testEllArr(iElem)=GenEllipsoid(inpCenCList{iElem}, ...
+                    inpArgCList{iElem}, inpRotCList{iElem});
+            end
+            check(testEllArr, nDims, 2);
+         end
     end
 end
 
-function check(testEllArr, nDims)
+function check(testEllArr, nDims, flag)
 import elltool.core.GenEllipsoid;
 isBoundVec = 0;
-plotObj = plot(testEllArr);
+if flag == 2
+    plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
+        @(x)[x,'_mySuffix']);
+    plotObj = plot(testEllArr,'relDataPlotter',plObj);
+    if(plObj == plotObj)
+        isOk = 1;
+    else
+        isOk = 0;
+    end
+    mlunitext.assert_equals(true, isOk);
+else
+    plotObj = plot(testEllArr);
+end
 SPlotStructure = plotObj.getPlotStructure;
 SHPlot =  toStruct(SPlotStructure.figToAxesToPlotHMap);
-num = SHPlot.figure_g1;
+if flag == 2
+    num = SHPlot.figure0x01_mySuf_fix;
+else
+    num = SHPlot.figure_g1;
+end
 [xDataCell, yDataCell, zDataCell] = arrayfun(@(x) getData(num.ax(x)), ...
     1:numel(num.ax), 'UniformOutput', false);
 if iscell(xDataCell)
@@ -368,16 +498,6 @@ mlunitext.assert_equals(isBoundVec, ones(size(isBoundVec)));
             (eigPoint(x) - qCenVec)) < 1 + absTol, cellPoints) ;
         
     end
-end
-
-function checkRDP(testObj, plObj)
-isOkCVec{1, 1} = testObj.getPlotStructure.figHMap.isEqual(...
-    plObj.getPlotStructure.figHMap);
-isOkCVec{1, 2} = testObj.getPlotStructure.figToAxesToHMap.isEqual(...
-    plObj.getPlotStructure.figToAxesToHMap);
-isOkCVec{1, 3} = testObj.getPlotStructure.figToAxesToPlotHMap.isEqual(...
-    plObj.getPlotStructure.figToAxesToPlotHMap);
-mlunitext.assert_equals(true,all([isOkCVec{:}]));
 end
 
 
