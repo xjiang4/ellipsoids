@@ -258,7 +258,9 @@ function self = testIntersectionIA(self)
         %
         %
         function self = testIntersectionIAForEll(self)
-            %ELLIPSOID AND ELLIPSOID
+            %test for internal approximation of intersection
+            %of two ellipsoids
+            %
             %test if the second ellipsoid lies in the first
             my11Ell = ellipsoid(eye(2));
             my12Ell = [0.5; 0]+ellipsoid(0.2*eye(2));
@@ -279,8 +281,8 @@ function self = testIntersectionIA(self)
             my31Ell = ellipsoid([0; 1; 0], eye(3));
             my32Ell = ellipsoid([1; 0; 0], eye(3));
             my3EllEllIAObj = my31Ell.intersection_ia(my32Ell);
-            myEllArray = [my31Ell my32Ell];
-            mlunitext.assert(myEllArray.doesIntersectionContain(my3EllEllIAObj));
+            myEllVec = [my31Ell my32Ell];
+            mlunitext.assert(myEllVec.doesIntersectionContain(my3EllEllIAObj));
             %
             %test if internal approximation is a point, when
             %the first ellipsoid touches the second
@@ -306,58 +308,29 @@ function self = testIntersectionIA(self)
             checkIAEllArray([2,1,2]);
             checkIAEllArray([2,3,1,5]);
             %
-            function checkIAShMatArrayEll(dimsShMatArray)
-                dimsCentVecArray=dimsShMatArray;
-                dimsCentVecArray(2)=1;
-                myArray=dimsShMatArray(3:end);
-                mCount=dimsShMatArray(1);
-                nCount=prod(myArray);
-                myVec=[];
-                myVec=zeros(1,prod(dimsShMatArray));
-                jElem=1;
-                for iElem=1:mCount^2:mCount^2*nCount
-                    myMat=jElem*eye(mCount);
-                    myVec(iElem:iElem+mCount^2-1)=reshape(myMat, [1, mCount^2]);
-                    jElem=jElem+1;     
-                end
-                shMatArray=reshape(myVec, dimsShMatArray);
-                my2Vec=[];
-                my2Vec=zeros(1,prod(dimsCentVecArray));
-                jElem=1;
-                nDelta=2/(nCount+1);
-                for iElem=1:mCount:mCount*nCount
-                    my2Vec(iElem) = -1+jElem*nDelta;
-                    my2Vec(iElem+1:iElem+mCount-1) = 0;
-                    jElem=jElem+1;
-                end
-                centVecArray = reshape(my2Vec, dimsCentVecArray);
-                myMultiDimEll = ellipsoid(centVecArray, shMatArray);
+            function checkIAShMatArrayEll(dimsShMat)
+                %checks if the intersection of multi-dimensional ellipsoid
+                %and ellipsoid is really internal
+                [myMultiDimEll, mCount, ~] = constructEllForTests(dimsShMat);
                 myEll = ellipsoid(eye(mCount));
                 myMultiDimEllEllIAObj = myMultiDimEll.intersection_ia(myEll);
-                mlunitext.assert(myEll.doesIntersectionContain(myMultiDimEllEllIAObj));    
+                mlunitext.assert(myEll.doesIntersectionContain(myMultiDimEllEllIAObj));
             end
-            function checkIAEllArray(dimsArray)
-                nCount = prod(dimsArray);
-                alpha=2*pi/nCount;
-                my1EllArray=[];
-                my1EllArray=[cos(alpha);sin(alpha)] + ellipsoid(1.5*eye(2));
-                for iElem = 1:nCount
-                    my1EllArray(iElem) = [cos(iElem*alpha);sin(iElem*alpha)] + ellipsoid(1.5*eye(2));
-                end
-                my2EllArray = reshape(my1EllArray, dimsArray);
-                for iElem = 1:nCount
-                    my1EllArray(iElem)=[cos(iElem*alpha);sin(iElem*alpha)] + ellipsoid(eye(2));
-                end
-                my3EllArray=reshape(my1EllArray, dimsArray);
-                myEllEllArrayIAObj = my2EllArray.intersection_ia(my3EllArray);
-                [isOk, reportStr] = my3EllArray.isEqual(myEllEllArrayIAObj);
+            function checkIAEllArray(dimsVec)
+                %checks if the intersection of two arrays of ellipsoids
+                %is equal to the second array
+                [my1EllArray, my2EllArray]=construct2EllArraysForTests(dimsVec);
+                myEllEllArrayIAObj = my1EllArray.intersection_ia(my2EllArray);
+                [isOk, reportStr] = my2EllArray.isEqual(myEllEllArrayIAObj);
                 mlunitext.assert(isOk, reportStr);
             end
         end
         %
         %
         function self = testIntersectionIAForHyper(self)
-            %ELLIPSOID AND HALFSPACE
+            %test for internal approximation of intersection
+            %of an ellipsoid and a hyperplane
+            %
             %ellipsoid lies in halfspace
             my1Ell = ellipsoid(eye(2));
             my1Hyper = hyperplane([1;1], 3);
@@ -395,48 +368,21 @@ function self = testIntersectionIA(self)
             checkIAEllArray([3,2]);
             checkIAEllArray([2,1,3,2]);
             %
-            function checkIAShMatArrayEll(dimsShMatArray)
-                dimsCentVecArray=dimsShMatArray;
-                dimsCentVecArray(2)=1;
-                myArray=dimsShMatArray(3:end);
-                mCount=dimsShMatArray(1);
-                nCount=prod(myArray);
-                myVec=[];
-                myVec=zeros(1,prod(dimsShMatArray));
-                jElem=1;
-                for iElem=1:mCount^2:mCount^2*nCount
-                    myMat=jElem*eye(mCount);
-                    myVec(iElem:iElem+mCount^2-1)=reshape(myMat, [1, mCount^2]);
-                    jElem=jElem+1;     
-                end
-                shMatArray=reshape(myVec, dimsShMatArray);
-                my2Vec=[];
-                my2Vec=zeros(1,prod(dimsCentVecArray));
-                jElem=1;
-                nDelta=2/(nCount+1);
-                for iElem=1:mCount:mCount*nCount
-                    my2Vec(iElem) = -1+jElem*nDelta;
-                    my2Vec(iElem+1:iElem+mCount-1) = 0;
-                    jElem=jElem+1;
-                end
-                centVecArray = reshape(my2Vec, dimsCentVecArray);
-                myMultiDimEll = ellipsoid(centVecArray, shMatArray);
+            function checkIAShMatArrayEll(dimsShMat)
+                %checks if the intersection of multi-dimensional ellipsoid
+                %and hyperplane is really internal
+                [myMultiDimEll, mCount, ~] = constructEllForTests(dimsShMat);
                 myHyper = hyperplane((-1)*ones(mCount,1), 1);
                 myMultiDimEllHyperIAObj = myMultiDimEll.intersection_ia(myHyper);
                 mlunitext.assert(myMultiDimEllHyperIAObj.isInside(myMultiDimEll));
             end
-            function checkIAEllArray(dimsArray)
-                nCount = prod(dimsArray);
-                alpha=2*pi/nCount;
-                my1EllArray=[];
-                my1EllArray=[cos(alpha);sin(alpha)] + ellipsoid(1.5*eye(2));
-                for iElem = 1:nCount
-                    my1EllArray(iElem) = [cos(iElem*alpha);sin(iElem*alpha)] + ellipsoid(1.5*eye(2));
-                end
-                my2EllArray = reshape(my1EllArray, dimsArray);
-                myHyper=hyperplane(ones([2,dimsArray]));
-                myEllHyperArrayIAObj = my2EllArray.intersection_ia(myHyper);
-                mlunitext.assert(myEllHyperArrayIAObj.isInside(my2EllArray));
+            function checkIAEllArray(dimsVec)
+                %checks if the intersection of array of ellipsoids
+                %and hyperplane is really internal
+                myEllArray=constructEllArrayForTests(dimsVec);
+                myHyper=hyperplane(ones([2,dimsVec]));
+                myEllHyperArrayIAObj = myEllArray.intersection_ia(myHyper);
+                mlunitext.assert(myEllHyperArrayIAObj.isInside(myEllArray));
             end
         end
         %
@@ -510,7 +456,9 @@ function self = testIntersectionIA(self)
         %
         %
         function self = testIntersectionEAForEll(self)
-            %ELLIPSOID AND ELLIPSOID
+            %test for external approximation of intersection
+            %of two ellipsoids
+            %
             %analitically proved, that minimal volume ellipsoid, covering
             %intersection of my11Ell and my12Ell is my11Ell.
             my11ShMat = eye(2);
@@ -561,56 +509,21 @@ function self = testIntersectionIA(self)
             checkEAEllArray([2,1,3]);
             checkEAEllArray([2,3,2,5]);
             %
-            function checkEAShMatArrayEll(dimsShMatArray)
-                dimsCentVecArray=dimsShMatArray;
-                dimsCentVecArray(2)=1;
-                myArray=dimsShMatArray(3:end);
-                mCount=dimsShMatArray(1);
-                nCount=prod(myArray);
-                myVec=[];
-                myVec=zeros(1,prod(dimsShMatArray));
-                jElem=1;
-                for iElem=1:mCount^2:mCount^2*nCount
-                    myMat=jElem*eye(mCount);
-                    myVec(iElem:iElem+mCount^2-1)=reshape(myMat, [1, mCount^2]);
-                    jElem=jElem+1;     
-                end
-                shMatArray=reshape(myVec, dimsShMatArray);
-                my2Vec=[];
-                my2Vec=zeros(1,prod(dimsCentVecArray));
-                jElem=1;
-                nDelta=2/(nCount+1);
-                for iElem=1:mCount:mCount*nCount
-                    my2Vec(iElem) = -1+jElem*nDelta;
-                    my2Vec(iElem+1:iElem+mCount-1) = 0;
-                    jElem=jElem+1;
-                end
-                centVecArray = reshape(my2Vec, dimsCentVecArray);
-                myMultiDimEll = ellipsoid(centVecArray, shMatArray);
+            function checkEAShMatArrayEll(dimsShMat)
+                %checks if the intersection of multi-dimensional ellipsoid
+                %and ellipsoid is equal to the second ellipsoid
+                [myMultiDimEll, mCount, nDelta] = constructEllForTests(dimsShMat);
                 myEll = [-1+nDelta; zeros(mCount-1,1)] + ellipsoid(.5*eye(mCount));
                 myMultiDimEllEllEAObj = myMultiDimEll.intersection_ea(myEll);
                 [isOk, reportStr] = myEll.isEqual(myMultiDimEllEllEAObj);
                 mlunitext.assert(isOk, reportStr);
             end
-            function checkEAEllArray(dimsArray)
-                nCount = prod(dimsArray);
-                alpha=2*pi/nCount;
-                my1EllArray=[];
-                my1EllArray=[cos(alpha);sin(alpha)] + ellipsoid(1.5*eye(2));
-                for iElem = 1:nCount
-                    my1EllArray(iElem) = [cos(iElem*alpha);sin(iElem*alpha)] + ellipsoid(1.5*eye(2));
-                end
-                my2EllArray = reshape(my1EllArray, dimsArray);
-                for iElem = 1:nCount
-                    my1EllArray(iElem)=[cos(iElem*alpha);sin(iElem*alpha)] + ellipsoid(eye(2));
-                end
-                my3EllArray=reshape(my1EllArray, dimsArray);
-                myEllEllArrayEAObj = my2EllArray.intersection_ea(my3EllArray);
-                hold on;
-                plot(my2EllArray, 'r');
-                plot(my3EllArray, 'b')
-                plot(myEllEllArrayEAObj, 'g');
-                [isOk, reportStr] = my3EllArray.isEqual(myEllEllArrayEAObj);
+            function checkEAEllArray(dimsVec)
+                %checks if the intersection of two arrays of ellipsoids
+                %is equal to the second array
+                [my1EllArray, my2EllArray]=construct2EllArraysForTests(dimsVec);
+                myEllEllArrayEAObj = my1EllArray.intersection_ea(my2EllArray);
+                [isOk, reportStr] = my2EllArray.isEqual(myEllEllArrayEAObj);
                 mlunitext.assert(isOk, reportStr);
             end
             
@@ -618,7 +531,9 @@ function self = testIntersectionIA(self)
         %
         %
         function self = testIntersectionEAForHyper(self)
-            %ELLIPSOID AND HALFSPACE
+            %test for external approximation of intersection
+            %of an ellipsoid and a hyperplane
+            %
             %ellipsoid lies in halfspace
             my1Ell = ellipsoid([-5;2;1],eye(3));
             my1Hyper = hyperplane([1;1;0], 1);
@@ -650,48 +565,21 @@ function self = testIntersectionIA(self)
             checkEAEllArray([2,4]);
             checkEAEllArray([2,3,3,5]);
             %
-            function checkEAShMatArrayEll(dimsShMatArray)
-                dimsCentVecArray=dimsShMatArray;
-                dimsCentVecArray(2)=1;
-                myArray=dimsShMatArray(3:end);
-                mCount=dimsShMatArray(1);
-                nCount=prod(myArray);
-                myVec=[];
-                myVec=zeros(1,prod(dimsShMatArray));
-                jElem=1;
-                for iElem=1:mCount^2:mCount^2*nCount
-                    myMat=jElem*eye(mCount);
-                    myVec(iElem:iElem+mCount^2-1)=reshape(myMat, [1, mCount^2]);
-                    jElem=jElem+1;     
-                end
-                shMatArray=reshape(myVec, dimsShMatArray);
-                my2Vec=[];
-                my2Vec=zeros(1,prod(dimsCentVecArray));
-                jElem=1;
-                nDelta=2/(nCount+1);
-                for iElem=1:mCount:mCount*nCount
-                    my2Vec(iElem) = -1+jElem*nDelta;
-                    my2Vec(iElem+1:iElem+mCount-1) = 0;
-                    jElem=jElem+1;
-                end
-                centVecArray = reshape(my2Vec, dimsCentVecArray);
-                myMultiDimEll = ellipsoid(centVecArray, shMatArray);
+            function checkEAShMatArrayEll(dimsShMat)
+                %checks if an intersection of multi-dimensional ellipsoid
+                %and hyperplane is empty
+                [myMultiDimEll, mCount, ~] = constructEllForTests(dimsShMat);
                 myHyper = hyperplane([1;zeros(mCount-1,1)], -5);
                 myMultiDimEllHyperEAObj = myMultiDimEll.intersection_ea(myHyper);
                 mlunitext.assert(isEmpty(myMultiDimEllHyperEAObj))
             end
-            function checkEAEllArray(dimsArray)
-                nCount = prod(dimsArray);
-                alpha=2*pi/nCount;
-                my1EllArray=[];
-                my1EllArray=[cos(alpha);sin(alpha)] + ellipsoid(1.5*eye(2));
-                for iElem = 1:nCount
-                    my1EllArray(iElem) = [cos(iElem*alpha);sin(iElem*alpha)] + ellipsoid(1.5*eye(2));
-                end
-                my2EllArray = reshape(my1EllArray, dimsArray);
-                myHyper=hyperplane(ones([2,dimsArray]), 3);
-                myEllHyperArrayEAObj = my2EllArray.intersection_ea(myHyper);
-                [isOk, reportStr] = my2EllArray.isEqual(myEllHyperArrayEAObj);
+            function checkEAEllArray(dimsVec)
+                %checks if the intersection of array of ellipsoids
+                %and hyperplane is equal to the array
+                myEllArray=constructEllArrayForTests(dimsVec);
+                myHyper=hyperplane(ones([2,dimsVec]), 3);
+                myEllHyperArrayEAObj = myEllArray.intersection_ea(myHyper);
+                [isOk, reportStr] = myEllArray.isEqual(myEllHyperArrayEAObj);
                 mlunitext.assert(isOk, reportStr);
             end
 
@@ -895,4 +783,58 @@ function self = testIntersectionIA(self)
         end
         %
     end
+end
+function [myMultiDimEll, mCount, nDelta]=constructEllForTests(dimsShMat)
+%constructs a multi-dimensional array of ellipsoids
+    dimsCentVec=dimsShMat;
+    dimsCentVec(2)=1;
+    myVec=dimsShMat(3:end);
+    mCount=dimsShMat(1);
+    nCount=prod(myVec);
+    my2Vec=[];
+    my2Vec=zeros(1,prod(dimsShMat));
+    jElem=1;
+    for iElem=1:mCount^2:mCount^2*nCount
+        myMat=jElem*eye(mCount);
+        my2Vec(iElem:iElem+mCount^2-1)=reshape(myMat, [1, mCount^2]);
+        jElem=jElem+1;
+    end
+    shMatArray=reshape(my2Vec, dimsShMat);
+    my3Vec=[];
+    my3Vec=zeros(1,prod(dimsCentVec));
+    jElem=1;
+    nDelta=2/(nCount+1);
+    for iElem=1:mCount:mCount*nCount
+        my3Vec(iElem) = -1+jElem*nDelta;
+        my3Vec(iElem+1:iElem+mCount-1) = 0;
+        jElem=jElem+1;
+    end
+    centVecArray = reshape(my3Vec, dimsCentVec);
+    myMultiDimEll = ellipsoid(centVecArray, shMatArray);
+end
+function myEllArray=constructEllArrayForTests(dimsVec)
+%constructs an array of ellipsoids with dimensionality dimsVec
+    nCount = prod(dimsVec);
+    alpha=2*pi/nCount;
+    myEllVec=[];
+    myEllVec=[cos(alpha);sin(alpha)] + ellipsoid(1.5*eye(2));
+    for iElem = 1:nCount
+        myEllVec(iElem) = [cos(iElem*alpha);sin(iElem*alpha)] + ellipsoid(1.5*eye(2));
+    end
+    myEllArray = reshape(myEllVec, dimsVec);
+end
+function [my1EllArray, my2EllArray]=construct2EllArraysForTests(dimsVec)
+%constructs two arrays of ellipsoids with the same dimensionality dimsVec
+    nCount = prod(dimsVec);
+    alpha=2*pi/nCount;
+    myEllVec=[];
+    myEllVec=[cos(alpha);sin(alpha)] + ellipsoid(1.5*eye(2));
+    for iElem = 1:nCount
+        myEllVec(iElem) = [cos(iElem*alpha);sin(iElem*alpha)] + ellipsoid(1.5*eye(2));
+    end
+    my1EllArray = reshape(myEllVec, dimsVec);
+    for iElem = 1:nCount
+        myEllVec(iElem) = [cos(iElem*alpha);sin(iElem*alpha)] + ellipsoid(eye(2));
+    end
+    my2EllArray=reshape(myEllVec, dimsVec);
 end
