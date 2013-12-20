@@ -787,6 +787,9 @@ end
 function [myMultiDimEll, mCount, nDelta]=constructEllForTests(dimsShMat)
 %constructs a multi-dimensional array of ellipsoids
     dimsCentVec=dimsShMat(2:end);
+    if numel(dimsShMat)==2
+        dimsCentVec(2)=1;
+    end
     myVec=dimsShMat(3:end);
     mCount=dimsShMat(1);
     nCount=prod(myVec);
