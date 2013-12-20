@@ -786,8 +786,7 @@ function self = testIntersectionIA(self)
 end
 function [myMultiDimEll, mCount, nDelta]=constructEllForTests(dimsShMat)
 %constructs a multi-dimensional array of ellipsoids
-    dimsCentVec=dimsShMat;
-    dimsCentVec(2)=1;
+    dimsCentVec=dimsShMat(2:end);
     myVec=dimsShMat(3:end);
     mCount=dimsShMat(1);
     nCount=prod(myVec);
