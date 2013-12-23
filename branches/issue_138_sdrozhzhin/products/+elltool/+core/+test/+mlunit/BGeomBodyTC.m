@@ -14,47 +14,31 @@ classdef BGeomBodyTC < elltool.plot.test.AGeomBodyPlotTestCase
             self =...
                 self@elltool.plot.test.AGeomBodyPlotTestCase(varargin{:});
         end
-       function self = plotND(self,nDims,inpFirstArgCList,inpSecArgCList, flag)
+        function self = plotND(self,nDims,inpFirstArgCList,inpSecArgCList)
             nElem = numel(inpFirstArgCList);
             for iElem = 1:nElem
                 testMat=...
                     self.fTest(inpFirstArgCList{iElem},...
                     inpSecArgCList{iElem});
-                check(testMat, nDims, flag);
+                check(testMat, nDims);
             end
             testEllMat(1) =...
                 self.fTest(inpFirstArgCList{1}, inpSecArgCList{1});
             testEllMat(2) =...
                 self.fTest(inpFirstArgCList{2}, inpSecArgCList{2});
-            check(testEllMat, nDims, flag);
+            check(testEllMat, nDims);
             testEl2Mat(nElem) = self.fTest();
             for iElem = 1:nElem
                 testEl2Mat(iElem) = self.fTest(inpFirstArgCList{iElem},...
                     inpSecArgCList{iElem});
             end
-            check(testEl2Mat, nDims, flag);
+            check(testEl2Mat, nDims);
             
-            function check(testEllMat, nDims, flag)
-                if flag == 2
-                    plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
-                        @(x)[x,'_mySuffix']);
-                    plotObj = plot(testEllMat,'relDataPlotter',plObj);
-                    if(plObj == plotObj)
-                        isOk = 1;
-                    else
-                        isOk = 0;
-                    end
-                    mlunitext.assert_equals(true, isOk);
-                else
-                    plotObj = plot(testEllMat);
-                end
+            function check(testEllMat, nDims)
+                plotObj = plot(testEllMat);
                 SPlotStructure = plotObj.getPlotStructure;
                 SHPlot =  toStruct(SPlotStructure.figToAxesToPlotHMap);
-                if flag == 2
-                    num = SHPlot.figure0x01_mySuf_fix;
-                else
-                    num = SHPlot.figure_g1;
-                end
+                num = SHPlot.figure_g1;
                 [xDataCell, yDataCell, zDataCell] =...
                     arrayfun(@(x) getData(num.ax(x)), ...
                     1:numel(num.ax), 'UniformOutput', false);
