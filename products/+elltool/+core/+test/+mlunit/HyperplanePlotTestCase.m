@@ -67,13 +67,13 @@ classdef HyperplanePlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
             nDims = 2;
             inpNormCList = {[1;1],[2;1],[0;0]};
             inpScalCList = {1,3,0};
-            self = plotND(self,nDims,inpNormCList,inpScalCList, 1);
+            self = plotND(self,nDims,inpNormCList,inpScalCList);
         end
         function self = testPlot3d(self)
             nDims = 3;
             inpNormCList = {[1;1;1],[2;1;3],[0;0;0],[1;0;0]};
             inpScalCList = {1,3,0,0};
-            self = plotND(self,nDims,inpNormCList,inpScalCList, 1);
+            self = plotND(self,nDims,inpNormCList,inpScalCList);
         end
         function testWrongCenterSize(self)
             testFirstHyp = hyperplane([2;1],-1);
@@ -89,22 +89,6 @@ classdef HyperplanePlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
             plot(testFirstHyp,testSecondHyp,'size',100);
             plot(testFirstHyp,testSecondHyp,'size',[100;2]);
         end
-        %
-        function self = testPlotRDP(self)
-            nDims = 2;
-            inpNormCList = {[1;1],[2;1],[0;0]};
-            inpScalCList = {1,3,0};
-            self = plotND(self,nDims,inpNormCList,inpScalCList, 2); 
-            %
-            nDims = 3;
-            inpNormCList = {[1;1;1],[2;1;3],[0;0;0],[1;0;0]};
-            inpScalCList = {1,3,0,0};
-            self = plotND(self,nDims,inpNormCList,inpScalCList, 2);
-        end
-     
-        
         
     end
 end
-
-

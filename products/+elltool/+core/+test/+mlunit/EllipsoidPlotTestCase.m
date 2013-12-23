@@ -148,7 +148,7 @@ classdef EllipsoidPlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
                 diag([10000, 10000]), diag([1e-5, 4]),[1 0; 0 0]};
             inpCenCList = {[0, 0].', [100, 100].', [0, 0].', [4, 5].', ...
                 [0, 0].', [-10, -10].',[0 0]'};
-            self = plotND(self,nDims,inpCenCList,inpArgCList, 1);
+            self = plotND(self,nDims,inpCenCList,inpArgCList);
         end
         function self = testPlot3d(self)
             nDims = 3;
@@ -158,33 +158,8 @@ classdef EllipsoidPlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
                 0 0.325 -0.3897;0 -0.3897 0.775],...
                 [1.5 0 -0.866;0 1 0; -0.866 0 2.5],...
                 diag([1, 100, 0.1]), [1 0 0;0 1 0; 0 0 0]};
-            self = plotND(self,nDims,inpCenCList,inpQMatCList, 1);
+            self = plotND(self,nDims,inpCenCList,inpQMatCList);
         end
-        %
-        function self = testPlotRDP(self)
-            nDims = 2;
-            inpArgCList = {[cos(pi/4), sin(pi/4); -sin(pi/4),...
-                cos(pi/4)]* ...
-                [1, 0; 0, 4]*[cos(pi/4), sin(pi/4); -sin(pi/4),...
-                cos(pi/4)].', ...
-                [1, 2; 2, 5], diag([10000, 1e-5]), diag([3, 0.1]), ...
-                diag([10000, 10000]), diag([1e-5, 4]),[1 0; 0 0]};
-            inpCenCList = {[0, 0].', [100, 100].', [0, 0].', [4, 5].', ...
-                [0, 0].', [-10, -10].',[0 0]'};
-            self = plotND(self,nDims,inpCenCList,inpArgCList, 2);
-            %
-            nDims = 3;
-            inpCenCList = {[0, 0, 0].', [1, 10, -1].', [0, 0, 0].', ...
-                [1, 1, 0].', [10, -10, 10].'};
-            inpQMatCList = {eye(3),[2 0 0;...
-                0 0.325 -0.3897;0 -0.3897 0.775],...
-                [1.5 0 -0.866;0 1 0; -0.866 0 2.5],...
-                diag([1, 100, 0.1]), [1 0 0;0 1 0; 0 0 0]};
-            self = plotND(self,nDims,inpCenCList,inpQMatCList, 2);
-            
-        end
-      
-        
     end
     
 end
