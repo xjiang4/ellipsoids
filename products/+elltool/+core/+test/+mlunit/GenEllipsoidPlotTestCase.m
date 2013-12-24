@@ -43,14 +43,26 @@ classdef GenEllipsoidPlotTestCase < elltool.plot.test.AGeomBodyPlotTestCase
             inpArgCList = {1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 0};
             inpCenCList = {1, 2, 3, 4, 5, -5, -4, -3, -2, -1, 0};
             nElem = numel(inpArgCList);
+            fplot = 'plot';
+            fSHPlot = @(x)x.figure_g1;
             for iElem = 1:nElem
                 testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem});
-                check(testEll, nDims);
+                check(testEll, nDims, fplot, fSHPlot);
+                auxTestPlod1d(testEll);
             end
             testEllArr(1) = GenEllipsoid(inpCenCList{1}, inpArgCList{1});
             testEllArr(2) = GenEllipsoid(inpCenCList{2}, inpArgCList{2});
             testEllArr(3) = GenEllipsoid(inpCenCList{3}, inpArgCList{3});
-            check(testEllArr, nDims);
+            check(testEllArr, nDims, fplot, fSHPlot);
+            auxTestPlod1d(testEllArr);
+            
+            function auxTestPlod1d(testEllArr)
+                plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
+                    @(x)[x,'_mySuffix']);
+                fplot = @(x)plot(x, 'relDataPlotter', plObj);
+                fSHPlot = @(x)x.figure0x01_mySuf_fix;
+                check(testEllArr,nDims, fplot, fSHPlot);
+            end
             
         end
         function self = testOrdinaryPlot2d(self)
@@ -63,20 +75,33 @@ classdef GenEllipsoidPlotTestCase < elltool.plot.test.AGeomBodyPlotTestCase
             inpCenCList = {[0, 0].', [100, 100].', [0, 0].', [4, 5].', ...
                 [0, 0].', [-10, -10].'};
             nElem = numel(inpArgCList);
+            fplot = 'plot';
+            fSHPlot = @(x)x.figure_g1;
             for iElem = 1:nElem
                 testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem});
-                check(testEll, nDims);
+                check(testEll, nDims, fplot, fSHPlot);
+                auxTestOrdinaryPlod2d(testEll);
             end
             
             testEllArr(1) = GenEllipsoid(inpCenCList{1}, inpArgCList{1});
             testEllArr(2) = GenEllipsoid(inpCenCList{2}, inpArgCList{2});
-            check(testEllArr, nDims);
+            check(testEllArr, nDims, fplot, fSHPlot);
+            auxTestOrdinaryPlod2d(testEllArr);
             
             for iElem = 1:nElem
                 testEllArr(iElem) = GenEllipsoid(inpCenCList{iElem},...
                     inpArgCList{iElem});
             end
-            check(testEllArr, nDims);
+            check(testEllArr, nDims, fplot, fSHPlot);
+            auxTestOrdinaryPlod2d(testEllArr);
+            
+            function auxTestOrdinaryPlod2d(testEllArr)
+                plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
+                    @(x)[x,'_mySuffix']);
+                fplot = @(x)plot(x, 'relDataPlotter', plObj);
+                fSHPlot = @(x)x.figure0x01_mySuf_fix;
+                check(testEllArr,nDims, fplot, fSHPlot);
+            end
             
         end
         
@@ -92,17 +117,29 @@ classdef GenEllipsoidPlotTestCase < elltool.plot.test.AGeomBodyPlotTestCase
             inpCenCList = {[0, 0].', [0, 0].', [0, 0].', [10, 7].', ...
                 [1, -5].', [10, 7].', [1, -5].'};
             nElem = numel(inpCenCList);
+            fplot = 'plot';
+            fSHPlot = @(x)x.figure_g1;
             for iElem = 1:nElem
                 testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
                     inpRotCList{iElem});
-                check(testEll, nDims);
+                check(testEll, nDims, fplot, fSHPlot);
+                auxTestDegeneratePlod2d(testEll);
             end
             
             for iElem = 1:nElem
                 testEllArr(iElem)=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
                     inpRotCList{iElem});
             end
-            check(testEllArr, nDims);
+            check(testEllArr, nDims, fplot, fSHPlot);
+            auxTestDegeneratePlod2d(testEllArr);
+            
+            function auxTestDegeneratePlod2d(testEllArr)
+                plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
+                    @(x)[x,'_mySuffix']);
+                fplot = @(x)plot(x, 'relDataPlotter', plObj);
+                fSHPlot = @(x)x.figure0x01_mySuf_fix;
+                check(testEllArr,nDims, fplot, fSHPlot);
+            end
             
         end
         
@@ -118,17 +155,29 @@ classdef GenEllipsoidPlotTestCase < elltool.plot.test.AGeomBodyPlotTestCase
                [cos(pi/3), -sin(pi/3), 0; sin(pi/3), cos(pi/3), 0; 0, 0, 1], ...
                 eye(3),[0 0 1;0 1 0; 1 0 0]};
             nElem = numel(inpArgCList);
+            fplot = 'plot';
+            fSHPlot = @(x)x.figure_g1;
             for iElem = 1:nElem
                 testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
                     inpRotCList{iElem});
-                check(testEll, nDims);
+                check(testEll, nDims, fplot, fSHPlot);
+                auxTestOrdinaryPlod3d(testEll);
             end
             
             for iElem = 1:nElem
                 testEllArr(iElem)=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
                     inpRotCList{iElem});
             end
-            check(testEllArr, nDims);
+            check(testEllArr, nDims, fplot, fSHPlot);
+            auxTestOrdinaryPlod3d(testEllArr);
+            
+            function auxTestOrdinaryPlod3d(testEllArr)
+                plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
+                    @(x)[x,'_mySuffix']);
+                fplot = @(x)plot(x, 'relDataPlotter', plObj);
+                fSHPlot = @(x)x.figure0x01_mySuf_fix;
+                check(testEllArr,nDims, fplot, fSHPlot);
+            end
         end
         
         function self = testDegeneratePlot3d(self)
@@ -164,34 +213,47 @@ classdef GenEllipsoidPlotTestCase < elltool.plot.test.AGeomBodyPlotTestCase
                 [cos(pi/3), -sin(pi/3), 0;...
                 sin(pi/3), cos(pi/3), 0; 0, 0, 1]};
             nElem = numel(inpArgCList);
+            fplot = 'plot';
+            fSHPlot = @(x)x.figure_g1;
             for iElem = 1:nElem
                 testEll=GenEllipsoid(inpCenCList{iElem}, inpArgCList{iElem}, ...
                     inpRotCList{iElem});
-                check(testEll, nDims);
+                check(testEll, nDims, fplot, fSHPlot);
+                auxTestDegeneratePlod3d(testEll);
             end
             
             for iElem = 1:5
                 testEllArr(iElem)=GenEllipsoid(inpCenCList{iElem}, ...
                     inpArgCList{iElem}, inpRotCList{iElem});
             end
-            check(testEllArr, nDims);
+            check(testEllArr, nDims, fplot, fSHPlot);
+            auxTestDegeneratePlod3d(testEllArr);
             
             for iElem = 1:nElem
                 testEllArr(iElem)=GenEllipsoid(inpCenCList{iElem}, ...
                     inpArgCList{iElem}, inpRotCList{iElem});
             end
-            check(testEllArr, nDims);
+            check(testEllArr, nDims, fplot, fSHPlot);
+            auxTestDegeneratePlod3d(testEllArr);
+            
+            function auxTestDegeneratePlod3d(testEllArr)
+                plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
+                    @(x)[x,'_mySuffix']);
+                fplot = @(x)plot(x, 'relDataPlotter', plObj);
+                fSHPlot = @(x)x.figure0x01_mySuf_fix;
+                check(testEllArr,nDims, fplot, fSHPlot);
+            end
         end
     end
 end
 
-function check(testEllArr, nDims)
+function check(testEllArr, nDims, fplot, fSHPlot)
 import elltool.core.GenEllipsoid;
 isBoundVec = 0;
-plotObj = plot(testEllArr);
+plotObj = feval(fplot, testEllArr);
 SPlotStructure = plotObj.getPlotStructure;
 SHPlot =  toStruct(SPlotStructure.figToAxesToPlotHMap);
-num = SHPlot.figure_g1;
+num = feval(fSHPlot, SHPlot);
 [xDataCell, yDataCell, zDataCell] = arrayfun(@(x) getData(num.ax(x)), ...
     1:numel(num.ax), 'UniformOutput', false);
 if iscell(xDataCell)
@@ -343,6 +405,7 @@ mlunitext.assert_equals(isBoundVec, ones(size(isBoundVec)));
             (eigPoint(x) - qCenVec)) < 1 + absTol, cellPoints) ;
         
     end
+plotObj.closeAllFigures();
 end
 
 

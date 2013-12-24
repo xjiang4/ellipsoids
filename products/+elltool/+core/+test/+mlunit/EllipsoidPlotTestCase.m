@@ -148,7 +148,19 @@ classdef EllipsoidPlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
                 diag([10000, 10000]), diag([1e-5, 4]),[1 0; 0 0]};
             inpCenCList = {[0, 0].', [100, 100].', [0, 0].', [4, 5].', ...
                 [0, 0].', [-10, -10].',[0 0]'};
-            self = plotND(self,nDims,inpCenCList,inpArgCList);
+            fplot = 'plot';
+            fSHPlot = @(x)x.figure_g1;
+            self = plotND(self,nDims,inpCenCList,inpArgCList, fplot, fSHPlot);
+            auxTestPlot2d(self);
+            
+            function auxTestPlot2d(self)
+                plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
+                    @(x)[x,'_mySuffix']);
+                fplot = @(x)plot(x, 'relDataPlotter', plObj);
+                fSHPlot = @(x)x.figure0x01_mySuf_fix;
+                plotND(self,nDims,inpCenCList,inpArgCList, fplot, fSHPlot);
+            end
+            
         end
         function self = testPlot3d(self)
             nDims = 3;
@@ -158,7 +170,18 @@ classdef EllipsoidPlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
                 0 0.325 -0.3897;0 -0.3897 0.775],...
                 [1.5 0 -0.866;0 1 0; -0.866 0 2.5],...
                 diag([1, 100, 0.1]), [1 0 0;0 1 0; 0 0 0]};
-            self = plotND(self,nDims,inpCenCList,inpQMatCList);
+            fplot = 'plot';
+            fSHPlot = @(x)x.figure_g1;
+            self = plotND(self,nDims,inpCenCList,inpQMatCList, fplot, fSHPlot);
+            auxTestPlot3d(self);
+            
+            function auxTestPlot3d(self)
+                plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
+                    @(x)[x,'_mySuffix']);
+                fplot = @(x)plot(x, 'relDataPlotter', plObj);
+                fSHPlot = @(x)x.figure0x01_mySuf_fix;
+                plotND(self,nDims,inpCenCList, inpQMatCList, fplot, fSHPlot);
+            end
         end
     end
     
