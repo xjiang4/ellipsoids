@@ -67,35 +67,13 @@ classdef HyperplanePlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
             nDims = 2;
             inpNormCList = {[1;1],[2;1],[0;0]};
             inpScalCList = {1,3,0};
-            fplot = 'plot';
-            fSHPlot = @(x)x.figure_g1;
-            self = plotND(self,nDims,inpNormCList,inpScalCList, fplot, fSHPlot);
-            auxTestPlot2d(self);
-            
-            function auxTestPlot2d(self)
-                plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
-                    @(x)[x,'_mySuffix']);
-                fplot = @(x)plot(x, 'relDataPlotter', plObj);
-                fSHPlot = @(x)x.figure0x01_mySuf_fix;
-                plotND(self,nDims,inpNormCList,inpScalCList, fplot, fSHPlot);
-            end
+            self = plotND(self,nDims,inpNormCList,inpScalCList);
         end
         function self = testPlot3d(self)
             nDims = 3;
             inpNormCList = {[1;1;1],[2;1;3],[0;0;0],[1;0;0]};
             inpScalCList = {1,3,0,0};
-            fplot = 'plot';
-            fSHPlot = @(x)x.figure_g1;
-            self = plotND(self,nDims,inpNormCList,inpScalCList, fplot, fSHPlot);
-            auxTestPlot3d(self);
-            
-            function auxTestPlot3d(self)
-                plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
-                    @(x)[x,'_mySuffix']);
-                fplot = @(x)plot(x, 'relDataPlotter', plObj);
-                fSHPlot = @(x)x.figure0x01_mySuf_fix;
-                plotND(self,nDims,inpNormCList,inpScalCList, fplot, fSHPlot);
-            end
+            self = plotND(self,nDims,inpNormCList,inpScalCList);
         end
         function testWrongCenterSize(self)
             testFirstHyp = hyperplane([2;1],-1);
@@ -110,7 +88,6 @@ classdef HyperplanePlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
             plot(testFirstHyp,'center',[1 3]);
             plot(testFirstHyp,testSecondHyp,'size',100);
             plot(testFirstHyp,testSecondHyp,'size',[100;2]);
-            
         end
         
     end
