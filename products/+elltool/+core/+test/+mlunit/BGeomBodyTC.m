@@ -15,31 +15,31 @@ classdef BGeomBodyTC < elltool.plot.test.AGeomBodyPlotTestCase
                 self@elltool.plot.test.AGeomBodyPlotTestCase(varargin{:});
         end
         function self = plotND(self,nDims,inpFirstArgCList,inpSecArgCList,...
-                  fplot, fSHPlot)
+                fPlot, fSHPlot)
             nElem = numel(inpFirstArgCList);
             for iElem = 1:nElem
                 testMat=...
                     self.fTest(inpFirstArgCList{iElem},...
                     inpSecArgCList{iElem});
-                check(testMat, nDims, fplot, fSHPlot);
+                check(testMat, nDims, fPlot, fSHPlot);
             end
             testEllMat(1) =...
                 self.fTest(inpFirstArgCList{1}, inpSecArgCList{1});
             testEllMat(2) =...
                 self.fTest(inpFirstArgCList{2}, inpSecArgCList{2});
-            check(testEllMat, nDims, fplot, fSHPlot);
+            check(testEllMat, nDims, fPlot, fSHPlot);
             testEl2Mat(nElem) = self.fTest();
             for iElem = 1:nElem
                 testEl2Mat(iElem) = self.fTest(inpFirstArgCList{iElem},...
                     inpSecArgCList{iElem});
             end
-            check(testEl2Mat, nDims, fplot, fSHPlot);
+            check(testEl2Mat, nDims, fPlot, fSHPlot);
             
-            function check(testEllMat, nDims, fplot, fSHPlot)
-                plotObj = feval(fplot, testEllMat);
+            function check(testEllMat, nDims, fPlot, fSHPlot)
+                plotObj = feval(fPlot, testEllMat);
                 SPlotStructure = plotObj.getPlotStructure;
                 SHPlot =  toStruct(SPlotStructure.figToAxesToPlotHMap);
-                num = feval(fSHPlot, SHPlot);
+                num = feval(SHPlot, fSHPlot);
                 [xDataCell, yDataCell, zDataCell] =...
                     arrayfun(@(x) getData(num.ax(x)), ...
                     1:numel(num.ax), 'UniformOutput', false);
@@ -74,6 +74,7 @@ classdef BGeomBodyTC < elltool.plot.test.AGeomBodyPlotTestCase
                 
                 testVec = reshape(testEllMat, 1, numel(testEllMat));
                 isBoundVec = self.fCheckBoundary(cellPoints,testVec);
+                
                 mlunitext.assert_equals(isBoundVec,...
                     ones(size(isBoundVec)));
                 
@@ -92,7 +93,6 @@ classdef BGeomBodyTC < elltool.plot.test.AGeomBodyPlotTestCase
                         outZData = [];
                     end
                 end
-                plotObj.closeAllFigures();
             end
         end
         
