@@ -39,7 +39,7 @@ classdef BGeomBodyTC < elltool.plot.test.AGeomBodyPlotTestCase
                 plotObj = feval(fPlot, testEllMat);
                 SPlotStructure = plotObj.getPlotStructure;
                 SHPlot =  toStruct(SPlotStructure.figToAxesToPlotHMap);
-                num = feval(SHPlot, fSHPlot);
+                num = feval(fSHPlot, SHPlot);
                 [xDataCell, yDataCell, zDataCell] =...
                     arrayfun(@(x) getData(num.ax(x)), ...
                     1:numel(num.ax), 'UniformOutput', false);
@@ -93,6 +93,7 @@ classdef BGeomBodyTC < elltool.plot.test.AGeomBodyPlotTestCase
                         outZData = [];
                     end
                 end
+                plotObj.closeAllFigures();
             end
         end
         

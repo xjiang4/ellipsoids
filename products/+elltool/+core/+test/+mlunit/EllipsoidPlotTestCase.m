@@ -148,16 +148,18 @@ classdef EllipsoidPlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
                 diag([10000, 10000]), diag([1e-5, 4]),[1 0; 0 0]};
             inpCenCList = {[0, 0].', [100, 100].', [0, 0].', [4, 5].', ...
                 [0, 0].', [-10, -10].',[0 0]'};
+            
             fPlot = @(x)plot(x);
             fSHPlot = @(x)x.figure_g1;
-            self = plotND(self,nDims,inpCenCList,inpArgCList, fPlot, fSHPlot);
+            auxTestPlot2d();
+            
+            plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
+                @(x)[x,'_mySuffix']);            
+            fPlot = @(x)plot(x, 'relDataPlotter', plObj);
+            fSHPlot = @(x)x.figure0x01_mySuf_fix;
             auxTestPlot2d();
             
             function auxTestPlot2d()
-                plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
-                    @(x)[x,'_mySuffix']);
-                fPlot = @(x)plot(x, 'relDataPlotter', plObj);
-                fSHPlot = @(x)x.figure0x01_mySuf_fix;
                 self = plotND(self,nDims,inpCenCList,inpArgCList, fPlot, fSHPlot);
             end
         end
@@ -169,9 +171,20 @@ classdef EllipsoidPlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
                 0 0.325 -0.3897;0 -0.3897 0.775],...
                 [1.5 0 -0.866;0 1 0; -0.866 0 2.5],...
                 diag([1, 100, 0.1]), [1 0 0;0 1 0; 0 0 0]};
+           
             fPlot = @(x)plot(x);
             fSHPlot = @(x)x.figure_g1;
-            self = plotND(self,nDims,inpCenCList,inpQMatCList, fPlot, fSHPlot);
+            auxTestPlot3d();
+            
+            plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
+                @(x)[x,'_mySuffix']);            
+            fPlot = @(x)plot(x, 'relDataPlotter', plObj);
+            fSHPlot = @(x)x.figure0x01_mySuf_fix;
+            auxTestPlot3d();
+            
+            function auxTestPlot3d()
+                self = plotND(self,nDims,inpCenCList,inpQMatCList, fPlot, fSHPlot);
+            end
         end
     end
     

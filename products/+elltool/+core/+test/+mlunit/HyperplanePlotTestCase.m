@@ -67,13 +67,40 @@ classdef HyperplanePlotTestCase < elltool.core.test.mlunit.BGeomBodyTC
             nDims = 2;
             inpNormCList = {[1;1],[2;1],[0;0]};
             inpScalCList = {1,3,0};
-            self = plotND(self,nDims,inpNormCList,inpScalCList);
+            
+            fPlot = @(x)plot(x);
+            fSHPlot = @(x)x.figure_g1;
+            auxTestPlot2d();
+            
+            plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
+                @(x)[x,'_mySuffix']);            
+            fPlot = @(x)plot(x, 'relDataPlotter', plObj);
+            fSHPlot = @(x)x.figure0x01_mySuf_fix;
+            auxTestPlot2d();
+            
+            function auxTestPlot2d()
+                self = plotND(self,nDims,inpNormCList,inpScalCList, fPlot, fSHPlot);
+            end
+            
         end
         function self = testPlot3d(self)
             nDims = 3;
             inpNormCList = {[1;1;1],[2;1;3],[0;0;0],[1;0;0]};
             inpScalCList = {1,3,0,0};
-            self = plotND(self,nDims,inpNormCList,inpScalCList);
+            
+            fPlot = @(x)plot(x);
+            fSHPlot = @(x)x.figure_g1;
+            auxTestPlot3d();
+            
+            plObj = smartdb.disp.RelationDataPlotter('figureGroupKeySuffFunc',...
+                @(x)[x,'_mySuffix']);
+            fPlot = @(x)plot(x, 'relDataPlotter', plObj);
+            fSHPlot = @(x)x.figure0x01_mySuf_fix;
+            auxTestPlot3d();
+            
+            function auxTestPlot3d()
+                self = plotND(self,nDims,inpNormCList,inpScalCList, fPlot, fSHPlot);
+            end
         end
         function testWrongCenterSize(self)
             testFirstHyp = hyperplane([2;1],-1);
