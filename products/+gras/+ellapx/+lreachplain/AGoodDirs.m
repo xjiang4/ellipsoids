@@ -64,7 +64,7 @@ classdef AGoodDirs
             import gras.mat.MatrixOperationsFactory;
             import gras.mat.ConstMatrixFunctionFactory;
             import modgen.common.throwerror;
-            %
+            % 
             self.lsGoodDirMat = lsGoodDirMat;
             %
             timeLimsVec = pDynObj.getTimeLimsVec();

@@ -750,7 +750,7 @@ classdef AReach < elltool.reach.IReach
                     qtStrCMat, qtStrCVec] =...
                     self.prepareSysParam(linSys, timeVec);
                 isDisturbance = self.isDisturbance(ctStrCMat, qtStrCMat);
-                %
+                % 
                 % Normalize good directions
                 %
                 sysDim = size(atStrCMat, 1);
