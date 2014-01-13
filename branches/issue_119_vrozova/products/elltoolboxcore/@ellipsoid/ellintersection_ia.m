@@ -80,14 +80,16 @@ if is2EllEqCentre(inpEllVec)
     secEllShMat = secEllObj.getShapeMat();
     
     [~,absTol] = firstEllObj.getAbsTol();
+    
 %     if ~(gras.la.ismatposdef(firstEllShMat, absTol))
 %         throwerror('errorMessage','shapeMat matrice must not be degenerate');
 %     end;
+
     import modgen.common.checkmultvar;
     checkmultvar(@(aMat, aAbsTolVal)gras.la.ismatposdef(aMat,aAbsTolVal),...
     2, firstEllShMat, absTol,...
     'errorTag','wrongInput:shapeMat',...
-    'errorMessage','shapeMat matrice must not be degenerate');
+    'errorMessage','shapeMat matrice of firstEllObj must not be degenerate');
 
     sqrtFirstEllShMat = ...
         gras.la.sqrtmpos(firstEllShMat,firstEllObj.getAbsTol());

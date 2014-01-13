@@ -150,6 +150,7 @@ function outEll = l_intersection_ea(fstEll, secObj)
 
 fstEllCentVec = fstEll.centerVec;
 fstEllShMat = fstEll.shapeMat;
+
 if ~all(fstEllShMat(:) == 0)
     if rank(fstEllShMat) < size(fstEllShMat, 1)
         fstEllShMat = ...
@@ -192,6 +193,7 @@ else
         outEll = fstEll;
         return;
     end
+    
     qSecVec = secObj.centerVec;
     seqQMat = secObj.shapeMat;
     if all(seqQMat(:)==0)
