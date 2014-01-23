@@ -1,5 +1,6 @@
 function outEllArr = intersection_ea(myEllArr, objArr)
 %
+%
 % INTERSECTION_EA - external ellipsoidal approximation of the
 %                   intersection of two ellipsoids, or ellipsoid and
 %                   halfspace, or ellipsoid and polytope.

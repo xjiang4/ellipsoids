@@ -1,8 +1,7 @@
 function outEll = ellintersection_ia(inpEllArr)
 %
 % ELLINTERSECTION_IA - computes maximum volume ellipsoid that is contained  
-%                      in the intersection of given ellipsoids.
-%                      
+%                     in the intersection of given ellipsoids.                      
 %
 % Input:
 %   regular:
