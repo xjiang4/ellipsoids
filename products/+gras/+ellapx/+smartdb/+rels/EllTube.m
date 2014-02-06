@@ -31,7 +31,8 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
     %   approxType: gras.ellapx.enums.EApproxType[1,1] - type of approximation
     %       (External, Internal, NotDefined)
     %   timeVec: double[1, nTimePoints] - time vector
-    %   calcPrecision: double[1, 1] - calculation precision
+    %   absTol:double[1, 1] - absolute tolerance
+    %   relTol:double[1, 1] - relative tolerance
     %   indSTime: double[1, 1]  - index of sTime point within timeVec
     %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of good direction
     %       vectors at any point of time from timeVec
@@ -298,8 +299,8 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           approximation schema for all of nEllTubes ellipsoid tubes, or specify the description of the
             %           approximation schema for each of the nEllTubes ellipsoid tubes
             %           separately.
-            %       calcPrecision: double[1, 1] - calculation precision
-            %
+            %       absTol:double[1, 1] - absolute tolerance
+            %       relTol:double[1, 1] - relative tolerance
             % Output:
             %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid
             %       tube object
@@ -358,7 +359,8 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           approximation schema for all of nEllTubes ellipsoid tubes, or specify the description of the
             %           approximation schema for each of the nEllTubes ellipsoid tubes
             %           separately.
-            %       calcPrecision: double[1, 1] - calculation precision
+            %       absTol:double[1, 1] - absolute tolerance
+            %       relTol:double[1, 1] - relative tolerance
             %
             % Output:
             %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid
@@ -418,8 +420,8 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           approximation schema for each of the nEllTubes ellipsoid tubes
             %           separately.
             %       calcPrecision: double[1, 1] - calculation precision
-            %       scaleFactor: double[1, nEllTubes] - a vector of scale
-            %           factors specified for every created ellipsoid tube.
+            %       absTol:double[1, 1] - absolute tolerance
+            %       relTol:double[1, 1] - relative tolerance  
             %
             % Output:
             %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid
@@ -467,7 +469,8 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           approximation schema for all of nEllTubes ellipsoid tubes, or specify the description of the
             %           approximation schema for each of the nEllTubes ellipsoid tubes
             %           separately.
-            %       calcPrecision: double[1, 1] - calculation precision
+            %       absTol:double[1, 1] - absolute tolerance
+            %       relTol:double[1, 1] - relative tolerance  
             %
             % Output:
             %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid
@@ -522,17 +525,13 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           approximation schema for all of nEllTubes ellipsoid tubes, or specify the description of the
             %           approximation schema for each of the nEllTubes ellipsoid tubes
             %           separately.
-            %       calcPrecision: double[1, 1] - calculation precision
+            %       absTol:double[1, 1] - absolute tolerance
+            %       relTol:double[1, 1] - relative tolerance  
             %
             % Output:
             %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid
             %       tube object
             %
-            
-            
-            
-            
-            
             import gras.ellapx.smartdb.rels.EllTube;
             import gras.ellapx.smartdb.rels.EllTubeBasic;
             nPoints = length(qEllArray);
