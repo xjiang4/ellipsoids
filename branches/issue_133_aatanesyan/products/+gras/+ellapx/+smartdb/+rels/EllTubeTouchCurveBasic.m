@@ -1,39 +1,43 @@
 classdef EllTubeTouchCurveBasic<handle
-    %
-    % One of the basic abstract classes in the Ellipsoidal Toolbox. It
-    % allows us to keep touch point curves of internal and external
-    % ellipsoid approximations for nEllTubes ellipsoid tubes.
+    % Basic abstract class in the Ellipsoidal Toolbox for keeping and working 
+    % with touch point curves of internal or external
+    % ellipsoid approximation for an ellipsoid tube.
     %
     % Fields:
     %   dim: double[1, 1] - the dimension of the space in which the touching 
-    %       curve is defined
+    %       curves are defined
     %   sTime: double[1, 1] - specific point of time which is best suited to
     %       describe good direction
-    %   approxSchemaName: cell[nEllTubes, 1] of char[1,] - name of the approximation schema
-    %   approxSchemaDescr: cell[nEllTubes, 1] of char[1,] - description of the approximation
-    %       schema
+    %   approxSchemaName: cell[1, 1] of char[1,] - name of the 
+    %       approximation schema
+    %   approxSchemaDescr: cell[1, 1] of char[1,] - description of the 
+    %       approximation schema
     %   approxType: gras.ellapx.enums.EApproxType[1,1] - type of approximation 
     %       (External, Internal, NotDefined)
-    %   timeVec: cell[nEllTubes, 1] of double[1, nTimePoints] - time vector 
+    %   timeVec: double[1, nTimePoints] - time vector 
     %   calcPrecision: double[1, 1] - calculation precision
     %   indSTime: double[1, 1]  - index of sTime point within timeVec
-     % %ltGoodDirArray: cell[nEllTubes,1] of double[nDim, nTimePoints] -
-            % %           cell of nEllTubes arrays of nTimePoints good direction vectors
-            % %           at any point of time from timeVec
-    %   ltGoodDirMat: cell->double[dim, nElem] - matrix of good direction 
+    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of good direction 
     %       vectors at any point of time from timeVec
-    %   lsGoodDirVec: cell->double[dim, 1] - good direction vector at sTime
-    %   ltGoodDirNormVec: cell->double[1, nElem] - norm of good direction 
+    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - good direction vector at sTime 
+    %       point of time
+    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of good direction 
     %       vector at any point of time from timeVec
-    %   lsGoodDirNorm: double[1, 1] - norm of good direction vector at sTime
-    %   xTouchCurveMat: cell->double[dim, nElem] - matrix of touch point 
-    %       curves for each initial direction specified by the user
-    %   xTouchOpCurveMat: cell->double[1, nElem] - matrix of touch point 
-    %       curves for each direction opposite to the initial direction 
-    %       specified by the user
-    %   xsTouchVec: cell->double[dim, 1]  - touch point curve vector at sTime
-    %   xsTouchOpVec: cell->double[dim, 1] - vector opposite to the touch 
-    %       point curve vector at sTime
+    %   lsGoodDirNorm: double[1, 1] - norm of good direction vector at
+    %       sTime point of time
+    %   xTouchCurveMat: cell[1, nTimePoints] of double[nDims, 1] - touch 
+    %       point curve for good direction matrix
+    %   xTouchOpCurveMat: cell[1, nTimePoints] of double[nDims, 1] - touch 
+    %       point curve oposite to the xTouchCurveMat touch point curve
+    %   xsTouchVec: cell[1, 1] of double[nDims, 1]  - touch point at sTime
+    %       point of time
+    %   xsTouchOpVec: cell[1, 1] of double[nDims, 1] - a point opposite to
+    %       the xsTouchVec touch point
+    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether a touch takes place
+    %       along good direction at sTime point of time
+    %   isLsTouchVec: cell[1, 1] of logical[nTimePoints, 1] - a logical
+    %       vector which indicates whether a touch takes place along good 
+    %       direction at any point of time from timeVec
     %
     properties (Constant,Hidden)
         FCODE_DIM
