@@ -528,6 +528,11 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %   ellTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] - constructed ellipsoid
             %       tube object
             %
+            
+            
+            
+            
+            
             import gras.ellapx.smartdb.rels.EllTube;
             import gras.ellapx.smartdb.rels.EllTubeBasic;
             nPoints = length(qEllArray);
