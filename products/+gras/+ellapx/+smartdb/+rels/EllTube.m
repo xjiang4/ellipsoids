@@ -1,34 +1,60 @@
 classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
         gras.ellapx.smartdb.rels.EllTubeBasic&...
         gras.ellapx.smartdb.rels.AEllTubeProjectable
-    % EllTube - class which keeps ellipsoidal tubes
+    % A class which adds more methods and functionality to EllTubeBasic class,
+    % allowing more profound work with ellipsoid tube objects.
     %
     % Fields:
-    %   QArray:cell[1, nElem] - Array of ellipsoid matrices
-    %   aMat:cell[1, nElem] - Array of ellipsoid centers
-    %   scaleFactor:double[1, 1] - Tube scale factor
-    %   MArray:cell[1, nElem] - Array of regularization ellipsoid matrices
-    %   dim :double[1, 1] - Dimensionality
-    %   sTime:double[1, 1] - Time s
-    %   approxSchemaName:cell[1,] - Name
-    %   approxSchemaDescr:cell[1,] - Description
-    %   approxType:gras.ellapx.enums.EApproxType - Type of approximation
-    %                 (external, internal, not defined)
-    %   timeVec:cell[1, m] - Time vector
-    %   calcPrecision:double[1, 1] - Calculation precision
-    %   indSTime:double[1, 1]  - index of sTime within timeVec
-    %   ltGoodDirMat:cell[1, nElem] - Good direction curve
-    %   lsGoodDirVec:cell[1, nElem] - Good direction at time s
-    %   ltGoodDirNormVec:cell[1, nElem] - Norm of good direction curve
-    %   lsGoodDirNorm:double[1, 1] - Norm of good direction at time s
-    %   xTouchCurveMat:cell[1, nElem] - Touch point curve for good
-    %                                   direction
-    %   xTouchOpCurveMat:cell[1, nElem] - Touch point curve for direction
-    %                                     opposite to good direction
-    %   xsTouchVec:cell[1, nElem]  - Touch point at time s
-    %   xsTouchOpVec :cell[1, nElem] - Touch point at time s
+    %   QArray: cell[1,1] of double[nDims,nDims,nTimePoints] -
+    %       an array of nTimePoints ellipsoid matrices of
+    %       double[nDims,nDims] type. Each element from
+    %       double[nDims,nDims,nTimePoints] array specifies double[nDims,nDims]
+    %       ellipsoid matrix at nTimePoint point of time. Here nTimePoints
+    %       is number of elements in timeVec.
+    %   aMat: cell[1,nTimePoints] of double[nDims,1] - array of nTimePoints
+    %       ellipsoid centers. Each center is specified for nTimePoint
+    %       point of time
+    %   scaleFactor: double[1, 1] - scale for the created ellipsoid tube
+    %   MArray: cell[1,1] of double[nDims,nDims,nTimePoints] -
+    %       an array of nTimePoints regularization matrices
+    %       of double[nDims,nDims] type. Each element from
+    %       double[nDims,nDims,nTimePoints] array specifies double[nDim,nDim]
+    %       regularization matrix at nTimePoint point of time
+    %   dim: double[1, 1] - the dimension of the space in which the touching
+    %       curves are defined
+    %   sTime: double[1, 1] - specific point of time which is best suited to
+    %       describe good direction
+    %   approxSchemaName: cell[1, 1] of char[1,] - name of the
+    %       approximation schema
+    %   approxSchemaDescr: cell[1, 1] of char[1,] - description of the
+    %       approximation schema
+    %   approxType: gras.ellapx.enums.EApproxType[1,1] - type of approximation
+    %       (External, Internal, NotDefined)
+    %   timeVec: double[1, nTimePoints] - time vector
+    %   calcPrecision: double[1, 1] - calculation precision
+    %   indSTime: double[1, 1]  - index of sTime point within timeVec
+    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of good direction
+    %       vectors at any point of time from timeVec
+    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - good direction vector at sTime
+    %       point of time
+    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of good direction
+    %       vector at any point of time from timeVec
+    %   lsGoodDirNorm: double[1, 1] - norm of good direction vector at
+    %       sTime point of time
+    %   xTouchCurveMat: cell[1, nTimePoints] of double[nDims, 1] - touch
+    %       point curve for good direction matrix
+    %   xTouchOpCurveMat: cell[1, nTimePoints] of double[nDims, 1] - touch
+    %       point curve oposite to the xTouchCurveMat touch point curve
+    %   xsTouchVec: cell[1, 1] of double[nDims, 1]  - touch point at sTime
+    %       point of time
+    %   xsTouchOpVec: cell[1, 1] of double[nDims, 1] - a point opposite to
+    %       the xsTouchVec touch point
+    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether a touch takes place
+    %       along good direction at sTime point of time
+    %   isLsTouchVec: cell[1, 1] of logical[nTimePoints, 1] - a logical
+    %       vector which indicates whether a touch takes place along good
+    %       direction at any point of time from timeVec
     %
-    %   TODO: correct description of the fields in gras.ellapx.smartdb.rels.EllTube
     methods(Access=protected)
         function changeDataPostHook(self)
             self.checkDataConsistency();
@@ -248,7 +274,7 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           double[nDims,nDims,nTimePoints] array specifies double[nDims,nDims]
             %           ellipsoid matrix at nTimePoint point of time. Here nTimePoints
             %           is number of elements in timeVec.
-            %       aMat: double[nTimePoints,nDims] - array of nTimePoints
+            %       aMat: double[nDims, nTimePoints] - array of nTimePoints
             %           ellipsoid centers. Each center is specified for nTimePoint
             %           point of time.
             %       timeVec: cell[1,1] of double[1,nTimePoints] - time vector
@@ -257,12 +283,21 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           at any point of time from timeVec
             %       sTime: double[1,1] - specific point of time from timeVec which is
             %           best suited to describe good direction
-            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of
-            %           approximation (External, Internal, NotDefined)
-            %       approxSchemaName: char[1,] - name of the approximation
-            %           schema
-            %       approxSchemaDescr: char[1,] - description of the
-            %           approximation schema
+            %       approxType: gras.ellapx.enums.EApproxType[1,1] / gras.ellapx.enums.EApproxType[1,nEllTubes] - type of
+            %           approximation (External, Internal, NotDefined). It is possible either to specify one type of
+            %           approximation for all of nEllTubes ellipsoid tubes, or specify the type of
+            %           approximation for each of the nEllTubes ellipsoid tubes
+            %           separately.
+            %       approxSchemaName: char[1,] / cell[1,nEllTubes] of char[1,] - name of the approximation
+            %           schema. It is possible either to specify one name of the approximation
+            %           schema for all of nEllTubes ellipsoid tubes, or specify the name of the approximation
+            %           schema for each of the nEllTubes ellipsoid tubes
+            %           separately.
+            %       approxSchemaDescr: char[1,] / cell[1,nEllTubes] of char[1,] - description of the
+            %           approximation schema. It is possible either to specify one description of the
+            %           approximation schema for all of nEllTubes ellipsoid tubes, or specify the description of the
+            %           approximation schema for each of the nEllTubes ellipsoid tubes
+            %           separately.
             %       calcPrecision: double[1, 1] - calculation precision
             %
             % Output:
@@ -294,7 +329,7 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           double[nDims,nDims,nTimePoints] array specifies double[nDims,nDims]
             %           ellipsoid matrix at nTimePoint point of time. Here nTimePoints
             %           is number of elements in timeVec.
-            %       aMat: cell[1,nTimePoints] of double[nDims,1] - array of nTimePoints
+            %       aMat: double[nDims, nTimePoints] - array of nTimePoints
             %           ellipsoid centers. Each center is specified for nTimePoint
             %           point of time.
             %       MArrayList: cell[nEllTubes,1] of double[nDims,nDims,nTimePoints] -
@@ -308,12 +343,21 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           at any point of time from timeVec
             %       sTime: double[1,1] - specific point of time from timeVec which is
             %           best suited to describe good direction
-            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of
-            %           approximation (External, Internal, NotDefined)
-            %       approxSchemaName: char[1,] - name of the approximation
-            %           schema
-            %       approxSchemaDescr: char[1,] - description of the
-            %           approximation schema
+            %       approxType: gras.ellapx.enums.EApproxType[1,1] / gras.ellapx.enums.EApproxType[1,nEllTubes] - type of
+            %           approximation (External, Internal, NotDefined). It is possible either to specify one type of
+            %           approximation for all of nEllTubes ellipsoid tubes, or specify the type of
+            %           approximation for each of the nEllTubes ellipsoid tubes
+            %           separately.
+            %       approxSchemaName: char[1,] / cell[1,nEllTubes] of char[1,] - name of the approximation
+            %           schema. It is possible either to specify one name of the approximation
+            %           schema for all of nEllTubes ellipsoid tubes, or specify the name of the approximation
+            %           schema for each of the nEllTubes ellipsoid tubes
+            %           separately.
+            %       approxSchemaDescr: char[1,] / cell[1,nEllTubes] of char[1,] - description of the
+            %           approximation schema. It is possible either to specify one description of the
+            %           approximation schema for all of nEllTubes ellipsoid tubes, or specify the description of the
+            %           approximation schema for each of the nEllTubes ellipsoid tubes
+            %           separately.
             %       calcPrecision: double[1, 1] - calculation precision
             %
             % Output:
@@ -344,7 +388,7 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           double[nDims,nDims,nTimePoints] array specifies double[nDims,nDims]
             %           ellipsoid matrix at nTimePoint point of time. Here nTimePoints
             %           is number of elements in timeVec.
-            %       aMat: cell[1,nTimePoints] of double[nDims,1] - array of nTimePoints
+            %       aMat: double[nDims, nTimePoints] - array of nTimePoints
             %           ellipsoid centers. Each center is specified for nTimePoint
             %           point of time.
             %       MArrayList: cell[nEllTubes,1] of double[nDims,nDims,nTimePoints] -
@@ -358,12 +402,21 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           at any point of time from timeVec
             %       sTime: double[1,1] - specific point of time from timeVec which is
             %           best suited to describe good direction
-            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of
-            %           approximation (External, Internal, NotDefined)
-            %       approxSchemaName: char[1,] - name of the approximation
-            %           schema
-            %       approxSchemaDescr: char[1,] - description of the
-            %           approximation schema
+            %       approxType: gras.ellapx.enums.EApproxType[1,1] / gras.ellapx.enums.EApproxType[1,nEllTubes] - type of
+            %           approximation (External, Internal, NotDefined). It is possible either to specify one type of
+            %           approximation for all of nEllTubes ellipsoid tubes, or specify the type of
+            %           approximation for each of the nEllTubes ellipsoid tubes
+            %           separately.
+            %       approxSchemaName: char[1,] / cell[1,nEllTubes] of char[1,] - name of the approximation
+            %           schema. It is possible either to specify one name of the approximation
+            %           schema for all of nEllTubes ellipsoid tubes, or specify the name of the approximation
+            %           schema for each of the nEllTubes ellipsoid tubes
+            %           separately.
+            %       approxSchemaDescr: char[1,] / cell[1,nEllTubes] of char[1,] - description of the
+            %           approximation schema. It is possible either to specify one description of the
+            %           approximation schema for all of nEllTubes ellipsoid tubes, or specify the description of the
+            %           approximation schema for each of the nEllTubes ellipsoid tubes
+            %           separately.
             %       calcPrecision: double[1, 1] - calculation precision
             %       scaleFactor: double[1, nEllTubes] - a vector of scale
             %           factors specified for every created ellipsoid tube.
@@ -399,12 +452,21 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           at any point of time from timeVec
             %       sTime: double[1,1] - specific point of time from timeVec which is
             %           best suited to describe good direction
-            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of
-            %           approximation (External, Internal, NotDefined)
-            %       approxSchemaName: char[1,] - name of the approximation
-            %           schema
-            %       approxSchemaDescr: char[1,] - description of the
-            %           approximation schema
+            %       approxType: gras.ellapx.enums.EApproxType[1,1] / gras.ellapx.enums.EApproxType[1,nEllTubes] - type of
+            %           approximation (External, Internal, NotDefined). It is possible either to specify one type of
+            %           approximation for all of nEllTubes ellipsoid tubes, or specify the type of
+            %           approximation for each of the nEllTubes ellipsoid tubes
+            %           separately.
+            %       approxSchemaName: char[1,] / cell[1,nEllTubes] of char[1,] - name of the approximation
+            %           schema. It is possible either to specify one name of the approximation
+            %           schema for all of nEllTubes ellipsoid tubes, or specify the name of the approximation
+            %           schema for each of the nEllTubes ellipsoid tubes
+            %           separately.
+            %       approxSchemaDescr: char[1,] / cell[1,nEllTubes] of char[1,] - description of the
+            %           approximation schema. It is possible either to specify one description of the
+            %           approximation schema for all of nEllTubes ellipsoid tubes, or specify the description of the
+            %           approximation schema for each of the nEllTubes ellipsoid tubes
+            %           separately.
             %       calcPrecision: double[1, 1] - calculation precision
             %
             % Output:
@@ -445,12 +507,21 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             %           at any point of time from timeVec
             %       sTime: double[1,1] - specific point of time from timeVec which is
             %           best suited to describe good direction
-            %       approxType: gras.ellapx.enums.EApproxType[1,1] - type of
-            %           approximation (External, Internal, NotDefined)
-            %       approxSchemaName: char[1,] - name of the approximation
-            %           schema
-            %       approxSchemaDescr: char[1,] - description of the
-            %           approximation schema
+            %       approxType: gras.ellapx.enums.EApproxType[1,1] / gras.ellapx.enums.EApproxType[1,nEllTubes] - type of
+            %           approximation (External, Internal, NotDefined). It is possible either to specify one type of
+            %           approximation for all of nEllTubes ellipsoid tubes, or specify the type of
+            %           approximation for each of the nEllTubes ellipsoid tubes
+            %           separately.
+            %       approxSchemaName: char[1,] / cell[1,nEllTubes] of char[1,] - name of the approximation
+            %           schema. It is possible either to specify one name of the approximation
+            %           schema for all of nEllTubes ellipsoid tubes, or specify the name of the approximation
+            %           schema for each of the nEllTubes ellipsoid tubes
+            %           separately.
+            %       approxSchemaDescr: char[1,] / cell[1,nEllTubes] of char[1,] - description of the
+            %           approximation schema. It is possible either to specify one description of the
+            %           approximation schema for all of nEllTubes ellipsoid tubes, or specify the description of the
+            %           approximation schema for each of the nEllTubes ellipsoid tubes
+            %           separately.
             %       calcPrecision: double[1, 1] - calculation precision
             %
             % Output:
@@ -624,9 +695,9 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
             % Input:
             %   regular:
             %       self.
-            %       fCalcFactor: cell_fun{1, 1] - function which calculates scaleFactor for
+            %       fCalcFactor: function_handle[1, 1] - function which calculates scaleFactor for
             %           fields in fieldNameList
-            %       fieldNameList: char[1, ]/cell[1,] of char[1, ] - a list of fields
+            %       fieldNameList: char[1, ]/cell[1,nFields] of char[1, ] - a list of field or nFields fields
             %           for which scale factor will be calculated
             %
             %  Output:

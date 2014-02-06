@@ -1,6 +1,58 @@
 classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
-    %TestRelation Summary of this class goes here
-    %   Detailed explanation goes here
+    % Basic abstract class in the Ellipsoidal Toolbox for keeping and working 
+    % with ellipsoid tube objects.
+    %
+    % Fields:
+    %   QArray: cell[1,1] of double[nDims,nDims,nTimePoints] -
+    %       an array of nTimePoints ellipsoid matrices of
+    %       double[nDims,nDims] type. Each element from
+    %       double[nDims,nDims,nTimePoints] array specifies double[nDims,nDims]
+    %       ellipsoid matrix at nTimePoint point of time. Here nTimePoints
+    %       is number of elements in timeVec.
+    %   aMat: cell[1,nTimePoints] of double[nDims,1] - array of nTimePoints
+    %       ellipsoid centers. Each center is specified for nTimePoint
+    %       point of time
+    %   scaleFactor: double[1, 1] - scale for the created ellipsoid tube
+    %   MArray: cell[1,1] of double[nDims,nDims,nTimePoints] -
+    %       an array of nTimePoints regularization matrices
+    %       of double[nDims,nDims] type. Each element from
+    %       double[nDims,nDims,nTimePoints] array specifies double[nDim,nDim]
+    %       regularization matrix at nTimePoint point of time
+    %   dim: double[1, 1] - the dimension of the space in which the touching 
+    %       curves are defined
+    %   sTime: double[1, 1] - specific point of time which is best suited to
+    %       describe good direction
+    %   approxSchemaName: cell[1, 1] of char[1,] - name of the 
+    %       approximation schema
+    %   approxSchemaDescr: cell[1, 1] of char[1,] - description of the 
+    %       approximation schema
+    %   approxType: gras.ellapx.enums.EApproxType[1,1] - type of approximation 
+    %       (External, Internal, NotDefined)
+    %   timeVec: double[1, nTimePoints] - time vector 
+    %   calcPrecision: double[1, 1] - calculation precision
+    %   indSTime: double[1, 1]  - index of sTime point within timeVec
+    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of good direction 
+    %       vectors at any point of time from timeVec
+    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - good direction vector at sTime 
+    %       point of time
+    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of good direction 
+    %       vector at any point of time from timeVec
+    %   lsGoodDirNorm: double[1, 1] - norm of good direction vector at
+    %       sTime point of time
+    %   xTouchCurveMat: cell[1, nTimePoints] of double[nDims, 1] - touch 
+    %       point curve for good direction matrix
+    %   xTouchOpCurveMat: cell[1, nTimePoints] of double[nDims, 1] - touch 
+    %       point curve oposite to the xTouchCurveMat touch point curve
+    %   xsTouchVec: cell[1, 1] of double[nDims, 1]  - touch point at sTime
+    %       point of time
+    %   xsTouchOpVec: cell[1, 1] of double[nDims, 1] - a point opposite to
+    %       the xsTouchVec touch point
+    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether a touch takes place
+    %       along good direction at sTime point of time
+    %   isLsTouchVec: cell[1, 1] of logical[nTimePoints, 1] - a logical
+    %       vector which indicates whether a touch takes place along good 
+    %       direction at any point of time from timeVec
+    %
     properties (Constant,Hidden)
         FCODE_Q_ARRAY
         FCODE_A_MAT
@@ -9,7 +61,7 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
     end
     methods
         function fieldsList = getNoCatOrCutFieldsList(~)
-            % GETNOCATORCUTFIELDLIST - returns a list of fields of
+            % GETNOCATORCUTFIELDSLIST - returns a list of fields of
             % EllTubeBasic object, which are not to be
             % concatenated or cut.
             %
@@ -858,7 +910,7 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
             %             Faculty of Computational
             %             Mathematics and Computer Science,
             %             System Analysis Department 2013 $
-            import gras.interp.MatrixInterpolantFactory;
+            %
             import gras.ellapx.smartdb.rels.EllTube;
             import modgen.common.throwerror;
             %
@@ -897,8 +949,8 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
             %
             % Output:
             %   thinnedEllTubeRel: gras.ellapx.smartdb.rels.EllTubeBasic[1, 1] - 
-            %       new ellipsoid tube object containing only ellipsoids with 
-            %       indices specified in indVec
+            %       new ellipsoid tube object containing only ellipsoids from 
+            %       self EllTube object with indices specified in indVec
             %       
             %
             import gras.ellapx.smartdb.F;
