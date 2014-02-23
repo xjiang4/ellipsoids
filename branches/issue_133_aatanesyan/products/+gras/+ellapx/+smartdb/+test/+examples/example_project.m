@@ -1,7 +1,8 @@
 % An example of calculating ellipsoid tube object projection using project
 % function.
 nPoints=5;
-calcPrecision=0.001;
+absTol=0.01;
+relTol=0.01;
 approxSchemaDescr=char.empty(1,0);
 approxSchemaName=char.empty(1,0);
 nDims=3;
@@ -17,10 +18,11 @@ ltGoodDirArray=repmat(lsGoodDirVec,[1,nTubes,nPoints]);
 fromMatEllTube=gras.ellapx.smartdb.rels.EllTube.fromQArrays(...
     qArrayList, aMat, timeVec,...
     ltGoodDirArray, sTime, approxType, approxSchemaName,...
-    approxSchemaDescr, calcPrecision);
+    approxSchemaDescr, absTol, relTol)
 projType = gras.ellapx.enums.EProjType.Static;
 projMat = [1 0; 0 1; 0 0]';
+p = @gras.ellapx.smartdb.test.examples.fGetProjMat
 [ellTubeProjRel,indProj2OrigVec] = fromMatEllTube.project(projType,...
-    {projMat},@gras.ellapx.smartdb.test.examples.fGetProjMat);
-plObj=smartdb.disp.RelationDataPlotter();
-ellTubeProjRel.plot(plObj);
+    {projMat},p)
+plObj=smartdb.disp.RelationDataPlotter()
+ellTubeProjRel.plot(plObj)

@@ -31,8 +31,8 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
     %   approxType: gras.ellapx.enums.EApproxType[1,1] - type of approximation
     %       (External, Internal, NotDefined)
     %   timeVec: double[1, nTimePoints] - time vector
-    %   absTol:double[1, 1] - absolute tolerance
-    %   relTol:double[1, 1] - relative tolerance
+    %   absTolerance: double[1, 1] - absolute tolerance
+    %   relTolerance: double[1, 1] - relative tolerance
     %   indSTime: double[1, 1]  - index of sTime point within timeVec
     %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of good direction
     %       vectors at any point of time from timeVec
@@ -52,7 +52,7 @@ classdef EllTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
     %       the xsTouchVec touch point
     %   isLsTouch: logical[1, 1] - a logical variable which indicates whether a touch takes place
     %       along good direction at sTime point of time
-    %   isLsTouchVec: cell[1, 1] of logical[nTimePoints, 1] - a logical
+    %   isLtTouchVec: cell[1, 1] of logical[nTimePoints, 1] - a logical
     %       vector which indicates whether a touch takes place along good
     %       direction at any point of time from timeVec
     %

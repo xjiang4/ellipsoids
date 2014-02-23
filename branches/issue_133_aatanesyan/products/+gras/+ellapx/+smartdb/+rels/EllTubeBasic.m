@@ -49,7 +49,7 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
     %       the xsTouchVec touch point
     %   isLsTouch: logical[1, 1] - a logical variable which indicates whether a touch takes place
     %       along good direction at sTime point of time
-    %   isLsTouchVec: cell[1, 1] of logical[nTimePoints, 1] - a logical
+    %   isLtTouchVec: cell[1, 1] of logical[nTimePoints, 1] - a logical
     %       vector which indicates whether a touch takes place along good 
     %       direction at any point of time from timeVec
     %
