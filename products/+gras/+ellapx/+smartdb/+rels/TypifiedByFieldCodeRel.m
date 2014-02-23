@@ -1,6 +1,4 @@
 classdef TypifiedByFieldCodeRel<smartdb.relations.ATypifiedByFieldCodeRel
-    %TestRelation Summary of this class goes here
-    %   Detailed explanation goes here
     methods 
         function self=TypifiedByFieldCodeRel(varargin)
             self=self@smartdb.relations.ATypifiedByFieldCodeRel(varargin{:});
