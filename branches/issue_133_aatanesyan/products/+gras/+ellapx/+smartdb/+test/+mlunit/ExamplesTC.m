@@ -30,6 +30,10 @@ classdef ExamplesTC < mlunitext.test_case
             gras.ellapx.smartdb.test.examples.example_projectStatic();
             gras.ellapx.smartdb.test.examples.example_isEqual1();
             gras.ellapx.smartdb.test.examples.example_isEqual2();
+            gras.ellapx.smartdb.test.examples.example_plot();
+            gras.ellapx.smartdb.test.examples.example_plotInt();
+            gras.ellapx.smartdb.test.examples.example_plotExt();
+            gras.ellapx.smartdb.test.examples.example_getData();
         end
     end
 end
