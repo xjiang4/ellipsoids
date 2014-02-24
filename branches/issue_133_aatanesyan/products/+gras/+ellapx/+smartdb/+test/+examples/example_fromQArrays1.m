@@ -1,5 +1,5 @@
 % An example of creating nTubes ellipsoid tube objects using fromQArrays
-% function.
+% function with the same type of approximation.
 nPoints=10;
 absTol=0.01;
 relTol=0.01;
@@ -18,4 +18,4 @@ ltGoodDirArray=repmat(lsGoodDirVec,[1,nTubes,nPoints]);
 fromMatEllTube=gras.ellapx.smartdb.rels.EllTube.fromQArrays(...
     qArrayList, aMat, timeVec,...
     ltGoodDirArray, sTime, approxType, approxSchemaName,...
-    approxSchemaDescr, absTol, relTol)
+    approxSchemaDescr, absTol, relTol);
