@@ -18,11 +18,11 @@ ltGoodDirArray=repmat(lsGoodDirVec,[1,nTubes,nPoints]);
 fromMatEllTube=gras.ellapx.smartdb.rels.EllTube.fromQArrays(...
     qArrayList, aMat, timeVec,...
     ltGoodDirArray, sTime, approxType, approxSchemaName,...
-    approxSchemaDescr, absTol, relTol)
+    approxSchemaDescr, absTol, relTol);
 projType = gras.ellapx.enums.EProjType.Static;
 projMat = [1 0; 0 1; 0 0]';
-p = @gras.ellapx.smartdb.test.examples.fGetProjMat
+p = @gras.ellapx.smartdb.test.examples.fGetProjMat;
 [ellTubeProjRel,indProj2OrigVec] = fromMatEllTube.project(projType,...
-    {projMat},p)
-plObj=smartdb.disp.RelationDataPlotter()
-ellTubeProjRel.plot(plObj)
+    {projMat},p);
+plObj=smartdb.disp.RelationDataPlotter();
+ellTubeProjRel.plot(plObj);

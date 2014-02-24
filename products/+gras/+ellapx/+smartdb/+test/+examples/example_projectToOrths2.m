@@ -1,6 +1,6 @@
-% An example of usage of CUT function from EllTubeBasic class. In
-% this example an ellipsoid tube object is created, using TimeVec time
-% vector. Then it is cut using cutTimeVec time vector.
+% Examples of calculating ellipsoid tube object projection to basic orths 
+% using PROJECTTOORTHS function. This is an example of projectToOrths usage 
+% with specified projection type.
 nPoints=10;
 absTol=0.01;
 relTol=0.01;
@@ -20,5 +20,7 @@ fromMatEllTube=gras.ellapx.smartdb.rels.EllTube.fromQArrays(...
     qArrayList, aMat, timeVec,...
     ltGoodDirArray, sTime, approxType, approxSchemaName,...
     approxSchemaDescr, absTol, relTol);
-cutTimeVec = [timeVec(2) timeVec(7)];
-cutVecEllTube = fromMatEllTube.cut(cutTimeVec);
+projType = gras.ellapx.enums.EProjType.DynamicAlongGoodCurve;
+ellTubeProjRel = fromMatEllTube.projectToOrths([1,2], projType);
+plObj=smartdb.disp.RelationDataPlotter();
+ellTubeProjRel.plot(plObj);

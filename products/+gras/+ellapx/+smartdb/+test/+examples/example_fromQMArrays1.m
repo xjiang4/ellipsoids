@@ -1,15 +1,16 @@
 % An example of creating nTubes ellipsoid tube objects using fromQMArrays
-% function.
-nPoints=5;
-calcPrecision=0.001;
-approxSchemaDescr=char.empty(1,0);
-approxSchemaName=char.empty(1,0);
+% function with the same type of approximation.
+nPoints=10;
+absTol=0.01;
+relTol=0.01;
+approxSchemaDescr='External';
+approxSchemaName='External';
 nDims=3;
-nTubes=4;
-lsGoodDirVec=[0;0;1];
-aMat=ones(nDims,nPoints);
-timeVec=1:nPoints;
-sTime=1;
+nTubes=3;
+lsGoodDirVec=[1;0;1];
+aMat=zeros(nDims,nPoints);
+timeVec=(1/nPoints):(1/nPoints):1;
+sTime=timeVec(randi(nPoints,1));
 approxType=gras.ellapx.enums.EApproxType.External;
 mArrayList=repmat({repmat(diag([0.1 0.2 0.3]),[1,1,nPoints])},...
     1,nTubes);
@@ -19,4 +20,4 @@ ltGoodDirArray=repmat(lsGoodDirVec,[1,nTubes,nPoints]);
 fromMatMEllTube=gras.ellapx.smartdb.rels.EllTube.fromQMArrays(...
     qArrayList, aMat, mArrayList, timeVec,...
     ltGoodDirArray, sTime, approxType, approxSchemaName,...
-    approxSchemaDescr, calcPrecision);
+    approxSchemaDescr, absTol, relTol);
