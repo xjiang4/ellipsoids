@@ -24,5 +24,3 @@ projMat = [1 0; 0 1; 0 0]';
 p = @gras.ellapx.smartdb.test.examples.fGetProjMat;
 [ellTubeProjRel,indProj2OrigVec] = fromMatEllTube.project(projType,...
     {projMat},p);
-plObj=smartdb.disp.RelationDataPlotter();
-ellTubeProjRel.plot(plObj);
