@@ -18,12 +18,12 @@ classdef EllTubeTouchCurveBasic<handle
     %   absTolerance: double[1, 1] - absolute tolerance
     %   relTolerance: double[1, 1] - relative tolerance
     %   indSTime: double[1, 1]  - index of sTime point within timeVec
-    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of good direction 
-    %       vectors at any point of time from timeVec
-    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - good direction vector at sTime 
-    %       point of time
-    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of good direction 
-    %       vector at any point of time from timeVec
+    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of 
+    %       good direction vectors at any point of time from timeVec
+    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - good direction vector 
+    %       at sTime point of time
+    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of good 
+    %       direction vector at any point of time from timeVec
     %   lsGoodDirNorm: double[1, 1] - norm of good direction vector at
     %       sTime point of time
     %   xTouchCurveMat: cell[1, nTimePoints] of double[nDims, 1] - touch 
@@ -34,8 +34,8 @@ classdef EllTubeTouchCurveBasic<handle
     %       point of time
     %   xsTouchOpVec: cell[1, 1] of double[nDims, 1] - a point opposite to
     %       the xsTouchVec touch point
-    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether a touch takes place
-    %       along good direction at sTime point of time
+    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether 
+    %       a touch takes place along good direction at sTime point of time
     %   isLtTouchVec: cell[1, 1] of logical[nTimePoints, 1] - a logical
     %       vector which indicates whether a touch takes place along good 
     %       direction at any point of time from timeVec

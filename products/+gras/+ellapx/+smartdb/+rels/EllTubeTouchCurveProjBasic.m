@@ -18,42 +18,47 @@ classdef EllTubeTouchCurveProjBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBa
     %   absTolerance: double[1, 1] - absolute tolerance
     %   relTolerance: double[1, 1] - relative tolerance
     %   indSTime: double[1, 1]  - index of sTime point within timeVec
-    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of the projections of good direction 
-    %       vectors on the specified space at any point of time from timeVec
-    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - the projection of good direction 
-    %       vector on the specified space at sTime point of time
-    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of the projections of good direction 
-    %       vectors on the specified space at any point of time from timeVec
+    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of 
+    %       the projections of good direction vectors on the specified space 
+    %       at any point of time from timeVec
+    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - the projection of good
+    %       direction vector on the specified space at sTime point of time
+    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of the 
+    %       projections of good direction vectors on the specified space at 
+    %       any point of time from timeVec
     %   lsGoodDirNorm: double[1, 1] - norm of the projection of good direction 
     %       vector on the specified space at sTime point of time
-    %   xTouchCurveMat: cell[1, nTimePoints] of double[nDims, 1] - the projection of touch 
-    %       point curve on the specified space for good direction matrix
-    %   xTouchOpCurveMat: cell[1, nTimePoints] of double[nDims, 1] - the projection of touch 
-    %       point curve oposite to the xTouchCurveMat touch point curve
-    %   xsTouchVec: cell[1, 1] of double[nDims, 1]  - the projection of touch point at sTime
-    %       point of time
-    %   xsTouchOpVec: cell[1, 1] of double[nDims, 1] - the projection of a point opposite to
-    %       the xsTouchVec touch point
-    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether a touch takes place
-    %       along good direction at sTime point of time
+    %   xTouchCurveMat: cell[1, nTimePoints] of double[nDims, 1] - the projection 
+    %       of touch point curve on the specified space for good direction matrix
+    %   xTouchOpCurveMat: cell[1, nTimePoints] of double[nDims, 1] - the projection 
+    %       of touch point curve oposite to the xTouchCurveMat touch point curve
+    %   xsTouchVec: cell[1, 1] of double[nDims, 1]  - the projection of touch
+    %       point at sTime point of time
+    %   xsTouchOpVec: cell[1, 1] of double[nDims, 1] - the projection of a 
+    %       point opposite to the xsTouchVec touch point
+    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether 
+    %       a touch takes place along good direction at sTime point of time
     %   isLsTouchVec: cell[1, 1] of logical[nTimePoints, 1] - a logical
     %       vector which indicates whether a touch takes place along good 
     %       direction at any point of time from timeVec
-    %   projSMat: cell[1, 1] of double[nDims, nDims] - projection matrix at sTime point of time
-    %   projArray: cell[nTimePoints, 1] of double[nDims, nDims] - an array of projection matrices 
-    %       at any point of time from timVec
-    %   projType: gras.ellapx.enums.EProjType[1, 1] - type of projection (Static, DynamicAlongGoodCurve)
-    %   ltGoodDirNormOrigVec: cell[1, 1] of double[1, nTimePoints] - norm of the original good direction 
-    %       vectors at any point of time from timeVec
-    %   lsGoodDirNormOrig: double[1, 1] - norm of the original good direction vector at
+    %   projSMat: cell[1, 1] of double[nDims, nDims] - projection matrix at 
     %       sTime point of time
-    %   ltGoodDirOrigMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of the original good direction 
-    %       vectors at any point of time from timeVec
-    %   lsGoodDirOrigVec: cell[1, 1] of double[nDims, 1] - the original good direction vector at sTime 
-    %       point of time
-    %   ltGoodDirNormOrigProjVec: cell[1, 1] of double[1, nTimePoints] - norm of the projection of the original good direction 
-    %       curve
-    %   ltGoodDirOrigProjMat: cell[1, 1] of double[nDims, nTimePoints] - the projectition of the original good direction curve
+    %   projArray: cell[nTimePoints, 1] of double[nDims, nDims] - an array 
+    %       of projection matrices at any point of time from timVec
+    %   projType: gras.ellapx.enums.EProjType[1, 1] - type of projection 
+    %       (Static, DynamicAlongGoodCurve)
+    %   ltGoodDirNormOrigVec: cell[1, 1] of double[1, nTimePoints] - norm of 
+    %       the original good direction vectors at any point of time from timeVec
+    %   lsGoodDirNormOrig: double[1, 1] - norm of the original good direction 
+    %       vector at sTime point of time
+    %   ltGoodDirOrigMat: cell[1, nTimePoints] of double[nDims, 1] - matrix 
+    %       of the original good direction vectors at any point of time from timeVec
+    %   lsGoodDirOrigVec: cell[1, 1] of double[nDims, 1] - the original good 
+    %       direction vector at sTime point of time
+    %   ltGoodDirNormOrigProjVec: cell[1, 1] of double[1, nTimePoints] - norm
+    %       of the projection of the original good direction curve
+    %   ltGoodDirOrigProjMat: cell[1, 1] of double[nDims, nTimePoints] - the
+    %       projectition of the original good direction curve
     %
     properties (Constant,Hidden)
         FCODE_PROJ_S_MAT
@@ -378,9 +383,29 @@ classdef EllTubeTouchCurveProjBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBa
     end
     methods (Static = true, Access = public)
         function projStrName = projMat2str(projSTimeMat)
+            % PROJMAT2STR - transforms the specified projection matrix at 
+            % sTime point of time into a string.
+            %
+            % Input:
+            %   projSTimeMat: double[nDims, nDims] - projection matrix at 
+            %        sTime point of time
+            % Output:
+            %   projStrName: char[1,] - the projection matrix at sTime point 
+            %       of time written as a string
+            %
             projStrName = mat2str(projSTimeMat,2);
         end
         function projStrName = projRow2str(projSTimeMat,row)
+            % PROJMAT2STR - transforms the specified row of the projection 
+            % matrix at sTime point of time into a string.
+            %
+            % Input:
+            %   projSTimeMat: double[nDims, nDims] - projection matrix at 
+            %        sTime point of time
+            % Output:
+            %   projStrName: char[1,] - the specified row of the projection
+            %       matrix at sTime point of time written as a string
+            %
             projStrName = mat2str(projSTimeMat(row,:),2);
         end
     end

@@ -1,4 +1,4 @@
-% An example of creating EllUnionTube object using FROMELLTUBES function.
+% An example of creating EllUnionTube object using FROMELLTUBES method.
 aMat = [0 1; 0 0];
 bMat = eye(2);
 SUBounds = struct();

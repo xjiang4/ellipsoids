@@ -5,20 +5,19 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
     %
     % Fields:
     %   QArray: cell[1,1] of double[nDims,nDims,nTimePoints] -
-    %       an array of the projections of nTimePoints ellipsoid matrices of
-    %       double[nDims,nDims] type. Each element from
-    %       double[nDims,nDims,nTimePoints] array specifies the projection of double[nDims,nDims]
-    %       ellipsoid matrix at nTimePoint point of time. Here nTimePoints
-    %       is number of elements in timeVec.
-    %   aMat: cell[1,nTimePoints] of double[nDims,1] - array of the projections of nTimePoints
-    %       ellipsoid centers. Each center is specified for nTimePoint
-    %       point of time
+    %       a 3-dimentional matrix in which each of nTimePoints slices is a 
+    %       double[nDims,nDims] projection of an ellipsoid matrix on specified 
+    %       subspace at nTimePoint point of time. Here nTimePoints is number
+    %       of elements in timeVec.
+    %   aMat: cell[1,nTimePoints] of double[nDims,1] - a 2-dimentional matrix 
+    %       in which each of nTimePoints columns is a projection of
+    %       an ellipsoid center. Each center is specified for 
+    %       nTimePoint point of time
     %   scaleFactor: double[1, 1] - scale for the created ellipsoid tube
     %   MArray: cell[1,1] of double[nDims,nDims,nTimePoints] -
-    %       an array of the projections of nTimePoints regularization matrices
-    %       of double[nDims,nDims] type. Each element from
-    %       double[nDims,nDims,nTimePoints] array specifies double[nDim,nDim]
-    %       regularization matrix at nTimePoint point of time
+    %       a 3-dimentional matrix in which each of nTimePoints slices is a 
+    %       double[nDims,nDims] projection of a regularization matrix on specified 
+    %       subspace at nTimePoint point of time.
     %   dim: double[1, 1] - the dimension of the space on which the touching 
     %       curves are projected
     %   sTime: double[1, 1] - specific point of time which is best suited to
@@ -33,42 +32,47 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
     %   absTolerance: double[1, 1] - absolute tolerance
     %   relTolerance: double[1, 1] - relative tolerance
     %   indSTime: double[1, 1]  - index of sTime point within timeVec
-    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of the projections of good direction 
-    %       vectors on the specified space at any point of time from timeVec
-    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - the projection of good direction 
-    %       vector on the specified space at sTime point of time
-    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of the projections of good direction 
-    %       vectors on the specified space at any point of time from timeVec
+    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of 
+    %       the projections of good direction vectors on the specified space
+    %       at any point of time from timeVec
+    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - the projection of good 
+    %       direction vector on the specified space at sTime point of time
+    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of the
+    %       projections of good direction vectors on the specified space at 
+    %       any point of time from timeVec
     %   lsGoodDirNorm: double[1, 1] - norm of the projection of good direction 
     %       vector on the specified space at sTime point of time
-    %   xTouchCurveMat: cell[1, nTimePoints] of double[nDims, 1] - the projection of touch 
-    %       point curve on the specified space for good direction matrix
-    %   xTouchOpCurveMat: cell[1, nTimePoints] of double[nDims, 1] - the projection of touch 
-    %       point curve oposite to the xTouchCurveMat touch point curve
-    %   xsTouchVec: cell[1, 1] of double[nDims, 1]  - the projection of touch point at sTime
-    %       point of time
-    %   xsTouchOpVec: cell[1, 1] of double[nDims, 1] - the projection of a point opposite to
-    %       the xsTouchVec touch point
-    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether a touch takes place
-    %       along good direction at sTime point of time
+    %   xTouchCurveMat: cell[1, nTimePoints] of double[nDims, 1] - the projection
+    %       of touch point curve on the specified space for good direction matrix
+    %   xTouchOpCurveMat: cell[1, nTimePoints] of double[nDims, 1] - the projection
+    %       of touch point curve oposite to the xTouchCurveMat touch point curve
+    %   xsTouchVec: cell[1, 1] of double[nDims, 1]  - the projection of touch 
+    %       point at sTime point of time
+    %   xsTouchOpVec: cell[1, 1] of double[nDims, 1] - the projection of a 
+    %       point opposite to the xsTouchVec touch point
+    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether 
+    %       a touch takes place along good direction at sTime point of time
     %   isLsTouchVec: cell[1, 1] of logical[nTimePoints, 1] - a logical
     %       vector which indicates whether a touch takes place along good 
     %       direction at any point of time from timeVec
-    %   projSMat: cell[1, 1] of double[nDims, nDims] - projection matrix at sTime point of time
-    %   projArray: cell[nTimePoints, 1] of double[nDims, nDims] - an array of projection matrices 
-    %       at any point of time from timVec
-    %   projType: gras.ellapx.enums.EProjType[1, 1] - type of projection (Static, DynamicAlongGoodCurve)
-    %   ltGoodDirNormOrigVec: cell[1, 1] of double[1, nTimePoints] - norm of the original good direction 
-    %       vectors at any point of time from timeVec
-    %   lsGoodDirNormOrig: double[1, 1] - norm of the original good direction vector at
+    %   projSMat: cell[1, 1] of double[nDims, nDims] - projection matrix at 
     %       sTime point of time
-    %   ltGoodDirOrigMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of the original good direction 
-    %       vectors at any point of time from timeVec
-    %   lsGoodDirOrigVec: cell[1, 1] of double[nDims, 1] - the original good direction vector at sTime 
-    %       point of time
-    %   ltGoodDirNormOrigProjVec: cell[1, 1] of double[1, nTimePoints] - norm of the projection of the original good direction 
-    %       curve
-    %   ltGoodDirOrigProjMat: cell[1, 1] of double[nDims, nTimePoints] - the projectition of the original good direction curve
+    %   projArray: cell[nTimePoints, 1] of double[nDims, nDims] - an array 
+    %       of projection matrices at any point of time from timVec
+    %   projType: gras.ellapx.enums.EProjType[1, 1] - type of projection 
+    %       (Static, DynamicAlongGoodCurve)
+    %   ltGoodDirNormOrigVec: cell[1, 1] of double[1, nTimePoints] - norm of 
+    %       the original good direction vectors at any point of time from timeVec
+    %   lsGoodDirNormOrig: double[1, 1] - norm of the original good direction 
+    %       vector at sTime point of time
+    %   ltGoodDirOrigMat: cell[1, nTimePoints] of double[nDims, 1] - matrix 
+    %       of the original good direction vectors at any point of time from timeVec
+    %   lsGoodDirOrigVec: cell[1, 1] of double[nDims, 1] - the original good 
+    %       direction vector at sTime point of time
+    %   ltGoodDirNormOrigProjVec: cell[1, 1] of double[1, nTimePoints] - norm 
+    %       of the projection of the original good direction curve
+    %   ltGoodDirOrigProjMat: cell[1, 1] of double[nDims, nTimePoints] - the
+    %       projectition of the original good direction curve
     %
     properties (Constant,Hidden, GetAccess=protected)
         N_SPOINTS=90;
@@ -120,8 +124,8 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
             %   regular:
             %       self.
             % Output:
-            %   fieldsList: cell[nFields, 1] of char[1, ] - list of fields of
-            %       EllTubeProjBasic object, which are not to be
+            %   fieldsList: cell[nFields, 1] of char[1, ] - list of fields 
+            %       of EllTubeProjBasic object, which are not to be
             %       concatenated or cut
             %
             import  gras.ellapx.smartdb.F;
@@ -686,13 +690,14 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
             %           properties not specified list of parameters,
             %           this one will be used
             %       'showDiscrete':logical[1,1]  -
-            %           if true, approximation in 3D will be filled in every time slice
+            %           if true, approximation in 3D will be filled in every 
+            %           time slice
             %       'nSpacePartPoins': double[1,1] -
             %           number of points in every time slice.
             % Output:
             %   regular:
-            %       plObj: smartdb.disp.RelationDataPlotter[1,1] - returns the relation
-            %       data plotter object.
+            %       plObj: smartdb.disp.RelationDataPlotter[1,1] - returns 
+            %       the relation data plotter object.
             %
             % Usage:
             %       obj.plotExt() - plots external approximation of ellTube.
@@ -716,9 +721,10 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
             %   regular:
             %       obj:  EllTubeProj: EllTubeProj object
             %   optional:
-            %       relDataPlotter:smartdb.disp.RelationDataPlotter[1,1] - relation data plotter object.
-            %       colorSpec: char[1,1] - color specification code, can be 'r','g',
-            %                    etc (any code supported by built-in Matlab function).
+            %       relDataPlotter:smartdb.disp.RelationDataPlotter[1,1] - 
+            %           relation data plotter object.
+            %       colorSpec: char[1,1] - color specification code, can be 
+            %           'r','g', etc (any code supported by built-in Matlab function).
             %   properties:
             %       fGetColor: function_handle[1, 1] -
             %           function that specified colorVec for
@@ -744,13 +750,14 @@ classdef EllTubeProjBasic<gras.ellapx.smartdb.rels.EllTubeBasic&...
             %           properties not specified list of parameters,
             %           this one will be used
             %       'showDiscrete':logical[1,1]  -
-            %           if true, approximation in 3D will be filled in every time slice
+            %           if true, approximation in 3D will be filled in every 
+            %           time slice
             %       'nSpacePartPoins': double[1,1] -
             %           number of points in every time slice.
             % Output:
             %   regular:
-            %       plObj: smartdb.disp.RelationDataPlotter[1,1] - returns the relation
-            %       data plotter object.
+            %       plObj: smartdb.disp.RelationDataPlotter[1,1] - returns 
+            %           the relation data plotter object.
             %
             % Usage:
             %       obj.plotInt() - plots internal approximation of ellTube.

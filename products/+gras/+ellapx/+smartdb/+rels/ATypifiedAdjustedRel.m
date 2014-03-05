@@ -7,8 +7,9 @@ classdef ATypifiedAdjustedRel<gras.ellapx.smartdb.rels.TypifiedByFieldCodeRel
         end
         %
         function [isOk,reportStr]=isEqual(self,otherRel,varargin)
-            % ISEQUAL - compares current relation object with other relation object and
-            % returns true if they are equal, otherwise it returns false
+            % ISEQUAL - compares current relation object with other relation 
+            % object and returns true if they are equal, otherwise it returns
+            % false.
             %
             % Input:
             %   regular:
@@ -16,12 +17,14 @@ classdef ATypifiedAdjustedRel<gras.ellapx.smartdb.rels.TypifiedByFieldCodeRel
             %       otherObj: ARelation [1,1] - other relation object
             %
             %   properties:
-            %     checkFieldOrder/isFieldOrderCheck: logical [1,1] - if true, then fields
-            %         in compared relations must be in the same order, otherwise the
-            %         order is not  important (false by default)
-            %     checkTupleOrder: logical[1,1] -  if true, then the tuples in the
-            %         compared relations are expected to be in the same order,
-            %         otherwise the order is not important (false by default)
+            %     checkFieldOrder/isFieldOrderCheck: logical [1,1] - if true, 
+            %         then fields in compared relations must be in the same 
+            %         order, otherwise the order is not  important (false by 
+            %         default)
+            %     checkTupleOrder: logical[1,1] -  if true, then the tuples 
+            %         in the compared relations are expected to be in the same 
+            %         order, otherwise the order is not important (false by
+            %         default)
             %     maxTolerance: double [1,1] - maximum allowed tolerance
             %     maxRelativeTolerance: double [1,1] - maximum allowed relative
             %         tolerance
@@ -35,8 +38,8 @@ classdef ATypifiedAdjustedRel<gras.ellapx.smartdb.rels.TypifiedByFieldCodeRel
             %
             % Output:
             %   isOk: logical[1, 1] - logical vector elements of
-            %       which take OK value if the fields in self and otherRel are
-            %       equal and otherwise it takes FALSE value
+            %       which take OK value if the fields in self and otherRel 
+            %       are equal and otherwise it takes FALSE value
             %   reportStr: char[1, ] - a report string which contains more
             %       detailed information about inequal fields in self and 
             %       otherRel objects
