@@ -5,7 +5,7 @@ nPoints = 20;
 timeBeg=0;
 timeEnd=1;
 type = 1;
-EllTube=...
+ellTubeObj=...
     gras.ellapx.smartdb.test.examples.getEllTube(nTubes,timeBeg,timeEnd,type,nPoints);
 projMat = [1 0; 0 1; 0 0]';
-ellTubeProjRel = EllTube.projectStatic(projMat);
+ellTubeProjObj = ellTubeObj.projectStatic(projMat);

@@ -1,35 +1,35 @@
-EllUnion = gras.ellapx.smartdb.test.examples.getUnion();
+ellUnionObj = gras.ellapx.smartdb.test.examples.getUnion();
 %
 % get a copy of the object
 %
-EllCopy = EllUnion.getCopy();
+ellCopy = ellUnionObj.getCopy();
 %
 % delete all the data from the object
 %
-EllUnion.clearData();
-EllUnion = gras.ellapx.smartdb.test.examples.getUnion();
+ellUnionObj.clearData();
+ellUnionObj = gras.ellapx.smartdb.test.examples.getUnion();
 %
 % create a copy of a specified object via calling a copy constructor for 
 % the object class
 %
-Clone = EllUnion.clone();
+cloneObj = ellUnionObj.clone();
 %
 % remove all duplicate tuples from the relation
 %
-noDuplicate = Clone.removeDuplicateTuples();
+noDuplicate = cloneObj.removeDuplicateTuples();
 %
 % write a content of relation into Excel spreadsheet file
 %
-EllUnion.writeToCSV('path');
+ellUnionObj.writeToCSV('path');
 %
 % write a content of relation into Excel spreadsheet file
 %
-fileName = EllUnion.writeToXLS('path');
+fileName = ellUnionObj.writeToXLS('path');
 %
 % display a content of the given relation as a data grid UI component
 %
-EllUnion.dispOnUI();
+ellUnionObj.dispOnUI();
 %
 % put some textual information about object in screen
 %
-EllUnion.display();
+ellUnionObj.display();

@@ -4,6 +4,6 @@ nPoints = 100;
 timeBeg=0;
 timeEnd=1;
 type = 2;
-EllTube=...
+ellTubeObj=...
     gras.ellapx.smartdb.test.examples.getEllTube(nTubes,timeBeg,timeEnd,type,nPoints);
-data = EllTube.getData();
+data = ellTubeObj.getData();

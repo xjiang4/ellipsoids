@@ -2,7 +2,7 @@
 % ellipsoid tubes from timeBegin to timeEnd time with specified type of
 % approximation.
 %
-function ellTube = getEllTube(nTubes,timeBeg,timeEnd,type,nPoints)
+function ellTubeObj = getEllTube(nTubes,timeBeg,timeEnd,type,nPoints)
 nDims=3;
 absTol=0.001;
 relTol=0.001;
@@ -21,7 +21,7 @@ else
     approxSchemaName='External';
     approxType=gras.ellapx.enums.EApproxType.External;
 end
-ellTube=gras.ellapx.smartdb.rels.EllTube.fromQArrays(...
+ellTubeObj=gras.ellapx.smartdb.rels.EllTube.fromQArrays(...
     qArrayList, aMat, timeVec,...
     ltGoodDirArray, sTime, approxType, approxSchemaName,...
     approxSchemaDescr, absTol, relTol);

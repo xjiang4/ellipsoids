@@ -1,5 +1,5 @@
-% An example of calculating ellipsoid tube object projection using project
+% An example of calculating ellipsoid tube object projection using PROJECT
 % function.
-EllProj = gras.ellapx.smartdb.test.examples.getProj();
+ellProjObj = gras.ellapx.smartdb.test.examples.getProj();
 plObj=smartdb.disp.RelationDataPlotter();
-EllProj.plot(plObj);
+ellProjObj.plot(plObj);
