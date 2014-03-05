@@ -6913,7 +6913,7 @@ gras.ellapx.smartdb.rels.EllTube.cat
 	        commonTimeAbsTol: double[1,1] - absolute tolerance used
 	            for comparing values at common times, =0 by default
 	 
-	        commonTimeRelTol: double[1,1] - absolute tolerance used
+	        commonTimeRelTol: double[1,1] - relative tolerance used
 	            for comparing values at common times, =0 by default
 	 
 	  Output:

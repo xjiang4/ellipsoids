@@ -6,29 +6,29 @@ nPoints = 20;
 type = 1;
 timeBeg1 = 0;
 timeEnd1 = 1;
-firstEllTube =...
+firstEllTubeObj =...
     gras.ellapx.smartdb.test.examples.getEllTube(nTubes,timeBeg1,timeEnd1,type,nPoints);
 timeBeg2 = 1;
 timeEnd2 = 2;
-secondEllTube =...
+secondEllTubeObj =...
     gras.ellapx.smartdb.test.examples.getEllTube(nTubes,timeBeg2,timeEnd2,type,nPoints);
 %
 % Concatenating firstEllTube and secondEllTube on [timeBeg1, timeEnd2]
 % vector of time.
 %
-resEllTube = firstEllTube.cat(secondEllTube);
+resEllTubeObj = firstEllTubeObj.cat(secondEllTubeObj);
 %
 % Concatenating the same firstEllTube and secondEllTube on [timeBeg1,timeEnd2]
 % vector of time, but the sTime and values of properties corresponding to 
 % sTime are taken from secondEllTube.
 %
-resEllTube = firstEllTube.cat(secondEllTube,'isReplacedByNew',true);
+resEllTubeObj = firstEllTubeObj.cat(secondEllTubeObj,'isReplacedByNew',true);
 %
 % Concatenating the same firstEllTube and secondEllTube on [timeBeg1,timeEnd2]
 % vector of time, but the sTime and values of properties corresponding to 
 % sTime are taken from firstEllTube.
 %
-resEllTube = firstEllTube.cat(secondEllTube,'isReplacedByNew',false);
+resEllTubeObj = firstEllTubeObj.cat(secondEllTubeObj,'isReplacedByNew',false);
 %
 % Note that we cannot concatenate ellipsoid tubes with  overlapping time
 % limits.

@@ -7,8 +7,8 @@ nPoints = 20;
 timeBeg=0;
 timeEnd=1;
 type = 1;
-EllTube=...
+ellTubeObj=...
     gras.ellapx.smartdb.test.examples.getEllTube(nTubes,timeBeg,timeEnd,type,nPoints);
-timeVec = EllTube.timeVec{1,:};
+timeVec = ellTubeObj.timeVec{1,:};
 cutTimePoint = timeVec(randi(size(timeVec,2),1));
-cutPointEllTube = EllTube.cut(cutTimePoint);
+cutPointEllTubeObj = ellTubeObj.cut(cutTimePoint);

@@ -1,92 +1,92 @@
-EllUnion = gras.ellapx.smartdb.test.examples.getUnion();
+ellUnionObj = gras.ellapx.smartdb.test.examples.getUnion();
 %
 % get the list of field descriptions
 %
-Descr = EllUnion.getFieldDescrList();
+descr = ellUnionObj.getFieldDescrList();
 %
 % get for given field a nested logical/cell array containing is-null 
 % indicators for cell content. For example, for approxSchemaName field.
 %
-IsNull = EllUnion.getFieldIsNull('approxSchemaName');
+isNull = ellUnionObj.getFieldIsNull('approxSchemaName');
 %
 % get for given field logical vector determining whether value of this 
 % field in each cell is null or not. For example, for approxSchemaName field.
 %
-ValueIsNull = EllUnion.getFieldIsValueNull('approxSchemaName');
+valueIsNull = ellUnionObj.getFieldIsValueNull('approxSchemaName');
 %
 % get the list of field names
 %
-Name = EllUnion.getFieldNameList();
+name = ellUnionObj.getFieldNameList();
 %
 % project object with specified fields. For example, with fields that are
 % not to be cut or concatenated.
 %
-nameList = EllUnion.getNoCatOrCutFieldsList();
-Proj = EllUnion.getFieldProjection(nameList);
+nameList = ellUnionObj.getNoCatOrCutFieldsList();
+proj = ellUnionObj.getFieldProjection(nameList);
 %
 % get the list of field types
 %
-Type = EllUnion.getFieldTypeList();
+type = ellUnionObj.getFieldTypeList();
 %
 % get the list of field type specifications. Field type specification is a 
 % sequence of type names corresponding to field value types starting with 
 % the top level and going down into the nested content of a field (for a 
 % field having a complex type).
 %
-TypeSpec = EllUnion.getFieldTypeSpecList();
+typeSpec = ellUnionObj.getFieldTypeSpecList();
 % or
-TypeSpec = EllUnion.getFieldTypeSpecList(nameList);
+typeSpec = ellUnionObj.getFieldTypeSpecList(nameList);
 %
 % get a matrix composed from the size vectorsfor the specified fields
 %
-ValueSizeMat = EllUnion.getFieldValueSizeMat(nameList);
+valueSizeMat = ellUnionObj.getFieldValueSizeMat(nameList);
 %
 % get a vector indicating whether a particular field is composed of null 
 % values completely
 %
-ValueNull = EllUnion.getIsFieldValueNull(nameList);
+valueNull = ellUnionObj.getIsFieldValueNull(nameList);
 %
 % get a size vector for the specified dimensions. If no dimensions are 
 % specified, a size vector for all dimensions up to minimum dimension is 
 % returned
-MinDimensionSize = EllUnion.getMinDimensionSize();
+minDimensionSize = ellUnionObj.getMinDimensionSize();
 %
 % get a minimum dimensionality for a given object
 %
-MinDimensionality = EllUnion.getMinDimensionality();
+minDimensionality = ellUnionObj.getMinDimensionality();
 %
 % get a number of elements in a given object
 %
-NElems = EllUnion.getNElems();
+nElems = ellUnionObj.getNElems();
 %
 % get a number of fields in a given object
 %
-NFiedls = EllUnion.getNFields();
+nFiedls = ellUnionObj.getNFields();
 %
 % get a number of tuples in a given object
 %
-NTuples = EllUnion.getNTuples();
+nTuples = ellUnionObj.getNTuples();
 %
 % get sort index for all tuples of given relation with respect to some of 
 % its fields
 %
-SortIndex = EllUnion.getSortIndex(nameList);
+sortIndex = ellUnionObj.getSortIndex(nameList);
 % also we can specify the direction of sorting ('asc' or 'desc')
-SortIndex = EllUnion.getSortIndex(nameList,'Direction','asc');
+sortIndex = ellUnionObj.getSortIndex(nameList,'Direction','asc');
 %
 % get tuples with given indices from given relation
 %
-Tuples = EllUnion.getTuples([1,2,3]);
+tuples = ellUnionObj.getTuples([1,2,3]);
 %
 % get tuples from given relation such that afixed index field contains 
 % values from a given set of value
 %
-FilteredTuples = EllUnion.getTuplesFilteredBy('sTime', 1);
+filteredTuples = ellUnionObj.getTuplesFilteredBy('sTime', 1);
 %
 % get internal representation for a set of unique tuples for given relation
 %
-UniqueData = EllUnion.getUniqueData();
+uniqueData = ellUnionObj.getUniqueData();
 %
 % get a relation containing the unique tuples from the original relation
 %
-UniqueTuples = EllUnion.getUniqueTuples();
+uniqueTuples = ellUnionObj.getUniqueTuples();

@@ -1,5 +1,5 @@
 % An example of ISEQUAL method usage. The compared ellTubeProjections are 
 % equal.
-firstProj = gras.ellapx.smartdb.test.examples.getProj();
-secondProj = gras.ellapx.smartdb.test.examples.getProj();
-res = firstProj.isEqual(secondProj);
+firstProjObj = gras.ellapx.smartdb.test.examples.getProj();
+secondProjObj = gras.ellapx.smartdb.test.examples.getProj();
+res = firstProjObj.isEqual(secondProjObj);

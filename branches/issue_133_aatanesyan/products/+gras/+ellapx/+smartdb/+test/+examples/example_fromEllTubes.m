@@ -10,5 +10,5 @@ timeVec = [0 10];
 dirsMat = [1 0; 0 1]';
 rsObj = elltool.reach.ReachContinuous(sys, x0EllObj, dirsMat, timeVec);
 ellTubeObj = rsObj.getEllTubeRel();
-unionEllTube = ...
+unionEllTubeObj = ...
     gras.ellapx.smartdb.rels.EllUnionTube.fromEllTubes(ellTubeObj);

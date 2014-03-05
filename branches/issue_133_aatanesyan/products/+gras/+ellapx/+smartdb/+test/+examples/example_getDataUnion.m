@@ -1,3 +1,3 @@
 % An example of GETDATA method's usage.
-EllUnion = gras.ellapx.smartdb.test.examples.getUnion();
-data = EllUnion.getData();
+ellUnionObj = gras.ellapx.smartdb.test.examples.getUnion();
+data = ellUnionObj.getData();

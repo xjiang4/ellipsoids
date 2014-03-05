@@ -1,14 +1,4 @@
-function unionEllTube = getUnion()
-% nTubes=10;
-% nPoints = 20;
-% timeBeg=1;
-% timeEnd=2;
-% type = 1;
-% ellTube = ...
-%     gras.ellapx.smartdb.test.examples.getEllTube(nTubes,...
-%     timeBeg,timeEnd,type,nPoints);
-% unionEllTube = ...
-%     gras.ellapx.smartdb.rels.EllUnionTube.fromEllTubes(ellTube);
+function unionEllTubeObj = getUnion()
 aMat = [0 1; 0 0];
 bMat = eye(2);
 SUBounds = struct();
@@ -20,6 +10,6 @@ timeVec = [0 10];
 dirsMat = [1 0; 0 1]';
 rsObj = elltool.reach.ReachContinuous(sys, x0EllObj, dirsMat, timeVec);
 ellTubeObj = rsObj.getEllTubeRel();
-unionEllTube = ...
+unionEllTubeObj = ...
     gras.ellapx.smartdb.rels.EllUnionTube.fromEllTubes(ellTubeObj);
 end
