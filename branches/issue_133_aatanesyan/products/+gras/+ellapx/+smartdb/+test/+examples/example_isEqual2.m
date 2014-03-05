@@ -1,7 +1,5 @@
 % An example ISEQUAL function usage. In it two ellipsoid tube objects are
-% created and compared. This is the example of the siplest usage of this
-% function with the minimum of input arguments. These ellipsoid tubes are
-% equal.
+% created and compared. These ellipsoid tubes are equal.
 nPoints=10;
 absTol=0.01;
 relTol=0.01;

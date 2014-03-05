@@ -9,9 +9,11 @@ classdef EllUnionTubeBasic<handle
     %       time when touch is occured in good direction
     %   timeTouchOpEndVec: cell [1, 1] of double[1, nTimePoints] - points of
     %       time when touch is occured in direction opposite to good direction
-    %   isLsTouchOp: logical[1, 1] - a logical variable which indicates whether a touch takes place
-    %       along the direction opposite to the good direction at sTime point of time
-    %   isLtTouchOpVec: cell [1, 1] of logical[nTimePoints, 1] - a logical variable which indicates whether a touch takes place
+    %   isLsTouchOp: logical[1, 1] - a logical variable which indicates whether
+    %       a touch takes place along the direction opposite to the good 
+    %       direction at sTime point of time
+    %   isLtTouchOpVec: cell [1, 1] of logical[nTimePoints, 1] - a logical 
+    %       variable which indicates whether a touch takes place
     %       along the direction opposite to the good direction at any point
     %       of time from timeVec
     %

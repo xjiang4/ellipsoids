@@ -6,20 +6,19 @@ classdef EllUnionTubeStaticProj<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&..
     %
     % Fields:
     %   QArray: cell[1,1] of double[nDims,nDims,nTimePoints] -
-    %       an array of the projections of nTimePoints ellipsoid matrices of
-    %       double[nDims,nDims] type. Each element from
-    %       double[nDims,nDims,nTimePoints] array specifies the projection of double[nDims,nDims]
-    %       ellipsoid matrix at nTimePoint point of time. Here nTimePoints
-    %       is number of elements in timeVec.
-    %   aMat: cell[1,nTimePoints] of double[nDims,1] - array of the projections of nTimePoints
-    %       ellipsoid centers. Each center is specified for nTimePoint
-    %       point of time
+    %       a 3-dimentional matrix in which each of nTimePoints slices is a 
+    %       double[nDims,nDims] projection of an ellipsoid matrix on specified 
+    %       subspace at nTimePoint point of time. Here nTimePoints is number of 
+    %       elements in timeVec.
+    %   aMat: cell[1,nTimePoints] of double[nDims,1] - a 2-dimentional matrix 
+    %       in which each of nTimePoints columns is a projection of
+    %       an ellipsoid center. Each center is specified for 
+    %       nTimePoint point of time
     %   scaleFactor: double[1, 1] - scale for the created ellipsoid tube
     %   MArray: cell[1,1] of double[nDims,nDims,nTimePoints] -
-    %       an array of the projections of nTimePoints regularization matrices
-    %       of double[nDims,nDims] type. Each element from
-    %       double[nDims,nDims,nTimePoints] array specifies double[nDim,nDim]
-    %       regularization matrix at nTimePoint point of time
+    %       a 3-dimentional matrix in which each of nTimePoints slices is a 
+    %       double[nDims,nDims] projection of a regularization matrix on specified 
+    %       subspace at nTimePoint point of time.
     %   dim: double[1, 1] - the dimension of the space on which the touching 
     %       curves are projected
     %   sTime: double[1, 1] - specific point of time which is best suited to
@@ -34,53 +33,60 @@ classdef EllUnionTubeStaticProj<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&..
     %   absTolerance: double[1, 1] - absolute tolerance
     %   relTolerance: double[1, 1] - relative tolerance
     %   indSTime: double[1, 1]  - index of sTime point within timeVec
-    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of the projections of good direction 
-    %       vectors on the specified space at any point of time from timeVec
-    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - the projection of good direction 
-    %       vector on the specified space at sTime point of time
-    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of the projections of good direction 
-    %       vectors on the specified space at any point of time from timeVec
+    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of 
+    %       the projections of good direction vectors on the specified space 
+    %       at any point of time from timeVec
+    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - the projection of good
+    %       direction  vector on the specified space at sTime point of time
+    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of the 
+    %       projections of good direction vectors on the specified space at
+    %       any point of time from timeVec
     %   lsGoodDirNorm: double[1, 1] - norm of the projection of good direction 
     %       vector on the specified space at sTime point of time
-    %   xTouchCurveMat: cell[1, nTimePoints] of double[nDims, 1] - the projection of touch 
-    %       point curve on the specified space for good direction matrix
-    %   xTouchOpCurveMat: cell[1, nTimePoints] of double[nDims, 1] - the projection of touch 
-    %       point curve oposite to the xTouchCurveMat touch point curve
-    %   xsTouchVec: cell[1, 1] of double[nDims, 1]  - the projection of touch point at sTime
-    %       point of time
-    %   xsTouchOpVec: cell[1, 1] of double[nDims, 1] - the projection of a point opposite to
-    %       the xsTouchVec touch point
-    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether a touch takes place
-    %       along good direction at sTime point of time
+    %   xTouchCurveMat: cell[1, nTimePoints] of double[nDims, 1] - the projection 
+    %       of touch point curve on the specified space for good direction matrix
+    %   xTouchOpCurveMat: cell[1, nTimePoints] of double[nDims, 1] - the projection
+    %       of touch point curve oposite to the xTouchCurveMat touch point curve
+    %   xsTouchVec: cell[1, 1] of double[nDims, 1]  - the projection of touch 
+    %       point at sTime point of time
+    %   xsTouchOpVec: cell[1, 1] of double[nDims, 1] - the projection of a point
+    %       opposite to the xsTouchVec touch point
+    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether 
+    %       a touch takes place along good direction at sTime point of time
     %   isLsTouchVec: cell[1, 1] of logical[nTimePoints, 1] - a logical
     %       vector which indicates whether a touch takes place along good 
     %       direction at any point of time from timeVec
-    %   projSMat: cell[1, 1] of double[nDims, nDims] - projection matrix at sTime point of time
-    %   projArray: cell[nTimePoints, 1] of double[nDims, nDims] - an array of projection matrices 
-    %       at any point of time from timVec
-    %   projType: gras.ellapx.enums.EProjType[1, 1] - type of projection (Static, DynamicAlongGoodCurve)
-    %   ltGoodDirNormOrigVec: cell[1, 1] of double[1, nTimePoints] - norm of the original good direction 
-    %       vectors at any point of time from timeVec
-    %   lsGoodDirNormOrig: double[1, 1] - norm of the original good direction vector at
+    %   projSMat: cell[1, 1] of double[nDims, nDims] - projection matrix at 
     %       sTime point of time
-    %   ltGoodDirOrigMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of the original good direction 
-    %       vectors at any point of time from timeVec
-    %   lsGoodDirOrigVec: cell[1, 1] of double[nDims, 1] - the original good direction vector at sTime 
-    %       point of time
-    %   ltGoodDirNormOrigProjVec: cell[1, 1] of double[1, nTimePoints] - norm of the projection of the original good direction 
-    %       curve
-    %   ltGoodDirOrigProjMat: cell[1, 1] of double[nDims, nTimePoints] - the projectition of the original good direction curve
+    %   projArray: cell[nTimePoints, 1] of double[nDims, nDims] - an array 
+    %       of projection matrices at any point of time from timVec
+    %   projType: gras.ellapx.enums.EProjType[1, 1] - type of projection 
+    %       (Static, DynamicAlongGoodCurve)
+    %   ltGoodDirNormOrigVec: cell[1, 1] of double[1, nTimePoints] - norm of 
+    %       the original good direction vectors at any point of time from timeVec
+    %   lsGoodDirNormOrig: double[1, 1] - norm of the original good direction 
+    %       vector at sTime point of time
+    %   ltGoodDirOrigMat: cell[1, nTimePoints] of double[nDims, 1] - matrix 
+    %       of the original good direction vectors at any point of time from timeVec
+    %   lsGoodDirOrigVec: cell[1, 1] of double[nDims, 1] - the original good 
+    %       direction vector at sTime point of time
+    %   ltGoodDirNormOrigProjVec: cell[1, 1] of double[1, nTimePoints] - norm 
+    %       of the projection of the original good direction curve
+    %   ltGoodDirOrigProjMat: cell[1, 1] of double[nDims, nTimePoints] - the
+    %       projectition of the original good direction curve
     %   ellUnionTimeDirection: gras.ellapx.enums.EEllUnionTimeDirection[1, 1] - 
     %       direction in time along which union is performed
     %   timeTouchEndVec: cell [1, 1] of double[1, nTimePoints] - points of
     %       time when touch is occured in good direction
     %   timeTouchOpEndVec: cell [1, 1] of double[1, nTimePoints] - points of
     %       time when touch is occured in direction opposite to good direction
-    %   isLsTouchOp: logical[1, 1] - a logical variable which indicates whether a touch takes place
-    %       along the direction opposite to the good direction at sTime point of time
-    %   isLtTouchOpVec: cell [1, 1] of logical[nTimePoints, 1] - a logical variable which indicates whether a touch takes place
-    %       along the direction opposite to the good direction at any point
-    %       of time from timeVec
+    %   isLsTouchOp: logical[1, 1] - a logical variable which indicates whether
+    %       a touch takes place along the direction opposite to the good direction
+    %       at sTime point of time
+    %   isLtTouchOpVec: cell [1, 1] of logical[nTimePoints, 1] - a logical 
+    %       variable which indicates whether a touch takes place along the 
+    %       direction opposite to the good direction at any point of time 
+    %       from timeVec
     %
     methods
         function fieldsList = getNoCatOrCutFieldsList(self)

@@ -8,8 +8,8 @@ classdef AEllTubeProjectable<handle
         %       self.
         %       projType: gras.ellapx.enums.EProjType[1,1] - type of the projection, 
         %           can be 'Static' and 'DynamicAlongGoodCurve'
-        %       projMatList: cell[1,nProjs] of double[nSpDims,nDims] - list of not 
-        %           necessarily orthogonal projection matrices, 
+        %       projMatList: cell[1,nProjs] of double[nSpDims,nDims] - list 
+        %           of not  necessarily orthogonal projection matrices, 
         %       fGetProjMat: function_handle[1,1] - function which creates
         %           vector of the projection matrices
         % Output:

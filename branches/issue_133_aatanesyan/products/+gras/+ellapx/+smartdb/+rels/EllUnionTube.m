@@ -2,25 +2,22 @@ classdef EllUnionTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
         gras.ellapx.smartdb.rels.EllTubeBasic&...        
         gras.ellapx.smartdb.rels.EllUnionTubeBasic&...
         gras.ellapx.smartdb.rels.AEllTubeProjectable
-    % A class which adds more methods and functionality to EllUnionTubeBasic class,
-    % allowing more profound work with the unions of ellipsoid tube objects.
+    % A class which allows to work with unions of ellipsoid tube objects.
     % 
     % Fields:
     %   QArray: cell[1,1] of double[nDims,nDims,nTimePoints] -
-    %       an array of nTimePoints ellipsoid matrices of
-    %       double[nDims,nDims] type. Each element from
-    %       double[nDims,nDims,nTimePoints] array specifies double[nDims,nDims]
-    %       ellipsoid matrix at nTimePoint point of time. Here nTimePoints
-    %       is number of elements in timeVec.
-    %   aMat: cell[1,nTimePoints] of double[nDims,1] - array of nTimePoints
-    %       ellipsoid centers. Each center is specified for nTimePoint
-    %       point of time
+    %       a 3-dimentional matrix in which each of nTimePoints slices is a 
+    %       double[nDims,nDims] ellipsoid matrix at nTimePoint point of time. 
+    %       Here nTimePoints is number of elements in timeVec.
+    %   aMat: cell[1,nTimePoints] of double[nDims,1] - a 2-dimentional matrix 
+    %       in which each of nTimePoints columns is a 
+    %       double[nDims, 1] ellipsoid center. Each center is specified for 
+    %       nTimePoint point of time
     %   scaleFactor: double[1, 1] - scale for the created ellipsoid tube
     %   MArray: cell[1,1] of double[nDims,nDims,nTimePoints] -
-    %       an array of nTimePoints regularization matrices
-    %       of double[nDims,nDims] type. Each element from
-    %       double[nDims,nDims,nTimePoints] array specifies double[nDim,nDim]
-    %       regularization matrix at nTimePoint point of time
+    %       a 3-dimentional matrix in which each of nTimePoints slices is 
+    %       a double[nDims,nDims] regularization matrix at nTimePoint point 
+    %       of time.
     %   dim: double[1, 1] - the dimension of the space in which the touching 
     %       curves are defined
     %   sTime: double[1, 1] - specific point of time which is best suited to
@@ -34,12 +31,12 @@ classdef EllUnionTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
     %   timeVec: double[1, nTimePoints] - time vector 
     %   calcPrecision: double[1, 1] - calculation precision
     %   indSTime: double[1, 1]  - index of sTime point within timeVec
-    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of good direction 
-    %       vectors at any point of time from timeVec
-    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - good direction vector at sTime 
-    %       point of time
-    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of good direction 
-    %       vector at any point of time from timeVec
+    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of 
+    %       good direction vectors at any point of time from timeVec
+    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - good direction vector 
+    %       at sTime point of time
+    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of good 
+    %       direction vector at any point of time from timeVec
     %   lsGoodDirNorm: double[1, 1] - norm of good direction vector at
     %       sTime point of time
     %   xTouchCurveMat: cell[1, nTimePoints] of double[nDims, 1] - touch 
@@ -50,8 +47,8 @@ classdef EllUnionTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
     %       point of time
     %   xsTouchOpVec: cell[1, 1] of double[nDims, 1] - a point opposite to
     %       the xsTouchVec touch point
-    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether a touch takes place
-    %       along good direction at sTime point of time
+    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether
+    %       a touch takes place along good direction at sTime point of time
     %   isLtTouchVec: cell[1, 1] of logical[nTimePoints, 1] - a logical
     %       vector which indicates whether a touch takes place along good 
     %       direction at any point of time from timeVec
@@ -61,9 +58,11 @@ classdef EllUnionTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
     %       time when touch is occured in good direction
     %   timeTouchOpEndVec: cell [1, 1] of double[1, nTimePoints] - points of
     %       time when touch is occured in direction opposite to good direction
-    %   isLsTouchOp: logical[1, 1] - a logical variable which indicates whether a touch takes place
-    %       along the direction opposite to the good direction at sTime point of time
-    %   isLtTouchOpVec: cell [1, 1] of logical[nTimePoints, 1] - a logical variable which indicates whether a touch takes place
+    %   isLsTouchOp: logical[1, 1] - a logical variable which indicates whether 
+    %       a touch takes place along the direction opposite to the good direction
+    %       at sTime point of time
+    %   isLtTouchOpVec: cell [1, 1] of logical[nTimePoints, 1] - a logical 
+    %       variable which indicates whether a touch takes place
     %       along the direction opposite to the good direction at any point
     %       of time from timeVec
     %
@@ -158,6 +157,25 @@ classdef EllUnionTube<gras.ellapx.smartdb.rels.ATypifiedAdjustedRel&...
     methods 
         function [ellTubeProjRel,indProj2OrigVec]=project(self,projType,...
                 varargin)
+            % PROJECT - projects ellipsoid tube union onto subspace
+            %
+            % Input:
+            %   regular:
+            %       self.
+            %       projType: gras.ellapx.enums.EProjType[1, 1] - type of
+            %           projection. It can only be Static for ellipsoid tube 
+            %           unions.
+            %       projMatList: double[nDims, nDims] -  subspace defined by 
+            %           its basis vectors on which ellipsoid tube has to be 
+            %           projected
+            %       fGetProjMat: cell_fun[1, ] - function that is used to
+            %           get the projection.
+            %
+            % Output:
+            %   ellTubeProjRel: gras.ellapx.smartdb.rels.EllTubeProj[1, 1] -
+            %       ellipsoid tube projection
+            %   indProj2OrigVec: double[1, ] - vector of indices
+            %
             import gras.ellapx.smartdb.rels.EllUnionTubeStaticProj;
             import gras.ellapx.smartdb.rels.EllTubeBasic;
             import gras.ellapx.enums.EProjType;

@@ -4,20 +4,18 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
     %
     % Fields:
     %   QArray: cell[1,1] of double[nDims,nDims,nTimePoints] -
-    %       an array of nTimePoints ellipsoid matrices of
-    %       double[nDims,nDims] type. Each element from
-    %       double[nDims,nDims,nTimePoints] array specifies double[nDims,nDims]
-    %       ellipsoid matrix at nTimePoint point of time. Here nTimePoints
-    %       is number of elements in timeVec.
-    %   aMat: cell[1,nTimePoints] of double[nDims,1] - array of nTimePoints
-    %       ellipsoid centers. Each center is specified for nTimePoint
-    %       point of time
+    %       a 3-dimentional matrix in which each of nTimePoints slices is a 
+    %       double[nDims,nDims] ellipsoid matrix at nTimePoint point of time. 
+    %       Here nTimePoints is number of elements in timeVec.
+    %   aMat: cell[1,nTimePoints] of double[nDims,1] - a 2-dimentional matrix 
+    %       in which each of nTimePoints columns is a 
+    %       double[nDims, 1] ellipsoid center. Each center is specified for 
+    %       nTimePoint point of time
     %   scaleFactor: double[1, 1] - scale for the created ellipsoid tube
     %   MArray: cell[1,1] of double[nDims,nDims,nTimePoints] -
-    %       an array of nTimePoints regularization matrices
-    %       of double[nDims,nDims] type. Each element from
-    %       double[nDims,nDims,nTimePoints] array specifies double[nDim,nDim]
-    %       regularization matrix at nTimePoint point of time
+    %       a 3-dimentional matrix in which each of nTimePoints slices is 
+    %       a double[nDims,nDims] regularization matrix at nTimePoint point
+    %       of time.
     %   dim: double[1, 1] - the dimension of the space in which the touching 
     %       curves are defined
     %   sTime: double[1, 1] - specific point of time which is best suited to
@@ -31,12 +29,12 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
     %   timeVec: double[1, nTimePoints] - time vector 
     %   calcPrecision: double[1, 1] - calculation precision
     %   indSTime: double[1, 1]  - index of sTime point within timeVec
-    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of good direction 
-    %       vectors at any point of time from timeVec
-    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - good direction vector at sTime 
-    %       point of time
-    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of good direction 
-    %       vector at any point of time from timeVec
+    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of 
+    %       good direction vectors at any point of time from timeVec
+    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - good direction vector 
+    %       at sTime point of time
+    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of good 
+    %       direction vector at any point of time from timeVec
     %   lsGoodDirNorm: double[1, 1] - norm of good direction vector at
     %       sTime point of time
     %   xTouchCurveMat: cell[1, nTimePoints] of double[nDims, 1] - touch 
@@ -47,8 +45,8 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
     %       point of time
     %   xsTouchOpVec: cell[1, 1] of double[nDims, 1] - a point opposite to
     %       the xsTouchVec touch point
-    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether a touch takes place
-    %       along good direction at sTime point of time
+    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether
+    %       a touch takes place along good direction at sTime point of time
     %   isLtTouchVec: cell[1, 1] of logical[nTimePoints, 1] - a logical
     %       vector which indicates whether a touch takes place along good 
     %       direction at any point of time from timeVec
@@ -69,8 +67,8 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
             %   regular:
             %       self.
             % Output:
-            %   fieldsList: cell[nFields, 1] of char[1, ] - list of fields of
-            %       EllTubeBasic object, which are not to be
+            %   fieldsList: cell[nFields, 1] of char[1, ] - list of fields 
+            %       of EllTubeBasic object, which are not to be
             %       concatenated or cut
             %
             import  gras.ellapx.smartdb.F;
@@ -873,12 +871,13 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
             % Input:
             %  regular:
             %     self.
-            %     approxType: cell[nEllTubes, 1] of char[1,] - type of approximation(internal/external)
+            %     approxType: cell[nEllTubes, 1] of char[1,] - type of 
+            %         approximation(internal/external)
             %
             % Output:
             %   apprEllMat: ellipsoid[nTimePoints, nEllTubes] - an array
-            %       of all the ellipsoids from all the ellipsoid tubes that are
-            %       stored in self object
+            %       of all the ellipsoids from all the ellipsoid tubes that 
+            %       are stored in self object
             %   timeVec: cell[1,1] of double[1,nTimePoints] - time vector
             import gras.ellapx.enums.EApproxType;
             import gras.ellapx.smartdb.F;
@@ -906,8 +905,9 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
             % Input:
             %   regular:
             %       self.
-            %       timeVec: double[1, nTimePoints] - sorted time vector to interpolate on.
-            %           Must begin with self.timeVec[1] and end with self.timeVec[end]
+            %       timeVec: double[1, nTimePoints] - sorted time vector to 
+            %           interpolate on. Must begin with self.timeVec[1] and 
+            %           end with self.timeVec[end]
             %
             % Output:
             %   interpEllTube: gras.ellapx.smartdb.rels.EllTubeBasic[1, 1] - 
@@ -1050,13 +1050,13 @@ classdef EllTubeBasic<gras.ellapx.smartdb.rels.EllTubeTouchCurveBasic
         end
         %
         function cutEllTubeRel = cut(self, cutTimeVec)
-            % CUT - extracts the piece of the ellipsoid tube object from given start 
-            % point of time to given end point of time.
+            % CUT - extracts the piece of the ellipsoid tube object from given 
+            % start point of time to given end point of time.
             % 
             % Input:
             %  regular:
             %     self.
-            %     cutTimeVec: double[1, 2]/ double[1, 1] - time interval to cut
+            %     cutTimeVec: double[1, 2] / double[1, 1] - time interval to cut
             %
             % Output:
             %   cutEllTubeRel: gras.ellapx.smartdb.rels.EllTube[1, 1] -
