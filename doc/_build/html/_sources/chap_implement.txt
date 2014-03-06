@@ -405,6 +405,7 @@ instant of time:
 .. _union-label:
 
 .. math::
+   :label: ellUnion
 
    {\mathcal X}_{U}[t]=\bigcup \limits_{\tau\leqslant t}{\mathcal X}[\tau],
 

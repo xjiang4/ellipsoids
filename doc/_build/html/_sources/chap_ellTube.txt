@@ -1,35 +1,37 @@
-﻿Ellipsoid tubes, tubes by the instant of time and their projections
+﻿Ellipsoid tubes, tubes by instant of time and their projections
 ===================================================================
 
-**Definition.** For any matrix asimptotic monotone function :math:`M(\cdot)`, which defines the configuration of the environment of any point of time, the quadratically regularized alternated reach set of system with disturbance is
+**Definition.** For any regularization matrix :math:`M(\cdot)` the quadratically regularized alternated reach set of system with uncertainty is
 
 .. math::
    {\mathcal X}^{q}_{U}(t,t_0,{\mathcal X}^{0},M(\cdot)) =
    \underset{t_0\leq\tau\leq t}{\bigcup}{\mathcal X}^{q}_{U}(\tau,t_0,{\mathcal X}^{0},M   (\cdot)).
 
-Identify as :math:`{\mathcal E}(\overline{x}(t),X_{+}(t,l))` и :math:`{\mathcal E}(\overline{x}(t),X_{-}(t,l))` the tight external and internal approximations along :math:`l(\cdot)` good direction such as :math:`l(t_0)=l`. Then the reach set by instant of time can be described as
+Note that if system doesn't have uncertainty then :math:`M(\cdot)=0`.
+
+By :math:`{\mathcal E}(\overline{x}(t),X_{+}(t,l))` and :math:`{\mathcal E}(\overline{x}(t),X_{-}(t,l))` denote tight external and internal approximations along :math:`l(\cdot)` good direction such as :math:`l(t_0)=l`. Then the reach set by instant of time can be described as
 
 .. math::
    {\mathcal X}^{q}_{U}[t]=\underset{\tau}{\bigcup}\underset{l}{\bigcap}\{
    {\mathcal E}(\overline{x}(\tau),X_{+}(\tau,l)) |l\in {\mathcal S}_1(0),   \tau\leq t\}\subseteq\underset{l} {\bigcap}\{{\mathcal E}^{U}_{+}[t,l])    |l\in {\mathcal S}_1(0)\},
 
-where :math:`{\mathcal E}^{U}_{+}[t,l]=\underset{\tau}{\bigcup}\{{\mathcal E}(\overline{x}(\tau),X_{+}(\tau,l))|t_0\leq\tau\leq t\}` is the external ellipsoidal tube by the instant of time.
+where :math:`{\mathcal E}^{U}_{+}[t,l]=\underset{\tau}{\bigcup}\{{\mathcal E}(\overline{x}(\tau),X_{+}(\tau,l))|t_0\leq\tau\leq t\}` is the external ellipsoidal tube by instant of time.
 
-Similar approxiamtion can be calculated with the internal ellipsoidal tube by the instant of time :math:`{\mathcal E}^{U}_{-}[t,l]=\underset{\tau}{\bigcup}\{{\mathcal E}(\overline{x}(\tau),X_{-}(\tau,l))|t_0\leq\tau\leq t\}`:
+Similar approxiamtion can be calculated with the internal ellipsoidal tube by instant of time :math:`{\mathcal E}^{U}_{-}[t,l]=\underset{\tau}{\bigcup}\{{\mathcal E}(\overline{x}(\tau),X_{-}(\tau,l))|t_0\leq\tau\leq t\}`:
 
 .. math::
    {\mathcal X}^{U}[t]\supseteq\underset{l}{\bigcup}\{{\mathcal E}^{U}_{-}[t,l]) |l\in {\mathcal S}_1(0)\}.
 
-Note that in general case ellipsoidal tube :math:`{\mathcal E}^{U}_{+}[t,l]` is not tight approximation. 
+Note that in general case ellipsoidal tube :math:`{\mathcal E}^{U}_{+}[t,l]` is not tight approximation. For more information see [GAG2012]_.
 
 So, all in all, there are two types of ellipsoid tube objects that we can work with using *Ellipsoidal Toolbox*:
 
 -  ellipsoidal tubes that are described in *gras.ellapx.smartdb.rels.EllTube* class;
 
--  tubes by the instant of time described in *gras.ellapx.smartdb.rels.EllUnionTube* class 
+-  tubes by instant of time described in *gras.ellapx.smartdb.rels.EllUnionTube* class 
    (see :ref:`formula <union-label>`).
 
-These two type of objects can be projected on specified subspaces. The projections of ellipsoid tubes can be either static or dynamic. The are described in gras.ellapx.smartdb.rels.EllTubeProj class. As for the tubes by the instant of time, they can only be projected on static subspaces. These projections are described in gras.ellapx.smartdb.rels.EllUnionTubeStaticProj class. For more information about these types of projections and their differences and for examples see this :ref:`link <section-label>`.
+These two type of objects can be projected on specified subspaces. The projections of ellipsoid tubes can be either static or dynamic. The are described in gras.ellapx.smartdb.rels.EllTubeProj class. As for the tubes by  instant of time, they can only be projected on static subspaces. These projections are described in gras.ellapx.smartdb.rels.EllUnionTubeStaticProj class. For more information about these types of projections and their differences and for examples see this :ref:`link <section-label>`.
 
 Ellipsoid tubes
 ---------------
@@ -195,16 +197,16 @@ For creating the projection matrix a special function is used in all of these ex
    :language: matlab
    :linenos:
 
-Tubes by the instant of time
-----------------------------
+Tubes by instant of time
+------------------------
 
-As with ellipsoid tube objects there are several methods that we can use while working with tubes by the instant of time. First of all we can create tubes by the instant of time using *fromEllTubes* method:
+As with ellipsoid tube objects, there are several methods that we can use while working with tubes by instant of time. First of all we can create tubes by instant of time using *fromEllTubes* method:
 
 .. literalinclude:: ../products/+gras/+ellapx/+smartdb/+test/+examples//example_fromEllTubes.m
    :language: matlab
    :linenos:
 
-From here on we will use the *getUnion* function so we can get a tube by the instant of time and work with it further on. As we have created a tubes by the instant of time object, we can get all the types of differet data about it. There is a set of methods that can give information about the data stored in the object and give access to it.
+From here on we will use the *getUnion* function so we can get a tube by instant of time and work with it further on. As we have created a tubes by instant of time object, we can get all the types of differet data about it. There is a set of methods that can give information about the data stored in the object and give access to it.
 
 .. literalinclude:: ../products/+gras/+ellapx/+smartdb/+test/+examples//example_getDataUnion.m
    :language: matlab
@@ -225,13 +227,13 @@ Also we can copy the object, clear all the data, save it in a file.
    :language: matlab
    :linenos:
 
-Also we can compare tubes by the instant of time using *isEqual* method.
+Also we can compare tubes by instant of time using *isEqual* method.
 
 .. literalinclude:: ../products/+gras/+ellapx/+smartdb/+test/+examples//example_isEqualUnion.m
    :language: matlab
    :linenos:
 
-At last, as it has already been said tubes by the instant of time can be projected only on static subspaces. It can be done in two ways.
+At last, as it has already been said tubes by instant of time can be projected only on static subspaces. It can be done in two ways.
 
 .. literalinclude:: ../products/+gras/+ellapx/+smartdb/+test/+examples//example_project.m
    :language: matlab
@@ -241,28 +243,28 @@ At last, as it has already been said tubes by the instant of time can be project
    :language: matlab
    :linenos:
 
-As for ellipsoid tube projections, a special function is used to create the projection matrix for tubes by the instant of time:
+As for ellipsoid tube projections, a special function is used to create the projection matrix for tubes by instant of time:
 
 .. literalinclude:: ../products/+gras/+ellapx/+smartdb/+test/+examples//fGetProjMat.m
    :language: matlab
    :linenos:
 
-Projections of ellipsoid tubes and unions
------------------------------------------
+Projections of ellipsoid tubes and tubes by instant of time
+-----------------------------------------------------------
 
-As it has already been said we can create either static or dynamic projections for ellipsoid tubes and only static projections for tubes by the instant of time. There are several methods in *Ellipsoidal Toolbox* for that. Most of them has already been described:
+As it has already been said we can create either static or dynamic projections for ellipsoid tubes and only static projections for tubes by instant of time. There are several methods in *Ellipsoidal Toolbox* for that. Most of them has already been described:
 
 -  *project*, *projectStatic* and *projectToOrths* for ellipsoid tubes;
 
--  *project* and *projectStatic* for tubes by the instant of time.
+-  *project* and *projectStatic* for tubes by instant of time.
 
-It should be mentioned that from here on all the examples are written for ellipsoid tube projections, but their usage is the same for the projections of tubes by the instant of time. We wiil use *getProj* function to create ellipsoid tube projection that we will work with.
+It should be mentioned that from here on all the examples are written for ellipsoid tube projections, but their usage is the same for the projections of tubes by instant of time. We wiil use *getProj* function to create ellipsoid tube projection that we will work with.
 
 .. literalinclude:: ../products/+gras/+ellapx/+smartdb/+test/+examples//example_getProj.m
    :language: matlab
    :linenos:
 
-As with ellipsoid tubes and tubes by the instant of time we can get all the types of differet data about projections. There is a set of methods that can give information about the data stored in the object and give access to it.
+As with ellipsoid tubes and tubes by instant of time we can get all the types of differet data about projections. There is a set of methods that can give information about the data stored in the object and give access to it.
 
 
 .. literalinclude:: ../products/+gras/+ellapx/+smartdb/+test/+examples//example_getDataProj.m
@@ -307,3 +309,4 @@ All the three methods have several properties connected to the properties of the
 
 To read more about the differences of these projections :ref:`goto <goto-label>`. Also there you can find some illustrations for both ellTube projections and ellUnionTube projections.
 
+.. [GAG2012] Gagarinov P.V. 2012. Computation of Alternated Reachability Tubes for Linear Control Systems under Uncertainty. *Moscow University Computational Mathematics and Cybernetics*, 2012, Vol. 36, No. 4, pp. 169–177.
