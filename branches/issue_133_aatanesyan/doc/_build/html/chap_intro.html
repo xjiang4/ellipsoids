@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Introduction &mdash; Ellipsoidal Toolbox 2.0 beta 1 documentation</title>
+    <title>Introduction &mdash; Ellipsoidal Toolbox 2.0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.0 beta 1',
+        VERSION:     '2.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Ellipsoidal Toolbox 2.0 beta 1 documentation" href="index.html" />
+    <link rel="top" title="Ellipsoidal Toolbox 2.0.1 documentation" href="index.html" />
     <link rel="next" title="Ellipsoidal Calculus" href="chap_ellcalc.html" />
     <link rel="prev" title="Welcome to Ellipsoidal Toolbox documentation!" href="main_manual.html" /> 
   </head>
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="main_manual.html" title="Welcome to Ellipsoidal Toolbox documentation!"
              accesskey="P">previous</a> |</li>
-        <li><a href="main_manual.html">Ellipsoidal Toolbox 2.0 beta 1 documentation</a> &raquo;</li> 
+        <li><a href="main_manual.html">Ellipsoidal Toolbox 2.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -97,21 +97,21 @@ reach set polytope is <img class="math" src="_images/math/f22656e16328ce7f7b5af2
 unions of rectangular polytopes <a class="reference internal" href="#asar2000" id="id6">[ASAR2000]</a>.</p>
 <div class="figure align-center" id="ddtfig" style="width: 50%">
 <img alt="approximation" src="_images/chapter01_ddt.png" />
-<p class="caption">Figure 14: Reach set approximation by union of rectangles. Source: adapted from <a class="reference internal" href="#asar2000" id="id7">[ASAR2000]</a>.</p>
+<p class="caption">Figure 34: Reach set approximation by union of rectangles. Source: adapted from <a class="reference internal" href="#asar2000" id="id7">[ASAR2000]</a>.</p>
 </div>
 <p>The algorithm works as follows. First, given the set of initial
 conditions defined as a polytope, the evolution in time of the
-polytope’s extreme points is computed (<a href="#ddtfig">figure  14</a> (a)).</p>
-<p><img class="math" src="_images/math/088e22e395ff0b8f6cde149172e52590852bcebf.png" alt="R(t_1)"/> in <a href="#ddtfig">figure  14</a> (a) is the reach set of the system at
+polytope’s extreme points is computed (<a href="#ddtfig">figure  34</a> (a)).</p>
+<p><img class="math" src="_images/math/088e22e395ff0b8f6cde149172e52590852bcebf.png" alt="R(t_1)"/> in <a href="#ddtfig">figure  34</a> (a) is the reach set of the system at
 time <img class="math" src="_images/math/44780f0598b4d22c6888cfca27deb04115f7fa88.png" alt="t_1"/>, and <img class="math" src="_images/math/1a3e51473c097540a265ee70575abb8038230e74.png" alt="R[t_0, t_1]"/> is the set of all points that
 can be reached during <img class="math" src="_images/math/85674382bfceecdd6e6d6bdfbc6cff246ef47ef9.png" alt="[t_0, t_1]"/>. Second, the algorithm computes
 the convex hull of vertices of both, the initial polytope and
-<img class="math" src="_images/math/088e22e395ff0b8f6cde149172e52590852bcebf.png" alt="R(t_1)"/> (<a href="#ddtfig">figure  14</a> (b)). The resulting polytope is then
-bloated to include all the reachable states in <img class="math" src="_images/math/3ad5575eeecc18f7013d14bb6ac8e07d4a611af3.png" alt="[t_0,t_1]"/> (<a href="#ddtfig">figure  14</a> (c)).
+<img class="math" src="_images/math/088e22e395ff0b8f6cde149172e52590852bcebf.png" alt="R(t_1)"/> (<a href="#ddtfig">figure  34</a> (b)). The resulting polytope is then
+bloated to include all the reachable states in <img class="math" src="_images/math/3ad5575eeecc18f7013d14bb6ac8e07d4a611af3.png" alt="[t_0,t_1]"/> (<a href="#ddtfig">figure  34</a> (c)).
 Finally, this overapproximating polytope is in its turn
-overapproximated by the union of rectangles (<a href="#ddtfig">figure  14</a> (d)). The
+overapproximated by the union of rectangles (<a href="#ddtfig">figure  34</a> (d)). The
 same procedure is repeated for the next time interval <img class="math" src="_images/math/d82d790d123640183a6478ccd2fca6d3dbbb5cc0.png" alt="[t_1,t_2]"/>,
-and the union of both rectangular approximations is taken (<a href="#ddtfig">figure  14</a> (e,f)),
+and the union of both rectangular approximations is taken (<a href="#ddtfig">figure  34</a> (e,f)),
 and so on. Rectangular polytopes are easy to represent
 and the number of facets grows linearly with dimension, but a large
 number of rectangles must be used to assure the approximation is not
@@ -438,7 +438,7 @@ and Algorithms</em>, 9:347–367, 2001.</td></tr>
         <li class="right" >
           <a href="main_manual.html" title="Welcome to Ellipsoidal Toolbox documentation!"
              >previous</a> |</li>
-        <li><a href="main_manual.html">Ellipsoidal Toolbox 2.0 beta 1 documentation</a> &raquo;</li> 
+        <li><a href="main_manual.html">Ellipsoidal Toolbox 2.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

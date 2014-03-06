@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Ellipsoid tubes, tubes by the instant of time and their projections &mdash; Ellipsoidal Toolbox 2.0 beta 1 documentation</title>
+    <title>Ellipsoid tubes, tubes by instant of time and their projections &mdash; Ellipsoidal Toolbox 2.0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.0 beta 1',
+        VERSION:     '2.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Ellipsoidal Toolbox 2.0 beta 1 documentation" href="index.html" />
+    <link rel="top" title="Ellipsoidal Toolbox 2.0.1 documentation" href="index.html" />
     <link rel="next" title="Summary and Outlook" href="chap_summary.html" />
     <link rel="prev" title="Examples" href="chap_examples.html" /> 
   </head>
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="chap_examples.html" title="Examples"
              accesskey="P">previous</a> |</li>
-        <li><a href="main_manual.html">Ellipsoidal Toolbox 2.0 beta 1 documentation</a> &raquo;</li> 
+        <li><a href="main_manual.html">Ellipsoidal Toolbox 2.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -49,28 +49,29 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="ellipsoid-tubes-tubes-by-the-instant-of-time-and-their-projections">
-<h1>Ellipsoid tubes, tubes by the instant of time and their projections<a class="headerlink" href="#ellipsoid-tubes-tubes-by-the-instant-of-time-and-their-projections" title="Permalink to this headline">¶</a></h1>
-<p><strong>Definition.</strong> For any matrix asimptotic monotone function <img class="math" src="_images/math/2e573bfe03a50bdd1738c6cf4dc80d417afd1c05.png" alt="M(\cdot)"/>, which defines the configuration of the environment of any point of time, the quadratically regularized alternated reach set of system with disturbance is</p>
+  <div class="section" id="ellipsoid-tubes-tubes-by-instant-of-time-and-their-projections">
+<h1>Ellipsoid tubes, tubes by instant of time and their projections<a class="headerlink" href="#ellipsoid-tubes-tubes-by-instant-of-time-and-their-projections" title="Permalink to this headline">¶</a></h1>
+<p><strong>Definition.</strong> For any regularization matrix <img class="math" src="_images/math/2e573bfe03a50bdd1738c6cf4dc80d417afd1c05.png" alt="M(\cdot)"/> the quadratically regularized alternated reach set of system with uncertainty is</p>
 <div class="math">
 <p><img src="_images/math/512c3855253a9608744f87b71998cc4099031188.png" alt="{\mathcal X}^{q}_{U}(t,t_0,{\mathcal X}^{0},M(\cdot)) =
 \underset{t_0\leq\tau\leq t}{\bigcup}{\mathcal X}^{q}_{U}(\tau,t_0,{\mathcal X}^{0},M   (\cdot))."/></p>
-</div><p>Identify as <img class="math" src="_images/math/06b60d0d7214d59442d08b7e393336ceb6c7f87e.png" alt="{\mathcal E}(\overline{x}(t),X_{+}(t,l))"/> и <img class="math" src="_images/math/8186d35faf6b4d13f95ad584cf4f1ac0b930749d.png" alt="{\mathcal E}(\overline{x}(t),X_{-}(t,l))"/> the tight external and internal approximations along <img class="math" src="_images/math/28c7cde33aa87f676e28cc8f7c2c65e61783f595.png" alt="l(\cdot)"/> good direction such as <img class="math" src="_images/math/0c7534cf3930d33d9e93b380d3282a37068e1ce1.png" alt="l(t_0)=l"/>. Then the reach set by instant of time can be described as</p>
+</div><p>Note that if system doesn&#8217;t have uncertainty then <img class="math" src="_images/math/0ab9370bf1570c1658bf09d2d6ff6a8ecda75db8.png" alt="M(\cdot)=0"/>.</p>
+<p>By <img class="math" src="_images/math/06b60d0d7214d59442d08b7e393336ceb6c7f87e.png" alt="{\mathcal E}(\overline{x}(t),X_{+}(t,l))"/> and <img class="math" src="_images/math/8186d35faf6b4d13f95ad584cf4f1ac0b930749d.png" alt="{\mathcal E}(\overline{x}(t),X_{-}(t,l))"/> denote tight external and internal approximations along <img class="math" src="_images/math/28c7cde33aa87f676e28cc8f7c2c65e61783f595.png" alt="l(\cdot)"/> good direction such as <img class="math" src="_images/math/0c7534cf3930d33d9e93b380d3282a37068e1ce1.png" alt="l(t_0)=l"/>. Then the reach set by instant of time can be described as</p>
 <div class="math">
 <p><img src="_images/math/957b5c775a16f08451308745dc2dae9e86f82ee9.png" alt="{\mathcal X}^{q}_{U}[t]=\underset{\tau}{\bigcup}\underset{l}{\bigcap}\{
 {\mathcal E}(\overline{x}(\tau),X_{+}(\tau,l)) |l\in {\mathcal S}_1(0),   \tau\leq t\}\subseteq\underset{l} {\bigcap}\{{\mathcal E}^{U}_{+}[t,l])    |l\in {\mathcal S}_1(0)\},"/></p>
-</div><p>where <img class="math" src="_images/math/cca4a283614b3ed693d0ae8c1a86c2486bf69dbb.png" alt="{\mathcal E}^{U}_{+}[t,l]=\underset{\tau}{\bigcup}\{{\mathcal E}(\overline{x}(\tau),X_{+}(\tau,l))|t_0\leq\tau\leq t\}"/> is the external ellipsoidal tube by the instant of time.</p>
-<p>Similar approxiamtion can be calculated with the internal ellipsoidal tube by the instant of time <img class="math" src="_images/math/1798176817126eb51cd40d65d0242caea8004c97.png" alt="{\mathcal E}^{U}_{-}[t,l]=\underset{\tau}{\bigcup}\{{\mathcal E}(\overline{x}(\tau),X_{-}(\tau,l))|t_0\leq\tau\leq t\}"/>:</p>
+</div><p>where <img class="math" src="_images/math/cca4a283614b3ed693d0ae8c1a86c2486bf69dbb.png" alt="{\mathcal E}^{U}_{+}[t,l]=\underset{\tau}{\bigcup}\{{\mathcal E}(\overline{x}(\tau),X_{+}(\tau,l))|t_0\leq\tau\leq t\}"/> is the external ellipsoidal tube by instant of time.</p>
+<p>Similar approxiamtion can be calculated with the internal ellipsoidal tube by instant of time <img class="math" src="_images/math/1798176817126eb51cd40d65d0242caea8004c97.png" alt="{\mathcal E}^{U}_{-}[t,l]=\underset{\tau}{\bigcup}\{{\mathcal E}(\overline{x}(\tau),X_{-}(\tau,l))|t_0\leq\tau\leq t\}"/>:</p>
 <div class="math">
 <p><img src="_images/math/1b65b4393db2e5450f682d2d746f10f530d5f150.png" alt="{\mathcal X}^{U}[t]\supseteq\underset{l}{\bigcup}\{{\mathcal E}^{U}_{-}[t,l]) |l\in {\mathcal S}_1(0)\}."/></p>
-</div><p>Note that in general case ellipsoidal tube <img class="math" src="_images/math/d9a7eb7a9cae035a5c7359576b38ab00c902054e.png" alt="{\mathcal E}^{U}_{+}[t,l]"/> is not tight approximation.</p>
+</div><p>Note that in general case ellipsoidal tube <img class="math" src="_images/math/d9a7eb7a9cae035a5c7359576b38ab00c902054e.png" alt="{\mathcal E}^{U}_{+}[t,l]"/> is not tight approximation. For more information see <a class="reference internal" href="#gag2012" id="id1">[GAG2012]</a>.</p>
 <p>So, all in all, there are two types of ellipsoid tube objects that we can work with using <em>Ellipsoidal Toolbox</em>:</p>
 <ul class="simple">
 <li>ellipsoidal tubes that are described in <em>gras.ellapx.smartdb.rels.EllTube</em> class;</li>
-<li>tubes by the instant of time described in <em>gras.ellapx.smartdb.rels.EllUnionTube</em> class
+<li>tubes by instant of time described in <em>gras.ellapx.smartdb.rels.EllUnionTube</em> class
 (see <a class="reference internal" href="chap_implement.html#union-label"><em>formula</em></a>).</li>
 </ul>
-<p>These two type of objects can be projected on specified subspaces. The projections of ellipsoid tubes can be either static or dynamic. The are described in gras.ellapx.smartdb.rels.EllTubeProj class. As for the tubes by the instant of time, they can only be projected on static subspaces. These projections are described in gras.ellapx.smartdb.rels.EllUnionTubeStaticProj class. For more information about these types of projections and their differences and for examples see this <a class="reference internal" href="chap_implement.html#section-label"><em>link</em></a>.</p>
+<p>These two type of objects can be projected on specified subspaces. The projections of ellipsoid tubes can be either static or dynamic. The are described in gras.ellapx.smartdb.rels.EllTubeProj class. As for the tubes by  instant of time, they can only be projected on static subspaces. These projections are described in gras.ellapx.smartdb.rels.EllUnionTubeStaticProj class. For more information about these types of projections and their differences and for examples see this <a class="reference internal" href="chap_implement.html#section-label"><em>link</em></a>.</p>
 <div class="section" id="ellipsoid-tubes">
 <h2>Ellipsoid tubes<a class="headerlink" href="#ellipsoid-tubes" title="Permalink to this headline">¶</a></h2>
 <p>There is a whole variety of operations upon ellipsoid tubes in <em>Ellipsoidal Toolbox</em>. We can, of course, create them. When the ellipsoid tube object is created, we can cut them, concatenate, interpolate, plot and project them and so on.</p>
@@ -1295,9 +1296,9 @@ end
 </pre></div>
 </td></tr></table></div>
 </div>
-<div class="section" id="tubes-by-the-instant-of-time">
-<h2>Tubes by the instant of time<a class="headerlink" href="#tubes-by-the-instant-of-time" title="Permalink to this headline">¶</a></h2>
-<p>As with ellipsoid tube objects there are several methods that we can use while working with tubes by the instant of time. First of all we can create tubes by the instant of time using <em>fromEllTubes</em> method:</p>
+<div class="section" id="tubes-by-instant-of-time">
+<h2>Tubes by instant of time<a class="headerlink" href="#tubes-by-instant-of-time" title="Permalink to this headline">¶</a></h2>
+<p>As with ellipsoid tube objects, there are several methods that we can use while working with tubes by instant of time. First of all we can create tubes by instant of time using <em>fromEllTubes</em> method:</p>
 <div class="highlight-matlab"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -1327,7 +1328,7 @@ end
     <span class="n">gras</span><span class="p">.</span><span class="n">ellapx</span><span class="p">.</span><span class="n">smartdb</span><span class="p">.</span><span class="n">rels</span><span class="p">.</span><span class="n">EllUnionTube</span><span class="p">.</span><span class="n">fromEllTubes</span><span class="p">(</span><span class="n">ellTubeObj</span><span class="p">);</span>
 </pre></div>
 </td></tr></table></div>
-<p>From here on we will use the <em>getUnion</em> function so we can get a tube by the instant of time and work with it further on. As we have created a tubes by the instant of time object, we can get all the types of differet data about it. There is a set of methods that can give information about the data stored in the object and give access to it.</p>
+<p>From here on we will use the <em>getUnion</em> function so we can get a tube by instant of time and work with it further on. As we have created a tubes by instant of time object, we can get all the types of differet data about it. There is a set of methods that can give information about the data stored in the object and give access to it.</p>
 <div class="highlight-matlab"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">% An example of GETDATA method&#39;s usage.</span>
@@ -1601,7 +1602,7 @@ end
 <span class="n">ellUnionObj</span><span class="p">.</span><span class="n">display</span><span class="p">();</span>
 </pre></div>
 </td></tr></table></div>
-<p>Also we can compare tubes by the instant of time using <em>isEqual</em> method.</p>
+<p>Also we can compare tubes by instant of time using <em>isEqual</em> method.</p>
 <div class="highlight-matlab"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
@@ -1615,7 +1616,7 @@ end
 <span class="n">res</span> <span class="p">=</span> <span class="n">firstUnionObj</span><span class="p">.</span><span class="n">isEqual</span><span class="p">(</span><span class="n">secondUnionObj</span><span class="p">);</span>
 </pre></div>
 </td></tr></table></div>
-<p>At last, as it has already been said tubes by the instant of time can be projected only on static subspaces. It can be done in two ways.</p>
+<p>At last, as it has already been said tubes by instant of time can be projected only on static subspaces. It can be done in two ways.</p>
 <div class="highlight-matlab"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
@@ -1648,7 +1649,7 @@ end
 <span class="n">statEllTubeProjObj</span> <span class="p">=</span> <span class="n">unionEllTubeObj</span><span class="p">.</span><span class="n">projectStatic</span><span class="p">(</span><span class="n">projMatList</span><span class="p">);</span>
 </pre></div>
 </td></tr></table></div>
-<p>As for ellipsoid tube projections, a special function is used to create the projection matrix for tubes by the instant of time:</p>
+<p>As for ellipsoid tube projections, a special function is used to create the projection matrix for tubes by instant of time:</p>
 <div class="highlight-matlab"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
@@ -1663,15 +1664,15 @@ end
 </pre></div>
 </td></tr></table></div>
 </div>
-<div class="section" id="projections-of-ellipsoid-tubes-and-unions">
-<h2>Projections of ellipsoid tubes and unions<a class="headerlink" href="#projections-of-ellipsoid-tubes-and-unions" title="Permalink to this headline">¶</a></h2>
-<p>As it has already been said we can create either static or dynamic projections for ellipsoid tubes and only static projections for tubes by the instant of time. There are several methods in <em>Ellipsoidal Toolbox</em> for that. Most of them has already been described:</p>
+<div class="section" id="projections-of-ellipsoid-tubes-and-tubes-by-instant-of-time">
+<h2>Projections of ellipsoid tubes and tubes by instant of time<a class="headerlink" href="#projections-of-ellipsoid-tubes-and-tubes-by-instant-of-time" title="Permalink to this headline">¶</a></h2>
+<p>As it has already been said we can create either static or dynamic projections for ellipsoid tubes and only static projections for tubes by instant of time. There are several methods in <em>Ellipsoidal Toolbox</em> for that. Most of them has already been described:</p>
 <ul class="simple">
 <li><em>project</em>, <em>projectStatic</em> and <em>projectToOrths</em> for ellipsoid tubes;</li>
-<li><em>project</em> and <em>projectStatic</em> for tubes by the instant of time.</li>
+<li><em>project</em> and <em>projectStatic</em> for tubes by instant of time.</li>
 </ul>
-<p>It should be mentioned that from here on all the examples are written for ellipsoid tube projections, but their usage is the same for the projections of tubes by the instant of time. We wiil use <em>getProj</em> function to create ellipsoid tube projection that we will work with.</p>
-<p>As with ellipsoid tubes and tubes by the instant of time we can get all the types of differet data about projections. There is a set of methods that can give information about the data stored in the object and give access to it.</p>
+<p>It should be mentioned that from here on all the examples are written for ellipsoid tube projections, but their usage is the same for the projections of tubes by instant of time. We wiil use <em>getProj</em> function to create ellipsoid tube projection that we will work with.</p>
+<p>As with ellipsoid tubes and tubes by instant of time we can get all the types of differet data about projections. There is a set of methods that can give information about the data stored in the object and give access to it.</p>
 <div class="highlight-matlab"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">% An example of GETDATA method&#39;s usage.</span>
@@ -1989,6 +1990,12 @@ end
 </td></tr></table></div>
 <p>All the three methods have several properties connected to the properties of the image, for example: transparency, color, line width and so on.</p>
 <p>To read more about the differences of these projections <a class="reference internal" href="chap_implement.html#goto-label"><em>goto</em></a>. Also there you can find some illustrations for both ellTube projections and ellUnionTube projections.</p>
+<table class="docutils citation" frame="void" id="gag2012" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[GAG2012]</a></td><td>Gagarinov P.V. 2012. Computation of Alternated Reachability Tubes for Linear Control Systems under Uncertainty. <em>Moscow University Computational Mathematics and Cybernetics</em>, 2012, Vol. 36, No. 4, pp. 169–177.</td></tr>
+</tbody>
+</table>
 </div>
 </div>
 
@@ -2000,10 +2007,10 @@ end
         <div class="sphinxsidebarwrapper">
   <h3><a href="main_manual.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Ellipsoid tubes, tubes by the instant of time and their projections</a><ul>
+<li><a class="reference internal" href="#">Ellipsoid tubes, tubes by instant of time and their projections</a><ul>
 <li><a class="reference internal" href="#ellipsoid-tubes">Ellipsoid tubes</a></li>
-<li><a class="reference internal" href="#tubes-by-the-instant-of-time">Tubes by the instant of time</a></li>
-<li><a class="reference internal" href="#projections-of-ellipsoid-tubes-and-unions">Projections of ellipsoid tubes and unions</a></li>
+<li><a class="reference internal" href="#tubes-by-instant-of-time">Tubes by instant of time</a></li>
+<li><a class="reference internal" href="#projections-of-ellipsoid-tubes-and-tubes-by-instant-of-time">Projections of ellipsoid tubes and tubes by instant of time</a></li>
 </ul>
 </li>
 </ul>
@@ -2048,7 +2055,7 @@ end
         <li class="right" >
           <a href="chap_examples.html" title="Examples"
              >previous</a> |</li>
-        <li><a href="main_manual.html">Ellipsoidal Toolbox 2.0 beta 1 documentation</a> &raquo;</li> 
+        <li><a href="main_manual.html">Ellipsoidal Toolbox 2.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
