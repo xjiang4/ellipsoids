@@ -1,6 +1,45 @@
 classdef EllTubeTouchCurveBasic<handle
-    %TestRelation Summary of this class goes here
-    %   Detailed explanation goes here
+    % Basic abstract class in the Ellipsoidal Toolbox for keeping and working 
+    % with touch point curves of internal or external
+    % ellipsoid approximation for an ellipsoid tube.
+    %
+    % Fields:
+    %   dim: double[1, 1] - the dimension of the space in which the touching 
+    %       curves are defined
+    %   sTime: double[1, 1] - specific point of time which is best suited to
+    %       describe good direction
+    %   approxSchemaName: cell[1, 1] of char[1,] - name of the 
+    %       approximation schema
+    %   approxSchemaDescr: cell[1, 1] of char[1,] - description of the 
+    %       approximation schema
+    %   approxType: gras.ellapx.enums.EApproxType[1,1] - type of approximation 
+    %       (External, Internal, NotDefined)
+    %   timeVec: double[1, nTimePoints] - time vector 
+    %   absTolerance: double[1, 1] - absolute tolerance
+    %   relTolerance: double[1, 1] - relative tolerance
+    %   indSTime: double[1, 1]  - index of sTime point within timeVec
+    %   ltGoodDirMat: cell[1, nTimePoints] of double[nDims, 1] - matrix of 
+    %       good direction vectors at any point of time from timeVec
+    %   lsGoodDirVec: cell[1, 1] of double[nDims, 1] - good direction vector 
+    %       at sTime point of time
+    %   ltGoodDirNormVec: cell[1, 1] of double[1, nTimePoints] - norm of good 
+    %       direction vector at any point of time from timeVec
+    %   lsGoodDirNorm: double[1, 1] - norm of good direction vector at
+    %       sTime point of time
+    %   xTouchCurveMat: cell[1, nTimePoints] of double[nDims, 1] - touch 
+    %       point curve for good direction matrix
+    %   xTouchOpCurveMat: cell[1, nTimePoints] of double[nDims, 1] - touch 
+    %       point curve oposite to the xTouchCurveMat touch point curve
+    %   xsTouchVec: cell[1, 1] of double[nDims, 1]  - touch point at sTime
+    %       point of time
+    %   xsTouchOpVec: cell[1, 1] of double[nDims, 1] - a point opposite to
+    %       the xsTouchVec touch point
+    %   isLsTouch: logical[1, 1] - a logical variable which indicates whether 
+    %       a touch takes place along good direction at sTime point of time
+    %   isLtTouchVec: cell[1, 1] of logical[nTimePoints, 1] - a logical
+    %       vector which indicates whether a touch takes place along good 
+    %       direction at any point of time from timeVec
+    %
     properties (Constant,Hidden)
         FCODE_DIM
         FCODE_S_TIME
@@ -27,6 +66,7 @@ classdef EllTubeTouchCurveBasic<handle
         GOOD_DIR_DISP_TOL=1e-10;
     end
     methods (Access=protected,Sealed)
+        %
         function checkSVsTConsistency(~,lsList,ltList,indList,...
                 lsName,ltName,fCheck)
             import modgen.common.throwerror;
@@ -83,9 +123,11 @@ classdef EllTubeTouchCurveBasic<handle
             checkFieldList={'xTouchCurveMat','xTouchOpCurveMat',...
                 'xsTouchVec','xsTouchOpVec'};
         end
+        %
         function depFieldList=getProblemDependencyFieldList(~)
             depFieldList={'MArray'};
         end
+        %
         function fCheckFieldTransfList=getTouchCurveDependencyCheckTransFuncList(~)
             fCheckFieldTransfList={...
                 @(fieldVal,scaleFactor,aMat,indSTime)(fieldVal-aMat)./scaleFactor,...
@@ -93,9 +135,11 @@ classdef EllTubeTouchCurveBasic<handle
                 @(fieldVal,scaleFactor,aMat,indSTime)(fieldVal-aMat(:,indSTime))./scaleFactor,...
                 @(fieldVal,scaleFactor,aMat,indSTime)(fieldVal-aMat(:,indSTime))./scaleFactor};
         end
+        %
         function fieldNameList=getProjectionDependencyFieldList(~)
             fieldNameList={'timeVec','sTime','dim','indSTime'};
         end
+        %
         function [valFieldNameList,touchFieldNameList]=...
                 getPossibleNanFieldList(~)
             valFieldNameList={'xsTouchVec','xTouchCurveMat',...
@@ -103,6 +147,7 @@ classdef EllTubeTouchCurveBasic<handle
             touchFieldNameList={'isLsTouch','isLtTouchVec','isLsTouch',...
                 'isLtTouchVec'};
         end
+        %
         function checkDataConsistency(self)
             import modgen.common.throwerror;
             import gras.gen.SquareMatVector;
