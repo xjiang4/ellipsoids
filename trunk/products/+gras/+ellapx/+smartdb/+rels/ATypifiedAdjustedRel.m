@@ -7,6 +7,43 @@ classdef ATypifiedAdjustedRel<gras.ellapx.smartdb.rels.TypifiedByFieldCodeRel
         end
         %
         function [isOk,reportStr]=isEqual(self,otherRel,varargin)
+            % ISEQUAL - compares current relation object with other relation 
+            % object and returns true if they are equal, otherwise it returns
+            % false.
+            %
+            % Input:
+            %   regular:
+            %       self.
+            %       otherObj: ARelation [1,1] - other relation object
+            %
+            %   properties:
+            %     checkFieldOrder/isFieldOrderCheck: logical [1,1] - if true, 
+            %         then fields in compared relations must be in the same 
+            %         order, otherwise the order is not  important (false by 
+            %         default)
+            %     checkTupleOrder: logical[1,1] -  if true, then the tuples 
+            %         in the compared relations are expected to be in the same 
+            %         order, otherwise the order is not important (false by
+            %         default)
+            %     maxTolerance: double [1,1] - maximum allowed tolerance
+            %     maxRelativeTolerance: double [1,1] - maximum allowed relative
+            %         tolerance
+            %     compareMetaDataBackwardRef: logical[1,1] if true, the CubeStruct's
+            %         referenced from the meta data objects are also compared
+            %     notComparedFieldList: cell[1,nFields] of char[1,] - list
+            %         of fields that are not to be compared
+            %     areTimeBoundsCompared: logical[1,1] - if false,
+            %         ellipsoidal tubes are compared on intersection of
+            %         definition domains
+            %
+            % Output:
+            %   isOk: logical[1, 1] - logical vector elements of
+            %       which take OK value if the fields in self and otherRel 
+            %       are equal and otherwise it takes FALSE value
+            %   reportStr: char[1, ] - a report string which contains more
+            %       detailed information about inequal fields in self and 
+            %       otherRel objects
+            %
             self.checkIfObjectScalar();
             otherRel.checkIfObjectScalar();
             [reg,prop]=modgen.common.parseparams(varargin,...
@@ -18,6 +55,16 @@ classdef ATypifiedAdjustedRel<gras.ellapx.smartdb.rels.TypifiedByFieldCodeRel
                 reg{:},prop{:});
         end
         function sortDetermenistically(self,varargin)
+            % SORTDETERMENISTICALLY - sorts fields of ATypifiedAdjustedRel
+            % object using specified maximal tolerance
+            % Input:
+            %   regular:
+            %       self.
+            %       maxTolerance: double[1, 1] - maximal tolerance that is
+            %           used while sorting elements of self object.
+            % Output:
+            %   none.
+            %
             self.sortDetermenisticallyInternal(varargin{:});
         end
     end
@@ -56,6 +103,15 @@ classdef ATypifiedAdjustedRel<gras.ellapx.smartdb.rels.TypifiedByFieldCodeRel
     end
     methods 
         function varargout=getData(self,varargin)
+            % GETDATA - gets data from ATypifiedAdjustedRel object
+            % Input:
+            %   regular:
+            %       self.
+            %       varargin:
+            % Output:
+            %   optional:
+            %       
+            %
             import modgen.common.parseparext;
             import modgen.common.parseparams;
             hookPropNameList=getPostDataHookPropNameList(self);

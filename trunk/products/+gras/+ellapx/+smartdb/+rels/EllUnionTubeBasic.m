@@ -1,6 +1,22 @@
 classdef EllUnionTubeBasic<handle
-    %TestRelation Summary of this class goes here
-    %   Detailed explanation goes here
+    % Basic abstract class in the Ellipsoidal Toolbox for keeping and working 
+    % with the unions of ellipsoid tube objects.
+    %
+    % Fields:
+    %   ellUnionTimeDirection: gras.ellapx.enums.EEllUnionTimeDirection[1, 1] - 
+    %       direction in time along which union is performed
+    %   timeTouchEndVec: cell [1, 1] of double[1, nTimePoints] - points of
+    %       time when touch is occured in good direction
+    %   timeTouchOpEndVec: cell [1, 1] of double[1, nTimePoints] - points of
+    %       time when touch is occured in direction opposite to good direction
+    %   isLsTouchOp: logical[1, 1] - a logical variable which indicates whether
+    %       a touch takes place along the direction opposite to the good 
+    %       direction at sTime point of time
+    %   isLtTouchOpVec: cell [1, 1] of logical[nTimePoints, 1] - a logical 
+    %       variable which indicates whether a touch takes place
+    %       along the direction opposite to the good direction at any point
+    %       of time from timeVec
+    %
     properties (Constant,Hidden)
         FCODE_ELL_UNION_TIME_DIRECTION
         %
@@ -14,6 +30,18 @@ classdef EllUnionTubeBasic<handle
     end
    methods 
         function fieldsList = getNoCatOrCutFieldsList(~)
+            % GETNOCATORCUTFIELDLIST - returns a list of fields of
+            % EllUionTubeBasic object, which are not to be
+            % concatenated or cut.
+            %
+            % Input:
+            %   regular:
+            %       self.
+            % Output:
+            %   namePrefix: char[nFields, ] - list of fields of
+            %       EllUionTubeBasic object, which are not to be
+            %       concatenated or cut
+            %
             import  gras.ellapx.smartdb.F;
             fieldsList=F().getNameList({'ELL_UNION_TIME_DIRECTION';...
                 'IS_LS_TOUCH_OP'});
